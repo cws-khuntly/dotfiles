@@ -1,0 +1,33 @@
+#==============================================================================
+#
+#          FILE:  A17-zimbra
+#         USAGE:  . A17-zimbra
+#   DESCRIPTION:  Sets application-wide functions
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+[ ! -d /opt/zimbra ] && return;
+
+alias zmcontrol="/usr/bin/env sudo -Su zimbra /opt/zimbra/bin/zmcontrol < ~/.etc/sudo";
+alias zmprov="/usr/bin/env sudo -Su zimbra /opt/zimbra/bin/zmprov";
+alias zmysql="/usr/bin/env sudo -Su zimbra /opt/zimbra/bin/mysql -u zimbra < ~/.etc/sudo";
+alias zimbra="/usr/bin/env sudo -Su root su - zimbra < ~/.etc/sudo";
+alias jstack="/usr/bin/env sudo -Su zimbra /opt/zimbra/java/bin/jstack < ~/.etc/sudo";
+alias zmstats="/usr/bin/env sudo -Su zimbra /opt/zimbra/bin zmstat lmtp_threads http_threads db_conn_count db_pool_size gc_major_count < ~/.etc/sudo | tail";
+alias ldapsearch="/opt/zimbra/bin/ldapsearch -H \"$(sudo -Su zimbra /opt/zimbra/bin/zmlocalconfig -s -m nokey ldap_url < ~/.etc/sudo | awk '{print $1}')\" -D \"$(sudo -Su zimbra /opt/zimbra/bin/zmlocalconfig -s -m nokey zimbra_ldap_userdn < ~/.etc/sudo)\" -w \"$(/usr/bin/env sudo -Su zimbra /opt/zimbra/bin/zmlocalconfig -s -m nokey zimbra_ldap_password < ~/.etc/sudo | awk '{print $1}')\" -LLL";
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;

@@ -1,0 +1,510 @@
+#=====  FUNCTION  =============================================================
+#          NAME:  zMoveMailboxes
+#   DESCRIPTION:  Move zimbra mailboxes to another maildrop
+#    PARAMETERS:  Minimum size of mailbox to move, number of users to move, target MD
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function zMoveMailboxes
+{
+    typeset SCRIPT_NAME="F07-zimbra";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -ne 3 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Moves a given number of users to the provided maildrop";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ min size ] [ user count ] [ target maildrop ]
+                -> The minimum mailbox size to move
+                -> The number of users to move
+                -> The target maildrop to move to";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${MINIMUM_MOVE_SIZE}" ] && unset -v MINIMUM_MOVE_SIZE;
+        [ ! -z "${NUMBER_OF_USERS}" ] && unset -v NUMBER_OF_USERS;
+        [ ! -z "${TARGET_MAILDROP}" ] && unset -v TARGET_MAILDROP;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    typeset -i MINIMUM_MOVE_SIZE=${1};
+    typeset -i NUMBER_OF_USERS=${2};
+    typeset TARGET_MAILDROP="${3}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "MINIMUM_MOVE_SIZE -> ${MINIMUM_MOVE_SIZE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "NUMBER_OF_USERS -> ${NUMBER_OF_USERS}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "TARGET_MAILDROP -> ${TARGET_MAILDROP}";
+
+    ## move it yo
+    /usr/bin/env sudo -u zimbra /usr/local/bin/zimbra_move_mailboxes.sh -m ${MINIMUM_MOVE_SIZE} -n ${NUMBER_OF_USERS} -t "${TARGET_MAILDROP}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${MINIMUM_MOVE_SIZE}" ] && unset -v MINIMUM_MOVE_SIZE;
+    [ ! -z "${NUMBER_OF_USERS}" ] && unset -v NUMBER_OF_USERS;
+    [ ! -z "${TARGET_MAILDROP}" ] && unset -v TARGET_MAILDROP;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  econsole
+#   DESCRIPTION:  Move zimbra mailboxes to another maildrop
+#    PARAMETERS:  Minimum size of mailbox to move, number of users to move, target MD
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function econsole
+{
+    typeset SCRIPT_NAME="F07-zimbra";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -eq 0 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Presents a command to the eCelerity console for processing";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ command ]
+                -> The commands to execute";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    printf "broadcast %s" "${*}" | sudo -u ecuser /opt/ecelerity/bin/ec_console > /dev/null 2>&1;
+    printf "retrieve %s" "${*}" | sudo -u ecuser /opt/ecelerity/bin/ec_console | python -c 'import sys; import xml.dom.minidom; s=sys.stdin.read(); print xml.dom.minidom.parseString(s).toprettyxml()';
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  getZimbraGlobalConfig
+#   DESCRIPTION:  Move zimbra mailboxes to another maildrop
+#    PARAMETERS:  Minimum size of mailbox to move, number of users to move, target MD
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function getZimbraGlobalConfig
+{
+    typeset SCRIPT_NAME="F07-zimbra";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -eq 0 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Provides an interface to the Zimbra global configuration stack";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ hostname ]
+                -> The hostname to obtain configuration against";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${ZIMBRA_SERVER_HOSTNAME}" ] && unset -v ZIMBRA_SERVER_HOSTNAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    typeset ZIMBRA_SERVER_HOSTNAME="${1}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ZIMBRA_SERVER_HOSTNAME -> ${ZIMBRA_SERVER_HOSTNAME}";
+
+    /usr/bin/env sudo -Su zimbra /opt/zimbra/bin/zmprov gs ${ZIMBRA_SERVER_HOSTNAME} < /home/khuntly/.etc/sudo 2>/dev/null;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60 )) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60 )) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${ZIMBRA_SERVER_HOSTNAME}" ] && unset -v ZIMBRA_SERVER_HOSTNAME;
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  getZimbraLocalConfig
+#   DESCRIPTION:  Move zimbra mailboxes to another maildrop
+#    PARAMETERS:  Minimum size of mailbox to move, number of users to move, target MD
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function getZimbraLocalConfig
+{
+    typeset SCRIPT_NAME="F07-zimbra";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -eq 0 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Provides an interface to the Zimbra local configuration stack";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME}";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    /usr/bin/env sudo -Su zimbra /opt/zimbra/bin/zmlocalconfig < /home/khuntly/.etc/sudo 2>/dev/null;
+    typeset -i RETURN_CODE="${?}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  getZimbraConfig
+#   DESCRIPTION:  Re-loads existing dotfiles for use
+#    PARAMETERS:  None
+#       RETURNS:  0 if success, non-zero otherwise
+#==============================================================================
+function getZimbraConfig
+{
+    typeset SCRIPT_NAME="F07-zimbra";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -eq 0 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Obtain and review Zimbra configuration";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ hostname | file ] [ configuration type ]
+            -> The hostname to obtain configuration for.
+                -> If an SSH configuration file is provided, it must be prefaced with ssh: to ensure proper parsing.
+            -> The configuration type to load. One of global or local.";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${ERROR_COUNT}" ] && typeset -i ERROR_COUNT=0;
+        [ ! -z "${TARGET_HOSTS[*]}" ] && unset -v TARGET_HOSTS;
+        [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+        [ ! -z "${HOSTNAME}" ] && unset -v HOSTNAME;
+        [ ! -z "${SOURCE_HOST_NAME}" ] && unset -v SOURCE_HOST_NAME;
+        [ ! -z "${CONFIGURATION_TYPE}" ] && unset -v CONFIGURATION_TYPE;
+        [ ! -z "${EXEC_COMMAND}" ] && unset -v EXEC_COMMAND;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    typeset -i ERROR_COUNT=0;
+    typeset SOURCE_HOST_NAME="$(/usr/bin/env hostname -f)";
+    typeset EXEC_COMMAND=". /home/khuntly/.functions.d/F10-zimbra;";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "SOURCE_HOST_NAME -> ${SOURCE_HOST_NAME}";
+
+    case "$([ -f "${1}" ] && echo "true")" in
+        [Tt][Rr][Uu][Ee])
+            if [ "$(cut -d ":" -f 1)" == "ssh" ]
+            then
+                ## this is an ssh config file, handle appropriately
+                for HOSTNAME in $(grep HostName "${1}" | awk '{print $NF}' | egrep -v "admin01|admin02")
+                do
+                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "HOSTNAME -> ${HOSTNAME}";
+
+                    setArray TARGET_HOSTS "${HOSTNAME}";
+
+                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_HOSTS -> ${TARGET_HOSTS[*]}";
+
+                    [ ! -z "${HOSTNAME}" ] && unset -v HOSTNAME;
+                done
+            else
+                setArray TARGET_HOSTS $(/usr/bin/env cat "${1}")
+            fi
+            ;;
+        *)
+            setArray TARGET_HOSTS "${1}";
+            ;;
+    esac
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_HOSTS -> ${TARGET_HOSTS[*]}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "CONFIGURATION_TYPE -> ${CONFIGURATION_TYPE}";
+
+    for TARGET_HOST in ${TARGET_HOSTS[*]}
+    do
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_HOST -> ${TARGET_HOST}";
+
+        if [ "${TARGET_HOST}" == "${SOURCE_HOST_NAME}" ]
+        then
+            ## run locally!
+            case "${CONFIGURATION_TYPE}" in
+                [Lo][Oo][Cc][Aa][Ll]) getZimbraLocalConfig; ;;
+                [Gg][Lo][Oo][Bb][Aa][Ll]) getZimbraGlobalConfig; ;;
+            esac
+
+            continue;
+        fi
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        validateServerAvailability "${TARGET_HOST}" 22;
+        typeset -i RET_CODE=${?};
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+        set +o noclobber;
+        typeset SCRIPT_NAME="F07-zimbra";
+        typeset FUNCTION_NAME="${FUNCNAME[0]}";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+
+        if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+        then
+            (( ERROR_COUNT += 1 ));
+
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Target host does not appear to be available.";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Target host does not appear to be available. Cannot continue."
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> continuing";
+
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60 )) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60 )) SECONDS";
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(date +"${TIMESTAMP_OPTS}")";
+
+            [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+            [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+            [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+            continue;
+        fi
+
+        getSshKeys host "${TARGET_HOST}";
+        typeset -i RET_CODE=${?};
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+        set +o noclobber;
+        typeset SCRIPT_NAME="F07-zimbra";
+        typeset FUNCTION_NAME="${FUNCNAME[0]}";
+
+        if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+        then
+            (( ERROR_COUNT += 1 ));
+
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Target host does not appear to be available via SSH.";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Target host does not appear to be available via SSH. Cannot continue."
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> continuing";
+
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60 )) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60 )) SECONDS";
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(date +"${TIMESTAMP_OPTS}")";
+
+            [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+            [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+            [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+            continue;
+        fi
+
+        case "${CONFIGURATION_TYPE}" in
+            [Lo][Oo][Cc][Aa][Ll])
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RUN COMMAND -> ${HOME}/.lib/ssh.exp --hostname ${TARGET_HOST} --username ${USERNAME} --cfgfile ${SSH_CONFIG_FILE} --exec \"${EXEC_COMMAND} getLocalConfig\" 2>&1 | /usr/bin/env tee -a \"${LOG_ROOT}/${LOGNAME}-$(date +%Y%m%d).log\"";
+
+                [ ! -z "${SSH_CONFIG_FILE}" ] && ${HOME}/.lib/ssh.exp --hostname ${TARGET_HOST} --username ${USERNAME} --cfgfile ${SSH_CONFIG_FILE} --exec "${EXEC_COMMAND} getLocalConfig" 2>&1 | /usr/bin/env tee -a "${LOG_ROOT}/${LOGNAME}-$(date +%Y%m%d).log";
+                [ -z "${SSH_CONFIG_FILE}" ] && ${HOME}/.lib/ssh.exp --hostname ${TARGET_HOST} --username ${USERNAME} --exec "${EXEC_COMMAND} getLocalConfig" 2>&1 | /usr/bin/env tee -a "${LOG_ROOT}/${LOGNAME}-$(date +%Y%m%d).log";
+                ;;
+            [Gg][Lo][Oo][Bb][Aa][Ll])
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RUN COMMAND -> ${HOME}/.lib/ssh.exp --hostname ${TARGET_HOST} --username ${USERNAME} --cfgfile ${SSH_CONFIG_FILE} --exec \"${EXEC_COMMAND} getGlobalConfig\" 2>&1 | /usr/bin/env tee -a \"${LOG_ROOT}/${LOGNAME}-$(date +%Y%m%d).log\"";
+
+                [ ! -z "${SSH_CONFIG_FILE}" ] && ${HOME}/.lib/ssh.exp --hostname ${TARGET_HOST} --username ${USERNAME} --cfgfile ${SSH_CONFIG_FILE} --exec "${EXEC_COMMAND} getGlobalConfig" 2>&1 | /usr/bin/env tee -a "${LOG_ROOT}/${LOGNAME}-$(date +%Y%m%d).log";
+                [ -z "${SSH_CONFIG_FILE}" ] && ${HOME}/.lib/ssh.exp --hostname ${TARGET_HOST} --username ${USERNAME} --exec "${EXEC_COMMAND} getGlobalConfig" 2>&1 | /usr/bin/env tee -a "${LOG_ROOT}/${LOGNAME}-$(date +%Y%m%d).log";
+                ;;
+        esac
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+    done
+
+    [ ${ERROR_COUNT} -ne 0 ] && typeset -i RETURN_CODE=${ERROR_COUNT};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${ERROR_COUNT}" ] && typeset -i ERROR_COUNT=0;
+    [ ! -z "${TARGET_HOSTS[*]}" ] && unset -v TARGET_HOSTS;
+    [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+    [ ! -z "${HOSTNAME}" ] && unset -v HOSTNAME;
+    [ ! -z "${SOURCE_HOST_NAME}" ] && unset -v SOURCE_HOST_NAME;
+    [ ! -z "${CONFIGURATION_TYPE}" ] && unset -v CONFIGURATION_TYPE;
+    [ ! -z "${EXEC_COMMAND}" ] && unset -v EXEC_COMMAND;
+    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}

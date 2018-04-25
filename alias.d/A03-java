@@ -1,0 +1,33 @@
+#==============================================================================
+#
+#          FILE:  java
+#         USAGE:  . java
+#   DESCRIPTION:  Useful java aliases
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+## java
+[ "$(/usr/bin/env uname -m)" == "x86_64" ] && alias java="${JAVA_HOME}/bin/java -d64 ${JAVA_OPTS}" || alias java="${JAVA_HOME}/bin/java ${JAVA_OPTS}";
+alias keytool="${JAVA_HOME}/bin/keytool";
+alias jad='~/.bin/jad -dead -ff -i -s java -t4';
+alias threadAnalyzer="java -jar ${HOME}/.lib/jca457.jar";
+alias heapAnalyzer="java -jar ${HOME}/.lib/ha456.jar";
+
+[ -r "${HOME}/.etc/SecurityService/config/PasswordRepository.config" ] && . "${HOME}/.etc/SecurityService/config/PasswordRepository.config";
+alias javaPasswordRepository='java -cp ".:${UTILITY_CLASSPATH}:${PASSWORD_UTILITY_JAR}" ${PASSWORD_UTILITY_CLASS}';
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;

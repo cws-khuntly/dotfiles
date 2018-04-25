@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <system-config>
+        <encoding>UTF-8</encoding>
+    </system-config>
+
+    <security-config>
+        <email-address />
+        <otpVariance />
+        <maxAttempts />
+        <iterations>10</iterations>
+        <passwordExpiration />
+        <passwordMinLength />
+        <passwordMaxLength />
+        <authAlgorithm>SHA-256</authAlgorithm>
+        <otpAlgorithm />
+        <keyBits>256</keyBits>
+        <secretKeyAlgorithm>PBKDF2WithHmacSHA1</secretKeyAlgorithm>
+        <encryptionAlgorithm>AES</encryptionAlgorithm>
+        <encryptionInstance>AES/CBC/PKCS5Padding</encryptionInstance>
+        <saltLength>96</saltLength>
+        <performAudit />
+        <resetIdLength />
+        <smsResetEnabled />
+        <smsCodeLength />
+        <resetTimeout />
+        <authConfig />
+        <authManager />
+        <userManager />
+    </security-config>
+
+    <password-repository>
+        <passwordFile>${HOME}/.etc/password.properties</passwordFile>
+        <saltFile>${HOME}/.etc/salt.properties</saltFile>
+    </password-repository>
+
+    <key-config />
+
+    <file-security-config />
+
+    <exception-config />
+
+    <resource-config />
+</configuration>

@@ -1,0 +1,11 @@
+[Unit]
+Description=Load Dropbox daemon
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/dropbox start
+ExecStop=/usr/bin/dropbox stop
+Restart=on-abort
+
+[Install]
+WantedBy=default.target

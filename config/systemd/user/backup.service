@@ -1,0 +1,11 @@
+[Unit]
+Description=Back up home directory to remote system
+After=xorg.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+ExecStart=/usr/bin/rsync -vcarbupEogtIzChi4 --append --safe-links --delete --timeout 10 --temp-dir=/var/tmp --no-motd --blocking-io --stats --progress -e "ssh -qaCkT -E ${HOME}/.log/ssh.log" --log-file=${HOME}/.log/rsync.log %h %u@admin01.buf:/home/khuntly/backups
+
+[Install]
+WantedBy=default.target

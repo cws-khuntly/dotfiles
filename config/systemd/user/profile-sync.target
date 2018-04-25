@@ -1,0 +1,6 @@
+##
+## ~/.config/systemd/user/profile-sync.target
+##
+[Unit]
+Description=Profile Synchronization Target
+StopWhenUnneeded=yes

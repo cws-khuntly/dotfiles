@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <system-config>
+        <encoding>UTF-8</encoding>
+    </system-config>
+
+    <application-config>
+        <appName>eSolutionsCore</appName>
+        <serviceRootDirectory />
+        <archiveRootDirectory />
+        <fileRepositoryRoot />
+        <dateFormat />
+        <connectTimeout>15000</connectTimeout>
+        <scriptTimeout>30000</scriptTimeout>
+        <messageIdLength />
+        <virtualManagerClass />
+        <agentBundleSource />
+        <serviceAccount />
+    </application-config>
+
+    <mail-config>
+        <mailFrom>kmhuntly@gmail.com</mailFrom>
+        <propertyFile>${HOME]/.etc/eSolutionsCore/config/mail/MailConfig.properties</propertyFile>
+    </mail-config>
+
+    <!-- how do we talk to the agent? -->
+    <agent-config />
+
+    <!-- do we need a proxy for internet access? -->
+    <proxy-config>
+        <proxyServiceRequired>true</proxyServiceRequired>
+        <proxyServerName>proxy.caspersbox.com</proxyServerName>
+        <proxyServerPort>8080</proxyServerPort>
+        <proxyAuthRequired>true</proxyAuthRequired>
+        <proxyAuthType>NTLM</proxyAuthType>
+        <proxyAuthDomain>CaspersBox</proxyAuthDomain>
+        <proxyServerRealm>CWS</proxyServerRealm>
+        <proxyUserId>kmhuntly</proxyUserId>
+        <proxyPwdSalt />
+        <proxyPassword />
+    </proxy-config>
+
+    <http-config>
+        <soTimeout>30</soTimeout>
+        <socketLinger>1</socketLinger>
+        <connTimeout>30</connTimeout>
+        <socketTimeout>30</socketTimeout>
+        <connMgrTimeout>30</connMgrTimeout>
+        <httpVersion>HTTP/1.0</httpVersion>
+        <staleCheck>true</staleCheck>
+        <keyStoreType />
+        <keyStoreFile />
+        <keyStorePass />
+        <keyStoreSalt />
+        <trustStoreType />
+        <trustStoreFile />
+        <trustStorePass />
+        <trustStoreSalt />
+    </http-config>
+
+    <dns-config />
+
+    <ssh-config>
+        <timeout>15</timeout> <!-- connect timeout in seconds (defaults to 10 if not set here) -->
+        <sshProperties>/opt/cws/eSolutions/.ssh/config</sshProperties> <!-- full path to properties file containing ssh props (like StrictHostKeyChecking, etc) -->
+        <sshAccount>kmhuntly</sshAccount> <!-- username to use for authentication -->
+        <sshKey>${HOME}/.ssh/id_rsa</sshKey> <!-- path to the ssh private key -->
+        <sshSalt />
+        <sshPassword />
+    </ssh-config>
+
+    <ftp-config>
+        <timeout>15</timeout> <!-- connect timeout in seconds (defaults to 10 if not set here) -->
+        <ftpAccount>kmhuntly</ftpAccount> <!-- username to use for authentication -->
+        <ftpSalt />
+        <ftpPassword />
+    </ftp-config>
+
+    <exception-config />
+
+    <resource-config />
+</configuration>

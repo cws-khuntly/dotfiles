@@ -1,0 +1,31 @@
+#==============================================================================
+#
+#          FILE:  ansible
+#         USAGE:  . ansible
+#   DESCRIPTION:  Loads keychain and adds available keys to it
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+[ ! -d /opt/ansible ] && return;
+
+typeset -x ANSIBLE=/opt/ansible;
+typeset -x PATH="${PATH}:${ANSIBLE}/bin";
+typeset -x PYTHONPATH="${ANSIBLE}/lib";
+typeset -x ANSIBLE_LIBRARY="${ANSIBLE}/library";
+typeset -x ANSIBLE_HOSTS="${HOME}/.etc/ansible/hosts";
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;

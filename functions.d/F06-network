@@ -1,0 +1,1566 @@
+#=====  FUNCTION  =============================================================
+#          NAME:  netinfo
+#   DESCRIPTION:  Returns pertinent network information
+#    PARAMETERS:  None
+#       RETURNS:  0 regardless of result.
+#==============================================================================
+function netinfo
+{
+    typeset SCRIPT_NAME="F06-network";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    typeset INET_ADDR_1="$(/usr/bin/env ifconfig | awk /'inet addr/ {print $2}')";
+    typeset INET_ADDR_2="$(/usr/bin/env ifconfig | awk /'inet addr/ {print $4}')";
+    typeset BROADCAST="$(/usr/bin/env ifconfig | awk /'Bcast/ {print $3}')";
+    typeset HWADDR="$(/usr/bin/env ifconfig | awk /'HWaddr/ {print $4,$5}')";
+    typeset EXTERNAL_ADDR="$(/usr/bin/env curl -dump -hiddenlinks=ignore -nolist http://checkip.dyndns.org:8245/ | sed '/^$/d; s/^[ ]*//g; s/[ ]*$//g')";
+
+    writeLogEntry "STDOUT" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "--------------- Network Information ---------------";
+    writeLogEntry "STDOUT" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${INET_ADDR_1}";
+    writeLogEntry "STDOUT" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${INET_ADDR_2}";
+    writeLogEntry "STDOUT" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${BROADCAST}";
+    writeLogEntry "STDOUT" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${HWADDR}";
+    [ ! -z "${EXTERNAL_ADDR}" ] && writeLogEntry "STDOUT" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${EXTERNAL_ADDR}";
+    writeLogEntry "STDOUT" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "---------------------------------------------------";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${INET_ADDR_1}" ] && unset -v INET_ADDR_1;
+    [ ! -z "${INET_ADDR_2}" ] && unset -v INET_ADDR_2;
+    [ ! -z "${BROADCAST}" ] && unset -v BROADCAST;
+    [ ! -z "${HWADDR}" ] && unset -v HWADDR;
+    [ ! -z "${EXTERNAL_ADDR}" ] && unset -v EXTERNAL_ADDR;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  wake
+#   DESCRIPTION:  Sends a Wake-On-LAN packet to a provided host
+#    PARAMETERS:  MAC address to send to
+#       RETURNS:  0
+#==============================================================================
+function wake
+{
+    typeset SCRIPT_NAME="F06-network";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -eq 0 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Wake a provided server with wake-on-LAN enabled";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ address ]
+                 -> The MAC address of the machine to wake";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    /usr/bin/env wakeonlan ${1};
+    typeset -i RET_CODE=${?};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+
+    [ -z "${RET_CODE}" ] && RETURN_CODE=1 || RETURN_CODE=${RET_CODE};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  validateServerAvailability
+#   DESCRIPTION:  Validates that a given host exists in DNS and is alive
+#    PARAMETERS:  Target host, port number (optional)
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function validateServerAvailability
+{
+    typeset SCRIPT_NAME="F06-network";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+    typeset -i ERROR_COUNT=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -eq 0 ]
+    then
+        typeset RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Validate a provided server's availability";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ hostname ] [ port ]
+                 -> The target host to validate
+                 -> The port number to attempt connection on";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${ERROR_COUNT}" ] && typeset -i ERROR_COUNT=0;
+        [ ! -z "${SEARCH_ENTRY}" ] && unset -v SEARCH_ENTRY;
+        [ ! -z "${VALIDATE_HOSTNAME}" ] && unset -v VALIDATE_HOSTNAME;
+        [ ! -z "${VALIDATE_PORT}" ] && unset -v VALIDATE_PORT;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    typeset VALIDATE_HOSTNAME="${1}";
+    [ ${#} -eq 2 ] && typeset -i VALIDATE_PORT=${2};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "VALIDATE_HOSTNAME -> ${VALIDATE_HOSTNAME}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "VALIDATE_PORT -> ${VALIDATE_PORT}";
+
+    /usr/bin/env host "${VALIDATE_HOSTNAME}" > /dev/null 2>&1;
+    typeset -i RET_CODE=${?};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+
+    case ${RET_CODE} in
+        0)
+            case ${#} in
+                1)
+                    case "$(uname)" in
+                        [Ss][Oo][Ll][Aa][Rr][Ii][Ss])
+                            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: /usr/bin/env ping \"${VALIDATE_HOSTNAME}\" 1 > /dev/null 2>&1";
+
+                            /usr/bin/env ping "${VALIDATE_HOSTNAME}" 1 > /dev/null 2>&1;
+                            ;;
+                        *)
+                            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: /usr/bin/env ping -c 1 -q -W ${THREAD_TIMEOUT} "${VALIDATE_HOSTNAME}" > /dev/null 2>&1";
+
+                            /usr/bin/env ping -c 1 -q -W ${THREAD_TIMEOUT} "${VALIDATE_HOSTNAME}" > /dev/null 2>&1;
+                            ;;
+                    esac
+                    ;;
+                2)
+                    if [ ! -z "$(type nc 2>/dev/null | grep -v alias)" ]
+                    then
+                        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: /usr/bin/env nc -w 10 ${VALIDATE_HOSTNAME} ${VALIDATE_PORT} < /dev/null > /dev/null 2>&1";
+
+                        /usr/bin/env nc -w 10 ${VALIDATE_HOSTNAME} ${VALIDATE_PORT} < /dev/null > /dev/null 2>&1;
+                    else
+                        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: /usr/bin/env telnet \"${VALIDATE_HOSTNAME}\" ${VALIDATE_PORT} >/dev/null 2>&1 &";
+
+                        /usr/bin/env telnet "${VALIDATE_HOSTNAME}" ${VALIDATE_PORT} > /dev/null 2>&1 &
+                        typeset -i TELNET_PID=${!};
+
+                        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "TELNET_PID -> ${TELNET_PID}";
+
+                        [ $(/usr/bin/env kill -0 "${TELNET_PID}" > /dev/null 2>&1; echo ${?}) -eq 1 ] && (( ERROR_COUNT += 1 )) || /usr/bin/env kill -9 ${TELNET_PID} > /dev/null 2>&1;
+                    fi
+                    ;;
+            esac
+            ;;
+        *)
+            ## lets do a few things here. dig/host don't use /etc/resolv.conf
+            ## so we have to kind of drag it in here.
+            if -f /etc/resolv.conf -o -l /etc/resolv.conf ]
+            then
+                for SEARCH_ENTRY in $(/usr/bin/env grep search /etc/resolv.conf)
+                do
+                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "SEARCH_ENTRY -> ${SEARCH_ENTRY}";
+
+                    [ "${SEARCH_ENTRY}" == "search" ] && continue;
+
+                    case $(/usr/bin/env host "${VALIDATE_HOSTNAME}.${SEARCH_ENTRY}" > /dev/null 2>&1; echo ${?};) in
+                        0)
+                            ## make sure to fix the error counter
+                            [ ${ERROR_COUNT} -ne 0 ] && unset -v ERROR_COUNT;
+                            typeset -i ERROR_COUNT=0;
+
+                            case ${#} in
+                                1)
+                                    case "$(uname)" in
+                                        [Ss][Oo][Ll][Aa][Rr][Ii][Ss])
+                                            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: /usr/bin/env ping \"${VALIDATE_HOSTNAME}\" 1 > /dev/null 2>&1";
+
+                                            /usr/bin/env ping "${VALIDATE_HOSTNAME}" 1 > /dev/null 2>&1;
+
+                                            break;
+                                            ;;
+                                        *)
+                                            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: /usr/bin/env ping -c 1 -q -W ${THREAD_TIMEOUT} "${VALIDATE_HOSTNAME}" > /dev/null 2>&1";
+
+                                            /usr/bin/env ping -c 1 -q -W ${THREAD_TIMEOUT} "${VALIDATE_HOSTNAME}" > /dev/null 2>&1;
+
+                                            break;
+                                            ;;
+                                    esac
+                                    ;;
+                                2)
+                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: /usr/bin/env telnet \"${VALIDATE_HOSTNAME}\" ${VALIDATE_PORT} >/dev/null 2>&1 &";
+
+                                    /usr/bin/env telnet "${VALIDATE_HOSTNAME}" ${VALIDATE_PORT} > /dev/null 2>&1 &
+                                    typeset -i TELNET_PID=${!};
+
+                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "TELNET_PID -> ${TELNET_PID}";
+
+                                    [ $(/usr/bin/env kill -0 "${TELNET_PID}" > /dev/null 2>&1; echo ${?}) -eq 1 ] && (( ERROR_COUNT += 1 )) || /usr/bin/env kill -9 ${TELNET_PID} > /dev/null 2>&1;
+
+                                    break;
+                                    ;;
+                            esac
+                            ;;
+                        *)
+                            (( ERROR_COUNT += 1 ));
+
+                            continue;
+                    esac
+
+                    if [ ${ERROR_COUNT} -ne 0 ]
+                    then
+                        typeset RETURN_CODE=1;
+
+                        writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${VALIDATE_HOSTNAME} does not appear to exist in DNS. Unable to determine availability.";
+                        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${VALIDATE_HOSTNAME} does not appear to exist in DNS. Unable to determine availability.";
+
+                        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+                        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+                        [ ! -z "${ERROR_COUNT}" ] && typeset -i ERROR_COUNT=0;
+                        [ ! -z "${SEARCH_ENTRY}" ] && unset -v SEARCH_ENTRY;
+                        [ ! -z "${VALIDATE_HOSTNAME}" ] && unset -v VALIDATE_HOSTNAME;
+                        [ ! -z "${VALIDATE_PORT}" ] && unset -v VALIDATE_PORT;
+
+                        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+                        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+                        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+                        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+                        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+                        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+                        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+                        return ${RETURN_CODE};
+                    fi
+                done
+            fi
+            ;;
+    esac
+
+    typeset -i RETURN_CODE=${ERROR_COUNT};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${TELNET_PID}" ] && unset -v TELNET_PID;
+    [ ! -z "${RET_CODE}" ] && typeset -i RET_CODE=0;
+    [ ! -z "${ERROR_COUNT}" ] && typeset -i ERROR_COUNT=0;
+    [ ! -z "${SEARCH_ENTRY}" ] && unset -v SEARCH_ENTRY;
+    [ ! -z "${VALIDATE_HOSTNAME}" ] && unset -v VALIDATE_HOSTNAME;
+    [ ! -z "${VALIDATE_PORT}" ] && unset -v VALIDATE_PORT;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+## TODO: fucking fix me
+#=====  FUNCTION  =============================================================
+#          NAME:  sendNotification
+#   DESCRIPTION:  Sends a notification email to a provided address
+#    PARAMETERS:  Template, file content, target address, attachment (optional)
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function sendNotification
+{
+    typeset SCRIPT_NAME="F06-network";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset OPTIND=OPTIONS;
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -eq 0 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Generates notification email to send to a selected audience.";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ -m <message template> ] [ -f <file> ] [ -t <send to> ] [ -a ] [ -e ] [ -h|-? ]
+                -> The message template to utilize.
+                -> If the content of a file should be applied to the message, the file should be specified here.
+                -> The target audience for the email
+                -> Add an optional attachment. If specified, path to the attachment and filename must be provided as an argument.
+                -> Execute processing.
+                -? Show this help";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${MESSAGE_FILE}" -a -f "${MESSAGE_FILE}" ] && rm -rf "${MESSAGE_FILE}";
+        [ ! -z "${TEMP_FILE}" -a -f "${TEMP_FILE}" ] && rm -rf "${TEMP_FILE}";
+
+        [ ! -z "${OPTIONS}" ] && unset -v OPTIONS;
+        [ ! -z "${MESSAGE_TEMPLATE}" ] && unset -v MESSAGE_TEMPLATE;
+        [ ! -z "${FILE_NAME}" ] && unset -v FILE_NAME;
+        [ ! -z "${SEND_TO}" ] && unset -v SEND_TO;
+        [ ! -z "${ATTACH_FILE}" ] && unset -v ATTACH_FILE;
+        [ ! -z "${MAIL_CMD}" ] && unset -v MAIL_CMD;
+        [ ! -z "${MESSAGE_FILE}" ] && unset -v MESSAGE_FILE;
+        [ ! -z "${TEMP_FILE}" ] && unset -v TEMP_FILE;
+        [ ! -z "${TEMPLATE_FILE}" ] && unset -v TEMPLATE_FILE;
+        [ ! -z "${MESSAGE_SUBJECT}" ] && unset -v MESSAGE_SUBJECT;
+        [ ! -z "${REPLACEMENT_ITEM}" ] && unset -v REPLACEMENT_ITEM;
+        [ ! -z "${MAILER_CODE}" ] && unset -v MAILER_CODE;
+        [ ! -z "${PRE_FILE_SIZE}" ] && unset -v PRE_FILE_SIZE;
+        [ ! -z "${POST_FILE_SIZE}" ] && unset -v POST_FILE_SIZE;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    while getopts "m:f:t:aeh" OPTIONS 2>/dev/null
+    do
+        case ${OPTIONS} in
+            m)
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "OPTARG -> ${OPTARG}";
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Setting MESSAGE_TEMPLATE..";
+
+                typeset MESSAGE_TEMPLATE="${OPTARG}";
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "MESSAGE_TEMPLATE -> ${MESSAGE_TEMPLATE}";
+                ;;
+            f)
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "OPTARG -> ${OPTARG}";
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Setting FILE_NAME..";
+
+                typeset FILE_NAME="${OPTARG}";
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "FILE_NAME -> ${FILE_NAME}";
+                ;;
+            t)
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "OPTARG -> ${OPTARG}";
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Setting SEND_TO..";
+
+                typeset SEND_TO="${OPTARG}";
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "SEND_TO -> ${SEND_TO}";
+                ;;
+            a)
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Setting ATTACH_FILE..";
+
+                typeset ATTACH_FILE="${_TRUE}";
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "ATTACH_FILE -> ${ATTACH_FILE}";
+                ;;
+            e)
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Validating data..";
+
+                if [ -z "${SEND_TO}" ]
+                then
+                    writeLogEntry "ERROR" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "No recipient names were provided. Unable to continue processing.";
+
+                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME} -> exit";
+
+                    [ ! -z "${MESSAGE_FILE}" -a -f "${MESSAGE_FILE}" ] && rm -rf "${MESSAGE_FILE}";
+                    [ ! -z "${TEMP_FILE}" -a -f "${TEMP_FILE}" ] && rm -rf "${TEMP_FILE}";
+
+                    [ ! -z "${OPTIONS}" ] && unset -v OPTIONS;
+                    [ ! -z "${MESSAGE_TEMPLATE}" ] && unset -v MESSAGE_TEMPLATE;
+                    [ ! -z "${FILE_NAME}" ] && unset -v FILE_NAME;
+                    [ ! -z "${SEND_TO}" ] && unset -v SEND_TO;
+                    [ ! -z "${ATTACH_FILE}" ] && unset -v ATTACH_FILE;
+                    [ ! -z "${MAIL_CMD}" ] && unset -v MAIL_CMD;
+                    [ ! -z "${MESSAGE_FILE}" ] && unset -v MESSAGE_FILE;
+                    [ ! -z "${TEMP_FILE}" ] && unset -v TEMP_FILE;
+                    [ ! -z "${TEMPLATE_FILE}" ] && unset -v TEMPLATE_FILE;
+                    [ ! -z "${MESSAGE_SUBJECT}" ] && unset -v MESSAGE_SUBJECT;
+                    [ ! -z "${REPLACEMENT_ITEM}" ] && unset -v REPLACEMENT_ITEM;
+                    [ ! -z "${MAILER_CODE}" ] && unset -v MAILER_CODE;
+                    [ ! -z "${PRE_FILE_SIZE}" ] && unset -v PRE_FILE_SIZE;
+                    [ ! -z "${POST_FILE_SIZE}" ] && unset -v POST_FILE_SIZE;
+                    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+                    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+                    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+                    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+                    return ${RETURN_CODE};
+                else
+                    if [ ! -z "${ATTACH_FILE}" -a "${ATTACH_FILE}" == "${_TRUE}" -a -z "${FILE_NAME}" ]
+                    then
+                        writeLogEntry "ERROR" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Request to attach file, but no file was provided. Unable to continue processing.";
+
+                        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+                        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME} -> exit";
+
+                        [ ! -z "${MESSAGE_FILE}" -a -f "${MESSAGE_FILE}" ] && rm -rf "${MESSAGE_FILE}";
+                        [ ! -z "${TEMP_FILE}" -a -f "${TEMP_FILE}" ] && rm -rf "${TEMP_FILE}";
+
+                        [ ! -z "${OPTIONS}" ] && unset -v OPTIONS;
+                        [ ! -z "${MESSAGE_TEMPLATE}" ] && unset -v MESSAGE_TEMPLATE;
+                        [ ! -z "${FILE_NAME}" ] && unset -v FILE_NAME;
+                        [ ! -z "${SEND_TO}" ] && unset -v SEND_TO;
+                        [ ! -z "${ATTACH_FILE}" ] && unset -v ATTACH_FILE;
+                        [ ! -z "${MAIL_CMD}" ] && unset -v MAIL_CMD;
+                        [ ! -z "${MESSAGE_FILE}" ] && unset -v MESSAGE_FILE;
+                        [ ! -z "${TEMP_FILE}" ] && unset -v TEMP_FILE;
+                        [ ! -z "${TEMPLATE_FILE}" ] && unset -v TEMPLATE_FILE;
+                        [ ! -z "${MESSAGE_SUBJECT}" ] && unset -v MESSAGE_SUBJECT;
+                        [ ! -z "${REPLACEMENT_ITEM}" ] && unset -v REPLACEMENT_ITEM;
+                        [ ! -z "${MAILER_CODE}" ] && unset -v MAILER_CODE;
+                        [ ! -z "${PRE_FILE_SIZE}" ] && unset -v PRE_FILE_SIZE;
+                        [ ! -z "${POST_FILE_SIZE}" ] && unset -v POST_FILE_SIZE;
+                        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+                        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+                        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+                        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+                        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+                        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+                        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+                        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+                        return ${RETURN_CODE};
+                    fi
+                fi
+                ;;
+            *)
+                typeset -i RETURN_CODE=3;
+
+                writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Generates notification email to send to a selected audience.";
+                writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ -m <message template> ] [ -f <file> ] [ -t <send to> ] [ -a ] [ -e ] [ -h|-? ]
+                        -> The message template to utilize.
+                        -> If the content of a file should be applied to the message, the file should be specified here.
+                        -> The target audience for the email
+                        -> Add an option attachment. If specified, path to the attachment and filename must be provided as an argument.
+                        -> Execute processing";
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+                [ ! -z "${MESSAGE_FILE}" -a -f "${MESSAGE_FILE}" ] && rm -rf "${MESSAGE_FILE}";
+                [ ! -z "${TEMP_FILE}" -a -f "${TEMP_FILE}" ] && rm -rf "${TEMP_FILE}";
+
+                [ ! -z "${OPTIONS}" ] && unset -v OPTIONS;
+                [ ! -z "${MESSAGE_TEMPLATE}" ] && unset -v MESSAGE_TEMPLATE;
+                [ ! -z "${FILE_NAME}" ] && unset -v FILE_NAME;
+                [ ! -z "${SEND_TO}" ] && unset -v SEND_TO;
+                [ ! -z "${ATTACH_FILE}" ] && unset -v ATTACH_FILE;
+                [ ! -z "${MAIL_CMD}" ] && unset -v MAIL_CMD;
+                [ ! -z "${MESSAGE_FILE}" ] && unset -v MESSAGE_FILE;
+                [ ! -z "${TEMP_FILE}" ] && unset -v TEMP_FILE;
+                [ ! -z "${TEMPLATE_FILE}" ] && unset -v TEMPLATE_FILE;
+                [ ! -z "${MESSAGE_SUBJECT}" ] && unset -v MESSAGE_SUBJECT;
+                [ ! -z "${REPLACEMENT_ITEM}" ] && unset -v REPLACEMENT_ITEM;
+                [ ! -z "${MAILER_CODE}" ] && unset -v MAILER_CODE;
+                [ ! -z "${PRE_FILE_SIZE}" ] && unset -v PRE_FILE_SIZE;
+                [ ! -z "${POST_FILE_SIZE}" ] && unset -v POST_FILE_SIZE;
+                [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+                [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+                [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+                [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+                return ${RETURN_CODE};
+                ;;
+        esac
+    done
+
+    if [ ! -s /ftp/ftpnm01/nmondata/.profile/.etc/mail.properties ]
+    then
+        typeset -i RETURN_CODE=4;
+
+        writeLogEntry "ERROR" "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "The mail configuration file was not found. Please create the mail configuration file, or re-locate it to /ftp/ftpnm01/nmondata/.profile/.etc, named \"mail.properties\"";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "The mail configuration file was not found. Please create the mail configuration file, or re-locate it to /ftp/ftpnm01/nmondata/.profile/.etc, named \"mail.properties\"";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${MESSAGE_FILE}" -a -f "${MESSAGE_FILE}" ] && rm -rf "${MESSAGE_FILE}";
+        [ ! -z "${TEMP_FILE}" -a -f "${TEMP_FILE}" ] && rm -rf "${TEMP_FILE}";
+
+        [ ! -z "${OPTIONS}" ] && unset -v OPTIONS;
+        [ ! -z "${MESSAGE_TEMPLATE}" ] && unset -v MESSAGE_TEMPLATE;
+        [ ! -z "${FILE_NAME}" ] && unset -v FILE_NAME;
+        [ ! -z "${SEND_TO}" ] && unset -v SEND_TO;
+        [ ! -z "${ATTACH_FILE}" ] && unset -v ATTACH_FILE;
+        [ ! -z "${MAIL_CMD}" ] && unset -v MAIL_CMD;
+        [ ! -z "${MESSAGE_FILE}" ] && unset -v MESSAGE_FILE;
+        [ ! -z "${TEMP_FILE}" ] && unset -v TEMP_FILE;
+        [ ! -z "${TEMPLATE_FILE}" ] && unset -v TEMPLATE_FILE;
+        [ ! -z "${MESSAGE_SUBJECT}" ] && unset -v MESSAGE_SUBJECT;
+        [ ! -z "${REPLACEMENT_ITEM}" ] && unset -v REPLACEMENT_ITEM;
+        [ ! -z "${MAILER_CODE}" ] && unset -v MAILER_CODE;
+        [ ! -z "${PRE_FILE_SIZE}" ] && unset -v PRE_FILE_SIZE;
+        [ ! -z "${POST_FILE_SIZE}" ] && unset -v POST_FILE_SIZE;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    source /ftp/ftpnm01/nmondata/.profile/.etc/mail.properties;
+
+    [ ! -d "${MAILSTORE_DIR}" ] && mkdir "${MAILSTORE_DIR}";
+
+    [ -z "${MAILRC_ACCOUNT_NAME}" ] && typeset MAIL_CMD="/usr/bin/env mailx" || typeset MAIL_CMD="/usr/bin/env mailx -A ${MAILRC_ACCOUNT_NAME}";
+    typeset MESSAGE_FILE="$(mktemp)";
+    typeset TEMP_FILE="$(mktemp)";
+    typeset TEMPLATE_FILE="${MAIL_TEMPLATE_DIR}/${MESSAGE_TEMPLATE}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "MAIL_CMD -> ${MESSAGE_FILE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "MESSAGE_FILE -> ${MESSAGE_FILE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "TEMP_FILE -> ${TEMP_FILE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "TEMPLATE_FILE -> ${TEMPLATE_FILE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Processing notification email for ${MESSAGE_TEMPLATE}..";
+
+    if [ -s "${TEMPLATE_FILE}" ]
+    then
+        ## the message provided exists - process
+        ## create copy
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Creating working copy of ${MESSAGE_TEMPLATE}..";
+
+        typeset MESSAGE_SUBJECT=$(head -1 "${TEMPLATE_FILE}" | cut -d ":" -f 2 | sed -e "s/#//g" -e "s/^ *//g" -e "s/ *$//g");
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "MESSAGE_SUBJECT - ${MESSAGE_SUBJECT}";
+
+        sed -e '1,2d' "${TEMPLATE_FILE}" > "${MESSAGE_FILE}" 2>/dev/null;
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Copy complete. Operating..";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Building email..";
+
+        for REPLACEMENT_ITEM in $(grep "&" "${TEMPLATE_FILE}" | cut -d "&" -f 2)
+        do
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "REPLACEMENT_ITEM - ${REPLACEMENT_ITEM}";
+
+            if [ -z "$(env "${REPLACEMENT_ITEM}" 2>/dev/null)" ]
+            then
+                writeLogEntry "ERROR" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Unable to find a suitable environment entry for ${REPLACEMENT_ITEM}.";
+                writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Unable to find a suitable environment entry for ${REPLACEMENT_ITEM}.";
+
+                continue;
+            fi
+
+            sed -e "s/&${REPLACEMENT_ITEM}&/$(env "${REPLACEMENT_ITEM}")/g" "${MESSAGE_FILE}" > "${TEMP_FILE}";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Validating...";
+
+            if [ ! -z "$(grep "$(env "${REPLACEMENT_ITEM}")" "${TEMP_FILE}")" ]
+            then
+                ## ok, move it over now..
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Change validated. Continuing..";
+
+                /usr/bin/env mv "${TEMP_FILE}" "${MESSAGE_FILE}"> /dev/null 2>&1;
+
+                ## and ensure..
+                if [ ! -z "$(grep "$(env "${REPLACEMENT_ITEM}")" "${MESSAGE_FILE}")" ]
+                then
+                    ## good, keep going
+                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Change validated. Continuing..";
+
+                    continue;
+                else
+                    ## ok, its not there. break out - doesnt make sense to continue
+                    writeLogEntry "ERROR" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "An error occurred generating the selected notification. Please try again.";
+
+                    typeset MAILER_CODE=1;
+
+                    break;
+                fi
+            else
+                writeLogEntry "ERROR" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "An error occurred generating the selected notification. Please try again.";
+
+                typeset MAILER_CODE=1;
+
+                break;
+            fi
+        done
+    fi
+
+    if [ ! -z "${MAILER_CODE}" ] || [ ${MAILER_CODE} -ne 0 ]
+    then
+        typeset -i RETURN_CODE=4;
+
+        writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred while processing the requested message.";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred while processing the requested message.";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${MESSAGE_FILE}" -a -f "${MESSAGE_FILE}" ] && rm -rf "${MESSAGE_FILE}";
+        [ ! -z "${TEMP_FILE}" -a -f "${TEMP_FILE}" ] && rm -rf "${TEMP_FILE}";
+
+        [ ! -z "${OPTIONS}" ] && unset -v OPTIONS;
+        [ ! -z "${MESSAGE_TEMPLATE}" ] && unset -v MESSAGE_TEMPLATE;
+        [ ! -z "${FILE_NAME}" ] && unset -v FILE_NAME;
+        [ ! -z "${SEND_TO}" ] && unset -v SEND_TO;
+        [ ! -z "${ATTACH_FILE}" ] && unset -v ATTACH_FILE;
+        [ ! -z "${MAIL_CMD}" ] && unset -v MAIL_CMD;
+        [ ! -z "${MESSAGE_FILE}" ] && unset -v MESSAGE_FILE;
+        [ ! -z "${TEMP_FILE}" ] && unset -v TEMP_FILE;
+        [ ! -z "${TEMPLATE_FILE}" ] && unset -v TEMPLATE_FILE;
+        [ ! -z "${MESSAGE_SUBJECT}" ] && unset -v MESSAGE_SUBJECT;
+        [ ! -z "${REPLACEMENT_ITEM}" ] && unset -v REPLACEMENT_ITEM;
+        [ ! -z "${MAILER_CODE}" ] && unset -v MAILER_CODE;
+        [ ! -z "${PRE_FILE_SIZE}" ] && unset -v PRE_FILE_SIZE;
+        [ ! -z "${POST_FILE_SIZE}" ] && unset -v POST_FILE_SIZE;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    ## unset -v mailer code so we can re-use it
+    unset -v MAILER_CODE;
+
+    ## message generated, mail it out
+    if [ -s "${MESSAGE_FILE}" ]
+    then
+        if [ ! -z "${FILE_CONTENT}" ]
+        then
+            ## we've been asked to include file content within the email. slide it in ...
+            ## print in the zone..
+            ## cut the filesize
+            typeset PRE_FILE_SIZE=$(wc -c "${MESSAGE_FILE}" | awk '{print $1}');
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "PRE_FILE_SIZE -> ${PRE_FILE_SIZE}";
+
+            ## echo in the zone
+            cat "${FILE_CONTENT}" >> "${MESSAGE_FILE}";
+
+            typeset POST_FILE_SIZE=$(wc -c "${MESSAGE_FILE}" | awk '{print $1}');
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "POST_FILE_SIZE -> ${POST_FILE_SIZE}";
+
+            ## and make sure it got there..
+            if [ ${PRE_FILE_SIZE} != ${POST_FILE_SIZE} ]
+            then
+                ## ok, good - csr should be in there - mail it out
+                typeset -i RETURN_CODE=0;
+            else
+                ## failed to generate the email
+                writeLogEntry "ERROR" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "File content insertion FAILED. Please process manually.";
+
+                typeset -i RETURN_CODE=1;
+            fi
+        fi
+
+        if [ -z "${RETURN_CODE}" ] || [ ${RETURN_CODE} -eq 0 ]
+        then
+            ## send it out
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Executing command mailx -s \"${NOTIFY_SUBJECT}\" -r \"${NOTIFY_FROM_ADDRESS}\" \"${TARGET_AUDIENCE}\" < ${MAILSTORE}/${MESSAGE_TEMPLATE}";
+
+            if [ ! -z "${ATTACH_FILE}" ]
+            then
+                if [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ]
+                then
+                    /usr/bin/env uuencode "${ATTACH_FILE}" $(/usr/bin/env basename "${ATTACH_FILE}") | "${MAIL_CMD}" -v -s "${MESSAGE_SUBJECT}" -r "${NOTIFY_FROM_ADDRESS}" \
+                        "${TARGET_AUDIENCE}" < "${MESSAGE_FILE}" > "${LOG_ROOT}/${MESSAGE_TEMPLATE}.log" 2>&1;
+                else
+                    /usr/bin/env uuencode "${ATTACH_FILE}" $(/usr/bin/env basename "${ATTACH_FILE}") | "${MAIL_CMD}" -s "${MESSAGE_SUBJECT}" -r "${NOTIFY_FROM_ADDRESS}" \
+                        "${TARGET_AUDIENCE}" < "${MESSAGE_FILE}";
+                fi
+            else
+                if [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ]
+                then
+                    "${MAIL_CMD}" -v -s "${MESSAGE_SUBJECT}" -r "${NOTIFY_FROM_ADDRESS}" \
+                        "${TARGET_AUDIENCE}" < "${MESSAGE_FILE}" > "${LOG_ROOT}/${MESSAGE_TEMPLATE}.log" 2>&1;
+                else
+                    "${MAIL_CMD}" -s "${MESSAGE_SUBJECT}" -r "${NOTIFY_FROM_ADDRESS}" "${TARGET_AUDIENCE}" < "${MESSAGE_FILE}";
+                fi
+            fi
+            typeset -i RET_CODE=${?};
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "RET_CODE -> ${RET_CODE}";
+
+            if [ ${RET_CODE} -ne 0 ]
+            then
+                ## failed to send the email
+                writeLogEntry "ERROR" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Failed to send the requested notification. Please process manually.";
+
+                typeset -i RETURN_CODE=1;
+            else
+                ## we're done. we no longer need the email file so lets get rid of it
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME} -> exit";
+
+                ## and return
+                typeset -i RETURN_CODE=0;
+            fi
+        else
+            ## email didnt get generated
+            writeLogEntry "ERROR" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Email generation insertion FAILED. Please process manually.";
+
+            typeset -i RETURN_CODE=1;
+        fi
+    fi
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${MESSAGE_FILE}" -a -f "${MESSAGE_FILE}" ] && rm -rf "${MESSAGE_FILE}";
+    [ ! -z "${TEMP_FILE}" -a -f "${TEMP_FILE}" ] && rm -rf "${TEMP_FILE}";
+
+    [ ! -z "${OPTIONS}" ] && unset -v OPTIONS;
+    [ ! -z "${MESSAGE_TEMPLATE}" ] && unset -v MESSAGE_TEMPLATE;
+    [ ! -z "${FILE_NAME}" ] && unset -v FILE_NAME;
+    [ ! -z "${SEND_TO}" ] && unset -v SEND_TO;
+    [ ! -z "${ATTACH_FILE}" ] && unset -v ATTACH_FILE;
+    [ ! -z "${MAIL_CMD}" ] && unset -v MAIL_CMD;
+    [ ! -z "${MESSAGE_FILE}" ] && unset -v MESSAGE_FILE;
+    [ ! -z "${TEMP_FILE}" ] && unset -v TEMP_FILE;
+    [ ! -z "${TEMPLATE_FILE}" ] && unset -v TEMPLATE_FILE;
+    [ ! -z "${MESSAGE_SUBJECT}" ] && unset -v MESSAGE_SUBJECT;
+    [ ! -z "${REPLACEMENT_ITEM}" ] && unset -v REPLACEMENT_ITEM;
+    [ ! -z "${MAILER_CODE}" ] && unset -v MAILER_CODE;
+    [ ! -z "${PRE_FILE_SIZE}" ] && unset -v PRE_FILE_SIZE;
+    [ ! -z "${POST_FILE_SIZE}" ] && unset -v POST_FILE_SIZE;
+    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  setProxy
+#   DESCRIPTION:  Sets/unsets proxy information for the shell
+#    PARAMETERS:  Obtained via menu
+#       RETURNS:  0 regardless of result.
+#==============================================================================
+function setProxy
+{
+    typeset SCRIPT_NAME="F06-network";
+    typeset METHOD_NAME="F06-network#${FUNCNAME[0]}";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset RESOURCE_FILE="${HOME}/.etc/resources/${FUNCNAME[0]}";
+    typeset -i DEFAULT_PORT=3128;
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "RESOURCE_FILE -> ${RESOURCE_FILE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "DEFAULT_PORT -> ${DEFAULT_PORT}";
+
+    while true
+    do
+        reset; clear;
+
+        /usr/bin/env printf "\n";
+        /usr/bin/env printf "%s\n" "+-------------------------------------------------------------------+";
+        /usr/bin/env printf "%40s\n" "Set environment proxy";
+        /usr/bin/env printf "%s\n" "+-------------------------------------------------------------------+";
+        /usr/bin/env printf "\n";
+        /usr/bin/env printf "%s\n" "1 - $(/usr/bin/env awk -F "=" '/\<set.proxy.information\>/{print $2}' ${RESOURCE_FILE} | /usr/bin/env sed -e 's/^ *//g;s/ *$//g;/^ *#/d;s/#.*//')";
+        /usr/bin/env printf "%s\n" "2 - $(/usr/bin/env awk -F "=" '/\<unset.proxy.information\>/{print $2}' ${RESOURCE_FILE} | /usr/bin/env sed -e 's/^ *//g;s/ *$//g;/^ *#/d;s/#.*//')";
+        /usr/bin/env printf "\n";
+        /usr/bin/env printf "%s\n\n" "Enter selection: ";
+
+        read ANSWER;
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "ANSWER -> ${ANSWER}";
+
+        case "${ANSWER}" in
+            [Xx]|[Qq]|[Cc])
+                ## user chose to quit, close us out
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+                [ ! -z "${RESOURCE_FILE}" ] && unset -v RESOURCE_FILE;
+                [ ! -z "${DEFAULT_PORT}" ] && unset -v DEFAULT_PORT;
+                [ ! -z "${ANSWER}" ] && unset -v ANSWER;
+                [ ! -z "${PROXY_USER}" ] && unset -v PROXY_USER;
+                [ ! -z "${PROXY_PASSWORD}" ] && unset -v PROXY_PASSWORD;
+                [ ! -z "${CONFIRM}" ] && unset -v CONFIRM;
+                [ ! -z "${PROXY_HOST}" ] && unset -v PROXY_HOST;
+                [ ! -z "${PROXY_HOSTNAME}" ] && unset -v PROXY_HOSTNAME;
+                [ ! -z "${PROXY_PORT}" ] && unset -v PROXY_PORT;
+                [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+                [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+                [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+                [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+                reset; clear; return ${RETURN_CODE};
+                ;;
+            1)
+                ## set proxy
+                while true
+                do
+                    reset; clear;
+
+                    /usr/bin/env printf "\n";
+                    /usr/bin/env printf "%s\n" "+-------------------------------------------------------------------+";
+                    /usr/bin/env printf "%40s\n" "Set environment proxy";
+                    /usr/bin/env printf "%s\n" "+-------------------------------------------------------------------+";
+                    /usr/bin/env printf "\n";
+                    /usr/bin/env printf "%s\n\n" "$(/usr/bin/env awk -F "=" '/\<provide.username\>/{print $2}' ${RESOURCE_FILE} | /usr/bin/env sed -e 's/^ *//g;s/ *$//g;/^ *#/d;s/#.*//')";
+
+                    read PROXY_USER;
+
+                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "PROXY_USER -> ${PROXY_USER}";
+
+                    case "${PROXY_USER}" in
+                        "")
+                            reset; clear;
+
+                            /usr/bin/env printf "\n";
+                            /usr/bin/env printf "%s\n" "+-------------------------------------------------------------------+";
+                            /usr/bin/env printf "%40s\n" "Set environment proxy";
+                            /usr/bin/env printf "%s\n" "+-------------------------------------------------------------------+";
+                            /usr/bin/env printf "\n";
+                            /usr/bin/env printf "%s\n\n" "$(/usr/bin/env awk -F "=" '/\<confirm.empty.username\>/{print $2}' ${RESOURCE_FILE} | /usr/bin/env sed -e 's/^ *//g;s/ *$//g;/^ *#/d;s/#.*//')";
+
+                            read CONFIRM;
+
+                            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "CONFIRM -> ${CONFIRM}";
+
+                            case "${CONFIRM}" in
+                                [Xx]|[Qq]|[Cc])
+                                    ## user chose to quit, close us out
+                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+                                    [ ! -z "${RESOURCE_FILE}" ] && unset -v RESOURCE_FILE;
+                                    [ ! -z "${DEFAULT_PORT}" ] && unset -v DEFAULT_PORT;
+                                    [ ! -z "${ANSWER}" ] && unset -v ANSWER;
+                                    [ ! -z "${PROXY_USER}" ] && unset -v PROXY_USER;
+                                    [ ! -z "${PROXY_PASSWORD}" ] && unset -v PROXY_PASSWORD;
+                                    [ ! -z "${CONFIRM}" ] && unset -v CONFIRM;
+                                    [ ! -z "${PROXY_HOST}" ] && unset -v PROXY_HOST;
+                                    [ ! -z "${PROXY_HOSTNAME}" ] && unset -v PROXY_HOSTNAME;
+                                    [ ! -z "${PROXY_PORT}" ] && unset -v PROXY_PORT;
+                                    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                                    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+                                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+                                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+                                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+                                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+                                    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+                                    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+                                    reset; clear; return ${RETURN_CODE};
+                                    ;;
+                                [Yy][Ee][Ss]|[Yy])
+                                    reset; clear; break;
+                                    ;;
+                                [Nn][Oo]|[Nn])
+                                    reset; clear; continue;
+                                    ;;
+                            esac
+                            ;;
+                        *)
+                            while true
+                            do
+                                reset; clear;
+
+                                /usr/bin/env printf "\n";
+                                /usr/bin/env printf "%s\n" "+-------------------------------------------------------------------+";
+                                /usr/bin/env printf "%40s\n" "Set environment proxy";
+                                /usr/bin/env printf "%s\n" "+-------------------------------------------------------------------+";
+                                /usr/bin/env printf "\n";
+                                /usr/bin/env printf "%s\n\n" "$(/usr/bin/env awk -F "=" '/\<provide.password\>/{print $2}' ${RESOURCE_FILE} | /usr/bin/env sed -e 's/^ *//g;s/ *$//g;/^ *#/d;s/#.*//')";
+
+                                read -s PROXY_PASSWORD;
+
+                                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "PROXY_PASSWORD -> ${PROXY_PASSWORD}";
+
+                                case "${PROXY_PASSWORD}" in
+                                    [Xx]|[Qq]|[Cc])
+                                        ## user chose to quit, close us out
+                                        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+                                        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+                                        [ ! -z "${RESOURCE_FILE}" ] && unset -v RESOURCE_FILE;
+                                        [ ! -z "${DEFAULT_PORT}" ] && unset -v DEFAULT_PORT;
+                                        [ ! -z "${ANSWER}" ] && unset -v ANSWER;
+                                        [ ! -z "${PROXY_USER}" ] && unset -v PROXY_USER;
+                                        [ ! -z "${PROXY_PASSWORD}" ] && unset -v PROXY_PASSWORD;
+                                        [ ! -z "${CONFIRM}" ] && unset -v CONFIRM;
+                                        [ ! -z "${PROXY_HOST}" ] && unset -v PROXY_HOST;
+                                        [ ! -z "${PROXY_HOSTNAME}" ] && unset -v PROXY_HOSTNAME;
+                                        [ ! -z "${PROXY_PORT}" ] && unset -v PROXY_PORT;
+                                        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                                        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+                                        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+                                        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+                                        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+                                        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+                                        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+                                        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+                                        reset; clear; return ${RETURN_CODE};
+                                        ;;
+                                    "")
+                                        reset; clear;
+
+                                        /usr/bin/env printf "\n";
+                                        /usr/bin/env printf "%s\n" "+-------------------------------------------------------------------+";
+                                        /usr/bin/env printf "%40s\n" "Set environment proxy";
+                                        /usr/bin/env printf "%s\n" "+-------------------------------------------------------------------+";
+                                        /usr/bin/env printf "\n";
+                                        /usr/bin/env printf "%s\n\n" "$(/usr/bin/env awk -F "=" '/\<confirm.empty.password\>/{print $2}' ${RESOURCE_FILE} | /usr/bin/env sed -e 's/^ *//g;s/ *$//g;/^ *#/d;s/#.*//')";
+
+                                        read CONFIRM;
+
+                                        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "CONFIRM -> ${CONFIRM}";
+
+                                        case "${CONFIRM}" in
+                                            [Yy][Ee][Ss]|[Yy])
+                                                reset; clear; break;
+                                                ;;
+                                            [Nn][Oo]|[Nn])
+                                                reset; clear; continue;
+                                                ;;
+                                        esac
+                                        ;;
+                                    *)
+                                        while true
+                                        do
+                                            reset; clear;
+
+                                            /usr/bin/env printf "\n";
+                                            /usr/bin/env printf "%s\n" "+-------------------------------------------------------------------+";
+                                            /usr/bin/env printf "%40s\n" "Set environment proxy";
+                                            /usr/bin/env printf "%s\n" "+-------------------------------------------------------------------+";
+                                            /usr/bin/env printf "\n";
+                                            /usr/bin/env printf "%s\n\n" "$(/usr/bin/env awk -F "=" '/\<provide.proxy.host\>/{print $2}' ${RESOURCE_FILE} | /usr/bin/env sed -e 's/^ *//g;s/ *$//g;/^ *#/d;s/#.*//')";
+
+                                            read PROXY_HOST;
+
+                                            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "PROXY_HOST -> ${PROXY_HOST}";
+
+                                            case "${PROXY_HOST}" in
+                                                [Xx]|[Qq]|[Cc])
+                                                    ## user chose to quit, close us out
+                                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+                                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+                                                    [ ! -z "${RESOURCE_FILE}" ] && unset -v RESOURCE_FILE;
+                                                    [ ! -z "${DEFAULT_PORT}" ] && unset -v DEFAULT_PORT;
+                                                    [ ! -z "${ANSWER}" ] && unset -v ANSWER;
+                                                    [ ! -z "${PROXY_USER}" ] && unset -v PROXY_USER;
+                                                    [ ! -z "${PROXY_PASSWORD}" ] && unset -v PROXY_PASSWORD;
+                                                    [ ! -z "${CONFIRM}" ] && unset -v CONFIRM;
+                                                    [ ! -z "${PROXY_HOST}" ] && unset -v PROXY_HOST;
+                                                    [ ! -z "${PROXY_HOSTNAME}" ] && unset -v PROXY_HOSTNAME;
+                                                    [ ! -z "${PROXY_PORT}" ] && unset -v PROXY_PORT;
+                                                    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                                                    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+                                                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+                                                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+                                                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+                                                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+                                                    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+                                                    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+                                                    reset; clear; return ${RETURN_CODE};
+                                                    ;;
+                                                "")
+                                                    /usr/bin/env printf "%s\n\n" "$(/usr/bin/env awk -F "=" '/\<no.host.provided\>/{print $2}' ${RESOURCE_FILE} | /usr/bin/env sed -e 's/^ *//g;s/ *$//g;/^ *#/d;s/#.*//')";
+
+                                                    sleep ${MESSAGE_DELAY}; reset; clear; continue;
+                                                    ;;
+                                                *)
+                                                    typeset PROXY_HOSTNAME="$(/usr/bin/env cut -d ":" -f 1 <<< "${PROXY_HOST}")";
+                                                    typeset PROXY_PORT="$(/usr/bin/env cut -d ":" -f 2 <<< "${PROXY_HOST}")";
+
+                                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "PROXY_HOSTNAME -> ${PROXY_HOSTNAME}";
+                                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "PROXY_PORT -> ${PROXY_PORT}";
+
+                                                    [ -z "${PROXY_PORT}" ] && typeset -i PROXY_PORT=${DEFAULT_PORT};
+
+                                                    [ -z "${PROXY_USER}" ] && typeset PROXY_URL="http://${PROXY_HOSTNAME}:${PROXY_PORT}/";
+                                                    [ ! -z "${PROXY_USER}" -a -z "${PROXY_PASSWORD}" ] && typeset PROXY_URL="http://${PROXY_USER}@${PROXY_HOSTNAME}:${PROXY_PORT}/";
+                                                    [ ! -z "${PROXY_USER}" -a ! -z "${PROXY_PASSWORD}" ] && typeset PROXY_URL="http://${PROXY_USER}:${PROXY_PASSWORD}@${PROXY_HOSTNAME}:${PROXY_PORT}/";
+
+                                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "PROXY_URL -> ${PROXY_URL}";
+
+                                                    unset -v http_proxy; typeset -x http_proxy="${PROXY_URL}";
+                                                    unset -v https_proxy; typeset -x https_proxy="${PROXY_URL}";
+                                                    unset -v ftp_proxy; typeset -x ftp_proxy="${PROXY_URL}";
+
+                                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "http_proxy -> ${http_proxy}";
+                                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "https_proxy -> ${http_proxy}";
+                                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ftp_proxy -> ${ftp_proxy}";
+                                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+                                                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+                                                    [ ! -z "${RESOURCE_FILE}" ] && unset -v RESOURCE_FILE;
+                                                    [ ! -z "${DEFAULT_PORT}" ] && unset -v DEFAULT_PORT;
+                                                    [ ! -z "${ANSWER}" ] && unset -v ANSWER;
+                                                    [ ! -z "${PROXY_USER}" ] && unset -v PROXY_USER;
+                                                    [ ! -z "${PROXY_PASSWORD}" ] && unset -v PROXY_PASSWORD;
+                                                    [ ! -z "${CONFIRM}" ] && unset -v CONFIRM;
+                                                    [ ! -z "${PROXY_HOST}" ] && unset -v PROXY_HOST;
+                                                    [ ! -z "${PROXY_HOSTNAME}" ] && unset -v PROXY_HOSTNAME;
+                                                    [ ! -z "${PROXY_PORT}" ] && unset -v PROXY_PORT;
+
+                                                    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                                                    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+                                                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+                                                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+                                                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+                                                    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+                                                    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+                                                    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+                                                    reset; clear; return ${RETURN_CODE};
+                                                    ;;
+                                            esac
+                                        done
+                                        ;;
+                                esac
+                            done
+                            ;;
+                    esac
+                done
+                ;;
+            2)
+                ## unset -v proxy
+                [ ! -z "${http_proxy}" ] && unset -v http_proxy;
+                [ ! -z "${https_proxy}" ] && unset -v https_proxy;
+                [ ! -z "${ftp_proxy}" ] && unset -v ftp_proxy;
+                ;;
+        esac
+    done
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${RESOURCE_FILE}" ] && unset -v RESOURCE_FILE;
+    [ ! -z "${DEFAULT_PORT}" ] && unset -v DEFAULT_PORT;
+    [ ! -z "${ANSWER}" ] && unset -v ANSWER;
+    [ ! -z "${PROXY_USER}" ] && unset -v PROXY_USER;
+    [ ! -z "${PROXY_PASSWORD}" ] && unset -v PROXY_PASSWORD;
+    [ ! -z "${CONFIRM}" ] && unset -v CONFIRM;
+    [ ! -z "${PROXY_HOST}" ] && unset -v PROXY_HOST;
+    [ ! -z "${PROXY_HOSTNAME}" ] && unset -v PROXY_HOSTNAME;
+    [ ! -z "${PROXY_PORT}" ] && unset -v PROXY_PORT;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    reset; clear; return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  checkSslExpiry
+#   DESCRIPTION:  Checks the SSL certificate expiration of a given host.
+#    PARAMETERS:  Service hostname
+#       RETURNS:  0 if success, non-zero otherwise
+#==============================================================================
+function checkSslExpiry
+{
+    typeset SCRIPT_NAME="F06-network";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -eq 0 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Configure access to a newly provisioned host";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ website:port ]
+                -> The website and port number to verify. Format: site name:port number";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ${ERROR_COUNT} -ne 0 ] && typeset -i ERROR_COUNT=0;
+        [ ! -z "${EXPIRY_EPOCH}" ] && unset -v EXPIRY_EPOCH;
+        [ ! -z "${SITE_LIST}" ] && unset -v SITE_LIST;
+        [ ! -z "${SITE}" ] && unset -v SITE;
+        [ ! -z "${SITE_HOSTNAME}" ] && unset -v SITE_HOSTNAME;
+        [ ! -z "${SITE_PORT}" ] && unset -v SITE_PORT;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${RETURNED_EXPIRY}" ] && unset -v RETURNED_EXPIRY;
+        [ ! -z "${EPOCH_EXPIRY}" ] && unset -v EPOCH_EXPIRY;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    typeset -i EXPIRY_EPOCH=$(returnEpochTime "$(date +"%Y %m %d")" ${VALIDATION_PERIOD});
+    [ -f "${1}" ] && setArray SITE_LIST $(/usr/bin/env cat "${1}") || setArray SITE_LIST "${1}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "EXPIRY_EPOCH -> ${EXPIRY_EPOCH}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "SITE_LIST -> ${SITE_LIST}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "PORT_NUMBER -> ${PORT_NUMBER}";
+
+    for SITE in ${SITE_LIST[*]}
+    do
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "SITE -> ${SITE}";
+
+        typeset SITE_HOSTNAME="$(cut -d ":" -f 1 <<< "${SITE}")";
+        typeset -i SITE_PORT="$(cut -d ":" -f 2 <<< "${SITE}")";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "SITE_HOSTNAME -> ${SITE_HOSTNAME}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "SITE_PORT -> ${SITE_PORT}";
+
+        ## make sure its a valid host
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        validateServerAvailability "${SITE_HOSTNAME}" ${SITE_PORT};
+        typeset -i RET_CODE=${?};
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+        set +o noclobber;
+        typeset SCRIPT_NAME="F06-network";
+        typeset FUNCTION_NAME="${FUNCNAME[0]}";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+
+        if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+        then
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Target host ${SITE_HOSTNAME} does not appear to be available.";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Target host ${SITE_HOSTNAME} does not appear to be available.";
+
+            [ ! -z "${SITE}" ] && unset -v SITE;
+            [ ! -z "${SITE_HOSTNAME}" ] && unset -v SITE_HOSTNAME;
+            [ ! -z "${SITE_PORT}" ] && unset -v SITE_PORT;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+            [ ! -z "${RETURNED_EXPIRY}" ] && unset -v RETURNED_EXPIRY;
+            [ ! -z "${EPOCH_EXPIRY}" ] && unset -v EPOCH_EXPIRY;
+
+            (( ERROR_COUNT += 1 ));
+
+            continue;
+        fi
+
+        typeset RETURNED_EXPIRY="$(printf "%s\n" "quit" | /usr/bin/env openssl s_client -connect "${SITE_HOSTNAME}:${SITE_PORT}" -nbio -mtu 1500 -bugs -rand file:${RANDOM_GENERATOR} 2>/dev/null | \
+            /usr/bin/env sed -ne "/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p" | /usr/bin/env openssl x509 -noout -subject -dates | /usr/bin/env grep notAfter | cut -d "=" -f 2 | \
+            /usr/bin/env awk '{print $4, $1, $2}')";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURNED_EXPIRY -> ${RETURNED_EXPIRY}";
+
+        if [ -z "${RETURNED_EXPIRY}" ]
+        then
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to obtain SSL certificate information from ${SITE_HOSTNAME}. Please verify the hostname and port number, and re-try.";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to obtain SSL certificate information from ${SITE_HOSTNAME}. Please verify the hostname and port number, and re-try.";
+
+            [ ! -z "${SITE}" ] && unset -v SITE;
+            [ ! -z "${SITE_HOSTNAME}" ] && unset -v SITE_HOSTNAME;
+            [ ! -z "${SITE_PORT}" ] && unset -v SITE_PORT;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+            [ ! -z "${RETURNED_EXPIRY}" ] && unset -v RETURNED_EXPIRY;
+            [ ! -z "${EPOCH_EXPIRY}" ] && unset -v EPOCH_EXPIRY;
+
+            (( ERROR_COUNT += 1 ));
+
+            continue;
+        fi
+
+        typeset -i EPOCH_EXPIRY=$(returnEpochTime "${RETURNED_EXPIRY}");
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "EPOCH_EXPIRY -> ${EPOCH_EXPIRY}";
+
+        if [ -z "${EPOCH_EXPIRY}" ]
+        then
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to obtain an expiration date for the obtained certificate. Please ensure the data is correct.";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to obtain an expiration date for the obtained certificate. Please ensure the data is correct.";
+
+            [ ! -z "${SITE}" ] && unset -v SITE;
+            [ ! -z "${SITE_HOSTNAME}" ] && unset -v SITE_HOSTNAME;
+            [ ! -z "${SITE_PORT}" ] && unset -v SITE_PORT;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+            [ ! -z "${RETURNED_EXPIRY}" ] && unset -v RETURNED_EXPIRY;
+            [ ! -z "${EPOCH_EXPIRY}" ] && unset -v EPOCH_EXPIRY;
+
+            (( ERROR_COUNT += 1 ));
+
+            continue;
+        fi
+
+        [ ${EPOCH_EXPIRY} -le ${EXPIRY_EPOCH} ] && writeLogEntry "STDOUT" "${FUNCTION_NAME}" "${CNAME}" "${LINENO}" "Certificate for host ${SITE_HOSTNAME} expires on ${RETURNED_EXPIRY}";
+
+        [ ! -z "${SITE}" ] && unset -v SITE;
+        [ ! -z "${SITE_HOSTNAME}" ] && unset -v SITE_HOSTNAME;
+        [ ! -z "${SITE_PORT}" ] && unset -v SITE_PORT;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${RETURNED_EXPIRY}" ] && unset -v RETURNED_EXPIRY;
+        [ ! -z "${EPOCH_EXPIRY}" ] && unset -v EPOCH_EXPIRY;
+    done
+
+    [ ${ERROR_COUNT} -ne 0 ] && typeset -i RETURN_CODE=${ERROR_COUNT} || typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ${ERROR_COUNT} -ne 0 ] && typeset -i ERROR_COUNT=0;
+    [ ! -z "${EXPIRY_EPOCH}" ] && unset -v EXPIRY_EPOCH;
+    [ ! -z "${SITE_LIST}" ] && unset -v SITE_LIST;
+    [ ! -z "${SITE}" ] && unset -v SITE;
+    [ ! -z "${SITE_HOSTNAME}" ] && unset -v SITE_HOSTNAME;
+    [ ! -z "${SITE_PORT}" ] && unset -v SITE_PORT;
+    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+    [ ! -z "${RETURNED_EXPIRY}" ] && unset -v RETURNED_EXPIRY;
+    [ ! -z "${EPOCH_EXPIRY}" ] && unset -v EPOCH_EXPIRY;
+
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  vpnc
+#   DESCRIPTION:  Connects to a given VPN target and sets routing information
+#    PARAMETERS:  None
+#       RETURNS:  0 regardless of result.
+#==============================================================================
+function vpnc
+{
+    typeset SCRIPT_NAME="F06-network";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -ne 2 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Creates or updates an array with the given information";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ VPN target ] [ routes ]
+                -> The name of the VPN to connect to (housed under /etc/vpnc/<vpn-name>.conf
+                -> The list of routes to add";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${NETMASK}" ] && unset -v NETMASK;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${VPN_TARGET}" ] && unset -v VPN_TARGET;
+        [ ! -z "${TARGET_ROUTES}" ] && unset -v TARGET_ROUTES;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    typeset VPN_TARGET="${1}";
+    [ -f "${2}" ] && setArray TARGET_ROUTES $(/usr/bin/env cat "${1}") || setArray TARGET_ROUTES "${2}";
+
+    if [ ! -f "/etc/vpnc/${VPN_TARGET}.conf" ]
+    then
+        RETURN_CODE=1;
+
+        writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "The provided VPN target, ${VPN_TARGET}, has not been configured.";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "The provided VPN target, ${VPN_TARGET}, has not been configured.";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${NETMASK}" ] && unset -v NETMASK;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${VPN_TARGET}" ] && unset -v VPN_TARGET;
+        [ ! -z "${TARGET_ROUTES}" ] && unset -v TARGET_ROUTES;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    sudo -Su root /usr/bin/env vpnc "${VPN_TARGET}" > /dev/null 2>&1;
+    typeset -i RET_CODE=${?};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+
+    if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+    then
+        RETURN_CODE=1;
+
+        writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to create VPN connection to ${VPN_TARGET}.";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to create VPN connection to ${VPN_TARGET}.";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${NETMASK}" ] && unset -v NETMASK;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${VPN_TARGET}" ] && unset -v VPN_TARGET;
+        [ ! -z "${TARGET_ROUTES}" ] && unset -v TARGET_ROUTES;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    for NETMASK in ${TARGET_ROUTES[*]}
+    do
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "NETMASK -> ${NETMASK}";
+
+        sudo -Su root /usr/bin/env ip route add ${NETMASK} dev tun0;
+        typeset -i RET_CODE=${?};
+
+
+        if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+        then
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Unable to add a route for ${NETMASK}. Some services may be unavailable.";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Unable to add a route for ${NETMASK}. Some services may be unavailable.";
+        fi
+
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${NETMASK}" ] && unset -v NETMASK;
+    done
+
+    writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "VPN connection to ${VPN_TARGET} complete.";
+
+    [ ! -z "${NETMASK}" ] && unset -v NETMASK;
+    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+    [ ! -z "${VPN_TARGET}" ] && unset -v VPN_TARGET;
+    [ ! -z "${TARGET_ROUTES}" ] && unset -v TARGET_ROUTES;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}

@@ -1,0 +1,9 @@
+SHELL=/bin/bash
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+MAILTO=${LOGNAME}
+
+#=====================================================================#
+# General                                                             #
+#=====================================================================#
+#  Minute  |  Hour  |  Day of Month  |  Month  |  Weekday  |  Command #
+#=====================================================================#

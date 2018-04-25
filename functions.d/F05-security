@@ -1,0 +1,1867 @@
+#=====  FUNCTION  =============================================================
+#          NAME:  returnRandomCharacters
+#   DESCRIPTION:  Returns a random string of alphanumeric characters
+#    PARAMETERS:  Length of string, include special characters
+#       RETURNS:  0 regardless of result.
+#==============================================================================
+function returnRandomCharacters
+{
+    typeset SCRIPT_NAME="F05-security";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -gt 2 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Return a random string of characters of the specified length";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ length ] [ special ]
+                 -> The length of the string to generate
+                 -> Special characters
+                    -> 0: Don't include special characters
+                    -> 1: Include special characters";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${STRING_LENGTH}" ] && unset -v STRING_LENGTH;
+        [ ! -z "${INCLUDE_SPECIAL}" ] && unset -v INCLUDE_SPECIAL;
+        [ ! -z "${RETURNED_CHARACTERS}" ] && unset -v RETURNED_CHARACTERS;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    case ${#} in
+        0)
+            typeset -i STRING_LENGTH=32;
+            typeset -i INCLUDE_SPECIAL=0;
+            ;;
+        1)
+            [ ${1} -lt 2 ] && typeset -i STRING_LENGTH=32 && typeset -i INCLUDE_SPECIAL=${1};
+            [ ${1} -gt 1 ] && typeset -i STRING_LENGTH=${1} && typeset -i INCLUDE_SPECIAL=0;
+            ;;
+        2)
+            typeset -i STRING_LENGTH=${1};
+            typeset -i INCLUDE_SPECIAL=${2};
+            ;;
+    esac
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "STRING_LENGTH -> ${STRING_LENGTH}";
+
+    [ ${INCLUDE_SPECIAL} -eq 0 ] && typeset RETURNED_CHARACTERS=$(/usr/bin/env cat /dev/urandom | /usr/bin/env tr -cd '[:alnum:]' | /usr/bin/env head -c ${STRING_LENGTH});
+    [ ${INCLUDE_SPECIAL} -eq 1 ] && typeset RETURNED_CHARACTERS=$(/usr/bin/env cat /dev/urandom | /usr/bin/env tr -cd '[:graph:]' | /usr/bin/env head -c ${STRING_LENGTH});
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURNED_CHARACTERS -> ${RETURNED_CHARACTERS}";
+
+    writeLogEntry "STDOUT" "${RETURNED_CHARACTERS}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${STRING_LENGTH}" ] && unset -v STRING_LENGTH;
+    [ ! -z "${INCLUDE_SPECIAL}" ] && unset -v INCLUDE_SPECIAL;
+    [ ! -z "${RETURNED_CHARACTERS}" ] && unset -v RETURNED_CHARACTERS;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  stringCrypt
+#   DESCRIPTION:  Encrypts/decrypts a provided string
+#    PARAMETERS:  Operation type, string, recipients (if using PGP/GPG)
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function stringCrypt
+{
+    typeset SCRIPT_NAME="F05-security";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    typeset USE_GPG="${_FALSE}";
+    typeset SALT_FILE="${HOME}/.etc/salt.properties";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "USE_GPG -> ${USE_GPG}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "SALT_FILE -> ${SALT_FILE}";
+
+    if [ ${#} -le 2 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Encrypt/Decrypt a provided string";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ method ] [ string ] \( recipients \)
+                 -> The desired method of operation: one of encrypt or decrypt
+                 -> The string to operate against
+                 -> A list of recipients \(only valid if using PGP/GPG\)";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${USE_GPG}" ] && unset -v USE_GPG;
+        [ ! -z "${AUTH_METHOD}" ] && unset -v AUTH_METHOD;
+        [ ! -z "${AUTH_STRING}" ] && unset -v AUTH_STRING;
+        [ ! -z "${AUTH_RECIPIENTS}" ] && unset -v AUTH_RECIPIENTS;
+        [ ! -z "${AUTHENTICATION}" ] && unset -v AUTHENTICATION;
+        [ ! -z "${SALT_FILE}" ] && unset -v SALT_FILE;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    case "${#}" in
+        2)
+            typeset AUTH_METHOD="${1}";
+            typeset AUTH_STRING="${2}";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "AUTH_METHOD -> ${AUTH_METHOD}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "AUTH_STRING -> ${AUTH_STRING}";
+            ;;
+        3)
+            typeset USE_GPG="${_TRUE}"
+            typeset AUTH_METHOD="${1}";
+            typeset AUTH_STRING="${2}";
+            typeset AUTH_RECIPIENTS="${3}";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "USE_GPG -> ${USE_GPG}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "AUTH_METHOD -> ${AUTH_METHOD}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "AUTH_STRING -> ${AUTH_STRING}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "AUTH_RECIPIENTS -> ${AUTH_RECIPIENTS}";
+            ;;
+        *)
+            RETURN_CODE=3;
+
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Encrypt/Decrypt a provided string";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ method ] [ string ] \( recipients \)
+                     -> The desired method of operation: one of encrypt or decrypt
+                     -> The string to operate against
+                     -> A list of recipients \(only valid if using PGP/GPG\)";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+            [ ! -z "${USE_GPG}" ] && unset -v USE_GPG;
+            [ ! -z "${AUTH_METHOD}" ] && unset -v AUTH_METHOD;
+            [ ! -z "${AUTH_STRING}" ] && unset -v AUTH_STRING;
+            [ ! -z "${AUTH_RECIPIENTS}" ] && unset -v AUTH_RECIPIENTS;
+            [ ! -z "${AUTHENTICATION}" ] && unset -v AUTHENTICATION;
+            [ ! -z "${SALT_FILE}" ] && unset -v SALT_FILE;
+
+            [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+            [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+            [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+            [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+            return ${RETURN_CODE};
+            ;;
+    esac
+
+    case ${AUTH_METHOD} in
+        [Ee][Nn][Cc][Rr][Yy][Pp][Tt])
+            if [ ! -z "${USE_GPG}" -a "${USE_GPG}" == "${_TRUE}" ]
+            then
+                echo "${AUTH_STRING}" | /usr/bin/env gpg -a -r ${AUTH_RECIPIENTS} --encrypt --sign;
+            else
+                if [ -f ${SALT_FILE} ]
+                then
+                    echo "${AUTH_STRING}" | /usr/bin/env openssl enc -aes-256-cbc -a -salt -pass pass:$(<${SALT_FILE});
+                else
+                    ## generate a salt file
+                    /usr/bin/env cat /dev/urandom | /usr/bin/env tr -dc 'a-zA-Z0-9' | /usr/bin/env fold -w 512 | /usr/bin/env head -n 1 > ${SALT_FILE};
+
+                    echo "${AUTH_STRING}" | /usr/bin/env openssl enc -aes-256-cbc -a -salt -pass "$(<${SALT_FILE})";
+                fi
+            fi
+            ;;
+        [Dd][Ee][Cc][Rr][Yy][Pp][Tt])
+            if [ ! -z "${USE_GPG}" -a "${USE_GPG}" == "${_TRUE}" ]
+            then
+                echo "${AUTH_STRING}" | /usr/bin/env gpg --decrypt;
+            else
+                if [ -f ${SALT_FILE} ]
+                then
+                    echo "${AUTH_STRING}" | /usr/bin/env openssl enc -d -aes-256-cbc -a -salt -pass pass:$(<${SALT_FILE});
+                else
+                    while ${_TRUE}
+                    do
+                        printf "Please provide a password to perform the decryption operation: ";
+
+                        read AUTHENTICATION;
+
+                        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "AUTHENTICATION -> ${AUTHENTICATION}";
+
+                        case ${AUTHENTICATION} in
+                            [Xx]|[Qq]|[Cc])
+                                ## user chose to quit, close us out
+                                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+                                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+                                [ ! -z "${AUTH_METHOD}" ] && unset -v AUTH_METHOD;
+                                [ ! -z "${AUTH_STRING}" ] && unset -v AUTH_STRING;
+                                [ ! -z "${AUTH_RECIPIENTS}" ] && unset -v AUTH_RECIPIENTS;
+                                [ ! -z "${AUTHENTICATION}" ] && unset -v AUTHENTICATION;
+                                [ ! -z "${SALT_FILE}" ] && unset -v SALT_FILE;
+
+                                [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                                [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+                                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+                                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+                                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+                                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+                                [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+                                [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+                                return ${RETURN_CODE};
+                                ;;
+                            *)
+                                [ ! -z "${AUTHENTICATION}" ] && continue || echo "${AUTH_STRING}" | /usr/bin/env openssl enc -d -aes-256-cbc -a -salt -pass pass:${AUTHENTICATION};
+                                ;;
+                        esac
+                    done
+                fi
+            fi
+            ;;
+        *)
+            RETURN_CODE=3;
+
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Encrypt/Decrypt a provided string";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ method ] [ string ] \( recipients \)
+                     -> The desired method of operation: one of encrypt or decrypt
+                     -> The string to operate against
+                     -> A list of recipients \(only valid if using PGP/GPG\)";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+            [ ! -z "${USE_GPG}" ] && unset -v USE_GPG;
+            [ ! -z "${AUTH_METHOD}" ] && unset -v AUTH_METHOD;
+            [ ! -z "${AUTH_STRING}" ] && unset -v AUTH_STRING;
+            [ ! -z "${AUTH_RECIPIENTS}" ] && unset -v AUTH_RECIPIENTS;
+            [ ! -z "${AUTHENTICATION}" ] && unset -v AUTHENTICATION;
+            [ ! -z "${SALT_FILE}" ] && unset -v SALT_FILE;
+
+            [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+            [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+            [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+            [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+            return ${RETURN_CODE};
+            ;;
+    esac
+    typeset -i RET_CODE=${?};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+
+    [ ! -z "${RET_CODE}" ] && RETURN_CODE=1 || RETURN_CODE=${RET_CODE};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${USE_GPG}" ] && unset -v USE_GPG;
+    [ ! -z "${AUTH_METHOD}" ] && unset -v AUTH_METHOD;
+    [ ! -z "${AUTH_STRING}" ] && unset -v AUTH_STRING;
+    [ ! -z "${AUTH_RECIPIENTS}" ] && unset -v AUTH_RECIPIENTS;
+    [ ! -z "${AUTHENTICATION}" ] && unset -v AUTHENTICATION;
+    [ ! -z "${SALT_FILE}" ] && unset -v SALT_FILE;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  fileCrypt
+#   DESCRIPTION:  Encrypts/decrypts a provided file
+#    PARAMETERS:  Operation type, string, recipients (if using PGP/GPG)
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function fileCrypt
+{
+    typeset SCRIPT_NAME="F05-security";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    typeset USE_GPG="${_FALSE}";
+    typeset SALT_FILE="${HOME}/.etc/salt.properties";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "USE_GPG -> ${USE_GPG}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "SALT_FILE -> ${SALT_FILE}";
+
+    if [ ${#} -le 2 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Encrypt/Decrypt a provided string";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ method ] [ string ] \( recipients \)
+                 -> The desired method of operation: one of encrypt or decrypt
+                 -> The string to operate against
+                 -> A list of recipients \(only valid if using PGP/GPG\)";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${USE_GPG}" ] && unset -v USE_GPG;
+        [ ! -z "${AUTH_METHOD}" ] && unset -v AUTH_METHOD;
+        [ ! -z "${FILE_NAME}" ] && unset -v FILE_NAME;
+        [ ! -z "${AUTH_RECIPIENTS}" ] && unset -v AUTH_RECIPIENTS;
+        [ ! -z "${AUTHENTICATION}" ] && unset -v AUTHENTICATION;
+        [ ! -z "${SALT_FILE}" ] && unset -v SALT_FILE;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    case "${#}" in
+        2)
+            typeset AUTH_METHOD="${1}";
+            typeset FILE_NAME="${2}";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "AUTH_METHOD -> ${AUTH_METHOD}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_NAME -> ${FILE_NAME}";
+            ;;
+        3)
+            typeset USE_GPG="${_TRUE}"
+            typeset AUTH_METHOD="${1}";
+            typeset FILE_NAME="${2}";
+            typeset AUTH_RECIPIENTS="${3}";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "USE_GPG -> ${USE_GPG}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "AUTH_METHOD -> ${AUTH_METHOD}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_NAME -> ${FILE_NAME}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "AUTH_RECIPIENTS -> ${AUTH_RECIPIENTS}";
+            ;;
+        *)
+            RETURN_CODE=3;
+
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Encrypt/Decrypt a provided string";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ method ] [ filename ] \( recipients \)
+                     -> The desired method of operation: one of encrypt or decrypt
+                     -> The filename to operate against
+                     -> A list of recipients \(only valid if using PGP/GPG\)";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+            [ ! -z "${USE_GPG}" ] && unset -v USE_GPG;
+            [ ! -z "${AUTH_METHOD}" ] && unset -v AUTH_METHOD;
+            [ ! -z "${FILE_NAME}" ] && unset -v FILE_NAME;
+            [ ! -z "${AUTH_RECIPIENTS}" ] && unset -v AUTH_RECIPIENTS;
+            [ ! -z "${AUTHENTICATION}" ] && unset -v AUTHENTICATION;
+            [ ! -z "${SALT_FILE}" ] && unset -v SALT_FILE;
+
+            [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+            [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+            [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+            [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+            return ${RETURN_CODE};
+            ;;
+    esac
+
+    case ${AUTH_METHOD} in
+        [Ee][Nn][Cc][Rr][Yy][Pp][Tt])
+            if [ ! -z "${USE_GPG}" -a "${USE_GPG}" == "${_TRUE}" ]
+            then
+                [ -z "${AUTH_RECIPIENTS}" ] && /usr/bin/env gpg -aes --output ${FILE_NAME}.asc ${FILE_NAME};
+                [ ! -z "${AUTH_RECIPIENTS}" ] && /usr/bin/env gpg -aes -r ${AUTH_RECIPIENTS} --output ${FILE_NAME}.asc ${FILE_NAME};
+            else
+                if [ -f ${SALT_FILE} ]
+                then
+                    echo "${FILE_NAME}" | /usr/bin/env openssl enc -aes-256-cbc -a -salt -pass file:${SALT_FILE};
+                else
+                    ## generate a salt file
+                    /usr/bin/env cat /dev/urandom | /usr/bin/env tr -dc 'a-zA-Z0-9' | /usr/bin/env fold -w 512 | /usr/bin/env head -n 1 > ${SALT_FILE};
+
+                    /usr/bin/env openssl enc -aes-256-cbc -a -salt -in ${FILE_NAME} -out ${FILE_NAME}.enc -pass file:${SALT_FILE};
+                fi
+            fi
+            ;;
+        [Dd][Ee][Cc][Rr][Yy][Pp][Tt])
+            if [ ! -z "${USE_GPG}" -a "${USE_GPG}" == "${_TRUE}" ]
+            then
+                /usr/bin/env gpg --decrypt ${FILE_NAME};
+            else
+                if [ -f ${SALT_FILE} ]
+                then
+                    /usr/bin/env openssl enc -d -aes-256-cbc -a -in ${FILE_NAME} -pass file:${SALT_FILE};
+                else
+                    while ${_TRUE}
+                    do
+                        printf "Please provide a password to perform the decryption operation: ";
+
+                        read AUTHENTICATION;
+
+                        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "AUTHENTICATION -> ${AUTHENTICATION}";
+
+                        case ${AUTHENTICATION} in
+                            [Xx]|[Qq]|[Cc])
+                                ## user chose to quit, close us out
+                                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+                                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+                                [ ! -z "${AUTH_METHOD}" ] && unset -v AUTH_METHOD;
+                                [ ! -z "${FILE_NAME}" ] && unset -v FILE_NAME;
+                                [ ! -z "${AUTH_RECIPIENTS}" ] && unset -v AUTH_RECIPIENTS;
+                                [ ! -z "${AUTHENTICATION}" ] && unset -v AUTHENTICATION;
+                                [ ! -z "${SALT_FILE}" ] && unset -v SALT_FILE;
+
+                                [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                                [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+                                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+                                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+                                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+                                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+                                [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+                                [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+                                return ${RETURN_CODE};
+                                ;;
+                            *)
+                                [ ! -z "${AUTHENTICATION}" ] && continue || /usr/bin/env openssl enc -d -aes-256-cbc -a -in ${FILE_NAME} -pass pass:${AUTHENTICATION};
+                                ;;
+                        esac
+                    done
+                fi
+            fi
+            ;;
+        *)
+            RETURN_CODE=3;
+
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Encrypt/Decrypt a provided string";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ method ] [ string ] \( recipients \)
+                     -> The desired method of operation: one of encrypt or decrypt
+                     -> The string to operate against
+                     -> A list of recipients \(only valid if using PGP/GPG\)";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+            [ ! -z "${USE_GPG}" ] && unset -v USE_GPG;
+            [ ! -z "${AUTH_METHOD}" ] && unset -v AUTH_METHOD;
+            [ ! -z "${FILE_NAME}" ] && unset -v FILE_NAME;
+            [ ! -z "${AUTH_RECIPIENTS}" ] && unset -v AUTH_RECIPIENTS;
+            [ ! -z "${AUTHENTICATION}" ] && unset -v AUTHENTICATION;
+            [ ! -z "${SALT_FILE}" ] && unset -v SALT_FILE;
+
+            [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+            [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+            [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+            [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+            return ${RETURN_CODE};
+            ;;
+    esac
+    typeset -i RET_CODE=${?};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+
+    [ ! -z "${RET_CODE}" ] && RETURN_CODE=1 || RETURN_CODE=${RET_CODE};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${USE_GPG}" ] && unset -v USE_GPG;
+    [ ! -z "${AUTH_METHOD}" ] && unset -v AUTH_METHOD;
+    [ ! -z "${FILE_NAME}" ] && unset -v FILE_NAME;
+    [ ! -z "${AUTH_RECIPIENTS}" ] && unset -v AUTH_RECIPIENTS;
+    [ ! -z "${AUTHENTICATION}" ] && unset -v AUTHENTICATION;
+    [ ! -z "${SALT_FILE}" ] && unset -v SALT_FILE;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  signFile
+#   DESCRIPTION:  Digitally signs a given file
+#    PARAMETERS:  The file to sign
+#       RETURNS:  0 regardless of result.
+#==============================================================================
+function signFile
+{
+    typeset SCRIPT_NAME="F05-security";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -eq 0 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Sign a provided file using GPG";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ file ]
+                 -> The file to sign using GPG";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    if [ ${#} -eq 0 ]
+    then
+        writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "A filename MUST be provided.";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "A filename MUST be provided.";
+
+        return 1;
+    fi
+
+    /usr/bin/env gpg --output $(basename ${1}).sig --detach-sig ${1};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  generateEntropyFile
+#   DESCRIPTION:  Generates an entropy file for use with applications that require it
+#    PARAMETERS:  None
+#       RETURNS:  0 regardless of result.
+#==============================================================================
+function generateEntropyFile
+{
+    typeset SCRIPT_NAME="F05-security";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    [ -z "${RANDOM_GENERATOR}" ] && typeset RANDOM_GENERATOR="/dev/random";
+    [ -z "${ENTROPY_FILE}" ] && typeset ENTROPY_FILE="${HOME}/.etc/entropy";
+    [ -z "${ENTROPY_FILE_SIZE}" ] && typeset -i ENTROPY_FILE_SIZE=16384;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RANDOM_GENERATOR -> ${RANDOM_GENERATOR}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ENTROPY_FILE -> ${ENTROPY_FILE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ENTROPY_FILE_SIZE -> ${ENTROPY_FILE_SIZE}";
+
+    typeset -i ERROR_COUNT=0;
+    typeset ENTROPY_FILE_NAME=${ENTROPY_FILE##*/};
+    typeset ENTROPY_BACKUP_FILE=${ENTROPY_FILE_NAME}.${DATESYS};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ERROR_COUNT -> ${ERROR_COUNT}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ENTROPY_FILE_PATH -> ${ENTROPY_FILE_PATH}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ENTROPY_BACKUP_FILE -> ${ENTROPY_BACKUP_FILE}";
+
+    [ -s ${ENTROPY_FILE} ] && mv ${ENTROPY_FILE} ${ENTROPY_FILE}.${DATESYS} > /dev/null 2>&1;
+
+    while read -r RANDOM_DATA
+    do
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RANDOM_DATA -> ${RANDOM_DATA}";
+
+        while true
+        do
+            echo ${RANDOM_DATA} >> ${ENTROPY_FILE};
+
+            [ $(wc -c ${ENTROPY_FILE} | awk '{print $1}') -ge ${ENTROPY_FILE_SIZE} ] && break;
+        done
+
+        writeLogEntry "INFO" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Entropy generation complete. Removing backup file.";
+
+        if [ ! -s ${ENTROPY_FILE} ]
+        then
+            if [ ${ERROR_COUNT} -ge ${RETRY_COUNT} ]
+            then
+                writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Entropy file generation failed. Retry limit exceeded. Cannot continue.";
+                writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Entropy file generation failed. Retry limit exceeded. Cannot continue.";
+
+                typeset -i RETURN_CODE=1;
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+                [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+                [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+                [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+                [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+                return ${RETURN_CODE};
+            fi
+
+            (( ERROR_COUNT += 1 ));
+
+            continue;
+        fi
+
+        break;
+    done < ${RANDOM_GENERATOR};
+
+    writeLogEntry "INFO" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Entropy file generated. Modifying permissions and removing backup.";
+
+    chmod 600 ${ENTROPY_FILE};
+    rm -rf ${ENTROPY_BACKUP_FILE} > /dev/null 2>&1;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  modifyAccountPassword
+#   DESCRIPTION:  Changes the password for a provided account on given hosts
+#    PARAMETERS:  Target host to configure, username for access
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function modifyAccountPassword
+{
+    typeset SCRIPT_NAME="F05-security";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+    typeset -i ERROR_COUNT=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -eq 0 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Change user account password on a given system"
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ hostname ] [ username ]
+                -> The hostname to provision against
+                    -> This can be formatted as either a file with multiple hosts on each line or a single hostname
+                -> The user name to modify. If no username is provided, the currently logged in user is utilized.";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${CURRENT_PASSWORD_FILE}" -a -f "${CURRENT_PASSWORD_FILE}" ] && rm -rf "${CURRENT_PASSWORD_FILE}";
+        [ ! -z "${NEW_PASSWORD_FILE}" -a -f "${NEW_PASSWORD_FILE}" ] && rm -rf "${NEW_PASSWORD_FILE}";
+
+        [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+        [ ! -z "${ERROR_COUNT}" ] && unset -v ERROR_COUNT;
+        [ ! -z "${HOSTLIST}" ] && unset -v HOSTLIST;
+        [ ! -z "${USER_NAME}" ] && unset -v USER_NAME;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${PASSWORD_CREDENTIALS}" ] && unset -v PASSWORD_CREDENTIALS;
+        [ ! -z "${PASSWORD_REPO_ENTRY}" ] && unset -v PASSWORD_REPO_ENTRY;
+        [ ! -z "${CREDENTIAL_ENTRY}" ] && unset -v CREDENTIAL_ENTRY;
+        [ ! -z "${CURRENT_PASSWORD}" ] && unset -v CURRENT_PASSWORD;
+        [ ! -z "${NEW_PASSWORD}" ] && unset -v NEW_PASSWORD;
+        [ ! -z "${CURRENT_PASSWORD_FILE}" ] && unset -v CURRENT_PASSWORD_FILE;
+        [ ! -z "${NEW_PASSWORD_FILE}" ] && unset -v NEW_PASSWORD_FILE;
+        [ ! -z "${RETURN_DATA}" ] && unset -v RETURN_DATA;
+        [ ! -z "${ENCR_TYPE}" ] && unset -v ENCR_TYPE;
+        [ ! -z "${NEW_PASSWD_FILE}" ] && unset -v NEW_PASSWD_FILE;
+        [ ! -z "${PASSWD_FILE}" ] && unset -v PASSWD_FILE;
+        [ ! -z "${RETURNED_PASSWORD}" ] && unset -v RETURNED_PASSWORD;
+        [ ! -z "${APPLY_PASSWORD}" ] && unset -v APPLY_PASSWORD;
+        [ ! -z "${RETURNED_DATA}" ] && unset -v RETURNED_DATA;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    [ -f "${1}" ] && setArray HOSTLIST $(/usr/bin/env cat "${1}") || setArray HOSTLIST "${1}";
+    [ ${#} -eq 2 ] && typeset USER_NAME="${2}" || typeset USER_NAME="${LOGNAME}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "HOSTLIST -> ${HOSTLIST[*]}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "USER_NAME -> ${USER_NAME[*]}";
+
+    for TARGET_HOST in ${HOSTLIST[*]}
+    do
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_HOST -> ${TARGET_HOST}";
+
+        if [ ! -z "${SETUP_NEW_SYSTEM}" ]
+        then
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RUN COMMAND -> validateServerAvailability \"${TARGET_HOST}\" 22;";
+
+            [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+            [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+            validateServerAvailability "${TARGET_HOST}" 22;
+            typeset -i RET_CODE=${?};
+
+            [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+            [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+            typeset SCRIPT_NAME="F05-security";
+            typeset FUNCTION_NAME="${FUNCNAME[0]}";
+
+            if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+            then
+                writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Target host does not appear to be available.";
+                writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Target host does not appear to be available";
+
+                [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+                [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+                (( ERROR_COUNT += 1 ));
+
+                [ ! -z "${CURRENT_PASSWORD_FILE}" -a -f "${CURRENT_PASSWORD_FILE}" ] && rm -rf "${CURRENT_PASSWORD_FILE}";
+                [ ! -z "${NEW_PASSWORD_FILE}" -a -f "${NEW_PASSWORD_FILE}" ] && rm -rf "${NEW_PASSWORD_FILE}";
+
+                [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+                [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+                [ ! -z "${PASSWORD_CREDENTIALS}" ] && unset -v PASSWORD_CREDENTIALS;
+                [ ! -z "${PASSWORD_REPO_ENTRY}" ] && unset -v PASSWORD_REPO_ENTRY;
+                [ ! -z "${CREDENTIAL_ENTRY}" ] && unset -v CREDENTIAL_ENTRY;
+                [ ! -z "${CURRENT_PASSWORD}" ] && unset -v CURRENT_PASSWORD;
+                [ ! -z "${NEW_PASSWORD}" ] && unset -v NEW_PASSWORD;
+                [ ! -z "${CURRENT_PASSWORD_FILE}" ] && unset -v CURRENT_PASSWORD_FILE;
+                [ ! -z "${NEW_PASSWORD_FILE}" ] && unset -v NEW_PASSWORD_FILE;
+                [ ! -z "${RETURN_DATA}" ] && unset -v RETURN_DATA;
+                [ ! -z "${ENCR_TYPE}" ] && unset -v ENCR_TYPE;
+                [ ! -z "${NEW_PASSWD_FILE}" ] && unset -v NEW_PASSWD_FILE;
+                [ ! -z "${PASSWD_FILE}" ] && unset -v PASSWD_FILE;
+                [ ! -z "${RETURNED_PASSWORD}" ] && unset -v RETURNED_PASSWORD;
+                [ ! -z "${APPLY_PASSWORD}" ] && unset -v APPLY_PASSWORD;
+                [ ! -z "${RETURNED_DATA}" ] && unset -v RETURNED_DATA;
+
+                continue;
+            fi
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RUN COMMAND -> getSshKeys host \"${TARGET_HOST}\" 0";
+
+            [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+            [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+            getSshKeys host "${TARGET_HOST}" 0;
+            typeset -i RET_CODE=${?};
+
+            [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+            [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+            typeset SCRIPT_NAME="F05-security";
+            typeset FUNCTION_NAME="${FUNCNAME[0]}";
+
+            if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+            then
+                writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Target host does not appear to have SSH host keys available.";
+                writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Target host does not appear to have SSH host keys available.";
+
+                [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+                [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+                (( ERROR_COUNT += 1 ));
+
+                [ ! -z "${CURRENT_PASSWORD_FILE}" -a -f "${CURRENT_PASSWORD_FILE}" ] && rm -rf "${CURRENT_PASSWORD_FILE}";
+                [ ! -z "${NEW_PASSWORD_FILE}" -a -f "${NEW_PASSWORD_FILE}" ] && rm -rf "${NEW_PASSWORD_FILE}";
+
+                [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+                [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+                [ ! -z "${PASSWORD_CREDENTIALS}" ] && unset -v PASSWORD_CREDENTIALS;
+                [ ! -z "${PASSWORD_REPO_ENTRY}" ] && unset -v PASSWORD_REPO_ENTRY;
+                [ ! -z "${CREDENTIAL_ENTRY}" ] && unset -v CREDENTIAL_ENTRY;
+                [ ! -z "${CURRENT_PASSWORD}" ] && unset -v CURRENT_PASSWORD;
+                [ ! -z "${NEW_PASSWORD}" ] && unset -v NEW_PASSWORD;
+                [ ! -z "${CURRENT_PASSWORD_FILE}" ] && unset -v CURRENT_PASSWORD_FILE;
+                [ ! -z "${NEW_PASSWORD_FILE}" ] && unset -v NEW_PASSWORD_FILE;
+                [ ! -z "${RETURN_DATA}" ] && unset -v RETURN_DATA;
+                [ ! -z "${ENCR_TYPE}" ] && unset -v ENCR_TYPE;
+                [ ! -z "${NEW_PASSWD_FILE}" ] && unset -v NEW_PASSWD_FILE;
+                [ ! -z "${PASSWD_FILE}" ] && unset -v PASSWD_FILE;
+                [ ! -z "${RETURNED_PASSWORD}" ] && unset -v RETURNED_PASSWORD;
+                [ ! -z "${APPLY_PASSWORD}" ] && unset -v APPLY_PASSWORD;
+                [ ! -z "${RETURNED_DATA}" ] && unset -v RETURNED_DATA;
+
+                continue;
+            fi
+        fi
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RUN COMMAND -> passwordRepo -list | sed -e 's/\t//g;s/^ *//g;s/ *$//g;s/ //g' | grep -i \"${USER_NAME}\" | grep -i \"CREDENTIAL\" | tr '\n' ' '";
+
+        for ENTRY in $(passwordRepo -list | sed -e 's/\t//g;s/^ *//g;s/ *$//g;s/ //g' | grep -i "${USER_NAME}" | grep -i "CREDENTIAL" | tr '\n' ' ')
+        do
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ENTRY -> ${ENTRY}";
+
+            setArray PASSWORD_CREDENTIALS "${ENTRY}";
+        done
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "PASSWORD_CREDENTIALS -> ${PASSWORD_CREDENTIALS[*]}";
+
+        if [ -z "${PASSWORD_CREDENTIALS[*]}" ]
+        then
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "No password entry was located for the provided host and user.";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "No password entry was located for the provided host and user.";
+
+            [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+            (( ERROR_COUNT += 1 ));
+
+            [ ! -z "${CURRENT_PASSWORD_FILE}" -a -f "${CURRENT_PASSWORD_FILE}" ] && rm -rf "${CURRENT_PASSWORD_FILE}";
+            [ ! -z "${NEW_PASSWORD_FILE}" -a -f "${NEW_PASSWORD_FILE}" ] && rm -rf "${NEW_PASSWORD_FILE}";
+
+            [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+            [ ! -z "${PASSWORD_CREDENTIALS}" ] && unset -v PASSWORD_CREDENTIALS;
+            [ ! -z "${PASSWORD_REPO_ENTRY}" ] && unset -v PASSWORD_REPO_ENTRY;
+            [ ! -z "${CREDENTIAL_ENTRY}" ] && unset -v CREDENTIAL_ENTRY;
+            [ ! -z "${CURRENT_PASSWORD}" ] && unset -v CURRENT_PASSWORD;
+            [ ! -z "${NEW_PASSWORD}" ] && unset -v NEW_PASSWORD;
+            [ ! -z "${CURRENT_PASSWORD_FILE}" ] && unset -v CURRENT_PASSWORD_FILE;
+            [ ! -z "${NEW_PASSWORD_FILE}" ] && unset -v NEW_PASSWORD_FILE;
+            [ ! -z "${RETURN_DATA}" ] && unset -v RETURN_DATA;
+            [ ! -z "${ENCR_TYPE}" ] && unset -v ENCR_TYPE;
+            [ ! -z "${NEW_PASSWD_FILE}" ] && unset -v NEW_PASSWD_FILE;
+            [ ! -z "${PASSWD_FILE}" ] && unset -v PASSWD_FILE;
+            [ ! -z "${RETURNED_PASSWORD}" ] && unset -v RETURNED_PASSWORD;
+            [ ! -z "${APPLY_PASSWORD}" ] && unset -v APPLY_PASSWORD;
+            [ ! -z "${RETURNED_DATA}" ] && unset -v RETURNED_DATA;
+
+            continue;
+        fi
+
+        case ${#PASSWORD_CREDENTIALS[*]} in
+            1)
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RUN COMMAND -> passwordRepo -show \$(sed -e 's/^ *//g;s/ *$//g' | cut -d \"=\" -f 2\)";
+
+                typeset PASSWORD_REPO_ENTRY="$(echo "${PASSWORD_CREDENTIALS}" | passwordRepo -show $(sed -e 's/^ *//g;s/ *$//g' | cut -d "=" -f 2))";
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "PASSWORD_REPO_ENTRY -> ${PASSWORD_REPO_ENTRY}";
+
+                typeset CREDENTIAL_ENTRY="$(echo "${PASSWORD_REPO_ENTRY}" | cut -d "=" -f 2)";
+                typeset USER_NAME="$(echo "${PASSWORD_REPO_ENTRY}" | awk '{print $1}')";
+                typeset CURRENT_PASSWORD="$(echo "${PASSWORD_REPO_ENTRY}" | awk '{print $2}')";
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "CREDENTIAL_ENTRY -> ${CREDENTIAL_ENTRY}";
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "USER_NAME -> ${USER_NAME}";
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "CURRENT_PASSWORD -> ${CURRENT_PASSWORD}";
+                ;;
+            *)
+                for PASSWORD_REPO_ENTRY in ${PASSWORD_CREDENTIALS[@]}
+                do
+                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "PASSWORD_REPO_ENTRY -> ${PASSWORD_REPO_ENTRY}";
+
+                    if [ $(echo "${PASSWORD_REPO_ENTRY}" | tr -dc "@" | wc -c) -eq 1 ]
+                    then
+                        if [ $(echo "${PASSWORD_REPO_ENTRY}" | grep -c "${TARGET_HOST}") -ne 0 ]
+                        then
+                            typeset CREDENTIAL_ENTRY="$(echo "${PASSWORD_REPO_ENTRY}" | cut -d "=" -f 2)";
+                            typeset USER_NAME="$(echo "${PASSWORD_REPO_ENTRY}" | awk '{print $1}')";
+                            typeset CURRENT_PASSWORD="$(echo "${PASSWORD_REPO_ENTRY}" | awk '{print $2}')";
+
+                            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "CREDENTIAL_ENTRY -> ${CREDENTIAL_ENTRY}";
+                            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "USER_NAME -> ${USER_NAME}";
+                            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "CURRENT_PASSWORD -> ${CURRENT_PASSWORD}";
+
+                            typeset -i ERROR_COUNT=0;
+
+                            break;
+                        fi
+                    fi
+
+                    (( ERROR_COUNT += 1 ));
+                done
+
+                if [ ${ERROR_COUNT} -ne 0 ]
+                then
+                    writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "No password entry was located for the provided host and user.";
+                    writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "No password entry was located for the provided host and user.";
+
+                    (( ERROR_COUNT += 1 ));
+
+                    [ ! -z "${CURRENT_PASSWORD_FILE}" -a -f "${CURRENT_PASSWORD_FILE}" ] && rm -rf "${CURRENT_PASSWORD_FILE}";
+                    [ ! -z "${NEW_PASSWORD_FILE}" -a -f "${NEW_PASSWORD_FILE}" ] && rm -rf "${NEW_PASSWORD_FILE}";
+
+                    [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+                    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+                    [ ! -z "${PASSWORD_CREDENTIALS}" ] && unset -v PASSWORD_CREDENTIALS;
+                    [ ! -z "${PASSWORD_REPO_ENTRY}" ] && unset -v PASSWORD_REPO_ENTRY;
+                    [ ! -z "${CREDENTIAL_ENTRY}" ] && unset -v CREDENTIAL_ENTRY;
+                    [ ! -z "${CURRENT_PASSWORD}" ] && unset -v CURRENT_PASSWORD;
+                    [ ! -z "${NEW_PASSWORD}" ] && unset -v NEW_PASSWORD;
+                    [ ! -z "${CURRENT_PASSWORD_FILE}" ] && unset -v CURRENT_PASSWORD_FILE;
+                    [ ! -z "${NEW_PASSWORD_FILE}" ] && unset -v NEW_PASSWORD_FILE;
+                    [ ! -z "${RETURN_DATA}" ] && unset -v RETURN_DATA;
+                    [ ! -z "${ENCR_TYPE}" ] && unset -v ENCR_TYPE;
+                    [ ! -z "${NEW_PASSWD_FILE}" ] && unset -v NEW_PASSWD_FILE;
+                    [ ! -z "${PASSWD_FILE}" ] && unset -v PASSWD_FILE;
+                    [ ! -z "${RETURNED_PASSWORD}" ] && unset -v RETURNED_PASSWORD;
+                    [ ! -z "${APPLY_PASSWORD}" ] && unset -v APPLY_PASSWORD;
+                    [ ! -z "${RETURNED_DATA}" ] && unset -v RETURNED_DATA;
+
+                    continue;
+                fi
+                ;;
+        esac
+
+        [ -s "${HOME}/.etc/new-password" ] && typeset NEW_PASSWORD="$(cat "${HOME}/.etc/new-password")" || typeset NEW_PASSWORD="$(returnRandomCharacters 64 0)";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "NEW_PASSWORD -> ${NEW_PASSWORD}";
+
+        ## check if empty here
+        if [ -z "${NEW_PASSWORD}" ]
+        then
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to generate a new password for the requested account. Cannot continue.";
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to generate a new password for the requested account. Cannot continue.";
+
+            (( ERROR_COUNT += 1 ));
+
+            [ ! -z "${CURRENT_PASSWORD_FILE}" -a -f "${CURRENT_PASSWORD_FILE}" ] && rm -rf "${CURRENT_PASSWORD_FILE}";
+            [ ! -z "${NEW_PASSWORD_FILE}" -a -f "${NEW_PASSWORD_FILE}" ] && rm -rf "${NEW_PASSWORD_FILE}";
+
+            [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+            [ ! -z "${PASSWORD_CREDENTIALS}" ] && unset -v PASSWORD_CREDENTIALS;
+            [ ! -z "${PASSWORD_REPO_ENTRY}" ] && unset -v PASSWORD_REPO_ENTRY;
+            [ ! -z "${CREDENTIAL_ENTRY}" ] && unset -v CREDENTIAL_ENTRY;
+            [ ! -z "${CURRENT_PASSWORD}" ] && unset -v CURRENT_PASSWORD;
+            [ ! -z "${NEW_PASSWORD}" ] && unset -v NEW_PASSWORD;
+            [ ! -z "${CURRENT_PASSWORD_FILE}" ] && unset -v CURRENT_PASSWORD_FILE;
+            [ ! -z "${NEW_PASSWORD_FILE}" ] && unset -v NEW_PASSWORD_FILE;
+            [ ! -z "${RETURN_DATA}" ] && unset -v RETURN_DATA;
+            [ ! -z "${ENCR_TYPE}" ] && unset -v ENCR_TYPE;
+            [ ! -z "${NEW_PASSWD_FILE}" ] && unset -v NEW_PASSWD_FILE;
+            [ ! -z "${PASSWD_FILE}" ] && unset -v PASSWD_FILE;
+            [ ! -z "${RETURNED_PASSWORD}" ] && unset -v RETURNED_PASSWORD;
+            [ ! -z "${APPLY_PASSWORD}" ] && unset -v APPLY_PASSWORD;
+            [ ! -z "${RETURNED_DATA}" ] && unset -v RETURNED_DATA;
+
+            continue;
+        fi
+
+        ## change password
+        case $(/usr/bin/env expect -v 2>/dev/null) in
+            "")
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RUN COMMAND -> \${HOME}/.bin/watchdog -c \"/usr/bin/env ssh\" -a \"-aqCkXY -l ${USER_NAME} ${TARGET_HOST} \"\"printf \"\"%s\n\"\" ${CURRENT_PASSWORD} ${NEW_PASSWORD} ${NEW_PASSWORD} | passwd\"";
+
+                typeset RETURN_DATA="$(${HOME}/.bin/watchdog -c "/usr/bin/env ssh" -a "-aqCkXY -l ${USER_NAME} ${TARGET_HOST} \"printf \"%s\n\" \"${CURRENT_PASSWORD}\" \"${NEW_PASSWORD}\" \"${NEW_PASSWORD}\" | passwd\"")";
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_DATA -> ${RETURN_DATA}";
+                ;;
+            *)
+                [ ! -z "${CURRENT_PASSWORD}" ] && typeset CURRENT_PASSWORD_FILE="$(mktemp /var/tmp)";
+                [ ! -z "${NEW_PASSWORD}" ] && typeset NEW_PASSWORD_FILE="$(mktemp /var/tmp)";
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "CURRENT_PASSWORD_FILE -> ${CURRENT_PASSWORD_FILE}";
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "NEW_PASSWORD_FILE -> ${NEW_PASSWORD_FILE}";
+
+                [ -f "${CURRENT_PASSWORD_FILE}" ] && chmod 600 "${CURRENT_PASSWORD_FILE}";
+                [ -f "${NEW_PASSWORD_FILE}" ] && chmod 600 "${NEW_PASSWORD_FILE}";
+
+                [ -f "${CURRENT_PASSWORD_FILE}" ] && printf "%s %s %s %s" "${USER_NAME}" "${USER_NAME}" "pass" "${CURRENT_PASSWORD}" > "${CURRENT_PASSWORD_FILE}" || writeLogEntry STDERR "A file could not be created. Continuing without, but errors may occur.";
+                [ -f "${NEW_PASSWORD_FILE}" ] && printf "%s %s %s %s" "${USER_NAME}" "${USER_NAME}" "pass" "${NEW_PASSWORD}" > "${NEW_PASSWORD_FILE}" || writeLogEntry STDERR "A file could not be created. Continuing without, but errors may occur.";
+
+                typeset -x ENCR_TYPE="";
+                typeset -x NEW_PASSWD_FILE="file:${NEW_PASSWORD_FILE}";
+                typeset -x PASSWD_FILE="file:${CURRENT_PASSWORD_FILE}";
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ENCR_TYPE -> ${ENCR_TYPE}";
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "PASSWD_FILE -> ${PASSWD_FILE}";
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "NEW_PASSWD_FILE -> ${NEW_PASSWD_FILE}";
+
+                [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+                typeset RETURN_DATA="$(${HOME}/.lib/ssh.exp ${TARGET_HOST} ${USER_NAME} "passwd")";
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_DATA -> ${RETURN_DATA}";
+
+                [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+                [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+                typeset SCRIPT_NAME="F05-security";
+                typeset FUNCTION_NAME="${FUNCNAME[0]}";
+                ;;
+        esac
+
+        wait;
+
+        typeset -i RET_CODE=${?};
+        typeset SCRIPT_NAME="F05-security";
+        typeset FUNCTION_NAME="${FUNCNAME[0]}";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+
+        if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+        then
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to modify password for host ${TARGET_HOST} and user ${LOGNAME}";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to modify password for host ${TARGET_HOST} and user ${LOGNAME}";
+
+            (( ERROR_COUNT += 1 ));
+
+            [ ! -z "${CURRENT_PASSWORD_FILE}" -a -f "${CURRENT_PASSWORD_FILE}" ] && rm -rf "${CURRENT_PASSWORD_FILE}";
+            [ ! -z "${NEW_PASSWORD_FILE}" -a -f "${NEW_PASSWORD_FILE}" ] && rm -rf "${NEW_PASSWORD_FILE}";
+
+            [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+            [ ! -z "${PASSWORD_CREDENTIALS}" ] && unset -v PASSWORD_CREDENTIALS;
+            [ ! -z "${PASSWORD_REPO_ENTRY}" ] && unset -v PASSWORD_REPO_ENTRY;
+            [ ! -z "${CREDENTIAL_ENTRY}" ] && unset -v CREDENTIAL_ENTRY;
+            [ ! -z "${CURRENT_PASSWORD}" ] && unset -v CURRENT_PASSWORD;
+            [ ! -z "${NEW_PASSWORD}" ] && unset -v NEW_PASSWORD;
+            [ ! -z "${CURRENT_PASSWORD_FILE}" ] && unset -v CURRENT_PASSWORD_FILE;
+            [ ! -z "${NEW_PASSWORD_FILE}" ] && unset -v NEW_PASSWORD_FILE;
+            [ ! -z "${RETURN_DATA}" ] && unset -v RETURN_DATA;
+            [ ! -z "${ENCR_TYPE}" ] && unset -v ENCR_TYPE;
+            [ ! -z "${NEW_PASSWD_FILE}" ] && unset -v NEW_PASSWD_FILE;
+            [ ! -z "${PASSWD_FILE}" ] && unset -v PASSWD_FILE;
+            [ ! -z "${RETURNED_PASSWORD}" ] && unset -v RETURNED_PASSWORD;
+            [ ! -z "${APPLY_PASSWORD}" ] && unset -v APPLY_PASSWORD;
+            [ ! -z "${RETURNED_DATA}" ] && unset -v RETURNED_DATA;
+
+            continue;
+        elif [ -z "${RETURN_DATA}" ]
+        then
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to modify password for host ${TARGET_HOST} and user ${LOGNAME}";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to modify password for host ${TARGET_HOST} and user ${LOGNAME}";
+
+            (( ERROR_COUNT += 1 ));
+
+            [ ! -z "${CURRENT_PASSWORD_FILE}" -a -f "${CURRENT_PASSWORD_FILE}" ] && rm -rf "${CURRENT_PASSWORD_FILE}";
+            [ ! -z "${NEW_PASSWORD_FILE}" -a -f "${NEW_PASSWORD_FILE}" ] && rm -rf "${NEW_PASSWORD_FILE}";
+
+            [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+            [ ! -z "${PASSWORD_CREDENTIALS}" ] && unset -v PASSWORD_CREDENTIALS;
+            [ ! -z "${PASSWORD_REPO_ENTRY}" ] && unset -v PASSWORD_REPO_ENTRY;
+            [ ! -z "${CREDENTIAL_ENTRY}" ] && unset -v CREDENTIAL_ENTRY;
+            [ ! -z "${CURRENT_PASSWORD}" ] && unset -v CURRENT_PASSWORD;
+            [ ! -z "${NEW_PASSWORD}" ] && unset -v NEW_PASSWORD;
+            [ ! -z "${CURRENT_PASSWORD_FILE}" ] && unset -v CURRENT_PASSWORD_FILE;
+            [ ! -z "${NEW_PASSWORD_FILE}" ] && unset -v NEW_PASSWORD_FILE;
+            [ ! -z "${RETURN_DATA}" ] && unset -v RETURN_DATA;
+            [ ! -z "${ENCR_TYPE}" ] && unset -v ENCR_TYPE;
+            [ ! -z "${NEW_PASSWD_FILE}" ] && unset -v NEW_PASSWD_FILE;
+            [ ! -z "${PASSWD_FILE}" ] && unset -v PASSWD_FILE;
+            [ ! -z "${RETURNED_PASSWORD}" ] && unset -v RETURNED_PASSWORD;
+            [ ! -z "${APPLY_PASSWORD}" ] && unset -v APPLY_PASSWORD;
+            [ ! -z "${RETURNED_DATA}" ] && unset -v RETURNED_DATA;
+
+            continue;
+        elif [ $(grep -ci "success" <<< "${RETURN_DATA}") -eq 0 ]
+        then
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to modify password for host ${TARGET_HOST} and user ${LOGNAME}";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to modify password for host ${TARGET_HOST} and user ${LOGNAME}";
+
+            (( ERROR_COUNT += 1 ));
+
+            [ ! -z "${CURRENT_PASSWORD_FILE}" -a -f "${CURRENT_PASSWORD_FILE}" ] && rm -rf "${CURRENT_PASSWORD_FILE}";
+            [ ! -z "${NEW_PASSWORD_FILE}" -a -f "${NEW_PASSWORD_FILE}" ] && rm -rf "${NEW_PASSWORD_FILE}";
+
+            [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+            [ ! -z "${PASSWORD_CREDENTIALS}" ] && unset -v PASSWORD_CREDENTIALS;
+            [ ! -z "${PASSWORD_REPO_ENTRY}" ] && unset -v PASSWORD_REPO_ENTRY;
+            [ ! -z "${CREDENTIAL_ENTRY}" ] && unset -v CREDENTIAL_ENTRY;
+            [ ! -z "${CURRENT_PASSWORD}" ] && unset -v CURRENT_PASSWORD;
+            [ ! -z "${NEW_PASSWORD}" ] && unset -v NEW_PASSWORD;
+            [ ! -z "${CURRENT_PASSWORD_FILE}" ] && unset -v CURRENT_PASSWORD_FILE;
+            [ ! -z "${NEW_PASSWORD_FILE}" ] && unset -v NEW_PASSWORD_FILE;
+            [ ! -z "${RETURN_DATA}" ] && unset -v RETURN_DATA;
+            [ ! -z "${ENCR_TYPE}" ] && unset -v ENCR_TYPE;
+            [ ! -z "${NEW_PASSWD_FILE}" ] && unset -v NEW_PASSWD_FILE;
+            [ ! -z "${PASSWD_FILE}" ] && unset -v PASSWD_FILE;
+            [ ! -z "${RETURNED_PASSWORD}" ] && unset -v RETURNED_PASSWORD;
+            [ ! -z "${APPLY_PASSWORD}" ] && unset -v APPLY_PASSWORD;
+            [ ! -z "${RETURNED_DATA}" ] && unset -v RETURNED_DATA;
+
+            continue;
+        fi
+
+        typeset RETURNED_PASSWORD="$(awk -F " " '{print $8}' <<< "${RETURN_DATA}")";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURNED_PASSWORD -> ${RETURNED_PASSWORD}";
+
+        [ -z "${RETURNED_PASSWORD}" ] && typeset APPLY_PASSWORD="${NEW_PASSWORD}" || typeset APPLY_PASSWORD="${RETURNED_PASSWORD}";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "APPLY_PASSWORD -> ${APPLY_PASSWORD}";
+
+        ## apply the new password
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RUN COMMAND -> passwordRepo -update \$(echo \"${CREDENTIAL_ENTRY}\" | awk '{print $1}'\) \"${USER_NAME}\" \"${APPLY_PASSWORD}\"";
+
+        typeset RETURNED_DATA="$(passwordRepo -update "$(echo "${CREDENTIAL_ENTRY}" | awk '{print $1}')" "${USER_NAME}" "${APPLY_PASSWORD}")";
+        typeset -i RET_CODE=${?};
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURNED_DATA -> ${RETURNED_DATA}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+
+        if [ -z "${RETURNED_DATA}" ]
+        then
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to modify password for host ${TARGET_HOST} and user ${LOGNAME} in repository.";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to modify password for host ${TARGET_HOST} and user ${LOGNAME} in repository. Please manually add ${NEW_PASSWORD}";
+
+            (( ERROR_COUNT += 1 ));
+
+            [ ! -z "${CURRENT_PASSWORD_FILE}" -a -f "${CURRENT_PASSWORD_FILE}" ] && rm -rf "${CURRENT_PASSWORD_FILE}";
+            [ ! -z "${NEW_PASSWORD_FILE}" -a -f "${NEW_PASSWORD_FILE}" ] && rm -rf "${NEW_PASSWORD_FILE}";
+
+            [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+            [ ! -z "${PASSWORD_CREDENTIALS}" ] && unset -v PASSWORD_CREDENTIALS;
+            [ ! -z "${PASSWORD_REPO_ENTRY}" ] && unset -v PASSWORD_REPO_ENTRY;
+            [ ! -z "${CREDENTIAL_ENTRY}" ] && unset -v CREDENTIAL_ENTRY;
+            [ ! -z "${CURRENT_PASSWORD}" ] && unset -v CURRENT_PASSWORD;
+            [ ! -z "${NEW_PASSWORD}" ] && unset -v NEW_PASSWORD;
+            [ ! -z "${CURRENT_PASSWORD_FILE}" ] && unset -v CURRENT_PASSWORD_FILE;
+            [ ! -z "${NEW_PASSWORD_FILE}" ] && unset -v NEW_PASSWORD_FILE;
+            [ ! -z "${RETURN_DATA}" ] && unset -v RETURN_DATA;
+            [ ! -z "${ENCR_TYPE}" ] && unset -v ENCR_TYPE;
+            [ ! -z "${NEW_PASSWD_FILE}" ] && unset -v NEW_PASSWD_FILE;
+            [ ! -z "${PASSWD_FILE}" ] && unset -v PASSWD_FILE;
+            [ ! -z "${RETURNED_PASSWORD}" ] && unset -v RETURNED_PASSWORD;
+            [ ! -z "${APPLY_PASSWORD}" ] && unset -v APPLY_PASSWORD;
+            [ ! -z "${RETURNED_DATA}" ] && unset -v RETURNED_DATA;
+
+            continue;
+        elif [ $(grep -c "success" <<< "${RETURNED_DATA}") -ne 0 ]
+        then
+            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to modify password for host ${TARGET_HOST} and user ${LOGNAME} in repository.";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to modify password for host ${TARGET_HOST} and user ${LOGNAME} in repository. Please manually add ${NEW_PASSWORD}";
+
+            (( ERROR_COUNT += 1 ));
+
+            [ ! -z "${CURRENT_PASSWORD_FILE}" -a -f "${CURRENT_PASSWORD_FILE}" ] && rm -rf "${CURRENT_PASSWORD_FILE}";
+            [ ! -z "${NEW_PASSWORD_FILE}" -a -f "${NEW_PASSWORD_FILE}" ] && rm -rf "${NEW_PASSWORD_FILE}";
+
+            [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+            [ ! -z "${PASSWORD_CREDENTIALS}" ] && unset -v PASSWORD_CREDENTIALS;
+            [ ! -z "${PASSWORD_REPO_ENTRY}" ] && unset -v PASSWORD_REPO_ENTRY;
+            [ ! -z "${CREDENTIAL_ENTRY}" ] && unset -v CREDENTIAL_ENTRY;
+            [ ! -z "${CURRENT_PASSWORD}" ] && unset -v CURRENT_PASSWORD;
+            [ ! -z "${NEW_PASSWORD}" ] && unset -v NEW_PASSWORD;
+            [ ! -z "${CURRENT_PASSWORD_FILE}" ] && unset -v CURRENT_PASSWORD_FILE;
+            [ ! -z "${NEW_PASSWORD_FILE}" ] && unset -v NEW_PASSWORD_FILE;
+            [ ! -z "${RETURN_DATA}" ] && unset -v RETURN_DATA;
+            [ ! -z "${ENCR_TYPE}" ] && unset -v ENCR_TYPE;
+            [ ! -z "${NEW_PASSWD_FILE}" ] && unset -v NEW_PASSWD_FILE;
+            [ ! -z "${PASSWD_FILE}" ] && unset -v PASSWD_FILE;
+            [ ! -z "${RETURNED_PASSWORD}" ] && unset -v RETURNED_PASSWORD;
+            [ ! -z "${APPLY_PASSWORD}" ] && unset -v APPLY_PASSWORD;
+            [ ! -z "${RETURNED_DATA}" ] && unset -v RETURNED_DATA;
+
+            continue;
+        fi
+
+        writeLogEntry "INFO" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Password for host ${TARGET_HOST} and user ${LOGNAME} successfully changed and stored in repository.";
+        writeLogEntry "STDOUT" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Password for host ${TARGET_HOST} and user ${LOGNAME} successfully changed and stored in repository.";
+    done
+
+    [ ${ERROR_COUNT} -ne 0 ] && typeset -i RETURN_CODE=1;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${CURRENT_PASSWORD_FILE}" -a -f "${CURRENT_PASSWORD_FILE}" ] && rm -rf "${CURRENT_PASSWORD_FILE}";
+    [ ! -z "${NEW_PASSWORD_FILE}" -a -f "${NEW_PASSWORD_FILE}" ] && rm -rf "${NEW_PASSWORD_FILE}";
+
+    [ ! -z "${CURRENT_PASSWORD_FILE}" -a -f "${CURRENT_PASSWORD_FILE}" ] && rm -rf "${CURRENT_PASSWORD_FILE}";
+    [ ! -z "${NEW_PASSWORD_FILE}" -a -f "${NEW_PASSWORD_FILE}" ] && rm -rf "${NEW_PASSWORD_FILE}";
+
+    [ ! -z "${HOSTLIST}" ] && unset -v HOSTLIST;
+    [ ! -z "${USER_NAME}" ] && unset -v USER_NAME;
+    [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+    [ ! -z "${PASSWORD_CREDENTIALS}" ] && unset -v PASSWORD_CREDENTIALS;
+    [ ! -z "${PASSWORD_REPO_ENTRY}" ] && unset -v PASSWORD_REPO_ENTRY;
+    [ ! -z "${CREDENTIAL_ENTRY}" ] && unset -v CREDENTIAL_ENTRY;
+    [ ! -z "${CURRENT_PASSWORD}" ] && unset -v CURRENT_PASSWORD;
+    [ ! -z "${NEW_PASSWORD}" ] && unset -v NEW_PASSWORD;
+    [ ! -z "${CURRENT_PASSWORD_FILE}" ] && unset -v CURRENT_PASSWORD_FILE;
+    [ ! -z "${NEW_PASSWORD_FILE}" ] && unset -v NEW_PASSWORD_FILE;
+    [ ! -z "${RETURN_DATA}" ] && unset -v RETURN_DATA;
+    [ ! -z "${ENCR_TYPE}" ] && unset -v ENCR_TYPE;
+    [ ! -z "${NEW_PASSWD_FILE}" ] && unset -v NEW_PASSWD_FILE;
+    [ ! -z "${PASSWD_FILE}" ] && unset -v PASSWD_FILE;
+    [ ! -z "${RETURNED_PASSWORD}" ] && unset -v RETURNED_PASSWORD;
+    [ ! -z "${APPLY_PASSWORD}" ] && unset -v APPLY_PASSWORD;
+    [ ! -z "${RETURNED_DATA}" ] && unset -v RETURNED_DATA;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  chmod
+#   DESCRIPTION:  Cleans up the archived log directory
+#    PARAMETERS:  Archive Directory, Logfile Name, Retention Time
+#       RETURNS:  0 regardless of result.
+#==============================================================================
+function chmod1
+{
+    typeset SCRIPT_NAME="F05-security";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -gt 2 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Change the permissions on a target file";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ permissions ] [ file ]
+                 -> The permissions to apply
+                 -> The file to apply permissions to";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${STRING_LENGTH}" ] && unset -v STRING_LENGTH;
+        [ ! -z "${INCLUDE_SPECIAL}" ] && unset -v INCLUDE_SPECIAL;
+        [ ! -z "${RETURNED_CHARACTERS}" ] && unset -v RETURNED_CHARACTERS;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    case "$(uname)" in
+        [Cc][Yy][Gg][Ww][Ii][Nn])
+            typeset -i ERROR_COUNT=0;
+            typeset -i OCTAL_PERMISSIONS="${1}";
+            setArray TARGET_FILES "${2}";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "OCTAL_PERMISSIONS -> ${OCTAL_PERMISSIONS}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_FILES -> ${TARGET_FILES[*]}";
+
+            typeset -i USER_PERMISSIONS="$(echo "${OCTAL_PERMISSIONS}" | awk '{print substr($0, 1, 1)}')";
+            typeset -i GROUP_PERMISSIONS="$(echo "${OCTAL_PERMISSIONS}" | awk '{print substr($0, 2, 1)}')";
+            typeset -i WORLD_PERMISSIONS="$(echo "${OCTAL_PERMISSIONS}" | awk '{print substr($0, 3, 1)}')";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "USER_PERMISSIONS -> ${USER_PERMISSIONS}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "GROUP_PERMISSIONS -> ${GROUP_PERMISSIONS}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "WORLD_PERMISSIONS -> ${WORLD_PERMISSIONS}";
+
+            for TARGET_FILE in ${TARGET_FILES[*]}
+            do
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_FILE -> ${TARGET_FILE}";
+
+                /usr/bin/env setfacl -s u::${USER_PERMISSIONS},g::${GROUP_PERMISSIONS},${WORLD_PERMISSIONS} ${TARGET_FILE} 2>/dev/null;
+                typeset -i RET_CODE=${?};
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+
+                if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+                then
+                    writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to modify file security for ${TARGET_FILE}";
+                    writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to modify file security for ${TARGET_FILE}";
+
+                    (( ERROR_COUNT += 1 ));
+
+                    continue;
+                fi
+
+                [ ! -z "${TARGET_FILE}" ] && unset -v TARGET_FILE;
+                [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+            done
+
+            [ ${ERROR_COUNT} -ne 0 ] && typeset -i RETURN_CODE=${ERROR_COUNT};
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+            [ ! -z "${ERROR_COUNT}" ] && unset -v ERROR_COUNT;
+            [ ! -z "${TARGET_FILE}" ] && unset -v TARGET_FILE;
+            [ ! -z "${OCTAL_PERMISSIONS}" ] && unset -v OCTAL_PERMISSIONS;
+            [ ! -z "${TARGET_FILES[*]}" ] && unset -v TARGET_FILES;
+            [ ! -z "${USER_PERMISSIONS}" ] && unset -v USER_PERMISSIONS;
+            [ ! -z "${GROUP_PERMISSIONS}" ] && unset -v GROUP_PERMISSIONS;
+            [ ! -z "${WORLD_PERMISSIONS}" ] && unset -v WORLD_PERMISSIONS;
+
+            [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+            [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+            [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+            [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+            return ${RETURN_CODE};
+            ;;
+        *)
+            /usr/bin/env chmod ${USER_PERMISSIONS}${GROUP_PERMISSIONS}${WORLD_PERMISSIONS} ${TARGET_FILE};
+            return ${?};
+            ;;
+    esac
+
+    [ ${ERROR_COUNT} -ne 0 ] && typeset -i RETURN_CODE=${ERROR_COUNT};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${ERROR_COUNT}" ] && unset -v ERROR_COUNT;
+    [ ! -z "${TARGET_FILE}" ] && unset -v TARGET_FILE;
+    [ ! -z "${OCTAL_PERMISSIONS}" ] && unset -v OCTAL_PERMISSIONS;
+    [ ! -z "${TARGET_FILES[*]}" ] && unset -v TARGET_FILES;
+    [ ! -z "${USER_PERMISSIONS}" ] && unset -v USER_PERMISSIONS;
+    [ ! -z "${GROUP_PERMISSIONS}" ] && unset -v GROUP_PERMISSIONS;
+    [ ! -z "${WORLD_PERMISSIONS}" ] && unset -v WORLD_PERMISSIONS;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  passwordRepository
+#   DESCRIPTION:  Wrapper around the password repository jar
+#    PARAMETERS:  Operation type, entry name, username, password, store entry
+#       RETURNS:  0 regardless of result.
+#==============================================================================
+function passwordRepository
+{
+    typeset SCRIPT_NAME="F05-security";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -eq 0 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Store a password in a secured file";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ option ] [ entry ] [ username ] [ password ]
+            -> Option: one of 'encrypt' or 'decrypt'
+                -> If option is 'encrypt':
+                    -> entry: The name of the entry to add
+                    -> username: The username to apply to the entry
+                    -> password: The password to apply to the entry
+                    -> store: Store the entry in the repository (optional)
+                -> If option is 'decrypt':
+                    -> entry: The name of the entry to obtain
+                    -> username: The username applied to the entry";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    typeset PASSWORD_UTILITY_CONFIG="${HOME}/.etc/SecurityService/config/PasswordRepository.config";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "PASSWORD_UTILITY_CONFIG -> PASSWORD_UTILITY_CONFIG";
+
+    if [ ! -f "${PASSWORD_UTILITY_CONFIG}" ]
+    then
+        typeset -i RETURN_CODE=1;
+
+        writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "The utility configuration file does not exist. Cannot continue.";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "The utility configuration file does not exist. Cannot continue.";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${PASSWORD_UTILITY_CONFIG}" ] && unset -v PASSWORD_UTILITY_CONFIG;
+        [ ! -z "${UTILITY_CLASSPATH_HOME}" ] && unset -v UTILITY_CLASSPATH_HOME;
+        [ ! -z "${PASSWORD_UTILITY_JAR}" ] && unset -v PASSWORD_UTILITY_JAR;
+        [ ! -z "${PASSWORD_UTILITY_CLASS}" ] && unset -v PASSWORD_UTILITY_CLASS;
+        [ ! -z "${UTILITY_CLASSPATH}" ] && unset -v UTILITY_CLASSPATH;
+        [ ! -z "${SELECTED_OPTION}" ] && unset -v SELECTED_OPTION;
+        [ ! -z "${ENTRY_NAME}" ] && unset -v ENTRY_NAME;
+        [ ! -z "${ENTRY_USERNAME}" ] && unset -v ENTRY_USERNAME;
+        [ ! -z "${ENTRY_PASSWORD}" ] && unset -v ENTRY_PASSWORD;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    ## source the config
+    . "${PASSWORD_UTILITY_CONFIG}" ;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "UTILITY_CLASSPATH_HOME -> ${UTILITY_CLASSPATH_HOME}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "PASSWORD_UTILITY_JAR -> ${PASSWORD_UTILITY_JAR}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "PASSWORD_UTILITY_CLASS -> ${PASSWORD_UTILITY_CLASS}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "UTILITY_CLASSPATH -> ${UTILITY_CLASSPATH}";
+
+    typeset SELECTED_OPTION="${1}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "SELECTED_OPTION -> ${SELECTED_OPTION}";
+
+    case "${SELECTED_OPTION}" in
+        [Ee][Nn][Cc][Rr][Yy][Pp][Tt]|[Dd][Ee][Cc][Rr][Yy][Pp][Tt])
+            typeset ENTRY_NAME="--entry ${2}";
+            typeset ENTRY_USERNAME="--username ${3}";
+            [ ${#} -ge 4 -a "${4}" != "tcl" ] && typeset ENTRY_PASSWORD="--password ${4}";
+            [ ${#} -eq 5 ] && typeset STORE_ENTRY="--store";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ENTRY_NAME -> ${ENTRY_NAME}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ENTRY_USERNAME -> ${ENTRY_USERNAME}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ENTRY_PASSWORD -> ${ENTRY_PASSWORD}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "STORE_ENTRY -> ${STORE_ENTRY}";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RUN_COMMAND -> /usr/bin/env java -cp \".:${UTILITY_CLASSPATH}:${PASSWORD_UTILITY_JAR}\" \"${PASSWORD_UTILITY_CLASS}\" \"--${SELECTED_OPTION}\" \"${ENTRY_NAME}\" \"${ENTRY_USERNAME}\" \"${ENTRY_PASSWORD}\" \"${STORE_ENTRY}\"";
+
+            /usr/bin/env java -cp ".:${UTILITY_CLASSPATH}:${PASSWORD_UTILITY_JAR}" ${PASSWORD_UTILITY_CLASS} --${SELECTED_OPTION} ${ENTRY_NAME} ${ENTRY_USERNAME} ${ENTRY_PASSWORD} ${STORE_ENTRY} 2>${LOG_ROOT}/PasswordUtility.err | tee ${LOG_ROOT}/PasswordUtility.out;
+
+            typeset -i RET_CODE=${?};
+            ;;
+        *)
+            RETURN_CODE=3;
+
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Store a password in a secured file";
+            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ option ] [ entry ] [ username ] [ password ]
+                -> Option: one of 'encrypt' or 'decrypt'
+                    -> If option is 'encrypt':
+                        -> entry: The name of the entry to add
+                        -> username: The username to apply to the entry
+                        -> password: The password to apply to the entry
+                        -> store: Store the entry in the repository (optional)
+                    -> If option is 'decrypt':
+                        -> entry: The name of the entry to obtain
+                        -> username: The username applied to the entry";
+
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+            [ ! -z "${PASSWORD_UTILITY_CONFIG}" ] && unset -v PASSWORD_UTILITY_CONFIG;
+            [ ! -z "${UTILITY_CLASSPATH_HOME}" ] && unset -v UTILITY_CLASSPATH_HOME;
+            [ ! -z "${PASSWORD_UTILITY_JAR}" ] && unset -v PASSWORD_UTILITY_JAR;
+            [ ! -z "${PASSWORD_UTILITY_CLASS}" ] && unset -v PASSWORD_UTILITY_CLASS;
+            [ ! -z "${UTILITY_CLASSPATH}" ] && unset -v UTILITY_CLASSPATH;
+            [ ! -z "${SELECTED_OPTION}" ] && unset -v SELECTED_OPTION;
+            [ ! -z "${ENTRY_NAME}" ] && unset -v ENTRY_NAME;
+            [ ! -z "${ENTRY_USERNAME}" ] && unset -v ENTRY_USERNAME;
+            [ ! -z "${ENTRY_PASSWORD}" ] && unset -v ENTRY_PASSWORD;
+            [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+            [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+            [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+            [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+            [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+            [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+            return ${RETURN_CODE};
+            ;;
+    esac
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+
+    typeset -i RETURN_CODE=${RET_CODE};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${PASSWORD_UTILITY_CONFIG}" ] && unset -v PASSWORD_UTILITY_CONFIG;
+    [ ! -z "${UTILITY_CLASSPATH_HOME}" ] && unset -v UTILITY_CLASSPATH_HOME;
+    [ ! -z "${PASSWORD_UTILITY_JAR}" ] && unset -v PASSWORD_UTILITY_JAR;
+    [ ! -z "${PASSWORD_UTILITY_CLASS}" ] && unset -v PASSWORD_UTILITY_CLASS;
+    [ ! -z "${UTILITY_CLASSPATH}" ] && unset -v UTILITY_CLASSPATH;
+    [ ! -z "${SELECTED_OPTION}" ] && unset -v SELECTED_OPTION;
+    [ ! -z "${ENTRY_NAME}" ] && unset -v ENTRY_NAME;
+    [ ! -z "${ENTRY_USERNAME}" ] && unset -v ENTRY_USERNAME;
+    [ ! -z "${ENTRY_PASSWORD}" ] && unset -v ENTRY_PASSWORD;
+    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  generateKeyPair
+#   DESCRIPTION:  Generate an RSA public/private keypair via OpenSSL
+#    PARAMETERS:  Filename, key size
+#       RETURNS:  0 regardless of result.
+#==============================================================================
+function generateKeyPair
+{
+    typeset SCRIPT_NAME="F05-security";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Provided arguments: ${*}";
+
+    if [ ${#} -eq 0 ]
+    then
+        RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} - Generate an RSA public/private keypair via OpenSSL";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Usage: ${FUNCTION_NAME} [ file ] [ keysize ]
+            -> The filename in which to save the generated keypair
+            -> The size of the keypair to generate.
+                -> If not specified, 4096 is utilized.
+                -> If specified but less than 2048, 2048 is utilized.";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${KEYFILE}" ] && unset -v KEYFILE;
+        [ ! -z "${KEYSIZE}" ] && unset -v KEYSIZE;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    typeset KEYFILE="${1}";
+    [ ${#} -ne 2 ] && typeset -i KEYSIZE=4096 || typeset -i KEYSIZE=${2};
+    [ ${KEYSIZE} -lt 2048 ] && typeset -i KEYSIZE=2048;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "KEYFILE -> KEYFILE";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "KEYSIZE -> KEYSIZE";
+
+    ## generate the keypair
+    /usr/bin/env openssl genrsa -out ${KEYFILE}.pem ${KEYSIZE} -outform pem;
+    typeset -i RET_CODE=${?};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> RET_CODE";
+
+    if [ -z ${RET_CODE} ] || [ ${RET_CODE} -ne 0 ] || [ ! -s "${KEYFILE}.pem" ]
+    then
+        typeset -i RETURN_CODE=1;
+
+        writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to create a private keyfile. Cannot continue.";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to create a private keyfile. Cannot continue.";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${KEYFILE}" ] && unset -v KEYFILE;
+        [ ! -z "${KEYSIZE}" ] && unset -v KEYSIZE;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    ## fix permissions
+    chmod 600 ${KEYFILE}.pem;
+
+    /usr/bin/env openssl rsa -in ${KEYFILE}.pem -out ${KEYFILE}.pub -pubout -outform pem;
+    typeset -i RET_CODE=${?};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> RET_CODE";
+
+    if [ -z ${RET_CODE} ] || [ ${RET_CODE} -ne 0 ] || [ ! -s "${KEYFILE}.pub" ]
+    then
+        typeset -i RETURN_CODE=1;
+
+        writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to create a public keyfile from the given private key.";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Failed to create a public keyfile from the given private key.";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+        [ ! -z "${KEYFILE}" ] && unset -v KEYFILE;
+        [ ! -z "${KEYSIZE}" ] && unset -v KEYSIZE;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+
+    typeset -i RETURN_CODE=${RET_CODE};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} -> exit";
+
+    [ ! -z "${KEYFILE}" ] && unset -v KEYFILE;
+    [ ! -z "${KEYSIZE}" ] && unset -v KEYSIZE;
+    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${SCRIPT_NAME}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}

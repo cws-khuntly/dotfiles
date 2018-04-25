@@ -1,0 +1,29 @@
+#==============================================================================
+#
+#          FILE:  stty
+#         USAGE:  . stty
+#   DESCRIPTION:  Sets tty options
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+/usr/bin/env stty erase "^?" 2>/dev/null;
+/usr/bin/env stty kill "^B" 2>/dev/null;
+/usr/bin/env stty -ixon 2>/dev/null;
+/usr/bin/env stty echoe 2>/dev/null;
+/usr/bin/env stty istrip 2>/dev/null;
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;

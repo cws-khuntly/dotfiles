@@ -1,0 +1,150 @@
+#==============================================================================
+#
+#          FILE:  excludes
+#         USAGE:  n/a
+#   DESCRIPTION:  rsync exclusion list
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#==============================================================================
+
+
+## exclude files that are relevant only locally
+.android
+.ansible
+.atom
+.backups
+.bash_history
+.bazaar
+.bogofilter
+.bzr.log
+.cache
+.cardpeek*
+.ccache
+.conkyrc
+.cpan*
+.dbshell
+.dbus
+.dmrc
+.dropbox*
+.dsh
+.eclipse
+.eid
+.esd_auth
+.everpad
+.face*
+.gconf*
+.gem
+.gimp*
+.gitconfig
+.gksu.lock
+.gnome*
+.gnupg
+.grive*
+.gscriptor
+.gstreamer-0.10
+.gtk-bookmarks
+.gtkpod
+.gtkrc*
+.gvfs
+.history
+.ICEauthority
+.icons
+.idm
+.imsettings.log
+.ipython
+.java
+.jitsi
+.kde*
+.keychain
+.lastpass
+.lesshst
+.linphone*
+.local
+.log/*
+.m2
+.mail
+.mission-control
+.mono
+.mozilla
+.mundus
+.mysql_history
+.nevernote
+.nixnote
+.node-gyp
+.oracle_jre_usage
+.pki
+.pulse*
+.purple
+.recently-used
+.redhat
+.rnd
+.rpmmacros
+.serverauth*
+.shotwell
+.sjphone
+.smartcard_list.txt
+.smartgit
+.spice-vdagent
+.subversion
+.superkaramba
+.swt
+.themes
+.thumbnails
+.Trash
+.TrueCrypt
+.vagrant.d
+.vim
+.viminfo
+.VirtualBox
+.wine
+.wireshark
+.Xauthority
+.xchat2
+.xsel.log
+.xsession*
+.yubico
+.runscreen
+.skipSync
+
+## exclude .ssh
+.ssh
+
+## exclude password files
+.etc/salt.properties
+.etc/password.properties
+.etc/dropbox
+.etc/password.asc
+.etc/sudo*
+
+## exclude files that are like playtime type files i guess
+*.iso
+*.bak
+*.*~
+*.exe
+rpmbuild
+
+## exclude solid directories
+android-sdks
+Audiobooks
+Downloads
+Documents/kmhuntly@gmail.com
+Desktop
+Dropbox
+KeePass
+Music
+Mail
+Pictures
+Public
+Podcasts
+Templates
+Videos
+VMs
+VirtualBox*

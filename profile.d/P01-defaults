@@ -1,0 +1,61 @@
+#==============================================================================
+#
+#          FILE:  defaults
+#         USAGE:  . defaults
+#   DESCRIPTION:  Sets default commandline options and variables for various programs
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+[ -z "${LOGNAME}" ] && typeset -x LOGNAME="$(/usr/bin/env whoami)";
+
+typeset -x LANG="en_US.UTF-8";
+typeset -x LC_ALL="en_US.UTF-8";
+typeset -x TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n';
+typeset -x LESS="-QR";
+typeset -ix IGNOREEOF=1;
+typeset -x GPG_TTY=$(tty);
+typeset -x BLOCKSIZE="K";
+typeset -x PAGER="/usr/bin/env less";
+typeset -x EDITOR="/usr/bin/env vim";
+typeset -x FCEDIT="/usr/bin/env vim";
+typeset -x VISUAL="/usr/bin/env vim";
+typeset -x DISPLAY=":0.0";
+typeset -x _TRUE="true";
+typeset -x _FALSE="false";
+typeset -ix THREAD_TIMEOUT=10;
+typeset -x MODIFIED_IFS="^";
+typeset -x RANDOM_GENERATOR="/dev/random";
+typeset -x ENTROPY_FILE="${HOME}/.etc/entropy";
+typeset -ix ENTROPY_FILE_SIZE=16384;
+typeset -x SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket";
+
+case "$(uname)" in
+    [Cc][Yy][Gg]][Ww][Ii][Nn]*)
+        typeset -x PATHSEP=";";
+        typeset -x TERM="ansi";
+        ;;
+    [Ll][Ii]][Nn][Uu][Xx])
+        typeset -x TERM="linux";
+        typeset -x PATHSEP=":";
+        ;;
+    [Aa][Ii][Xx]|[Ss][Uu][Nn][Oo][Ss]|[Ss][Oo]][Ll][Aa][Rr][Ii][Ss])
+        typeset -x TERM="ansi";
+        typeset -x PATHSEP=":";
+        ;;
+esac
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;

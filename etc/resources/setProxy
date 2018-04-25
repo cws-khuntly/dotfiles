@@ -1,0 +1,19 @@
+#===  CONFIGURATION ===========================================================
+#          NAME:  E09-network
+#   DESCRIPTION:  Configuration file defining directories and platforms
+#    PARAMETERS:  N/A
+#       RETURNS:  N/A
+#==============================================================================
+
+## setProxy
+set.proxy.information = Set proxy
+unset.proxy.information = Unset proxy
+
+provide.username = Please provide your proxy username :
+provide.password = Please provide your proxy password :
+provide.proxy.host = Please provide your proxy host in the format hostname:port :
+
+confirm.empty.username = Are you sure you do not require a username ?
+confirm.empty.password = Are you sure you do not require a password ?
+
+no.host.provided = No proxy host was provided. Please provide a proxy host.

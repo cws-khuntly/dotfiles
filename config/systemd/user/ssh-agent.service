@@ -1,0 +1,35 @@
+#==============================================================================
+#
+#          FILE:  ssh-agnet.service
+#         USAGE:  systemctl --user enable ssh-agent.service;
+#                 systemctl --user start ssh-agent.service
+#   DESCRIPTION:  Loads the ssh-agent systemd service
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[Unit]
+Description=OpenSSH private key agent
+
+[Service]
+Type=forking
+Environment=SSH_AUTH_SOCK=%t/ssh-agent.socket
+ExecStart=/bin/ssh-agent -a ${SSH_AUTH_SOCK}
+ExecStartPost=/bin/systemctl --user set-environment SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
+ExecStartPost=/bin/bash -c /bin/ps x -o pid,comm | /bin/grep ssh-agent | /bin/cut -d ' ' -f 1 > %t/ssh-agent.pid
+ExecStop=/bin/ssh-add -D
+ExecStopPost=/bin/ssh-agent -k
+ExecStopPost=/bin/pkill ssh-agent
+ExecStopPost=/bin/rm ${SSH_AUTH_SOCK}
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,106 @@
+#==============================================================================
+#
+#          FILE:  config
+#         USAGE:  n/a
+#   DESCRIPTION:  ssh client configuration file
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+Host github.com
+    HostName                    = github.com
+    User                        = git
+    IdentitiesOnly              = yes
+    IdentityFile                = ~/.ssh/id_cws-khuntly
+
+Host caspersb-pfsense01-wan.network.caspersbox.com pfsense01.caspersbox.com pfsense01
+    HostName                    = caspersb-pfsense01-wan.network.caspersbox.com
+
+Host caspersb-cs2811-vlan30.network.caspersbox.com caspersb-cs2811-vlan30 caspersb-cs2811
+    HostName                    = caspersb-cs2811-vlan30.network.caspersbox.com
+    KexAlgorithms               = diffie-hellman-group1-sha1
+    Ciphers                     = aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc
+
+Host caspersb-cs3750-vlan30.network.caspersbox.com caspersb-cs3750-vlan30 caspersb-cs3750
+    HostName                    = caspersb-cs3750-vlan30.network.caspersbox.com
+    KexAlgorithms               = diffie-hellman-group1-sha1
+    Ciphers                     = aes256-cbc
+
+Host caspersb-vmware01.mgmt.caspersbox.com caspersb-vmware01 vmware01
+    HostName                    = caspersb-vmware01.mgmt.caspersbox.com
+
+Host caspersb-vmware02.mgmt.caspersbox.com caspersb-vmware02 vmware02
+    HostName                    = caspersb-vmware02.mgmt.caspersbox.com
+
+Host caspersb-haproxy01.caspersbox.com caspersb-haproxy01
+    HostName                    = caspersb-haproxy01.caspersbox.com
+
+Host caspersb-proxy01.caspersbox.com caspersb-proxy01 proxy01
+    HostName                    = caspersb-proxy01.caspersbox.com
+
+Host caspersb-proxy02.caspersbox.com caspersb-proxy02 proxy02
+    HostName                    = caspersb-proxy02.caspersbox.com
+
+Host caspersb-mdns01.caspersbox.com caspersb-mdns01 mdns01
+    HostName                    = caspersb-mdns01.caspersbox.com
+
+Host caspersb-mdns02.caspersbox.com caspersb-mdns02 mdns02
+    HostName                    = caspersb-mdns01.caspersbox.com
+
+Host caspersb-sdns01.caspersbox.com caspersb-sdns01 sdns01
+    HostName                    = caspersb-sdns01.caspersbox.com
+
+Host caspersb-sdns02.caspersbox.com caspersb-sdns02 sdns02
+    HostName                    = caspersb-sdns02.caspersbox.com
+
+Host caspersb-dhcp01.caspersbox.com caspersb-dhcp01 dhcp01
+    HostName                    = caspersb-dhcp01.caspersbox.com
+
+Host caspersb-websrv01.caspersbox.com caspersb-websrv01 web01
+    HostName                    = caspersb-websrv01.caspersbox.com
+
+Host caspersb-websrv02.caspersbox.com caspersb-websrv02 web02
+    HostName                    = caspersb-websrv02.caspersbox.com
+
+Host caspersb-certauth01.mgmt.caspersbox.com caspersb-certauth01 certauth ca
+    HostName                    = caspersb-certauth01.mgmt.caspersbox.com.
+
+Host caspersb-pxesrc01.mgmt.caspersbox.com caspersb-pxesrc01
+    HostName                    = caspersb-pxesrc01.mgmt.caspersbox.com.
+
+Host *
+    AddressFamily               = inet
+    CheckHostIP                 = yes
+    Compression                 = yes
+    ConnectionAttempts          = 2
+    ConnectTimeout              = 10
+    EscapeChar                  = ~
+    ForwardAgent                = no
+    ForwardX11                  = no
+    ForwardX11Trusted           = yes
+    GlobalKnownHostsFile        = /etc/ssh/known_hosts
+    UserKnownHostsFile          = ~/.ssh/known_hosts
+    HashKnownHosts              = yes
+    HostbasedAuthentication     = no
+    PubkeyAuthentication        = yes
+    LogLevel                    = INFO
+    NumberOfPasswordPrompts     = 3
+    #PreferredAuthentications    = publickey,keyboard-interactive,password
+    Protocol                    = 2
+    ServerAliveCountMax         = 30
+    ServerAliveInterval         = 60
+    StrictHostKeyChecking       = no
+    TCPKeepAlive                = yes
+    VerifyHostKeyDNS            = ask
+    XAuthLocation               = /usr/bin/xauth
+    User                        = kmhuntly
+    IdentityFile                = ~/.ssh/id_rsa

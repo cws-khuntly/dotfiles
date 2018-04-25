@@ -1,0 +1,13 @@
+##
+## ~/.config/systemd/user/profile-sync.timer
+##
+[Unit]
+Description=Synchronize profile
+
+[Timer]
+OnBootSec=5min
+OnCalendar=*-*-* *:00:00 ## run every hour
+Unit=profile-sync.target
+
+[Install]
+WantedBy=basic.target

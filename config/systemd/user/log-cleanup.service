@@ -1,0 +1,31 @@
+#==============================================================================
+#
+#          FILE:  log-cleanup.service
+#         USAGE:  n/a - called by timer
+#   DESCRIPTION:  Loads the gpg-agent systemd service
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[Unit]
+Description=Log rotation service
+IgnoreOnIsolate=true
+
+[Service]
+Type=simple
+ExecStartPre=source %u/.etc/logging.properties
+ExecStartPre=source %u/.lib/logging.sh
+ExecStart=rotateLogsBySize
+ExecStart=rotateLogsByTime
+
+[Install]
+WantedBy=default.target

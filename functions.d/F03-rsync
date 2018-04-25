@@ -1,0 +1,420 @@
+#=====  FUNCTION  ===============================================================
+#          NAME:  createBackup
+#   DESCRIPTION:  Creates a filesystem backup using rsync
+#    PARAMETERS:  hostname, username, source and destination
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function createBackup
+{
+    typeset DEBUG_NAME="F03-rsync#${FUNCNAME[0]}";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "Provided arguments: ${*}";
+
+    if [ ${#} -ne 4 ]
+    then
+        typeset RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${DEBUG_NAME}" "${0}" "${LINENO}" "${FUNCTION_NAME} - Perform an rsync backup of a filesystem";
+        writeLogEntry "STDERR" "${DEBUG_NAME}" "${0}" "${LINENO}" "Usage: ${FUNCTION_NAME} [ hostname ] [ username ] [ source ] [ destination ]
+                 -> The target host to obtain the source from
+                 -> The username to execute the rsync as.
+                 -> The source file/directory to obtain
+                 -> The target directory to store the source into";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} -> exit";
+
+        [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+        [ ! -z "${USERNAME}" ] && unset -v USERNAME;
+        [ ! -z "${SOURCE_FS}" ] && unset -v SOURCE_FS;
+        [ ! -z "${DEST_FS}" ] && unset -v DEST_FS;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${DEBUG_NAME}" ] && unset -v DEBUG_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    typeset TARGET_HOST="${1}";
+    typeset USERNAME="${2}";
+    typeset SOURCE_FS="${3}";
+    typeset DEST_FS="${4}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "USERNAME -> ${USERNAME}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "TARGET_HOST -> ${TARGET_HOST}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "SOURCE_FS -> ${SOURCE_FS}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "DEST_FS -> ${DEST_FS}";
+
+    ## create the exclude file if not exists - rsync will choke otherwise
+    [ ! -f ${HOME}/.etc/excludes ] && touch ${HOME}/.etc/excludes;
+
+    [ -z "${THREAD_TIMEOUT}" ] && TIMEOUT_VALUE=30 || TIMEOUT_VALUE=${THREAD_TIMEOUT};
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    validateServerAvailability "${TARGET_HOST}" 22;
+    typeset -i RET_CODE=${?};
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    typeset DEBUG_NAME="F03-rsync#${FUNCNAME[0]}";
+
+    if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+    then
+        RETURN_CODE=1;
+
+        writeLogEntry "ERROR" "${DEBUG_NAME}" "${0}" "${LINENO}" "Failed to set up ${TARGET_HOST} for user ${USERNAME}. Server does not appear to be available.";
+        writeLogEntry "STDERR" "${DEBUG_NAME}" "${0}" "${LINENO}" "Failed to configure new host.";
+
+        [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+        [ ! -z "${USERNAME}" ] && unset -v USERNAME;
+        [ ! -z "${SOURCE_FS}" ] && unset -v SOURCE_FS;
+        [ ! -z "${DEST_FS}" ] && unset -v DEST_FS;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${DEBUG_NAME}" ] && unset -v DEBUG_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    getSshKeys host "${TARGET_HOST}";
+    typeset -i RET_CODE=${?};
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    typeset DEBUG_NAME="F03-rsync#${FUNCNAME[0]}";
+
+    if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+    then
+        RETURN_CODE=1;
+
+        writeLogEntry "ERROR" "${DEBUG_NAME}" "${0}" "${LINENO}" "Unable to obtain SSH host keys for provided host.";
+        writeLogEntry "STDERR" "${DEBUG_NAME}" "${0}" "${LINENO}" "Failed to configure new host.";
+
+        [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+        [ ! -z "${USERNAME}" ] && unset -v USERNAME;
+        [ ! -z "${SOURCE_FS}" ] && unset -v SOURCE_FS;
+        [ ! -z "${DEST_FS}" ] && unset -v DEST_FS;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${DEBUG_NAME}" ] && unset -v DEBUG_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    ${HOME}/.lib/rsync.exp ${USERNAME} ${TARGET_HOST} local ${SOURCE_FS} ${DEST_FS};
+    typeset -i RET_CODE=${?};
+
+    typeset DEBUG_NAME="F03-rsync#${FUNCNAME[0]}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "RET_CODE -> ${RET_CODE}";
+
+    if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+    then
+        RETURN_CODE=1;
+
+        writeLogEntry "ERROR" "${DEBUG_NAME}" "${0}" "${LINENO}" "rsync operation has failed.";
+        writeLogEntry "STDERR" "${DEBUG_NAME}" "${0}" "${LINENO}" "Failed to configure new host.";
+
+        [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+        [ ! -z "${USERNAME}" ] && unset -v USERNAME;
+        [ ! -z "${SOURCE_FS}" ] && unset -v SOURCE_FS;
+        [ ! -z "${DEST_FS}" ] && unset -v DEST_FS;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${DEBUG_NAME}" ] && unset -v DEBUG_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    RETURN_CODE=${RET_CODE};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} -> exit";
+
+    [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+    [ ! -z "${USERNAME}" ] && unset -v USERNAME;
+    [ ! -z "${SOURCE_FS}" ] && unset -v SOURCE_FS;
+    [ ! -z "${DEST_FS}" ] && unset -v DEST_FS;
+    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${DEBUG_NAME}" ] && unset -v DEBUG_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  restoreBackup
+#   DESCRIPTION:  Restores a backup via rsync
+#    PARAMETERS:  hostname, username, source and target
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function restoreBackup
+{
+    typeset DEBUG_NAME="F03-rsync#${FUNCNAME[0]}";
+    typeset FUNCTION_NAME="${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} START: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(/usr/bin/env date +"%s");
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "Provided arguments: ${*}";
+
+    if [ ${#} -ne 4 ]
+    then
+        typeset RETURN_CODE=3;
+
+        writeLogEntry "STDERR" "${DEBUG_NAME}" "${0}" "${LINENO}" "${FUNCTION_NAME} - Perform an rsync restore of a filesystem";
+        writeLogEntry "STDERR" "${DEBUG_NAME}" "${0}" "${LINENO}" "Usage: ${FUNCTION_NAME} [ hostname ] [ username ] [ source ] [ destination ]
+                 -> The target host to obtain the source from
+                 -> The username to execute the rsync as.
+                 -> The source file/directory to obtain
+                 -> The target directory to store the source into";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} -> exit";
+
+        [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+        [ ! -z "${USERNAME}" ] && unset -v USERNAME;
+        [ ! -z "${SOURCE_FS}" ] && unset -v SOURCE_FS;
+        [ ! -z "${DEST_FS}" ] && unset -v DEST_FS;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${DEBUG_NAME}" ] && unset -v DEBUG_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    typeset TARGET_HOST="${1}";
+    typeset USERNAME="${2}";
+    typeset SOURCE_FS="${3}";
+    typeset DEST_FS="${4}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "USERNAME -> ${USERNAME}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "TARGET_HOST -> ${TARGET_HOST}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "SOURCE_FS -> ${SOURCE_FS}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "DEST_FS -> ${DEST_FS}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "AUTH_FILE -> ${AUTH_FILE}";
+
+    ## create the exclude file if not exists - rsync will choke otherwise
+    [ ! -f ${HOME}/.etc/excludes ] && touch ${HOME}/.etc/excludes;
+    [ -d ${DEST_FS} ] && mkdir ${DEST_FS};
+    [ -z "${THREAD_TIMEOUT}" ] && TIMEOUT_VALUE=30 || TIMEOUT_VALUE=${THREAD_TIMEOUT};
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    validateServerAvailability "${TARGET_HOST}" 22;
+    typeset -i RET_CODE=${?};
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    typeset DEBUG_NAME="F03-rsync#${FUNCNAME[0]}";
+
+    if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+    then
+        RETURN_CODE=1;
+
+        writeLogEntry "ERROR" "${DEBUG_NAME}" "${0}" "${LINENO}" "Target host does not appear to be available.";
+        writeLogEntry "STDERR" "${DEBUG_NAME}" "${0}" "${LINENO}" "Failed to execute the requested command. Cannot continue.";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} -> exit";
+
+        [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+        [ ! -z "${USERNAME}" ] && unset -v USERNAME;
+        [ ! -z "${SOURCE_FS}" ] && unset -v SOURCE_FS;
+        [ ! -z "${DEST_FS}" ] && unset -v DEST_FS;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${DEBUG_NAME}" ] && unset -v DEBUG_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    getSshKeys host "${TARGET_HOST}";
+    typeset -i RET_CODE=${?};
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    typeset DEBUG_NAME="F03-rsync#${FUNCNAME[0]}";
+
+    if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+    then
+        RETURN_CODE=1;
+
+        writeLogEntry "ERROR" "${DEBUG_NAME}" "${0}" "${LINENO}" "Unable to obtain SSH host keys for provided host.";
+        writeLogEntry "STDERR" "${DEBUG_NAME}" "${0}" "${LINENO}" "Failed to execute the requested command. Cannot continue.";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} -> exit";
+
+        [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+        [ ! -z "${USERNAME}" ] && unset -v USERNAME;
+        [ ! -z "${SOURCE_FS}" ] && unset -v SOURCE_FS;
+        [ ! -z "${DEST_FS}" ] && unset -v DEST_FS;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${DEBUG_NAME}" ] && unset -v DEBUG_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    ${HOME}/.lib/rsync.exp ${USERNAME} ${TARGET_HOST} remote ${SOURCE_FS} ${DEST_FS};
+    typeset -i RET_CODE=${?};
+
+    typeset DEBUG_NAME="F03-rsync#${FUNCNAME[0]}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "RET_CODE -> ${RET_CODE}";
+
+    if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+    then
+        RETURN_CODE=1;
+
+        writeLogEntry "ERROR" "${DEBUG_NAME}" "${0}" "${LINENO}" "rsync operation has failed.";
+        writeLogEntry "STDERR" "${DEBUG_NAME}" "${0}" "${LINENO}" "Failed to execute the requested command. Cannot continue.";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} -> exit";
+
+        [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+        [ ! -z "${USERNAME}" ] && unset -v USERNAME;
+        [ ! -z "${SOURCE_FS}" ] && unset -v SOURCE_FS;
+        [ ! -z "${DEST_FS}" ] && unset -v DEST_FS;
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${DEBUG_NAME}" ] && unset -v DEBUG_NAME;
+
+        return ${RETURN_CODE};
+    fi
+
+    RETURN_CODE=${RET_CODE};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} -> exit";
+
+    [ ! -z "${TARGET_HOST}" ] && unset -v TARGET_HOST;
+    [ ! -z "${USERNAME}" ] && unset -v USERNAME;
+    [ ! -z "${SOURCE_FS}" ] && unset -v SOURCE_FS;
+    [ ! -z "${DEST_FS}" ] && unset -v DEST_FS;
+    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${DEBUG_NAME}" "${0}" "${LINENO}" "${DEBUG_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${DEBUG_NAME}" ] && unset -v DEBUG_NAME;
+
+    return ${RETURN_CODE};
+}
+

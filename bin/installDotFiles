@@ -1,0 +1,395 @@
+#!/usr/bin/env bash
+#==============================================================================
+#
+#          FILE:  profile
+#         USAGE:  . ~/profile
+#   DESCRIPTION:
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  CaspersBox Web Services
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#==============================================================================
+
+trap 'set +v; set +x' INT TERM EXIT;
+
+typeset -x PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin";
+
+[ -r "${HOME}/.etc/logging.properties" -a -s "${HOME}/.etc/logging.properties" ] && . "${HOME}/.etc/logging.properties";
+[ -r "${HOME}/.lib/logger.sh" -a ! -z "${LOGGING_LOADED}" -a "${LOGGING_LOADED}" == "${_TRUE}" ] && . "${HOME}/.lib/logger.sh";
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+## source necessary functions
+[ -r "${HOME}/.functions.d/F06-network" ] && . "${HOME}/.functions.d/F06-network";
+
+## Application constants
+typeset CNAME="$(/usr/bin/env basename "${0}")";
+typeset SCRIPT_ABSOLUTE_PATH="$(cd "${0%/*}" 2>/dev/null; echo "${PWD}/${0##*/}")";
+typeset SCRIPT_ROOT="$(/usr/bin/env dirname "${SCRIPT_ABSOLUTE_PATH}")";
+typeset METHOD_NAME="${CNAME}#startup";
+typeset -i ERROR_COUNT=0;
+typeset CONFIG="${HOME}/.dotfiles/etc/install.conf"
+typeset CURR_IFS"=${IFS}";
+typeset MODIFIED_IFS"=${MODIFIED_IFS:=$'\n'}";
+
+[ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${CNAME}" "${LINENO}" "CNAME -> ${CNAME}";
+[ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${CNAME}" "${LINENO}" "SCRIPT_ABSOLUTE_PATH -> ${SCRIPT_ABSOLUTE_PATH}";
+[ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${CNAME}" "${LINENO}" "SCRIPT_ROOT -> ${SCRIPT_ROOT}";
+[ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${CNAME}" "${LINENO}" "METHOD_NAME -> ${METHOD_NAME}";
+[ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${CNAME}" "${LINENO}" "ERROR_COUNT -> ${ERROR_COUNT}";
+[ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${CNAME}" "${LINENO}" "CONFIG -> ${CONFIG}";
+[ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${CNAME}" "${LINENO}" "IFS -> ${IFS}";
+[ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${CNAME}" "${LINENO}" "MODIFIED_IFS -> ${MODIFIED_IFS}";
+[ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${CNAME}" "${LINENO}" "${CNAME} starting up.. Process ID ${$}";
+[ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${CNAME}" "${LINENO}" "${METHOD_NAME} -> enter";
+[ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${CNAME}" "${LINENO}" "Provided arguments: ${*}";
+
+#=====  FUNCTION  =============================================================
+#          NAME:  cleanAndDeployFiles
+#   DESCRIPTION:  ssh's to a target host and removes the existing dotfiles
+#                 directory and copies the new one
+#    PARAMETERS:  None
+#       RETURNS:  0 if success, non-zero otherwise
+#==============================================================================
+function cleanAndDeployFiles
+{
+    set +o noclobber;
+    typeset METHOD_NAME="${0}#${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} START: $(date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(date +"%s");
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Provided arguments: ${*}";
+
+    if [ ${#} -eq 0 ]
+    then
+        typeset -i RETURN_CODE=3;
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+
+        writeLogEntry "STDERR" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} - Clean and transfer dotfiles";
+        writeLogEntry "STDERR" "${METHOD_NAME}" "${0}" "${LINENO}" "Usage: ${METHOD_NAME} [ host ]
+                -> The host to connect to";
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} TOTAL RUNTIME: $(( RUNTIME / 60 )) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60 )) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} END: $(date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} -> exit";
+
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${METHOD_NAME}" ] && unset -v METHOD_NAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        return ${RETURN_CODE};
+    fi
+
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    validateServerAvailability ${1};
+    typeset -i RET_CODE=${?};
+
+    typeset METHOD_NAME="${0}#${FUNCNAME[0]}";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "RET_CODE -> ${RET_CODE}";
+
+    if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+    then
+        typeset RETURN_CODE=1;
+
+        writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "${1} does not appear to exist in DNS. Unable to determine availability.";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "${1} does not appear to exist in DNS. Unable to determine availability.";
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "${METHOD_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "${METHOD_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} -> exit";
+
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        return ${RETURN_CODE};
+    fi
+
+    ## create a copy of the existing dotfiles directory from THIS host and send it to the target host
+    cd ${HOME}/.dotfiles; /usr/bin/env tar cf ${HOME}/dotfiles.tar *; ## create the archive
+    /usr/bin/env ssh -ql ${LOGNAME} ${1} "typeset -x PATH=${PATH}:/bin:sbin:/usr/bin:/usr/sbin; [ -f ${HOME}/dotfiles.tar ] && /usr/bin/env rm -f ${HOME}/dotfiles.tar"; ## remove it if it exists
+    /usr/bin/env scp -q ${HOME}/dotfiles.tar ${LOGNAME}@${1}:${HOME}/dotfiles.tar; ## send the new one
+    typeset -i RET_CODE=${?};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "RET_CODE -> ${RET_CODE}";
+
+    if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+    then
+        typeset RETURN_CODE=1;
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+
+        writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "Failed to create or copy dotfiles to remote host.";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "Failed to create or copy dotfiles to remote host.";
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "${METHOD_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "${METHOD_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} -> exit";
+
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        return ${RETURN_CODE};
+    fi
+
+    ## ok, files should be out there. lets go
+    /usr/bin/env ssh -ql ${LOGNAME} ${1} "typeset -x PATH=${PATH}:/bin:sbin:/usr/bin:/usr/sbin; /usr/bin/env rm -rf ${HOME}/.dotfiles; /usr/bin/env mkdir ${HOME}/.dotfiles; cd ${HOME}/.dotfiles; \
+        /usr/bin/env tar xf ${HOME}/dotfiles.tar; ${HOME}/.dotfiles/bin/installDotFiles install;";
+    typeset -i RET_CODE=${?};
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "RET_CODE -> ${RET_CODE}";
+
+    if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+    then
+        typeset RETURN_CODE=1;
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "RETURN_CODE -> ${RETURN_CODE}";
+
+        writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "Failed to clean/create dotfiles";
+        writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "Failed to clean/create dotfiles";
+
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "${METHOD_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+        [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${SCRIPT_NAME}" "${LINENO}" "${METHOD_NAME}" "${METHOD_NAME} END: $(/usr/bin/env date +"${TIMESTAMP_OPTS}")";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} -> exit";
+
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+        [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+        [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+        [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+        return ${RETURN_CODE};
+    fi
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} TOTAL RUNTIME: $(( RUNTIME / 60 )) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60 )) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} END: $(date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} -> exit";
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    [ ! -z "${METHOD_NAME}" ] && unset -v METHOD_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    return ${RETURN_CODE};
+}
+
+#=====  FUNCTION  =============================================================
+#          NAME:  installFiles
+#   DESCRIPTION:  Re-loads existing dotfiles for use
+#    PARAMETERS:  None
+#       RETURNS:  0 if success, non-zero otherwise
+#==============================================================================
+function installFiles
+{
+    set +o noclobber;
+    typeset METHOD_NAME="${0}#${FUNCNAME[0]}";
+    typeset -i RETURN_CODE=0;
+    typeset -i ERROR_COUNT=0;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} START: $(date +"${TIMESTAMP_OPTS}")";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i START_EPOCH=$(date +"%s");
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} -> enter";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Provided arguments: ${*}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Setting permissions.";
+
+    ## change some permissions
+    /usr/bin/env find ${HOME}/.dotfiles -type d -exec /usr/bin/env chmod 755 {} \; ;
+    /usr/bin/env find ${HOME}/.dotfiles -type f -exec /usr/bin/env chmod 644 {} \; ;
+    /usr/bin/env chmod 755 ${HOME}/.dotfiles/bin; ## 755 on all files in bin
+    /usr/bin/env chmod 700 ${HOME}/.ssh; ## ssh wants 700
+    /usr/bin/env chmod 600 ${HOME}/.dotfiles/m2/settings.xml ${HOME}/.dotfiles/etc/ldaprc ${HOME}/.dotfiles/etc/curlrc ${HOME}/.dotfiles/etc/netrc ${HOME}/.dotfiles/etc/wgetrc; ## 600 on all security related files
+    /usr/bin/env chmod 600 ${HOME}/.dotfiles/etc/SecurityService/config/ServiceConfig.xml ${HOME}/.dotfiles/etc/eSolutionsCore/config/ServiceConfig.xml; ## 600 on all security related files
+    /usr/bin/env chmod 600 ${HOME}/.dotfiles/config/subversion/servers ${HOME}/.dotfiles/config/subversion/config; ## 600 on all security related files
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Generating and creating files.";
+
+    ## change the IFS
+    typeset -x IFS="${MODIFIED_IFS}";
+
+    ## clean up home directory first
+    for ENTRY in $(<${CONFIG})
+    do
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "ENTRY -> ${ENTRY}";
+
+        [[ "${ENTRY}" =~ ^\# ]] && continue;
+
+        typeset ENTRY_COMMAND="$(/usr/bin/env cut -d "|" -f 1 <<< "${ENTRY}")";
+        typeset ENTRY_SOURCE="$(/usr/bin/env cut -d "|" -f 2 <<< "${ENTRY}")";
+        typeset ENTRY_TARGET="$(/usr/bin/env cut -d "|" -f 3 <<< "${ENTRY}")";
+
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "ENTRY_COMMAND -> ${ENTRY_COMMAND}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "ENTRY_SOURCE -> ${ENTRY_SOURCE}";
+        [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "ENTRY_TARGET -> ${ENTRY_TARGET}";
+
+        case "${ENTRY_COMMAND}" in
+            "mkdir")
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Removing directory ${ENTRY_SOURCE}";
+
+                [ -d $(eval echo "${ENTRY_SOURCE}") ] && /usr/bin/env rm -rf $(eval echo "${ENTRY_SOURCE}");
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Creating directory ${ENTRY_SOURCE}";
+
+                /usr/bin/env mkdir -p $(eval echo "${ENTRY_SOURCE}");
+                typeset RET_CODE=${?};
+
+                if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+                then
+                    writeLogEntry "ERROR" "${METHOD_NAME}" "${0}" "${LINENO}" "Failed to create directory ${ENTRY_SOURCE}";
+
+                    (( ERROR_COUNT += 1 ));
+
+                    continue;
+                fi
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Directory ${ENTRY_SOURCE} created";
+                ;;
+            "ln")
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Removing symbolic link ${ENTRY_TARGET}";
+
+                [ -L $(eval echo "${ENTRY_TARGET}") ] && /usr/bin/env unlink $(eval echo "${ENTRY_TARGET}");
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Creating symbolic link ${ENTRY_SOURCE} -> ${ENTRY_TARGET}";
+
+                /usr/bin/env ln -s $(eval echo "${ENTRY_SOURCE}") $(eval echo "${ENTRY_TARGET}");
+                typeset RET_CODE=${?};
+
+                if [ -z "${RET_CODE}" -o ${RET_CODE} -ne 0 ]
+                then
+                    writeLogEntry "ERROR" "${METHOD_NAME}" "${0}" "${LINENO}" "Failed to link ${ENTRY_SOURCE} to ${ENTRY_TARGET}";
+
+                    (( ERROR_COUNT += 1 ));
+
+                    continue;
+                fi
+
+                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Symbolic link ${ENTRY_SOURCE} -> ${ENTRY_TARGET} created.";
+                ;;
+            *)
+                writeLogEntry "INFO" "${METHOD_NAME}" "${0}" "${LINENO}" "Skipping entry ${ENTRY_COMMAND}.";
+
+                continue;
+                ;;
+        esac
+
+        [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+        [ ! -z "${ENTRY_COMMAND}" ] && unset -v ENTRY_COMMAND;
+        [ ! -z "${ENTRY_SOURCE}" ] && unset -v ENTRY_SOURCE;
+        [ ! -z "${ENTRY_TARGET}" ] && unset -v ENTRY_TARGET;
+        [ ! -z "${ENTRY}" ] && unset -v ENTRY;
+    done
+
+    ## restore the original ifs
+    typeset -x IFS="${IFS}";
+
+    ## ssh keys (if they don't already exist AND this host requires them)
+    [ ! -f ${HOME}/.ssh/id_rsa -a -f ${HOME}/.ssh/known_hosts ] && /usr/bin/env ssh-keygen -t rsa -b 4096 -N "" -C "" -f ${HOME}/.ssh/id_rsa;
+    [ ! -f ${HOME}/.ssh/id_dsa -a -f ${HOME}/.ssh/known_hosts ] && /usr/bin/env ssh-keygen -t dsa -b 1024 -N "" -C "" -f ${HOME}/.ssh/id_dsa;
+    [ ! -f ${HOME}/.ssh/id_ecdsa -a -f ${HOME}/.ssh/known_hosts ] && /usr/bin/env ssh-keygen -t ecdsa -b 521 -N "" -C "" -f ${HOME}/.ssh/id_ecdsa;
+
+    ## remove tarfile
+    [ -f "${HOME}/dotfiles.tar" ] && /usr/bin/env rm -f "${HOME}/dotfiles.tar";
+
+    typeset -i RETURN_CODE=${ERROR_COUNT};
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} TOTAL RUNTIME: $(( RUNTIME / 60 )) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60 )) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} END: $(date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} -> exit";
+
+    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+    [ ! -z "${FUNCTION_NAME}" ] && unset -v FUNCTION_NAME;
+    [ ! -z "${SCRIPT_NAME}" ] && unset -v SCRIPT_NAME;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    return ${RETURN_CODE};
+}
+
+if [ ${#} -eq 0 ]
+then
+    typeset -i RETURN_CODE=3;
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "RETURN_CODE -> ${RETURN_CODE}";
+
+    writeLogEntry "STDERR" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} - Install dotfiles to a remote host";
+    writeLogEntry "STDERR" "${METHOD_NAME}" "${0}" "${LINENO}" "Usage: ${METHOD_NAME} [ host ]
+            -> The host to connect to";
+
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i END_EPOCH=$(/usr/bin/env date +"%s");
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && typeset -i RUNTIME=$(( START_EPOCH - END_EPOCH ));
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} TOTAL RUNTIME: $(( RUNTIME / 60 )) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60 )) SECONDS";
+    [ ! -z "${ENABLE_PERFORMANCE}" -a "${ENABLE_PERFORMANCE}" = "${_TRUE}" ] && writeLogEntry "PERFORMANCE" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} END: $(date +"${TIMESTAMP_OPTS}")";
+
+    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "${METHOD_NAME} -> exit";
+
+    [ ! -z "${RET_CODE}" ] && unset -v RET_CODE;
+    [ ! -z "${METHOD_NAME}" ] && unset -v METHOD_NAME;
+
+    [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+    [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -x || set +x;
+
+    exit ${RETURN_CODE};
+fi
+
+case "${1}" in
+    "install") installFiles; [ -f "${HOME}/dotfiles.tar" ] && /usr/bin/env rm -f "${HOME}/dotfiles.tar"; exit ${?}; ;;
+    *) cleanAndDeployFiles ${1}; [ -f "${HOME}/dotfiles.tar" ] && /usr/bin/env rm -f "${HOME}/dotfiles.tar"; exit ${?}; ;;
+esac
+

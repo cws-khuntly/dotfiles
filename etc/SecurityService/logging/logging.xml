@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="audit-logger" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="${user.home}/.log/SecurityService-audit.log" />
+        <param name="DatePattern" value=".yyyy-MM-dd" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[Time: %d{dd MMM yyyy HH:mm:ss,SSS}][Thread:%t][Log: %c][Level: %-5p] - [File: %F:%L] - %m %n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelMatchFilter">
+            <param name="LevelToMatch" value="INFO" />
+            <param name="AcceptOnMatch" value="true" />
+        </filter>
+        <filter class="org.apache.log4j.varia.DenyAllFilter" />
+    </appender>
+    <appender name="error-logger" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="${user.home}/.log/SecurityService-error.log" />
+        <param name="DatePattern" value=".yyyy-MM-dd" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[Time: %d{dd MMM yyyy HH:mm:ss,SSS}][Thread:%t][Log: %c][Level: %-5p] - [File: %F:%L] - %m %n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelMatchFilter">
+            <param name="LevelToMatch" value="ERROR" />
+            <param name="AcceptOnMatch" value="true" />
+        </filter>
+        <filter class="org.apache.log4j.varia.DenyAllFilter" />
+    </appender>
+    <appender name="debug-logger" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="${user.home}/.log/SecurityService-debug.log" />
+        <param name="DatePattern" value=".yyyy-MM-dd" />
+        <param name="Threshold" value="DEBUG" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[Time: %d{dd MMM yyyy HH:mm:ss,SSS}][Thread:%t][Log: %c][Level: %-5p] - [File: %F:%L] - %m %n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelMatchFilter">
+            <param name="LevelToMatch" value="DEBUG" />
+            <param name="AcceptOnMatch" value="true" />
+        </filter>
+        <filter class="org.apache.log4j.varia.DenyAllFilter" />
+    </appender>
+
+    <category name="AUDIT_RECORDER.com.cws.esolutions.security" additivity="false">
+        <priority value="INFO" />
+        <appender-ref ref="audit-logger" />
+    </category>
+    <category name="ERROR_RECORDER.com.cws.esolutions.security" additivity="false">
+        <priority value="ERROR" />
+        <appender-ref ref="error-logger" />
+    </category>
+    <category name="SECURITY_DEBUGGER" additivity="false">
+        <priority value="DEBUG" />
+        <appender-ref ref="debug-logger" />
+    </category>
+</log4j:configuration>

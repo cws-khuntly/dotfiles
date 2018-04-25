@@ -1,0 +1,30 @@
+#==============================================================================
+#
+#          FILE:  reflector.timer
+#         USAGE:  systemctl --user enable reflector.timer;
+#                 systemctl --user start reflector.timer
+#   DESCRIPTION:  Loads the reflector systemd timer
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[Unit]
+Description=Run reflector weekly
+
+[Timer]
+OnBootSec=10min
+OnCalendar=daily
+Persistent=true
+Unit=reflector.target
+
+[Install]
+WantedBy=timers.target

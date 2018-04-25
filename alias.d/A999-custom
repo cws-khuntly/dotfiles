@@ -1,0 +1,91 @@
+#==============================================================================
+#
+#          FILE:  custom
+#         USAGE:  . custom
+#   DESCRIPTION:  Customizations
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+## customs
+alias lt='/usr/bin/env ls -ltrhpF --color=auto';
+alias la='/usr/bin/env ls -ltrahpF --color=auto';
+alias ll='/usr/bin/env ls -lhpF --color=auto';
+alias ll.='/usr/bin/env ls -ltrdhpF .* --color=auto';
+alias li='/usr/bin/env ls -iltrhpF --color=auto';
+alias li.='/usr/bin/env ls -iltrahpF --color=auto';
+alias ld='/usr/bin/env ls -ldhpF --color=auto';
+alias kshn='/usr/bin/env ksh -n';
+alias kshnv='/usr/bin/env ksh -n -v';
+alias sizeof='/usr/bin/env du -sk';
+alias mktd='pushd $(mktemp)';
+alias listd='for inode in *; do [ -d ${inode} ] && echo "${inode}"; done';
+alias stamp='/usr/bin/env date "+%Y%m%d%a%H%M"';
+alias da='/usr/bin/env date "+%Y-%m-%d %A    %T %Z"';
+alias zero='/usr/bin/env cat /dev/null >|';
+alias netbackup="${NB_HOME}/bp";
+alias ssh='/usr/bin/env ssh -qt4AC'
+alias removeKey='/usr/bin/env ssh-keygen -R';
+alias win2unix="/usr/bin/env sed 's/$/\r/'";
+alias fixtty='/usr/bin/env stty sane';
+alias time='/usr/bin/time --format="%C took %e seconds"';
+alias pdftotext='/usr/bin/env pdftotext -enc UTF-8 -layout';
+alias ff='/usr/bin/env find . -type f';
+alias fd='/usr/bin/env find . -type d';
+alias clearScroll='/usr/bin/env printf "\033c"';
+alias cpuTimeSlice="/usr/bin/env sar -p | /usr/bin/env tail -11 | /usr/bin/env head -10 | /usr/bin/env awk '{print $NF}' | /usr/bin/env awk '{total += $1; count++} END {print total / count}'";
+alias icanhazip='/usr/bin/env dig +short @resolver1.opensdns.com myip.opendns.com';
+# dig TXT +short o-o.myaddr.l.google.com @ns1.google.com | sed 's/"//g'
+alias sshd='/usr/bin/env ssh -F ~/.ssh/config.dev';
+alias scpd='/usr/bin/env scp -F ~/.ssh/config.dev';
+alias fortune='/usr/bin/env fortune -a -e -o';
+alias bofh='/usr/bin/env fortune -a -e -o bofh-excuses';
+alias ipv4sort='/usr/bin/env sort -t . -k 1,1 -k 2,2 -k 3,3 -k 4,4';
+
+## script tracing
+alias debug='typeset -x ENABLE_DEBUG="true"';
+alias verbose='typeset -x ENABLE_VERBOSE="true"';
+alias trace='typeset -x ENABLE_TRACE="true"';
+alias perf='typeset -x ENABLE_PERFORMANCE="true"';
+alias nodebug='typeset -x ENABLE_DEBUG="false"';
+alias noverbose='typeset -x ENABLE_VERBOSE="false"';
+alias notrace='typeset -x ENABLE_TRACE="false"';
+alias noperf='typeset -x ENABLE_PERFORMANCE="false"';
+
+## expect
+alias scp.exp="${HOME}/.lib/scp.exp";
+alias ssh.exp="${HOME}/.lib/ssh.exp";
+alias ssh-copy-id.exp="${HOME}/.lib/sshCopyIdentity.exp";
+alias sudo.exp="${HOME}/.lib/sudo.exp";
+alias rsync.exp="${HOME}/.lib/rsync.exp";
+alias gpg.exp="${HOME}/.lib/gpg.exp";
+alias keychain.exp="${HOME}/.lib/keychain.exp";
+alias telnet.exp="${HOME}/.lib/telnet.exp";
+
+case "$(echo "${SHELL}" | awk -F "/" '{print $NF}')" in
+    [Kk][Ss][Hh])
+        alias reload='. ${HOME}/.kshrc';
+        alias shell='selectProfile';
+        alias listFunctions="typeset -f | grep function | awk '{print \$NF}'";
+        ;;
+    [Bb][Aa][Ss][Hh])
+        alias reload='. ${HOME}/.bash_profile';
+        alias shell='selectProfile';
+        alias listFunctions="compgen -A function";
+        ;;
+esac
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;

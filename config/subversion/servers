@@ -1,0 +1,26 @@
+### This file specifies server-specific parameters,
+### including HTTP proxy information, HTTP timeout settings,
+### and authentication settings.
+###
+### The currently defined server options are:
+
+
+[groups]
+# group1 = *.collab.net
+
+[global]
+#http-proxy-host =
+#http-proxy-port =
+#http-proxy-username =
+#http-proxy-password =
+#http-proxy-exceptions =
+http-timeout = 10
+http-compression = yes
+http-chunked-requests = yes
+http-bulk-updates = yes
+store-passwords = no
+store-plaintext-passwords = no
+store-ssl-client-cert-pp = no
+store-ssl-client-cert-pp-plaintext = no
+store-auth-creds = no
+username = khuntly

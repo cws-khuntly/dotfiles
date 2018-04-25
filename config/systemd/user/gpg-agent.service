@@ -1,0 +1,31 @@
+#==============================================================================
+#
+#          FILE:  gpg-agent.service
+#         USAGE:  systemctl --user enable gpg-agent.service;
+#                 systemctl --user start gpg-agent.service
+#   DESCRIPTION:  Loads the gpg-agent systemd service
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[Unit]
+Description=GnuPG private key agent
+IgnoreOnIsolate=true
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/gpg-agent --homedir %u/.gnupg --use-standard-socket --daemon
+ExecStop=/usr/bin/pkill gpg-agent
+Restart=on-abort
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,34 @@
+#==============================================================================
+#
+#          FILE:  sudo
+#         USAGE:  . sudo
+#   DESCRIPTION:  Useful sudo aliases
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+## sudo aliases
+alias wasadm='/usr/bin/env sudo su - wasadm';
+alias appadm='/usr/bin/env sudo su - appadm';
+alias ihsadm='/usr/bin/env sudo su - ihsadm';
+alias webadm='/usr/bin/env sudo su - webadm';
+alias dnsadm='/usr/bin/env sudo su - dnsadm';
+alias zimbra='/usr/bin/env sudo su - zimbra';
+alias sysadmin='/usr/bin/env sudo su - sysadmin';
+alias ecuser='/usr/bin/env sudo su - ecuser';
+alias root='/usr/bin/env sudo su -';
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <servers>
+        <server>
+            <id>internal</id>
+            <username>username</username>
+            <password>password</password>
+        </server>
+        <server>
+            <id>snapshots</id>
+            <username>username</username>
+            <password>password</password>
+        </server>
+        <server>
+            <id>ext-libs</id>
+            <username>username</username>
+            <password>password</password>
+        </server>
+    </servers>
+
+    <proxies>
+        <proxy>
+            <id>cws-proxy</id>
+            <active>true</active>
+            <protocol>http</protocol>
+            <username>the-username</username>
+            <password>the-password</password>
+            <host>proxy.caspersbox.corp</host>
+            <port>3128</port>
+            <nonProxyHosts>localhost|127.0.0.1|*.caspersbox.corp</nonProxyHosts>
+        </proxy>
+    </proxies>
+
+    <profiles>
+        <profile>
+            <id>nexus</id>
+            <properties>
+                <gpg.passphrase>passphrase</gpg.passphrase>
+                <sdk.path>/opt/google/android-sdk</sdk.path>
+                <android.sdk.path>/opt/google/android-sdk</android.sdk.path>
+            </properties>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>global</activeProfile>
+        <activeProfile>nexus</activeProfile>
+        <activeProfile>cws-build</activeProfile>
+    </activeProfiles>
+</settings>

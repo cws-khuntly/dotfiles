@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily Backups
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=1h
+Persistent=true
+Unit=backup.target
+
+[Install]
+WantedBy=default.target

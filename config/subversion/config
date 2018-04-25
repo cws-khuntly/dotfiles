@@ -1,0 +1,84 @@
+### This file configures various client-side behaviors.
+###
+### The commented-out examples below are intended to demonstrate
+### how to use this file.
+
+### Section for authentication and authorization customizations.
+[auth]
+password-stores = gpg-agent,keychain,gnome-keyring
+store-passwords = no
+store-auth-creds = no
+
+### Section for configuring external helper applications.
+[helpers]
+editor-cmd = vim
+diff-cmd = meld
+
+### Section for configuring tunnel agents.
+[tunnels]
+
+### Section for configuring miscellaneous Subversion options.
+[miscellany]
+global-ignores = *.o *.lo *.la *.al .libs *.so *.so.[0-9]* *.a *.pyc *.pyo __pycache__ *.rej *~ #*# .#* .*.swp .DS_Store
+log-encoding = UTF8
+use-commit-times = yes
+no-unlock = yes
+preserved-conflict-file-exts = doc ppt xls od?
+enable-auto-props = yes
+interactive-conflicts = yes
+
+### Section for configuring automatic properties.
+[auto-props]
+### The format of the entries is:
+###   file-name-pattern = propname[=value][;propname[=value]...]
+### The file-name-pattern can contain wildcards (such as '*' and
+### '?').  All entries which match (case-insensitively) will be
+### applied to the file.  Note that auto-props functionality
+### must be enabled, which is typically done by setting the
+### 'enable-auto-props' option.
+*.c = svn:eol-style=native;svn:keywords=Author Date Id Rev URL;svn:keywords=Author Date Id Rev URL
+*.cpp = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.h = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.dsp = svn:eol-style=CRLF
+*.dsw = svn:eol-style=CRLF
+*.sh = svn:eol-style=native;svn:keywords=Author Date Id Rev URL;svn:executable
+*.txt = svn:eol-style=native;svn:keywords=Author Date Id Rev URL;svn:keywords=Author Date Id Rev URL;
+*.png = svn:mime-type=image/png
+*.jpg = svn:mime-type=image/jpeg
+*.css = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.eot = svn:mime-type=application/vnd.ms-fontobject
+*.gif = svn:mime-type=image/gif
+*.ico = svn:mime-type=image/vnd.microsoft.icon
+*.inc = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.info = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.install=svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.java = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.jpeg = svn:mime-type=image/jpeg
+*.jpg = svn:mime-type=image/jpeg
+*.js = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.jsp = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.module = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.php5 = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.php = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.pl = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.pm = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.png = svn:mime-type=image/png
+*.properties = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.py = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.sh = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.sql = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.svg = svn:mime-type=image/svg+xml
+*.tpl = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.ttf = svn:mime-type=application/x-font-ttf
+*.txt = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+*.woff = svn:mime-type=application/x-woff
+*.xcf = svn:mime-type=image/x-xcf
+*.xml = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+Makefile = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+SConscript = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+SConstruct = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+USERINFO = svn:eol-style=native;svn:keywords=Author Date Id Rev URL
+
+### Section for configuring working copies.
+[working-copy]
+exclusive-locking = false

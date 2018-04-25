@@ -1,0 +1,32 @@
+#==============================================================================
+#
+#          FILE:  PA2-apache
+#         USAGE:  . PA2-apache
+#   DESCRIPTION:  Sets environment path
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
+
+[ -d "/opt/Apache/maven/current" ] && export PATH="${PATH}:/opt/Apache/maven/current/bin";
+[ -d "/opt/Apache/ant/current" ] && export PATH="${PATH}:/opt/Apache/ant/current/bin";
+[ -d "/opt/Apache/httpd/current" ] && export PATH="${PATH}:/opt/Apache/httpd/current/bin";
+[ -d "/opt/Apache/geronimo/current" ] && export PATH="${PATH}:/opt/Apache/geronimo/current/bin";
+[ -d "/opt/Apache/activemq/current" ] && export PATH="${PATH}:/opt/Apache/activemq/current/bin";
+[ -d "/opt/Apache/archiva/current" ] && export PATH="${PATH}:/opt/Apache/archiva/current/bin";
+[ -d "/opt/Apache/apacheds/current" ] && export PATH="${PATH}:/opt/Apache/apacheds/current/bin";
+[ -d "/opt/Apache/tomcat/current" ] && export PATH="${PATH}:/opt/Apache/tomcat/current/bin";
+
+[ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
+[ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
