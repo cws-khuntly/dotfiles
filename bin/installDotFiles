@@ -20,14 +20,14 @@ trap 'set +v; set +x' INT TERM EXIT;
 
 typeset -x PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin";
 
-[ -r "${HOME}/.etc/logging.properties" -a -s "${HOME}/.etc/logging.properties" ] && . "${HOME}/.etc/logging.properties";
-[ -r "${HOME}/.lib/logger.sh" -a ! -z "${LOGGING_LOADED}" -a "${LOGGING_LOADED}" == "${_TRUE}" ] && . "${HOME}/.lib/logger.sh";
+[ -r "${HOME}/.dotfiles/etc/logging.properties" -a -s "${HOME}/.etc/logging.properties" ] && . "${HOME}/.dotfiles/etc/logging.properties";
+[ -r "${HOME}/.dotfiles/lib/logger.sh" -a ! -z "${LOGGING_LOADED}" -a "${LOGGING_LOADED}" == "${_TRUE}" ] && . "${HOME}/.dotfiles/lib/logger.sh";
 
 [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
 [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
 
 ## source necessary functions
-[ -r "${HOME}/.functions.d/F06-network" ] && . "${HOME}/.functions.d/F06-network";
+[ -r "${HOME}/.dotfiles/functions.d/F06-network" ] && . "${HOME}/.dotfiles/functions.d/F06-network";
 
 ## Application constants
 typeset CNAME="$(/usr/bin/env basename "${0}")";
