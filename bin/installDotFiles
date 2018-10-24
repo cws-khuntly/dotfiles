@@ -133,6 +133,9 @@ function cleanAndDeployFiles
         return ${RETURN_CODE};
     fi
 
+    ## copy ssh keys
+    /usr/bin/env ssh-copy-id -i ${HOME}/.ssh/id_rsa.pub ${1};
+
     ## create a copy of the existing dotfiles directory from THIS host and send it to the target host
     cd ${HOME}/.dotfiles; /usr/bin/env tar cf ${HOME}/dotfiles.tar *; ## create the archive
     /usr/bin/env ssh -ql ${LOGNAME} ${1} "typeset -x PATH=${PATH}:/bin:sbin:/usr/bin:/usr/sbin; [ -f ${HOME}/dotfiles.tar ] && /usr/bin/env rm -f ${HOME}/dotfiles.tar"; ## remove it if it exists
