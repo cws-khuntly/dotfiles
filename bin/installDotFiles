@@ -36,8 +36,8 @@ typeset SCRIPT_ROOT="$(/usr/bin/env dirname "${SCRIPT_ABSOLUTE_PATH}")";
 typeset METHOD_NAME="${CNAME}#startup";
 typeset -i ERROR_COUNT=0;
 typeset CONFIG="${HOME}/.dotfiles/etc/install.conf"
-typeset CURR_IFS"=${IFS}";
-typeset MODIFIED_IFS"=${MODIFIED_IFS:=$'\n'}";
+typeset CURR_IFS="${IFS}";
+typeset MODIFIED_IFS=$'\n';
 
 [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${CNAME}" "${LINENO}" "CNAME -> ${CNAME}";
 [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${CNAME}" "${LINENO}" "SCRIPT_ABSOLUTE_PATH -> ${SCRIPT_ABSOLUTE_PATH}";
