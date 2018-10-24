@@ -20,7 +20,7 @@ trap 'set +v; set +x' INT TERM EXIT;
 
 typeset -x PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin";
 
-[ -r "${HOME}/.dotfiles/etc/logging.properties" -a -s "${HOME}/.etc/logging.properties" ] && . "${HOME}/.dotfiles/etc/logging.properties";
+[ -r "${HOME}/.dotfiles/etc/logging.properties" -a -s "${HOME}/.dotfiles/etc/logging.properties" ] && . "${HOME}/.dotfiles/etc/logging.properties";
 [ -r "${HOME}/.dotfiles/lib/logger.sh" -a ! -z "${LOGGING_LOADED}" -a "${LOGGING_LOADED}" == "${_TRUE}" ] && . "${HOME}/.dotfiles/lib/logger.sh";
 
 [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
@@ -248,7 +248,7 @@ function installFiles
     ## change some permissions
     /usr/bin/env find ${HOME}/.dotfiles -type d -exec /usr/bin/env chmod 755 {} \; ;
     /usr/bin/env find ${HOME}/.dotfiles -type f -exec /usr/bin/env chmod 644 {} \; ;
-    /usr/bin/env chmod 755 ${HOME}/.dotfiles/bin; ## 755 on all files in bin
+    /usr/bin/env chmod 755 ${HOME}/.dotfiles/bin/*; ## 755 on all files in bin
     /usr/bin/env chmod 700 ${HOME}/.ssh; ## ssh wants 700
     /usr/bin/env chmod 600 ${HOME}/.dotfiles/m2/settings.xml ${HOME}/.dotfiles/etc/ldaprc ${HOME}/.dotfiles/etc/curlrc ${HOME}/.dotfiles/etc/netrc ${HOME}/.dotfiles/etc/wgetrc; ## 600 on all security related files
     /usr/bin/env chmod 600 ${HOME}/.dotfiles/etc/SecurityService/config/ServiceConfig.xml ${HOME}/.dotfiles/etc/eSolutionsCore/config/ServiceConfig.xml; ## 600 on all security related files
@@ -279,6 +279,7 @@ function installFiles
                 [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Removing directory ${ENTRY_SOURCE}";
 
                 [ -d $(eval echo "${ENTRY_SOURCE}") ] && /usr/bin/env rm -rf $(eval echo "${ENTRY_SOURCE}");
+                [ -f $(eval echo "${ENTRY_SOURCE}") ] && /usr/bin/env rm -f $(eval echo "${ENTRY_SOURCE}");
 
                 [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Creating directory ${ENTRY_SOURCE}";
 
@@ -297,9 +298,11 @@ function installFiles
                 [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Directory ${ENTRY_SOURCE} created";
                 ;;
             "ln")
+                echo "${ENTRY_TARGET
                 [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Removing symbolic link ${ENTRY_TARGET}";
 
                 [ -L $(eval echo "${ENTRY_TARGET}") ] && /usr/bin/env unlink $(eval echo "${ENTRY_TARGET}");
+                [ -f $(eval echo "${ENTRY_TARGET}") ] && /usr/bin/env rm -f $(eval echo "${ENTRY_TARGET}");
 
                 [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Creating symbolic link ${ENTRY_SOURCE} -> ${ENTRY_TARGET}";
 
@@ -392,4 +395,3 @@ case "${1}" in
     "install") installFiles; [ -f "${HOME}/dotfiles.tar" ] && /usr/bin/env rm -f "${HOME}/dotfiles.tar"; exit ${?}; ;;
     *) cleanAndDeployFiles ${1}; [ -f "${HOME}/dotfiles.tar" ] && /usr/bin/env rm -f "${HOME}/dotfiles.tar"; exit ${?}; ;;
 esac
-
