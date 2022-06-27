@@ -233,7 +233,7 @@ function validateServerAvailability
         *)
             ## lets do a few things here. dig/host don't use /etc/resolv.conf
             ## so we have to kind of drag it in here.
-            if -f /etc/resolv.conf -o -l /etc/resolv.conf ]
+            if [ -f /etc/resolv.conf ]
             then
                 for SEARCH_ENTRY in $(/usr/bin/env grep search /etc/resolv.conf)
                 do
@@ -241,7 +241,12 @@ function validateServerAvailability
 
                     [ "${SEARCH_ENTRY}" == "search" ] && continue;
 
-                    case $(/usr/bin/env host "${VALIDATE_HOSTNAME}.${SEARCH_ENTRY}" > /dev/null 2>&1; echo ${?};) in
+                    /usr/bin/env host "${VALIDATE_HOSTNAME}.${SEARCH_ENTRY}" > /dev/null 2>&1;
+                    typeset -i RET_CODE=${?};
+
+                    [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+
+                    case ${RET_CODE} in
                         0)
                             ## make sure to fix the error counter
                             [ ${ERROR_COUNT} -ne 0 ] && unset -v ERROR_COUNT;
@@ -280,10 +285,42 @@ function validateServerAvailability
                                     ;;
                             esac
                             ;;
+                        1)
+                            ## check hosts file for entry, if it exists use it
+                            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "No entry was found in DNS. Checking hosts table...";
+
+                            if [ ! -z $(/usr/bin/env grep ${VALIDATE_HOSTNAME} /etc/hosts ]
+                            then
+                                ## make sure to fix the error counter
+                                [ ${ERROR_COUNT} -ne 0 ] && unset -v ERROR_COUNT;
+                                typeset -i ERROR_COUNT=0;
+
+                                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "Entry located in /etc/hosts";
+
+                                RETURN_CODE=0;
+
+                                break;
+                            else
+                                writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${VALIDATE_HOSTNAME} does not appear to exist in the hosts table. Unable to determine availability.";
+                                writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${VALIDATE_HOSTNAME} does not appear to exist in the hosts table. Unable to determine availability.";
+
+                                (( ERROR_COUNT += 1 ));
+
+                                [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ERROR_COUNT -> ${ERROR_COUNT}";
+
+                                continue;
+                            fi
+                            ;;
                         *)
+                            writeLogEntry "ERROR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${VALIDATE_HOSTNAME} does not appear to exist in the hosts table. Unable to determine availability.";
+                            writeLogEntry "STDERR" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "${VALIDATE_HOSTNAME} does not appear to exist in the hosts table. Unable to determine availability.";
+
                             (( ERROR_COUNT += 1 ));
 
+                            [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${SCRIPT_NAME}" "${LINENO}" "${FUNCTION_NAME}" "ERROR_COUNT -> ${ERROR_COUNT}";
+
                             continue;
+                            ;;
                     esac
 
                     if [ ${ERROR_COUNT} -ne 0 ]
