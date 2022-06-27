@@ -252,7 +252,7 @@ function installFiles
     /usr/bin/env find ${HOME}/.dotfiles -type d -exec /usr/bin/env chmod 755 {} \; ;
     /usr/bin/env find ${HOME}/.dotfiles -type f -exec /usr/bin/env chmod 644 {} \; ;
     /usr/bin/env chmod 755 ${HOME}/.dotfiles/bin/*; ## 755 on all files in bin
-    /usr/bin/env chmod 700 ${HOME}/.ssh; ## ssh wants 700
+    [ ! -d ${HOME}/.ssh ] && mkdir -pv ${HOME}/.ssh; /usr/bin/env chmod 700 ${HOME}/.ssh; ## ssh wants 700
     /usr/bin/env chmod 600 ${HOME}/.dotfiles/m2/settings.xml ${HOME}/.dotfiles/etc/ldaprc ${HOME}/.dotfiles/etc/curlrc ${HOME}/.dotfiles/etc/netrc ${HOME}/.dotfiles/etc/wgetrc; ## 600 on all security related files
     /usr/bin/env chmod 600 ${HOME}/.dotfiles/etc/SecurityService/config/ServiceConfig.xml ${HOME}/.dotfiles/etc/eSolutionsCore/config/ServiceConfig.xml; ## 600 on all security related files
     /usr/bin/env chmod 600 ${HOME}/.dotfiles/config/subversion/servers ${HOME}/.dotfiles/config/subversion/config; ## 600 on all security related files
@@ -301,7 +301,7 @@ function installFiles
                 [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Directory ${ENTRY_SOURCE} created";
                 ;;
             "ln")
-                echo "${ENTRY_TARGET
+                echo "${ENTRY_TARGET}"
                 [ ! -z "${ENABLE_DEBUG}" -a "${ENABLE_DEBUG}" = "${_TRUE}" ] && writeLogEntry "DEBUG" "${METHOD_NAME}" "${0}" "${LINENO}" "Removing symbolic link ${ENTRY_TARGET}";
 
                 [ -L $(eval echo "${ENTRY_TARGET}") ] && /usr/bin/env unlink $(eval echo "${ENTRY_TARGET}");
@@ -341,6 +341,7 @@ function installFiles
     typeset -x IFS="${IFS}";
 
     ## ssh keys (if they don't already exist AND this host requires them)
+    [ ! -f ${HOME}/.ssh/known_hosts ] && touch -f ${HOME}/.ssh/known_hosts;
     [ ! -f ${HOME}/.ssh/id_rsa -a -f ${HOME}/.ssh/known_hosts ] && /usr/bin/env ssh-keygen -t rsa -b 4096 -N "" -C "" -f ${HOME}/.ssh/id_rsa;
     [ ! -f ${HOME}/.ssh/id_dsa -a -f ${HOME}/.ssh/known_hosts ] && /usr/bin/env ssh-keygen -t dsa -b 1024 -N "" -C "" -f ${HOME}/.ssh/id_dsa;
     [ ! -f ${HOME}/.ssh/id_ecdsa -a -f ${HOME}/.ssh/known_hosts ] && /usr/bin/env ssh-keygen -t ecdsa -b 521 -N "" -C "" -f ${HOME}/.ssh/id_ecdsa;
