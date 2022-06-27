@@ -71,7 +71,7 @@ fi
 ## trap logout
 trap 'source ~/.dotfiles/functions.d/F01-userProfile; logoutUser; exit' 0;
 
-[ ! -z "$(/usr/bin/env which screen)" -a -z "${STY}" -a -f ${HOME}/.config/runscreen ] && /usr/bin/env screen -q;
+[ ! -z "$(/usr/bin/env which screen 2>/dev/null)" -a -z "${STY}" -a -f ${HOME}/.config/runscreen ] && /usr/bin/env screen -q;
 
 [ ! -z "${ENABLE_VERBOSE}" -a "${ENABLE_VERBOSE}" = "${_TRUE}" ] && set -x || set +x;
 [ ! -z "${ENABLE_TRACE}" -a "${ENABLE_TRACE}" = "${_TRUE}" ] && set -v || set +v;
