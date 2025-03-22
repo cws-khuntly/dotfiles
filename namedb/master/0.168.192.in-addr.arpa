@@ -1,0 +1,14 @@
+$TTL 2d    ; default TTL for zone
+$ORIGIN 0.168.192.in-addr.arpa. ; base domain-name
+@           IN      SOA   ns1.caspersbox.com. dnsadm.ns1.caspersbox.com. (
+            2025032101     ; serial number
+            12h            ; refresh
+            15m            ; update retry
+            3w             ; expiry
+            2h             ; minimum
+            )
+            IN      NS      ns1.caspersbox.com.
+
+1           IN      PTR     router
+210         IN      PTR     ns1.caspersbox.com
+

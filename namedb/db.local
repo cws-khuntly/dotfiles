@@ -1,0 +1,13 @@
+$TTL 2d    ; default TTL for zone
+$ORIGIN localhost. ; base domain-name
+@           IN      SOA   ns1.caspersbox.com. dnsadm.ns1.caspersbox.com. (
+            2025032101     ; serial number
+            12h            ; refresh
+            15m            ; update retry
+            3w             ; expiry
+            2h             ; minimum
+            )
+            IN      NS      ns1.caspersbox.com.
+
+localhost   IN      A       127.0.0.1
+
