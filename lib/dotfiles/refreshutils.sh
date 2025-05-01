@@ -186,6 +186,9 @@ function refreshLocalFiles()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir ${DOTFILES_INSTALL_PATH}";
         fi
 
+        [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+        [[ -n "${ret_code}" ]] && unset -v ret_code;
+
         cmd_output=$(mkdir -pv "${DOTFILES_INSTALL_PATH}");
         ret_code="${?}";
 
@@ -204,6 +207,9 @@ function refreshLocalFiles()
             if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd ${DOTFILES_INSTALL_PATH}; tar -xf - )";
             fi
+
+            [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+            [[ -n "${ret_code}" ]] && unset -v ret_code;
 
             cmd_output=$("${UNARCHIVE_PROGRAM}" -c "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" | ( cd "${DOTFILES_INSTALL_PATH}"; tar -xf - ));
             ret_code="${?}";
@@ -267,6 +273,9 @@ function refreshLocalFiles()
                                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -p ${entry_target}";
                                     fi
 
+                                    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                                     cmd_output=$(mkdir -pv "$(eval printf "%s" "${entry_target}")");
                                     ret_code="${?}";
 
@@ -313,6 +322,9 @@ function refreshLocalFiles()
                                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ln -s eval printf \"%s\" ${entry_source} eval printf \"%s\" ${entry_target}";
                                 fi
 
+                                [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                                [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                                 cmd_output=$(ln -s "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")");
                                 ret_code="${?}";
 
@@ -346,6 +358,9 @@ function refreshLocalFiles()
                                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f ${entry_target}";
                                     fi
 
+                                    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                                     cmd_output=$(rm -f "${entry_target}");
                                     ret_code="${?}";
 
@@ -365,6 +380,9 @@ function refreshLocalFiles()
                                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Copying file ${entry_source} to ${entry_target}";
                                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cp ${entry_source} ${entry_target}";
                                         fi
+
+                                        [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                                        [[ -n "${ret_code}" ]] && unset -v ret_code;
 
                                         cmd_output=$(cp "${entry_source}" "${entry_target}");
                                         ret_code="${?}";
@@ -450,13 +468,14 @@ function refreshLocalFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${cleanup_list}";
     fi
 
+    [[ -n "${cname}" ]] && unset -v cname;
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
     cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${cleanup_list}";
     ret_code="${?}";
 
-    set +o noclobber;
+    cname="refreshutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -617,6 +636,9 @@ function refreshRemoteFiles()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh -ql ${target_user} -p ${target_port} ${target_host} \"bash -s\" < \"${DEPLOY_TO_DIR}/$(basename "${file_verification_script}")\"";
                 fi
 
+                [[ -n "${verify_response}" ]] && unset -v verify_response;
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                 verify_response=$(ssh -ql "${target_user}" -p "${target_port}" "${target_host}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${file_verification_script}")");
                 ret_code="${?}";
 
@@ -716,6 +738,9 @@ function refreshRemoteFiles()
                                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh -ql ${target_user} -p ${target_port} ${target_host} \"bash -s\" < \"${DEPLOY_TO_DIR}/$(basename "${installation_script}")\"";
                                 fi
 
+                                [[ -n "${refresh_response}" ]] && unset -v refresh_response;
+                                [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                                 refresh_response=$(ssh -ql "${target_user}" -p "${target_port}" "${target_host}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${installation_script}")");
                                 ret_code="${?}";
 
@@ -753,13 +778,14 @@ function refreshRemoteFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${cleanup_list}";
     fi
 
+    [[ -n "${cname}" ]] && unset -v cname;
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
     cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${cleanup_list}";
     ret_code="${?}";
 
-    set +o noclobber;
+    cname="refreshutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then

@@ -49,6 +49,9 @@ function getHostKeys()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh-keygen -F ${target_host} 2>/dev/null | grep ${keytype}";
             fi
 
+            [[ -n "${does_key_exist}" ]] && unset -v does_key_exist;
+            [[ -n "${ret_code}" ]] && unset -v ret_code;
+
             does_key_exist="$(ssh-keygen -F "${target_host}" 2>/dev/null | grep "${keytype}")";
             ret_code="${?}";
 
@@ -66,6 +69,10 @@ function getHostKeys()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s\n\" \"~\" | nc \"${target_host}\" ${target_port}";
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh-keyscan -t \"${keytype}\" -p ${target_port} -H \"${target_host}\"";
             fi
+
+            [[ -n "${remote_ssh_version}" ]] && unset -v remote_ssh_version;
+            [[ -n "${remote_ssh_key}" ]] && unset -v remote_ssh_key;
+            [[ -n "${ret_code}" ]] && unset -v ret_code;
 
             remote_ssh_version="$(printf "%s" "~" | nc "${target_host}" ${target_port} 2>/dev/null | head -1)";
             remote_ssh_key="$(ssh-keyscan -t "${keytype}" -p ${target_port} -H "${target_host}")";
@@ -111,7 +118,7 @@ function getHostKeys()
     [[ -n "${hostlist}" ]] && unset -v hostlist;
 
     if (( error_count != 0 )); then
-        return_code=${error_count};
+        return_code="${error_count}";
 
         if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "One or more errors occurred retrieving SSH host keys. Please review logs.";
@@ -175,6 +182,8 @@ function generateSshKeys()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -p ${HOME}/.ssh";
         fi
 
+        [[ -n "${ret_code}" ]] && unset -v ret_code;
+
         cmd_output=$(mkdir -pv "${HOME}"/.ssh);
         ret_code="${?}";
 
@@ -213,6 +222,8 @@ function generateSshKeys()
                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${SSH_KEYGEN_PROGRAM} -b ${SSH_KEY_SIZE} -t ${SSH_KEY_TYPE} -f ${TMPDIR:-${USABLE_TMP_DIR}}/${SSH_KEY_FILENAME}";
                     fi
+
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
 
                     cmd_output=$("${SSH_KEYGEN_PROGRAM}" -b "${SSH_KEY_SIZE}" -t "${SSH_KEY_TYPE}" -f "${TMPDIR:-${USABLE_TMP_DIR}}/${SSH_KEY_FILENAME}");
                     ret_code="${?}";
@@ -389,6 +400,8 @@ function copyKeysToTarget()
                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Copying public key ${keyfile}";
                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh-copy-id -i ${keyfile} -oPort=${returnedHostInfo[1]:-${SSH_PORT_NUMBER}} ${returnedHostInfo[0]} > /dev/null 2>&1";
                         fi
+
+                        [[ -n "${ret_code}" ]] && unset -v ret_code;
 
                         cmd_output=$(ssh-copy-id -i "${keyfile}" -oPort="${returned_port:-${SSH_PORT_NUMBER}}" "${returned_hostname}" > /dev/null 2>&1);
                         ret_code="${?}";

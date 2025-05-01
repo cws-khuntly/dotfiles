@@ -229,6 +229,9 @@ function cleanupLocalFiles()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${targetDir}/${targetFile}";
                 fi
 
+                [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                 cmd_output=$(rm -rf "${targetDir:?}/${targetFile}");
                 ret_code="${?}";
 
@@ -261,6 +264,9 @@ function cleanupLocalFiles()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing file ${targetDir}/${targetFile}";
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f ${targetDir}/${targetFile}";
                 fi
+
+                [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
 
                 cmd_output=$(rm -f "${targetDir:?}/${targetFile}");
                 ret_code="${?}";
@@ -389,6 +395,8 @@ function cleanupRemoteFiles()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cat /dev/null >| ${file_cleanup_file}";
         fi
 
+        [[ -n "${ret_code}" ]] && unset -v ret_code;
+
         cat /dev/null >| ${file_cleanup_file};
         ret_code="${?}";
 
@@ -461,6 +469,8 @@ function cleanupRemoteFiles()
                 fi
             else
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: sftp -b ${file_cleanup_file} -oPort=${target_port} ${target_user}@${target_host} > /dev/null 2>&1"; fi
+
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
 
                 sftp -b "${file_cleanup_file}" -oPort="${target_port}" "${target_user}@${target_host}" > /dev/null 2>&1;
                 ret_code="${?}";

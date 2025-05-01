@@ -163,7 +163,7 @@ function validateAndCopyKeysForHost
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
     set +o noclobber;
-    cname="F02-misc";
+    cname="basefunctions.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
 
@@ -226,7 +226,7 @@ function validateAndCopyKeysForHost
 	validateHostAddress "${target_host}" "${target_port}";
 	ret_code="${?}";
 
-	cname="installutils.sh";
+	cname="basefunctions.sh";
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -249,9 +249,9 @@ function validateAndCopyKeysForHost
 		[[ -n "${ret_code}" ]] && unset -v ret_code;
 
 		getHostKeys "${target_host}" ${target_port};
-		ret_code=${?};
+		ret_code="${?}";
 
-		cname="installutils.sh";
+		cname="basefunctions.sh";
 		function_name="${cname}#${FUNCNAME[0]}";
 
 		if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -276,7 +276,7 @@ function validateAndCopyKeysForHost
 			copyKeysToTarget "${target_host}" "${ssh_port_number}" "${target_user}" "${force_exec}";
 			ret_code="${?}";
 
-			cname="managedotfiles.sh";
+			cname="basefunctions.sh";
 			function_name="${cname}#${FUNCNAME[0]}";
 
 			if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then

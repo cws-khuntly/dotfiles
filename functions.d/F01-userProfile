@@ -153,8 +153,11 @@ function runLoginCommands()
             fi
 
             if [[ -n "$(command -v ${cmnd_binary})" ]]; then
+                [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                 cmd_output=$("${cmd_binary}" "${cmnd_args}");
-                ret_code=${?};
+                ret_code="${?}";
 
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";

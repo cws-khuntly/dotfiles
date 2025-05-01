@@ -126,7 +126,7 @@ function uninstallFiles()
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
                 getHostKeys "${target_host}" "${target_port}";
-                ret_code=${?};
+                ret_code="${?}";
 
                 cname="uninstallutils.sh";
                 function_name="${cname}#${FUNCNAME[0]}";
@@ -142,6 +142,14 @@ function uninstallFiles()
                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred getting SSH host keys from host ${target_host}. Please review logs.";
                     fi
                 else
+                    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: uninstallRemoteFiles ${target_host} ${target_port} ${target_user}";
+                    fi
+
+                    [[ -n "${cname}" ]] && unset -v cname;
+                    [[ -n "${function_name}" ]] && unset -v function_name;
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                     uninstallRemoteFiles "${target_host}" "${target_port}" "${target_user}";
                     ret_code="${?}";
 
@@ -153,10 +161,10 @@ function uninstallFiles()
                     fi
 
                     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                        return_code="${ret_code}"
+                        (( error_count += 1 ));
 
                         if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred performing file uninstall on host ${target_host} as user ${target_user}. Please review logs.";
+                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred getting SSH host keys from host ${target_host}. Please review logs.";
                         fi
                     else
                         if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -261,6 +269,8 @@ function uninstallLocalFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${removable_entry}";
                     fi
 
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                     cmd_output=$(rm -rf "${removable_entry}");
                     ret_code="${?}";
 
@@ -289,6 +299,8 @@ function uninstallLocalFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: unlink ${removable_entry}";
                     fi
 
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                     cmd_output=$(unlink "${removable_entry}");
                     ret_code="${?}";
 
@@ -316,6 +328,8 @@ function uninstallLocalFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing file ${removable_entry}";
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f ${removable_entry}";
                     fi
+
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
 
                     cmd_output=$(rm -f "${removable_entry}");
                     ret_code="${?}";
@@ -357,8 +371,10 @@ function uninstallLocalFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${DOTFILES_INSTALL_PATH}";
             fi
 
+            [[ -n "${ret_code}" ]] && unset -v ret_code;
+
             cmd_output=$(rm -rf ${DOTFILES_INSTALL_PATH});
-            ret_code=${?};
+            ret_code="${?}";
 
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
@@ -559,6 +575,8 @@ function uninstallRemoteFiles()
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: sftp -b ${file_removal_script} -oPort=${target_port} ${target_user}@${target_host} > /dev/null 2>&1";
                 fi
+
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
 
                 sftp -b "${file_removal_script}" -oPort="${target_port}" "${target_user}@${target_host}" > /dev/null 2>&1;
                 ret_code="${?}";

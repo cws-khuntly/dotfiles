@@ -69,23 +69,21 @@ function installFiles()
         [[ -z "${entry}" ]] && continue;
         [[ "${entry}" =~ ^\# ]] && continue;
 
-        entry_source="$(cut -d "|" -f 2 <<< "${entry}")";
         entry_target="$(cut -d "|" -f 3 <<< "${entry}")";
         entry_permissions="$(cut -d "|" -f 4 <<< "${entry}")";
         recurse_permissions="$(cut -d "|" -f 4 <<< "${entry}")";
 
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_source -> ${entry_source}";
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_target -> ${entry_target}";
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_permissions -> ${entry_permissions}";
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "recurse_permissions -> ${recurse_permissions}";
         fi
 
-        if [[ -z "${entry_source}" ]] || [[ -z "${entry_target}" ]]; then
+        if [[ -z "${entry_target}" ]]; then
             (( error_count += 1 ));
 
             if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided entry command from ${INSTALL_CONF} was empty. entry_source -> ${entry_source}, entry_target -> ${entry_target}";
+                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided entry target from ${INSTALL_CONF} was empty. entry_target -> ${entry_target}";
             fi
 
             continue;
@@ -99,6 +97,9 @@ function installFiles()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating directory ${entry_target}";
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -p ${entry_target}";
         fi
+
+        [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+        [[ -n "${ret_code}" ]] && unset -v ret_code;
 
         cmd_output=$(mkdir -pv "$(eval printf "%s" "${entry_target}")");
         ret_code="${?}";
@@ -120,6 +121,9 @@ function installFiles()
         fi
 
         if [[ -n "${entry_permissions}" ]]; then
+            [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+            [[ -n "${ret_code}" ]] && unset -v ret_code;
+
             if [[ -n "${recurse_permissions}" ]] && [[ "${recurse_permissions}" == "${_TRUE}" ]]; then
                 cmd_output=$(chmod -R ${entry_permissions} $(eval printf "%s" "${entry_target}"));
             else
@@ -286,6 +290,9 @@ function installLocalFiles()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir \"${DOTFILES_INSTALL_PATH}\"";
         fi
 
+        [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+        [[ -n "${ret_code}" ]] && unset -v ret_code;
+
         cmd_output=$(mkdir -pv "${DOTFILES_INSTALL_PATH}");
         ret_code="${?}";
 
@@ -307,11 +314,12 @@ function installLocalFiles()
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd ${DOTFILES_INSTALL_PATH}; tar -xf - )";
         fi
 
-        cmd_output=$("${UNARCHIVE_PROGRAM}" -c "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" | ( cd "${DOTFILES_INSTALL_PATH}"; tar -xf - ));
+        [[ -n "${ret_code}" ]] && unset -v ret_code;
+
+        "${UNARCHIVE_PROGRAM}" -c "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" | ( cd "${DOTFILES_INSTALL_PATH}"; tar -xf - );
         ret_code="${?}";
 
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
         fi
 
@@ -380,6 +388,9 @@ function installLocalFiles()
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ln -s eval printf \"%s\" ${entry_source} eval printf \"%s\" ${entry_target}";
                             fi
 
+                            [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                            [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                             cmd_output=$(ln -s "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")");
                             ret_code="${?}";
 
@@ -399,6 +410,9 @@ function installLocalFiles()
                                 continue;
                             else
                                 if [[ -n "${entry_permissions}" ]]; then
+                                    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                                     cmd_output=$(chmod -h ${entry_permissions} $(eval printf "%s" "${entry_target}"));
                                     ret_code="${?}";
 
@@ -426,6 +440,9 @@ function installLocalFiles()
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cp -p ${entry_source} ${entry_target}";
                             fi
 
+                            [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                            [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                             cmd_output=$(cp -p "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")");
                             ret_code="${?}";
 
@@ -445,6 +462,9 @@ function installLocalFiles()
                                 continue;
                             else
                                 if [[ -n "${entry_permissions}" ]]; then
+                                    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                                     cmd_output=$(chmod ${entry_permissions} $(eval printf "%s" "${entry_target}"));
                                     ret_code="${?}";
 
@@ -512,13 +532,14 @@ function installLocalFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${cleanup_list}";
     fi
 
+    [[ -n "${cname}" ]] && unset -v cname;
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
     cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${cleanup_list}";
     ret_code="${?}";
 
-    set +o noclobber;
+    cname="installutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -681,6 +702,9 @@ function installRemoteFiles()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh -ql ${target_user} -p ${target_port} ${target_host} \"bash -s\" < \"${DEPLOY_TO_DIR}/$(basename "${file_verification_script}")\"";
                 fi
 
+                [[ -n "${verify_response}" ]] && unset -v verify_response;
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
+
                 verify_response=$(ssh -ql "${target_user}" -p "${target_port}" "${target_host}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${file_verification_script}")");
                 ret_code="${?}";
 
@@ -779,6 +803,9 @@ function installRemoteFiles()
                                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh -ql ${target_user} -p ${target_port} ${target_host} \"bash -s\" < \"${DEPLOY_TO_DIR}/$(basename "${installation_script}")\"";
                                 fi
+
+                                [[ -n "${install_response}" ]] && unset -v install_response;
+                                [[ -n "${ret_code}" ]] && unset -v ret_code;
 
                                 install_response=$(ssh -ql "${target_user}" -p "${target_port}" "${target_host}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${installation_script}")");
                                 ret_code="${?}";

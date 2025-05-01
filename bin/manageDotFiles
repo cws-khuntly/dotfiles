@@ -137,6 +137,7 @@ function main()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runInstallLocalFiles";
                 fi
 
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -170,6 +171,7 @@ function main()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: validateAndCopyKeysForHost ${target_host} ${ssh_port_number}";
                 fi
 
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -195,6 +197,7 @@ function main()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runInstallRemoteFiles ${target_host} ${ssh_port_number} ${target_user} ${force_exec}";
                     fi
 
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
                     [[ -n "${cname}" ]] && unset -v cname;
                     [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -233,6 +236,7 @@ function main()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: deployLocalFiles";
                 fi
 
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -266,6 +270,7 @@ function main()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: validateAndCopyKeysForHost ${target_host} ${ssh_port_number}";
                 fi
 
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -291,6 +296,7 @@ function main()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: deployRemoteFiles ${target_host} ${ssh_port_number} ${target_user} ${force_exec}";
                     fi
 
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
                     [[ -n "${cname}" ]] && unset -v cname;
                     [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -329,6 +335,7 @@ function main()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runDeployLocalFiles";
                 fi
 
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -354,6 +361,7 @@ function main()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runInstallLocalFiles";
                     fi
 
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
                     [[ -n "${cname}" ]] && unset -v cname;
                     [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -388,6 +396,7 @@ function main()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: validateAndCopyKeysForHost ${target_host} ${ssh_port_number}";
                 fi
 
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -413,6 +422,7 @@ function main()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runDeployRemoteFiles ${target_host} ${ssh_port_number} ${target_user} ${force_exec}";
                     fi
 
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
                     [[ -n "${cname}" ]] && unset -v cname;
                     [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -438,6 +448,7 @@ function main()
                             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runInstallRemoteFiles ${target_host} ${ssh_port_number} ${target_user} ${force_exec}";
                         fi
 
+                        [[ -n "${ret_code}" ]] && unset -v ret_code;
                         [[ -n "${cname}" ]] && unset -v cname;
                         [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -477,6 +488,7 @@ function main()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: removeLocalFiles";
                 fi
 
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -510,6 +522,7 @@ function main()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: validateAndCopyKeysForHost ${target_host} ${ssh_port_number}";
                 fi
 
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -535,6 +548,7 @@ function main()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runRemoveRemoteFiles ${target_host} ${ssh_port_number} ${target_user} ${force_exec}";
                     fi
 
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
                     [[ -n "${cname}" ]] && unset -v cname;
                     [[ -n "${function_name}" ]] && unset -v function_name;
 
@@ -880,13 +894,14 @@ while (( ${#} > 0 )); do
             esac
             ;;
         help|\?|h)
+            [[ -n "${cname}" ]] && unset -v cname;
             [[ -n "${function_name}" ]] && unset -v function_name;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
             usage;
             RETURN_CODE="${?}";
 
-            set +o noclobber;
+            cname="manageDotFiles";
             function_name="${CNAME}#${FUNCNAME[0]}";
 
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -968,13 +983,14 @@ else
                 writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: captureGpgData";
             fi
 
+            [[ -n "${ret_code}" ]] && unset -v ret_code;
             [[ -n "${function_name}" ]] && unset -v function_name;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
             captureGpgData;
             ret_code="${?}";
 
-            set +o noclobber;
+            cname="manageDotFiles";
             function_name="${CNAME}#${FUNCNAME[0]}";
 
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
