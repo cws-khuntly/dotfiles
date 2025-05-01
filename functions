@@ -17,7 +17,7 @@
 #      REVISION:  ---
 #
 #==============================================================================
-
+foo
 ## load functions
 for file_entry in "${HOME}"/.functions.d/*; do
     [[ -z "${file_entry}" ]] && continue;
