@@ -11,7 +11,6 @@ function validateHostAddress()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="networkutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -157,7 +156,6 @@ function checkForValidHost()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="networkutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -349,7 +347,6 @@ function checkForValidAddress()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="networkutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -472,7 +469,6 @@ function checkForValidPort()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="networkutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -571,7 +567,6 @@ function checkIfHostIsAlive()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="networkutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;

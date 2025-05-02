@@ -12,7 +12,6 @@ function captureGpgData()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="gpgutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     ret_code=0;
@@ -235,7 +234,6 @@ function generateGpgKeys()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="gpgutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     ret_code=0;
@@ -256,7 +254,7 @@ function generateGpgKeys()
     if [[ ! -d "${HOME}"/.gnupg ]]; then
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "GnuPG user configuration directory does not exist. Creating.";
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -p ${HOME}/.gnupg";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -pv ${HOME}/.gnupg";
         fi
 
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;

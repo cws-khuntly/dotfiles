@@ -27,7 +27,6 @@ function readPropertyFile
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="basefunctions.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -54,7 +53,6 @@ function readPropertyFile
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-        set +o noclobber;
         cname="basefunctions.sh";
         function_name="${cname}#${FUNCNAME[1]}";
         return_code=3;
@@ -93,21 +91,12 @@ function readPropertyFile
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "property_value -> ${property_value}";
         fi
 
-        if [[ -z "${property_name}" ]]; then
+        if [[ -z "${property_name}" ]] || [[ -z "${property_value}" ]]; then
             (( error_count += 1 ));
 
             if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Found property name is invalid. property_name -> ${property_name}";
                 writeLogEntry "CONSOLE" "STDERR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Found property name is invalid. property_name -> ${property_name}";
-            fi
-
-            continue;
-        elif [[ -z "${property_value}" ]] && [[ "${property_value}" == "ln" ]]; then
-            (( error_count += 1 ));
-
-            if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Found property value is invalid. property_name -> ${property_value}";
-                writeLogEntry "CONSOLE" "STDERR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Found property value is invalid. property_name -> ${property_value}";
             fi
 
             continue;
@@ -162,7 +151,6 @@ function validateAndCopyKeysForHost
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="basefunctions.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -189,7 +177,6 @@ function validateAndCopyKeysForHost
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-        set +o noclobber;
         cname="F02-misc";
         function_name="${cname}#${FUNCNAME[1]}";
         return_code=3;
@@ -328,7 +315,6 @@ function waitForProcessFile
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="basefunctions.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -355,7 +341,6 @@ function waitForProcessFile
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-        set +o noclobber;
         cname="basefunctions.sh";
         function_name="${cname}#${FUNCNAME[1]}";
         return_code=3;

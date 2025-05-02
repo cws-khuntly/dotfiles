@@ -11,7 +11,6 @@ function uninstallFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="uninstallutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -217,7 +216,6 @@ function uninstallLocalFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="uninstallutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     ret_code=0;
@@ -440,7 +438,6 @@ function uninstallRemoteFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="uninstallutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;

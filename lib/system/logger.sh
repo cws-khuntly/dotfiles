@@ -21,10 +21,13 @@ if [[ -n "${LOGGING_PROPERTIES}" ]]; then
     source "${LOGGING_PROPERTIES}";
 else
     if [[ -r "${SCRIPT_ROOT}/etc/system/logging.properties" ]] && [[ -s "${SCRIPT_ROOT}/etc/system/logging.properties" ]]; then
+        echo "LOADED -> ${SCRIPT_ROOT}/etc/system/logging.properties" >> ${HOME}/loaded.txt
         source "${SCRIPT_ROOT}/etc/system/logging.properties"; ## if its here, override the above and use it
     elif [[ -r "${HOME}/etc/system/logging.properties" ]] && [[ -s "${HOME}/etc/system/logging.properties" ]]; then
+        echo "LOADED -> ${HOME}/etc/system/logging.properties" >> ${HOME}/loaded.txt
         source "${HOME}/etc/system/logging.properties"; ## if its here, override the above and use it
     elif [[ -r "/usr/local/etc/logging.properties" ]] && [[ -s "/usr/local/etc/logging.properties" ]]; then
+        echo "LOADED -> /usr/local/etc/logging.properties" >> ${HOME}/loaded.txt
         source "/usr/local/etc/logging.properties"; ## if its here, use it
     else
         printf "\e[00;31m%s\e[00;32m\n" "Unable to load logging configuration. Shutting down." >&2;
@@ -37,6 +40,8 @@ if [[ -z "${LOGGING_LOADED}" ]] || [[ "${LOGGING_LOADED}" == "${_FALSE}" ]]; the
     printf "\e[00;31m%s\033[0m\n" "Failed to load logging configuration. No logging available!" >&2;
 fi
 
+if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
+if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 if [[ -n "${LOG_ROOT}" ]] && [[ ! -d "${LOG_ROOT}" ]]; then mkdir -p "${LOG_ROOT}"; fi
 
 #======  FUNCTION  ============================================================
@@ -47,6 +52,10 @@ if [[ -n "${LOG_ROOT}" ]] && [[ ! -d "${LOG_ROOT}" ]]; then mkdir -p "${LOG_ROOT
 #==============================================================================
 function usage()
 (
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
+
+    set +o noclobber;
     function_name="${CNAME}#${FUNCNAME[0]}";
     return_code=3;
 
@@ -71,6 +80,9 @@ function usage()
     printf "    %s: %s\n" "Calling function" "The method within the script calling the method to write the log entry." >&2;
     printf "    %s: %s\n" "Message" "The data to write to the logfile." >&2;
 
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
+
     return ${return_code};
 )
 
@@ -82,6 +94,9 @@ function usage()
 #==============================================================================
 function writeLogEntry()
 (
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
+
     set +o noclobber;
     function_name="${CNAME}#${FUNCNAME[0]}";
     return_code=0;
@@ -107,6 +122,9 @@ function writeLogEntry()
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${function_name}" ]] && unset -v function_name;
 
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
+
     return ${return_code};
 )
 
@@ -118,7 +136,14 @@ function writeLogEntry()
 #==============================================================================
 function writeLogEntryToConsole()
 (
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
+
     set +o noclobber;
+    function_name="${CNAME}#${FUNCNAME[0]}";
+    return_code=0;
+    error_count=0;
+
     log_level="${1}";
     log_message="${2}";
 
@@ -128,6 +153,9 @@ function writeLogEntryToConsole()
     esac
     [[ -n "${log_level}" ]] && unset -v log_level;
     [[ -n "${log_message}" ]] && unset -v log_message;
+
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
     return 0;
 )
@@ -140,6 +168,9 @@ function writeLogEntryToConsole()
 #==============================================================================
 function writeLogEntryToFile()
 (
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
+
     set +o noclobber;
     log_level="${1}";
     log_pid="${2}";
@@ -171,6 +202,9 @@ function writeLogEntryToFile()
     [[ -n "${log_message}" ]] && unset -v log_message;
     [[ -n "${log_file}" ]] && unset -v log_file;
     [[ -n "${write_to_log}" ]] && unset -v write_to_log;
+
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
     return 0;
 )

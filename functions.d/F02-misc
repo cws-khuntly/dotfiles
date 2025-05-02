@@ -11,7 +11,6 @@ function mkcd()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="F02-misc.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -39,7 +38,6 @@ function mkcd()
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-        set +o noclobber;
         cname="F02-misc";
         function_name="${cname}#${FUNCNAME[1]}";
         return_code=3;
@@ -150,7 +148,6 @@ function lsz()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="F02-misc.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -178,7 +175,6 @@ function lsz()
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-        set +o noclobber;
         cname="F02-misc";
         function_name="${cname}#${FUNCNAME[1]}";
         return_code=3;
@@ -288,7 +284,6 @@ function extract()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="F02-misc.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -316,7 +311,6 @@ function extract()
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-        set +o noclobber;
         cname="F02-misc";
         function_name="${cname}#${FUNCNAME[1]}";
         return_code=3;
@@ -444,7 +438,6 @@ function returnRandomCharacters()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="F02-misc.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -472,7 +465,6 @@ function returnRandomCharacters()
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-        set +o noclobber;
         cname="F02-misc";
         function_name="${cname}#${FUNCNAME[1]}";
         return_code=3;
@@ -637,7 +629,6 @@ function shredit
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="F02-misc.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -665,7 +656,6 @@ function shredit
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-        set +o noclobber;
         cname="F02-misc";
         function_name="${cname}#${FUNCNAME[1]}";
         return_code=3;

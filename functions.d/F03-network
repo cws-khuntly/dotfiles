@@ -11,7 +11,6 @@ function validateHostAvailability()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="F03-network.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -39,7 +38,6 @@ function validateHostAvailability()
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-        set +o noclobber;
         cname="F03-network";
         function_name="${cname}#${FUNCNAME[1]}";
         return_code=3;
@@ -362,7 +360,6 @@ function isValidHost()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="F03-network.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -545,7 +542,6 @@ function isValidAddress()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="F03-network.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -717,7 +713,6 @@ function isValidPort()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="F03-network.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
@@ -811,7 +806,6 @@ function isValidNetworkName()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    set +o noclobber;
     cname="F03-network.sh";
     function_name="${cname}#${FUNCNAME[0]}";
     return_code=0;
