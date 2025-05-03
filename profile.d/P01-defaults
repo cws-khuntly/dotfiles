@@ -20,37 +20,49 @@
 
 [[ -z "${LOGNAME}" ]] && LOGNAME="$(whoami)";
 
-LANG="en_US.UTF-8";
-LC_ALL="en_US.UTF-8";
-TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n';
-LESS="-QR";
-IGNOREEOF=1;
-BLOCKSIZE="K";
-PAGER="less";
-EDITOR="vim";
-FCEDIT="vim";
-VISUAL="vim";
-DISPLAY=":0.0";
-_TRUE="true";
-_FALSE="false";
-THREAD_TIMEOUT=10;
-MODIFIED_IFS="^";
-RANDOM_GENERATOR="/dev/urandom";
-ENTROPY_FILE="${HOME}/etc/entropy";
-ENTROPY_FILE_SIZE=16384;
-SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket";
+#
+# read-only
+#
+declare -rx LANG="en_US.UTF-8";
+declare -rx LC_ALL="en_US.UTF-8";
+declare -rx TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n';
+declare -rx LESS="-QR";
+declare -rx IGNOREEOF=1;
+declare -rx BLOCKSIZE="K";
+declare -rx PAGER="less";
+declare -rx EDITOR="vim";
+declare -rx FCEDIT="vim";
+declare -rx VISUAL="vim";
+declare -rx _TRUE="true";
+declare -rx _FALSE="false";
+declare -rx SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket";
+
+#
+# read-write
+#
+declare -x DISPLAY=":0.0";
+declare -ix THREAD_TIMEOUT=10;
+declare -x MODIFIED_IFS="^";
+declare -x RANDOM_GENERATOR="/dev/urandom";
+declare -x ENTROPY_FILE="${HOME}/etc/entropy";
+declare -ix ENTROPY_FILE_SIZE=16384;
+
+#
+# prompt
+#
+declare -x PROMPT_COMMAND=setPromptCommand;
 
 case "$(uname -s)" in
     [Cc][Yy][Gg][Ww][Ii][Nn]*)
-        TERM="ansi";
-        PATHSEP=";";
+        declare -rx TERM="ansi";
+        declare -rx PATHSEP=";";
         ;;
     [Ll][Ii][Nn][Uu][Xx])
-        TERM="linux";
-        PATHSEP=":";
+        declare -rx TERM="linux";
+        declare -rx PATHSEP=":";
         ;;
     [Aa][Ii][Xx]|[Ss][Uu][Nn][Oo][Ss]|[Ss][Oo][Ll][Aa][Rr][Ii][Ss])
-        TERM="ansi";
-        PATHSEP=":";
+        declare -rx TERM="ansi";
+        declare -rx PATHSEP=":";
         ;;
 esac

@@ -959,23 +959,18 @@ else
         RETURN_CODE="1";
     else
         ## bring in any library scripts
-        ## we have this here because of the possibility of a different config file other than the default being used
-        if [[ -n "${DOTFILES_LIB_PATH}" ]] && [[ -d "${DOTFILES_LIB_PATH}" ]]; then
+        for LIBENTRY in "${SCRIPT_ROOT}"/lib/$(basename "${CNAME}" ".sh")/*.sh; do
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found library directory ${DOTFILES_LIB_PATH}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Library ${LIBENTRY}";
             fi
 
-            for DOTFILES_LIB in $(ls ${DOTFILES_LIB_PATH}); do
-                if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Library ${DOTFILES_LIB}";
-                fi
+            [[ -z "${LIBENTRY}" ]] && continue;
+            [[ "${LIBENTRY}" =~ ^\# ]] && continue;
 
-                [[ -z "${DOTFILES_LIB}" ]] && continue;
-                [[ "${DOTFILES_LIB}" =~ ^\# ]] && continue;
+            if [[ -r "${LIBENTRY}" ]] && [[ -s "${LIBENTRY}" ]]; then source "${LIBENTRY}"; fi
 
-                if [[ -r "${DOTFILES_LIB_PATH}/${DOTFILES_LIB}" ]] && [[ -s "${DOTFILES_LIB_PATH}/${DOTFILES_LIB}" ]]; then source "${DOTFILES_LIB_PATH}/${DOTFILES_LIB}"; fi
-            done
-        fi
+            [[ -n "${LIBENTRY}" ]] && unset -v LIBENTRY;
+        done
 
         if [[ -n "${GENERATE_GPG_KEYS}" ]] && [[ "${GENERATE_GPG_KEYS}" == "${_TRUE}" ]]; then
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
