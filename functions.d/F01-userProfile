@@ -11,10 +11,23 @@ function showHostInfo()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="F01-userProfile.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="F01-userProfile";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local error_count=0;
+    local host_system_name;
+    local host_ip_address;
+    local host_kernel_version;
+    local host_cpu_count;
+    local host_cpu_info;
+    local host_memory_size;
+    local swap_memory_size;
+    local system_process_count;
+    local user_disk_usage;
+    local user_process_count;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -61,14 +74,17 @@ function showHostInfo()
     printf "%-16s : %-10s %s in %s\n" "+ Disk Usage" "You're currently using" "${user_disk_usage}" "${HOME}" >&2;
     printf "%-16s : %-10d\n" "+ Processes" "${user_process_count}" >&2;
     printf "%s\n" "+-------------------------------------------------------------------+" >&2;
+
     if [[ -r /etc/motd ]] && [[ -s /etc/motd ]]; then
         printf "\n" >&2;
         printf "%s\n" "+------------------------------ MOTD -------------------------------+" >&2;
         cat /etc/motd >&2;
         printf "%s\n" "+-------------------------------------------------------------------+" >&2;
     fi
+
     printf "\n" >&2;
 
+    [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${host_system_name}" ]] && unset -v host_system_name;
     [[ -n "${host_ip_address[*]}" ]] && unset -v host_ip_address;
     [[ -n "${host_kernel_version}" ]] && unset -v host_kernel_version;
@@ -76,9 +92,9 @@ function showHostInfo()
     [[ -n "${host_cpu_info}" ]] && unset -v host_cpu_info;
     [[ -n "${host_memory_size}" ]] && unset -v host_memory_size;
     [[ -n "${swap_memory_size}" ]] && unset -v swap_memory_size;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-
-    (( error_count != 0 )) && return_code="${error_count}";
+    [[ -n "${system_process_count}" ]] && unset -v system_process_count;
+    [[ -n "${user_disk_usage}" ]] && unset -v user_disk_usage;
+    [[ -n "${user_process_count}" ]] && unset -v user_process_count;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -93,9 +109,11 @@ function showHostInfo()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -114,19 +132,28 @@ function setPromptCommand()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="F01-userProfile";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
+    local cname="F01-userProfile";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local color_off='\033[0m';
+    local color_red='\033[0;31m';
+    local color_green='\033[0;32m';
+    local color_yellow='\033[0;33m';
+    local color_blue='\033[0;34m';
+    local PS2="continue -> ";
+    local PS3="Enter selection: ";
+    local PS4='[Time: \D{%F %T} ][Thread: ${0}][Log: -][Level: TRACE] - [File: ${FUNCNAME[0]:-${SHELL}}] [Method: -] - ';
+    local git_status="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)";
+    local real_user;
+    local start_epoch
+    local end_epoch;
+    local runtime;
 
-    color_off='\033[0m';
-    color_red='\033[0;31m';
-    color_green='\033[0;32m';
-    color_yellow='\033[0;33m';
-    color_blue='\033[0;34m';
-    PS2="continue -> ";
-    PS3="Enter selection: ";
-    PS4='[Time: \D{%F %T} ][Thread: ${0}][Log: -][Level: TRACE] - [File: ${FUNCNAME[0]:-${SHELL}}] [Method: -] - ';
-    git_status="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)";
+    if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        start_epoch="$(date +"%s")";
+
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} START: $(date -d @"${start_epoch}" +"${TIMESTAMP_OPTS}")";
+    fi
 
     [[ -n "${PS1}" ]] && unset -v PS1;
 
@@ -162,7 +189,33 @@ function setPromptCommand()
             esac
     esac
 
+    [[ -n "${color_off}" ]] && unset -v color_off;
+    [[ -n "${color_red}" ]] && unset -v color_red;
+    [[ -n "${color_green}" ]] && unset -v color_green;
+    [[ -n "${color_yellow}" ]] && unset -v color_yellow;
+    [[ -n "${color_blue}" ]] && unset -v color_blue;
+    [[ -n "${git_status}" ]] && unset -v git_status;
+    [[ -n "${real_user}" ]] && unset -v real_user;
+
+
+    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
+    fi
+
+    if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        end_epoch="$(date +"%s")"
+        runtime=$(( end_epoch - start_epoch ));
+
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} END: $(date -d "@${end_epoch}" +"${TIMESTAMP_OPTS}")";
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
+    fi
+
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -181,10 +234,18 @@ function runLoginCommands()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="F01-userProfile.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="F01-userProfile";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local error_count=0;
+    local ret_code=0;
+    local cmd_entry;
+    local cmd_binary;
+    local cmd_args;
+    local cmd_output;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -209,19 +270,19 @@ function runLoginCommands()
             [[ -z "${cmd_entry}" ]] && continue;
             [[ "${cmd_entry}" =~ ^\# ]] && continue;
 
-            cmnd_binary="$(cut -d "|" -f 1 <<< "${cmd_entry}")";
-            cmnd_args="$(cut -d "|" -f 2 <<< "${cmd_entry}")";
+            cmd_binary="$(cut -d "|" -f 1 <<< "${cmd_entry}")";
+            cmd_args="$(cut -d "|" -f 2 <<< "${cmd_entry}")";
 
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmnd_binary -> ${cmnd_binary}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmnd_args -> ${cmnd_args}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_binary -> ${cmd_binary}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_args -> ${cmd_args}";
             fi
 
-            if [[ -n "$(command -v ${cmnd_binary})" ]]; then
+            if [[ -n "$(command -v ${cmd_binary})" ]]; then
                 [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cmd_output="$("${cmd_binary}" "${cmnd_args}")";
+                cmd_output="$("${cmd_binary}" "${cmd_args}")";
                 ret_code="${?}";
 
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -233,22 +294,26 @@ function runLoginCommands()
                     (( error_count += 1 ));
 
                     if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Execution of command ${cmnd_binary} with arguments ${cmnd_args} failed with return code ${ret_code}.";
-                        writeLogEntry "CONSOLE" "STDERR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Execution of command ${cmnd_binary} with arguments ${cmnd_args} failed with return code ${ret_code}.";
+                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Execution of command ${cmd_binary} with arguments ${cmd_args} failed with return code ${ret_code}.";
+                        writeLogEntry "CONSOLE" "STDERR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Execution of command ${cmd_binary} with arguments ${cmd_args} failed with return code ${ret_code}.";
                     fi
 
                     continue;
                 fi
             fi
 
-            [[ -n "${cmnd_args}" ]] && unset -v cmnd_args;
-            [[ -n "${cmnd_binary}" ]] && unset -v cmnd_binary;
+            [[ -n "${cmd_args}" ]] && unset -v cmd_args;
+            [[ -n "${cmd_binary}" ]] && unset -v cmd_binary;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
         done
     fi
 
-    [[ -n "${cmnd_args}" ]] && unset -v cmnd_args;
-    [[ -n "${cmnd_binary}" ]] && unset -v cmnd_binary;
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${cmd_entry}" ]] && unset -v cmd_entry;
+    [[ -n "${cmd_binary}" ]] && unset -v cmd_binary;
+    [[ -n "${cmd_args}" ]] && unset -v cmd_args;
+    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
 
     (( error_count != 0 )) && return_code="${error_count}";
 
@@ -265,9 +330,11 @@ function runLoginCommands()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -286,10 +353,13 @@ function logoutUser()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="F01-userProfile.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="F01-userProfile";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local error_count=0;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -311,6 +381,8 @@ function logoutUser()
 
     (( error_count != 0 )) && return_code="${error_count}";
 
+    [[ -n "${error_count}" ]] && unset -v error_count;
+
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
@@ -324,9 +396,11 @@ function logoutUser()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

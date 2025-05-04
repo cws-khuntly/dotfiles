@@ -112,6 +112,9 @@ function main()
     local ssh_port_number;
     local target_user;
     local force_exec;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -606,51 +609,6 @@ function main()
 )
 
 #======  FUNCTION  ============================================================
-#          NAME:  usage
-#   DESCRIPTION:  Rotates log files in logs directory
-#    PARAMETERS:  None
-#       RETURNS:  0 regardless of result.
-#==============================================================================
-function usage()
-(
-    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
-    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
-
-    local function_name="${CNAME}#${FUNCNAME[0]}";
-    local return_code=3;
-
-    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "${function_name} -> enter";
-    fi
-
-    printf "%s %s\n" "${function_name}" "Deploy and install dotfiles." >&2;
-    printf "%s %s\n" "Usage: ${function_name}" "[ options ]" >&2;
-    printf "    %s: %s\n" "NOTE" "All configuration options are available in the configuration file, and may be overridden with the appropriate arguments." >&2;
-    printf "    %s: %s\n" "--config | -c <configuration file>" "(Optional) The location to an alternative configuration file for this utility. Default configuration file -> ${DEFAULT_CONFIG_FILE}" >&2;
-    printf "        %s: %s\n" "NOTE" "While this is an optional argument, it MUST be the first positional parameter to this application in order to properly load the various configuration options." >&2;
-    printf "    %s: %s\n" "--servername | -s <hostname>" "(Optional) The target system name to process against. Default value -> ${TARGET_HOST}." >&2;
-    printf "    %s: %s\n" "--username | -u <username>" "(Optional) The username to utilize for the target system. Default value -> ${TARGET_USER}." >&2;
-    printf "    %s: %s\n" "--action | -a <action>" "(Optional) The type of process to execute. One of the following. Default value -> ${DEFAULT_RUNTIME_OPTION}" >&2;
-    printf "        %s: %s\n" "deployFiles" "Pushes dotfiles to the selected system but does not install/apply" >&2;
-    printf "        %s: %s\n" "installFiles" "Installs dotfiles to the selected system - assumes the package has already been sent to the target system" >&2;
-    printf "        %s: %s\n" "deployAndInstall" "Pushes dotfiles to the selected system and installs" >&2;
-    printf "        %s: %s\n" "refreshDotFiles" "Performs a refresh of the existing dotfiles, adding/removing entries as necessary" >&2;
-    printf "    %s: %s\n" "--force | -f" "(Optional) If passed as an argument, hostname validation is disabled and target hosts will NOT be checked for life. Default value -> ${_FALSE}" >&2;
-    printf "    %s: %s\n" "--help | -h | -?" "Show this help menu." >&2;
-
-    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "${function_name} -> exit";
-    fi
-
-    [[ -n "${function_name}" ]] && unset -v function_name;
-
-    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
-    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
-
-    return ${return_code};
-)
-
-#======  FUNCTION  ============================================================
 #          NAME:  capturedata
 #   DESCRIPTION:  Rotates log files in logs directory
 #    PARAMETERS:  None
@@ -668,6 +626,9 @@ function capturedata()
     local argument;
     local argument_name;
     local argument_value;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -875,6 +836,51 @@ function capturedata()
 
     return "${return_code}";
 }
+
+#======  FUNCTION  ============================================================
+#          NAME:  usage
+#   DESCRIPTION:  Rotates log files in logs directory
+#    PARAMETERS:  None
+#       RETURNS:  0 regardless of result.
+#==============================================================================
+function usage()
+(
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
+
+    local function_name="${CNAME}#${FUNCNAME[0]}";
+    local return_code=3;
+
+    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "${function_name} -> enter";
+    fi
+
+    printf "%s %s\n" "${function_name}" "Deploy and install dotfiles." >&2;
+    printf "%s %s\n" "Usage: ${function_name}" "[ options ]" >&2;
+    printf "    %s: %s\n" "NOTE" "All configuration options are available in the configuration file, and may be overridden with the appropriate arguments." >&2;
+    printf "    %s: %s\n" "--config | -c <configuration file>" "(Optional) The location to an alternative configuration file for this utility. Default configuration file -> ${DEFAULT_CONFIG_FILE}" >&2;
+    printf "        %s: %s\n" "NOTE" "While this is an optional argument, it MUST be the first positional parameter to this application in order to properly load the various configuration options." >&2;
+    printf "    %s: %s\n" "--servername | -s <hostname>" "(Optional) The target system name to process against. Default value -> ${TARGET_HOST}." >&2;
+    printf "    %s: %s\n" "--username | -u <username>" "(Optional) The username to utilize for the target system. Default value -> ${TARGET_USER}." >&2;
+    printf "    %s: %s\n" "--action | -a <action>" "(Optional) The type of process to execute. One of the following. Default value -> ${DEFAULT_RUNTIME_OPTION}" >&2;
+    printf "        %s: %s\n" "deployFiles" "Pushes dotfiles to the selected system but does not install/apply" >&2;
+    printf "        %s: %s\n" "installFiles" "Installs dotfiles to the selected system - assumes the package has already been sent to the target system" >&2;
+    printf "        %s: %s\n" "deployAndInstall" "Pushes dotfiles to the selected system and installs" >&2;
+    printf "        %s: %s\n" "refreshDotFiles" "Performs a refresh of the existing dotfiles, adding/removing entries as necessary" >&2;
+    printf "    %s: %s\n" "--force | -f" "(Optional) If passed as an argument, hostname validation is disabled and target hosts will NOT be checked for life. Default value -> ${_FALSE}" >&2;
+    printf "    %s: %s\n" "--help | -h | -?" "Show this help menu." >&2;
+
+    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "${function_name} -> exit";
+    fi
+
+    [[ -n "${function_name}" ]] && unset -v function_name;
+
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
+
+    return ${return_code};
+)
 
 if (( ${#} == 0 )); then usage; exit ${?}; fi
 if (( $(capturedata "${@}"; echo "${?}") != 0 )); then usage; exit ${?}; fi
