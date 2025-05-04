@@ -11,10 +11,20 @@ function cleanupFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="cleanuputils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="cleanuputils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local operating_mode
+    local cleanup_file_list
+    local target_host;
+    local target_port;
+    local target_user;
+    local force_exec;
+    local start_epoch;
+    local start_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -138,12 +148,14 @@ function cleanupFiles()
         fi
     fi
 
-    [[ -n "${target_user}" ]] && unset -v target_user;
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${operating_mode}" ]] && unset -v operating_mode;
+    [[ -n "${cleanup_file_list}" ]] && unset -v forcleanup_file_listce_exec;
     [[ -n "${target_host}" ]] && unset -v target_host;
     [[ -n "${target_port}" ]] && unset -v target_port;
+    [[ -n "${target_user}" ]] && unset -v target_user;
     [[ -n "${force_exec}" ]] && unset -v force_exec;
-    [[ -n "${cleanup_file_list}" ]] && unset -v cleanup_file_list;
-    [[ -n "${operating_mode}" ]] && unset -v operating_mode;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -153,9 +165,11 @@ function cleanupFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -174,10 +188,20 @@ function cleanupLocalFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="cleanuputils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="cleanuputils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local requested_files;
+    local eligibleFile;
+    local targetFile;
+    local targetDir;
+    local cmd_output;
+    local files_to_process;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -201,7 +225,9 @@ function cleanupLocalFiles()
 
     mapfile -d "," -t files_to_process < <(printf "%s" "${requested_files}");
 
-    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "files_to_process -> ${files_to_process[*]}"; fi
+    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "files_to_process -> ${files_to_process[*]}";
+    fi
 
     for eligibleFile in "${files_to_process[@]}"; do
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -230,7 +256,7 @@ function cleanupLocalFiles()
                 [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cmd_output=$(rm -rf "${targetDir:?}/${targetFile}");
+                cmd_output="$(rm -rf "${targetDir:?}/${targetFile}")";
                 ret_code="${?}";
 
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -266,7 +292,7 @@ function cleanupLocalFiles()
                 [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cmd_output=$(rm -f "${targetDir:?}/${targetFile}");
+                cmd_output="$(rm -f "${targetDir:?}/${targetFile}")";
                 ret_code="${?}";
 
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -307,12 +333,16 @@ function cleanupLocalFiles()
         [[ -n "${ret_code}" ]] && unset -v ret_code;
     done
 
-    [[ -n "${targetFile}" ]] && unset -v targetFile;
-    [[ -n "${eligibleFile}" ]] && unset -v eligibleFile;
-    [[ -n "${files_to_process[*]}" ]] && unset -v files_to_process;
-    [[ -n "${requested_files}" ]] && unset -v requested_files;
-
     (( error_count != 0 )) && return_code="${error_count}";
+
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${requested_files}" ]] && unset -v requested_files;
+    [[ -n "${eligibleFile}" ]] && unset -v eligibleFile;
+    [[ -n "${targetFile}" ]] && unset -v targetFile;
+    [[ -n "${targetDir}" ]] && unset -v targetDir;
+    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+    [[ -n "${files_to_process[*]}" ]] && unset -v files_to_process;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -322,9 +352,11 @@ function cleanupLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -343,11 +375,22 @@ function cleanupRemoteFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="cleanuputils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    file_counter=0;
-    return_code=0;
-    error_count=0;
+    local cname="cleanuputils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local file_counter=0;
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local requested_files;
+    local target_host;
+    local target_port;
+    local target_user;
+    local file_cleanup_file;
+    local targetFile;
+    local targetDir;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -394,7 +437,7 @@ function cleanupRemoteFiles()
 
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cat /dev/null >| ${file_cleanup_file};
+        cat /dev/null >| "${file_cleanup_file}";
         ret_code="${?}";
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -408,7 +451,7 @@ function cleanupRemoteFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Populating file cleanup file ${file_cleanup_file}...";
             fi
 
-            for eligibleFile in "${files_to_process[@]}"; do
+            for eligibleFile in "${requested_files[@]}"; do
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_counter -> ${file_counter}";
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "eligibleFile -> ${eligibleFile}";
@@ -489,19 +532,18 @@ function cleanupRemoteFiles()
         fi
     fi
 
-    [[ -w "${file_cleanup_file}" ]] && rm -f "${file_cleanup_file}";
+    [[ -f "${file_cleanup_file}" ]] && rm -f "${file_cleanup_file}";
 
-    [[ -n "${targetFile}" ]] && unset -v targetFile;
-    [[ -n "${targetDir}" ]] && unset -v targetDir;
+    [[ -n "${file_counter}" ]] && unset -v file_counter;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${requested_files}" ]] && unset -v requested_files;
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${requested_files[*]}" ]] && unset -v requested_files;
     [[ -n "${target_host}" ]] && unset -v target_host;
     [[ -n "${target_port}" ]] && unset -v target_port;
     [[ -n "${target_user}" ]] && unset -v target_user;
-    [[ -n "${file_counter}" ]] && unset -v file_counter;
-    [[ -n "${eligibleFile}" ]] && unset -v eligibleFile;
     [[ -n "${file_cleanup_file}" ]] && unset -v file_cleanup_file;
-    [[ -n "${files_to_process[*]}" ]] && unset -v files_to_process;
+    [[ -n "${targetFile}" ]] && unset -v targetFile;
+    [[ -n "${targetDir}" ]] && unset -v targetDir;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -511,9 +553,11 @@ function cleanupRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

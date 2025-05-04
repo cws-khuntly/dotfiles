@@ -29,7 +29,7 @@ function mkcd()
 
     #======  FUNCTION  ============================================================
     #          NAME:  usage
-    #   DESCRIPTION:  
+    #   DESCRIPTION:
     #    PARAMETERS:  None
     #       RETURNS:  0 regardless of result.
     #==============================================================================
@@ -71,7 +71,7 @@ function mkcd()
     [[ -n "${cmd_output}" ]] && unset -v cmd_output;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-    cmd_output=$(mkdir -pv "${directory_to_create}");
+    cmd_output="$(mkdir -pv "${directory_to_create}")";
     ret_code="${?}";
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -166,7 +166,7 @@ function lsz()
 
     #======  FUNCTION  ============================================================
     #          NAME:  usage
-    #   DESCRIPTION:  
+    #   DESCRIPTION:
     #    PARAMETERS:  None
     #       RETURNS:  0 regardless of result.
     #==============================================================================
@@ -306,7 +306,7 @@ function extract()
 
     #======  FUNCTION  ============================================================
     #          NAME:  usage
-    #   DESCRIPTION:  
+    #   DESCRIPTION:
     #    PARAMETERS:  None
     #       RETURNS:  0 regardless of result.
     #==============================================================================
@@ -464,7 +464,7 @@ function returnRandomCharacters()
 
     #======  FUNCTION  ============================================================
     #          NAME:  usage
-    #   DESCRIPTION:  
+    #   DESCRIPTION:
     #    PARAMETERS:  None
     #       RETURNS:  0 regardless of result.
     #==============================================================================
@@ -586,7 +586,7 @@ function returnRandomCharacters()
     else
         returned_characters="$(tr -cd '[:alnum:]' < /dev/urandom | head -c ${string_length})";
     fi
-    
+
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returned_characters -> ${returned_characters}"; fi
 
     if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -655,7 +655,7 @@ function shredit
 
     #======  FUNCTION  ============================================================
     #          NAME:  usage
-    #   DESCRIPTION:  
+    #   DESCRIPTION:
     #    PARAMETERS:  None
     #       RETURNS:  0 regardless of result.
     #==============================================================================
@@ -699,7 +699,7 @@ function shredit
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output=$(cryptsetup -d /dev/urandom -c aes-xts-plain create delete ${shred_file}); ## TODO: make this a property
+        cmd_output="$(cryptsetup -d /dev/urandom -c aes-xts-plain create delete ${shred_file})"; ## TODO: make this a property
         ret_code="${?}";
 
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -711,7 +711,7 @@ function shredit
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output=$(shred -vz /dev/mapper/delete);
+        cmd_output="$(shred -vz /dev/mapper/delete)";
         ret_code="${?}";
 
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -729,7 +729,7 @@ function shredit
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output=$(cryptsetup remove delete);
+        cmd_output="$(cryptsetup remove delete)";
         ret_code="${?}";
 
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then

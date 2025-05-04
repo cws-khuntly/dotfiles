@@ -21,13 +21,10 @@ if [[ -n "${LOGGING_PROPERTIES}" ]]; then
     source "${LOGGING_PROPERTIES}";
 else
     if [[ -r "${SCRIPT_ROOT}/etc/system/logging.properties" ]] && [[ -s "${SCRIPT_ROOT}/etc/system/logging.properties" ]]; then
-        echo "LOADED -> ${SCRIPT_ROOT}/etc/system/logging.properties" >> ${HOME}/loaded.txt
         source "${SCRIPT_ROOT}/etc/system/logging.properties"; ## if its here, override the above and use it
     elif [[ -r "${HOME}/etc/system/logging.properties" ]] && [[ -s "${HOME}/etc/system/logging.properties" ]]; then
-        echo "LOADED -> ${HOME}/etc/system/logging.properties" >> ${HOME}/loaded.txt
         source "${HOME}/etc/system/logging.properties"; ## if its here, override the above and use it
     elif [[ -r "/usr/local/etc/logging.properties" ]] && [[ -s "/usr/local/etc/logging.properties" ]]; then
-        echo "LOADED -> /usr/local/etc/logging.properties" >> ${HOME}/loaded.txt
         source "/usr/local/etc/logging.properties"; ## if its here, use it
     else
         printf "\e[00;31m%s\e[00;32m\n" "Unable to load logging configuration. Shutting down." >&2;
@@ -56,8 +53,10 @@ function usage()
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
     set +o noclobber;
-    function_name="${CNAME}#${FUNCNAME[0]}";
-    return_code=3;
+
+    local cname="logger.sh";
+    local function_name="${CNAME}#${FUNCNAME[0]}";
+    local return_code=3;
 
     printf "%s %s\n" "${function_name}" "Write a log message to a provided target." >&2;
     printf "%s %s\n" "Usage: ${function_name}" "[ <options> ]" >&2;
@@ -80,6 +79,9 @@ function usage()
     printf "    %s: %s\n" "Calling function" "The method within the script calling the method to write the log entry." >&2;
     printf "    %s: %s\n" "Message" "The data to write to the logfile." >&2;
 
+    [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
+
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
@@ -98,11 +100,11 @@ function writeLogEntry()
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
     set +o noclobber;
-    function_name="${CNAME}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
 
-    action="${1}";
+    local cname="logger.sh";
+    local function_name="${CNAME}#${FUNCNAME[0]}";
+    local return_code=0;
+    local action="${1}";
 
     case "${action}" in
         [Ff][Ii][Ll][Ee])
@@ -116,11 +118,10 @@ function writeLogEntry()
             ;;
     esac
 
-    [[ -n "${transfer_file_list}" ]] && unset -v transfer_file_list;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${action}" ]] && unset -v action;
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
@@ -140,19 +141,23 @@ function writeLogEntryToConsole()
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
     set +o noclobber;
-    function_name="${CNAME}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
 
-    log_level="${1}";
-    log_message="${2}";
+    local cname="logger.sh";
+    local function_name="${CNAME}#${FUNCNAME[0]}";
+    local return_code=0;
+    local log_level="${1}";
+    local log_message="${2}";
 
     case "${log_level}" in
         [Ss][Tt][Dd][Oo][Uu][Tt]) printf "%s\n" "${log_message}" >&1; ;;
         [Ss][Tt][Dd][Ee][Rr][Rr]) printf "\e[00;31m%s\e[00;32m\n" "${log_message}" >&2; ;;
     esac
+
     [[ -n "${log_level}" ]] && unset -v log_level;
     [[ -n "${log_message}" ]] && unset -v log_message;
+
+    [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
@@ -172,13 +177,17 @@ function writeLogEntryToFile()
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
     set +o noclobber;
-    log_level="${1}";
-    log_pid="${2}";
-    log_source="${3}";
-    log_line="${4}";
-    log_method="${5}";
-    log_message="${6}";
-    log_date="${7}";
+
+    local cname="logger.sh";
+    local function_name="${CNAME}#${FUNCNAME[0]}";
+    local log_level="${1}";
+    local log_pid="${2}";
+    local log_source="${3}";
+    local log_line="${4}";
+    local log_method="${5}";
+    local log_message="${6}";
+    local log_date="${7}";
+    local log_file;
 
     case "${log_level}" in
         [Pp][Ee][Rr][Ff][Oo][Rr][Mm][Aa][Nn][Cc][Ee]) log_file="${PERF_LOG_FILE}"; ;;
@@ -194,14 +203,17 @@ function writeLogEntryToFile()
 
     printf "${CONVERSION_PATTERN}\n" "${log_date}" "${log_file}" "${log_level}" "${log_pid}" "${log_source}" "${log_line}" "${log_method}" "${log_message}" >> "${LOG_ROOT}/${log_file}";
 
-    [[ -n "${log_date}" ]] && unset -v log_date;
     [[ -n "${log_level}" ]] && unset -v log_level;
-    [[ -n "${log_method}" ]] && unset -v log_method;
+    [[ -n "${log_pid}" ]] && unset -v log_pid;
     [[ -n "${log_source}" ]] && unset -v log_source;
     [[ -n "${log_line}" ]] && unset -v log_line;
+    [[ -n "${log_method}" ]] && unset -v log_method;
     [[ -n "${log_message}" ]] && unset -v log_message;
+    [[ -n "${log_date}" ]] && unset -v log_date;
     [[ -n "${log_file}" ]] && unset -v log_file;
-    [[ -n "${write_to_log}" ]] && unset -v write_to_log;
+
+    [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi

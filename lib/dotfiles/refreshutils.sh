@@ -11,11 +11,19 @@ function refreshFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="refreshutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
-    continue_exec="${_TRUE}";
+    local cname="refreshutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local refresh_mode;
+    local target_host;
+    local target_port;
+    local target_user;
+    local force_exec;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -128,10 +136,13 @@ function refreshFiles()
             ;;
     esac
 
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${refresh_mode}" ]] && unset -v refresh_mode;
     [[ -n "${target_host}" ]] && unset -v target_host;
+    [[ -n "${target_port}" ]] && unset -v target_port;
     [[ -n "${target_user}" ]] && unset -v target_user;
-    [[ -n "${continue_exec}" ]] && unset -v continue_exec;
+    [[ -n "${force_exec}" ]] && unset -v force_exec;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -141,9 +152,11 @@ function refreshFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -162,11 +175,21 @@ function refreshLocalFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="refreshutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    ret_code=0;
-    return_code=0;
-    error_count=0;
+    local cname="refreshutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local cmd_output;
+    local entry;
+    local entry_command;
+    local entry_source;
+    local entry_target;
+    local entry_permissions;
+    local cleanup_list;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -187,7 +210,7 @@ function refreshLocalFiles()
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output=$(mkdir -pv "${DOTFILES_INSTALL_PATH}");
+        cmd_output="$(mkdir -pv "${DOTFILES_INSTALL_PATH}")";
         ret_code="${?}";
 
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -209,7 +232,7 @@ function refreshLocalFiles()
             [[ -n "${cmd_output}" ]] && unset -v cmd_output;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            cmd_output=$("${UNARCHIVE_PROGRAM}" -c "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" | ( cd "${DOTFILES_INSTALL_PATH}"; tar -xf - ));
+            cmd_output="$("${UNARCHIVE_PROGRAM}" -c "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" | ( cd "${DOTFILES_INSTALL_PATH}"; tar -xf - ))";
             ret_code="${?}";
 
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -274,7 +297,7 @@ function refreshLocalFiles()
                                     [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                                    cmd_output=$(mkdir -pv "$(eval printf "%s" "${entry_target}")");
+                                    cmd_output="$(mkdir -pv "$(eval printf "%s" "${entry_target}")")";
                                     ret_code="${?}";
 
                                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -323,7 +346,7 @@ function refreshLocalFiles()
                                 [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                                cmd_output=$(ln -s "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")");
+                                cmd_output="$(ln -s "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
                                 ret_code="${?}";
 
                                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -359,7 +382,7 @@ function refreshLocalFiles()
                                     [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                                    cmd_output=$(rm -f "${entry_target}");
+                                    cmd_output="$(rm -f "${entry_target}")";
                                     ret_code="${?}";
 
                                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -382,7 +405,7 @@ function refreshLocalFiles()
                                         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                                         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                                        cmd_output=$(cp "${entry_source}" "${entry_target}");
+                                        cmd_output="$(cp "${entry_source}" "${entry_target}")";
                                         ret_code="${?}";
 
                                         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -489,10 +512,14 @@ function refreshLocalFiles()
     (( error_count != 0 )) && return_code="${error_count}";
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+    [[ -n "${entry}" ]] && unset -v entry;
     [[ -n "${entry_command}" ]] && unset -v entry_command;
     [[ -n "${entry_source}" ]] && unset -v entry_source;
     [[ -n "${entry_target}" ]] && unset -v entry_target;
-    [[ -n "${entry}" ]] && unset -v entry;
+    [[ -n "${entry_permissions}" ]] && unset -v entry_permissions;
+    [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -507,8 +534,11 @@ function refreshLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -527,11 +557,23 @@ function refreshRemoteFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="refreshutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    ret_code=0;
-    return_code=0;
-    error_count=0;
+    local cname="refreshutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local target_host;
+    local target_port;
+    local target_user;
+    local file_verification_script;
+    local transfer_file_list;
+    local verify_response;
+    local installation_script;
+    local refresh_response;
+    local cleanup_list;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -654,7 +696,7 @@ function refreshRemoteFiles()
                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${TMPDIR:-${USABLE_TMP_DIR}}";
                     fi
-                
+
                     installation_script="$(mktemp --tmpdir="${TMPDIR:-${USABLE_TMP_DIR}}")";
 
                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -795,11 +837,20 @@ function refreshRemoteFiles()
         fi
     fi
 
+    [[ -f "${file_verification_script}" ]] && rm -f "${file_verification_script}";
+    [[ -f "${installation_script}" ]] && rm -f "${installation_script}";
+
     [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${entry_command}" ]] && unset -v entry_command;
-    [[ -n "${entry_source}" ]] && unset -v entry_source;
-    [[ -n "${entry_target}" ]] && unset -v entry_target;
-    [[ -n "${entry}" ]] && unset -v entry;
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${target_host}" ]] && unset -v target_host;
+    [[ -n "${target_port}" ]] && unset -v target_port;
+    [[ -n "${target_user}" ]] && unset -v target_user;
+    [[ -n "${file_verification_script}" ]] && unset -v file_verification_script;
+    [[ -n "${transfer_file_list}" ]] && unset -v transfer_file_list;
+    [[ -n "${verify_response}" ]] && unset -v verify_response;
+    [[ -n "${installation_script}" ]] && unset -v installation_script;
+    [[ -n "${refresh_response}" ]] && unset -v refresh_response;
+    [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -814,8 +865,11 @@ function refreshRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

@@ -27,9 +27,15 @@ function readPropertyFile
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="basefunctions.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
+    local cname="basefunctions.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local error_count=0;
+    local property_name;
+    local property_value;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -44,7 +50,7 @@ function readPropertyFile
 
     #======  FUNCTION  ============================================================
     #          NAME:  usage
-    #   DESCRIPTION:  
+    #   DESCRIPTION:
     #    PARAMETERS:  None
     #       RETURNS:  0 regardless of result.
     #==============================================================================
@@ -118,6 +124,10 @@ function readPropertyFile
 
     (( error_count != 0 )) && return_code="${error_count}";
 
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${property_name}" ]] && unset -v property_name;
+    [[ -n "${property_value}" ]] && unset -v property_value;
+
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
@@ -131,8 +141,11 @@ function readPropertyFile
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -151,9 +164,16 @@ function validateAndCopyKeysForHost
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="basefunctions.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
+    local cname="basefunctions.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local target_host;
+    local target_port;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -168,7 +188,7 @@ function validateAndCopyKeysForHost
 
     #======  FUNCTION  ============================================================
     #          NAME:  usage
-    #   DESCRIPTION:  
+    #   DESCRIPTION:
     #    PARAMETERS:  None
     #       RETURNS:  0 regardless of result.
     #==============================================================================
@@ -177,7 +197,7 @@ function validateAndCopyKeysForHost
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-        cname="F02-misc";
+        cname="basefunctions.sh";
         function_name="${cname}#${FUNCNAME[1]}";
         return_code=3;
 
@@ -195,7 +215,7 @@ function validateAndCopyKeysForHost
         return ${return_code};
     )
 
-    (( ${#} != 2 )) && usage;
+    if (( ${#} != 2 )); then usage; exit ${?}; fi
 
     target_host="${1}";
     target_port="${2}";
@@ -235,7 +255,7 @@ function validateAndCopyKeysForHost
 		[[ -n "${function_name}" ]] && unset -v function_name;
 		[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-		getHostKeys "${target_host}" ${target_port};
+		getHostKeys "${target_host}" "${target_port}";
 		ret_code="${?}";
 
 		cname="basefunctions.sh";
@@ -282,6 +302,11 @@ function validateAndCopyKeysForHost
 
     (( error_count != 0 )) && return_code="${error_count}";
 
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${target_host}" ]] && unset -v target_host;
+    [[ -n "${target_port}" ]] && unset -v target_port;
+
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
@@ -295,8 +320,11 @@ function validateAndCopyKeysForHost
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -315,9 +343,18 @@ function waitForProcessFile
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="basefunctions.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
+    local cname="basefunctions.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local retry_counter=0;
+    local watch_file;
+	local sleep_time;
+	local retry_count;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -332,7 +369,7 @@ function waitForProcessFile
 
     #======  FUNCTION  ============================================================
     #          NAME:  usage
-    #   DESCRIPTION:  
+    #   DESCRIPTION:
     #    PARAMETERS:  None
     #       RETURNS:  0 regardless of result.
     #==============================================================================
@@ -361,25 +398,28 @@ function waitForProcessFile
         return ${return_code};
     )
 
-    (( ${#} != 3 )) && usage;
+    if (( ${#} != 3 )); then usage; exit ${?}; fi
 
 	watch_file="${1}";
 	sleep_time="${2}";
 	retry_count="${3}";
 
 	while [[ ! -f "${watch_file}" ]]; do
-		(( retry_counter != retry_count )) && sleep ${sleep_time};
+		(( retry_counter != retry_count )) && sleep "${sleep_time}";
 
 		(( retry_counter += 1 ));
 
 		continue
 	done
 
-	[[ -f "${watch_file}" ]] && rm -f ${watch_file};
+	[[ -f "${watch_file}" ]] && rm -f "${watch_file}";
 
-	[[ -n "${watch_file}" ]] && unset -v watch_file;
-	[[ -n "${sleep_time}" ]] && unset -v sleep_time;
-	[[ -n "${retry_count}" ]] && unset -v retry_count;
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${retry_counter}" ]] && unset -v retry_counter;
+    [[ -n "${watch_file}" ]] && unset -v watch_file;
+    [[ -n "${sleep_time}" ]] && unset -v sleep_time;
+    [[ -n "${retry_count}" ]] && unset -v retry_count;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -394,11 +434,77 @@ function waitForProcessFile
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
     return ${return_code};
 }
+
+#=====  FUNCTION  =============================================================
+#          NAME:  isNaN
+#   DESCRIPTION:  Checks if the provided variable is a number
+#    PARAMETERS:  Variable to check
+#       RETURNS:  0 if true, 1 if false
+#==============================================================================
+function isNaN
+(
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
+
+    local cname="systemutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local error_count=0;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
+
+    if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        start_epoch="$(date +"%s")";
+
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} START: $(date -d @"${start_epoch}" +"${TIMESTAMP_OPTS}")";
+    fi
+
+    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
+    fi
+
+    (( ${#} != 1 )) && return 3;
+
+    [[ "${1}" =~ ^-?[0-9]+$ ]] || return_code=1;
+
+    (( error_count != 0 )) && return_code="${error_count}";
+
+    [[ -n "${error_count}" ]] && unset -v error_count;
+
+    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
+    fi
+
+    if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        end_epoch="$(date +"%s")"
+        runtime=$(( end_epoch - start_epoch ));
+
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} END: $(date -d "@${end_epoch}" +"${TIMESTAMP_OPTS}")";
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
+    fi
+
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
+    [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
+
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
+
+    return ${return_code};
+)

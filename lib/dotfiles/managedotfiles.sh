@@ -11,9 +11,14 @@ function runInstallLocalFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="managedotfiles.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -59,6 +64,7 @@ function runInstallLocalFiles()
     fi
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -73,8 +79,11 @@ function runInstallLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -93,10 +102,18 @@ function runInstallRemoteFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-	cname="managedotfiles.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+	local cname="managedotfiles.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+	local target_hostname;
+	local target_ssh_port;
+	local target_ssh_user;
+	local force_exec;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -152,11 +169,12 @@ function runInstallRemoteFiles()
 		fi
 	fi
 
+	[[ -n "${error_count}" ]] && unset -v error_count;
 	[[ -n "${target_hostname}" ]] && unset -v target_hostname;
 	[[ -n "${target_ssh_port}" ]] && unset -v target_ssh_port;
 	[[ -n "${target_ssh_user}" ]] && unset -v target_ssh_user;
 	[[ -n "${force_exec}" ]] && unset -v force_exec;
-	[[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -171,8 +189,11 @@ function runInstallRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -191,10 +212,15 @@ function runDeployLocalFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-	cname="managedotfiles.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+	local cname="managedotfiles.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local error_count=0;
+    local ret_code=0;
+    local transfer_file_list;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -270,8 +296,9 @@ function runDeployLocalFiles()
 		fi
     fi
 
-    [[ -n "${transfer_file_list}" ]] && unset -v transfer_file_list;
+    [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${transfer_file_list}" ]] && unset -v transfer_file_list;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -286,8 +313,11 @@ function runDeployLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -306,10 +336,19 @@ function runDeployRemoteFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-	cname="managedotfiles.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+	local cname="managedotfiles.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local target_host;
+	local ssh_port_number;
+	local target_user;
+	local force_exec;
+    local transfer_file_list;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -396,12 +435,12 @@ function runDeployRemoteFiles()
 		fi
 	fi
 
-    [[ -n "${transfer_file_list}" ]] && unset -v transfer_file_list;
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+	[[ -n "${error_count}" ]] && unset -v error_count;
 	[[ -n "${target_host}" ]] && unset -v target_host;
 	[[ -n "${ssh_port_number}" ]] && unset -v ssh_port_number;
 	[[ -n "${target_user}" ]] && unset -v target_user;
-	[[ -n "${force_exec}" ]] && unset -v force_exec;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${transfer_file_list}" ]] && unset -v transfer_file_list;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -416,8 +455,11 @@ function runDeployRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -436,9 +478,14 @@ function runRemoveLocalFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="managedotfiles.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -494,8 +541,11 @@ function runRemoveLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -514,9 +564,18 @@ function runRemoveRemoteFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="managedotfiles.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local error_count=0;
+    local ret_code=0;
+    local target_host;
+	local ssh_port_number;
+	local target_user;
+	local force_exec;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -591,8 +650,11 @@ function runRemoveRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

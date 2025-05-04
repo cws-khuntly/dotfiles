@@ -12,10 +12,20 @@ function transferFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="transferutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="transferutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local operating_mode;
+    local files_to_process;
+    local target_host;
+    local target_port;
+    local target_user;
+    local force_exec;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -97,14 +107,14 @@ function transferFiles()
                 ;;
             "${TRANSFER_LOCATION_REMOTE}")
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferRemoteFiles ${files_to_process} ${returned_hostname} ${target_port} ${target_user}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferRemoteFiles ${files_to_process} ${target_host} ${target_port} ${target_user}";
                 fi
 
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                transferRemoteFiles "${files_to_process}" "${returned_hostname}" "${target_port}" "${target_user}";
+                transferRemoteFiles "${files_to_process}" "${target_host}" "${target_port}" "${target_user}";
                 ret_code="${?}";
 
                 cname="transferutils.sh";
@@ -118,11 +128,11 @@ function transferFiles()
                     return_code="${ret_code}"
 
                     if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "File transfer to host $(hostname -s) has failed. Please review logs.";
+                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "File transfer to host ${target_host} has failed. Please review logs.";
                     fi
                 else
                     if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "File transfer to host $(hostname -s) has completed successfully.";
+                        writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "File transfer to host ${target_host} has completed successfully.";
                     fi
                 fi
                 ;;
@@ -142,13 +152,14 @@ function transferFiles()
         fi
     fi
 
-    [[ -n "${force_exec}" ]] && unset -v force_exec;
-    [[ -n "${target_user}" ]] && unset -v target_user;
-    [[ -n "${target_port}" ]] && unset -v target_port;
-    [[ -n "${target_host}" ]] && unset -v target_host;
-    [[ -n "${files_to_process}" ]] && unset -v files_to_process;
-    [[ -n "${operating_mode}" ]] && unset -v operating_mode;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${operating_mode}" ]] && unset -v operating_mode;
+    [[ -n "${files_to_process}" ]] && unset -v files_to_process;
+    [[ -n "${target_host}" ]] && unset -v target_host;
+    [[ -n "${target_port}" ]] && unset -v target_port;
+    [[ -n "${target_user}" ]] && unset -v target_user;
+    [[ -n "${force_exec}" ]] && unset -v force_exec;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -158,9 +169,11 @@ function transferFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -181,10 +194,19 @@ function transferLocalFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="transferutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="transferutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local error_count=0;
+    local file_listing;
+    local files_to_process;
+    local eligibleFile;
+    local target_file;
+    local target_dir;
+    local cmd_output;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -210,7 +232,7 @@ function transferLocalFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "files_to_process -> ${files_to_process[*]}";
     fi
 
-    if [[ -z "${files_to_process[@]}" ]] || (( ${#files_to_process[@]} == 0 )); then
+    if [[ -z "${files_to_process[*]}" ]] || (( ${#files_to_process[@]} == 0 )); then
 		return_code="${ret_code}"
 
         if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -241,7 +263,7 @@ function transferLocalFiles()
                     if [[ ! -f "${target_file}" ]]; then
                         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                        cmd_output=$(cp "${target_file}" "${target_dir}");
+                        cmd_output="$(cp "${target_file}" "${target_dir}")";
                         ret_code="${?}";
 
                         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -280,6 +302,14 @@ function transferLocalFiles()
 
     (( error_count != 0 )) && return_code="${error_count}";
 
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${file_listing}" ]] && unset -v file_listing;
+    [[ -n "${files_to_process[*]}" ]] && unset -v files_to_process;
+    [[ -n "${eligibleFile}" ]] && unset -v eligibleFile;
+    [[ -n "${target_file}" ]] && unset -v target_file;
+    [[ -n "${target_dir}" ]] && unset -v target_dir;
+    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
@@ -293,8 +323,11 @@ function transferLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -314,10 +347,26 @@ function transferRemoteFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="transferutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="transferutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local file_list;
+    local target_host;
+    local target_port;
+    local target_user;
+    local sftp_send_file;
+    local files_to_process;
+    local eligibleFile;
+    local target_file;
+    local target_dir;
+    local file_counter;
+    local cleanup_list;
+    local cmd_output;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -372,7 +421,7 @@ function transferRemoteFiles()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Populating batch file ${sftp_send_file}...";
         fi
 
-        if [[ -z "${files_to_process[@]}" ]] || (( ${#files_to_process[*]} == 0 )); then
+        if [[ -z "${files_to_process[*]}" ]] || (( ${#files_to_process[*]} == 0 )); then
             return_code=1;
 
             if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -437,7 +486,7 @@ function transferRemoteFiles()
 
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                sftp -b "${sftp_send_file}" -P "${target_port}" "${target_user}@${target_host}" > /dev/null 2>&1;
+                cmd_output="$(sftp -b "${sftp_send_file}" -P "${target_port}" "${target_user}@${target_host}")";
                 ret_code="${?}";
 
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -487,17 +536,22 @@ function transferRemoteFiles()
 
     (( error_count != 0 )) && return_code="${error_count}";
 
-    [[ -n "${force_exec}" ]] && unset -v force_exec;
-    [[ -n "${continue_exec}" ]] && unset -v continue_exec;
-    [[ -n "${ssh_response}" ]] && unset -v ssh_response;
-    [[ -n "${target_user}" ]] && unset -v target_user;
+    [[ -f "${sftp_send_file}" ]] && rm -f "${sftp_send_file}";
+
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${file_list}" ]] && unset -v file_list;
     [[ -n "${target_host}" ]] && unset -v target_host;
     [[ -n "${target_port}" ]] && unset -v target_port;
-    [[ -n "${sftp_delete_file}" ]] && unset -v sftp_delete_file;
+    [[ -n "${target_user}" ]] && unset -v target_user;
     [[ -n "${sftp_send_file}" ]] && unset -v sftp_send_file;
-    [[ -n "${file_verification_script}" ]] && unset -v file_verification_script;
-    [[ -n "${ssh_response}" ]] && unset -v ssh_response;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${files_to_process[*]}" ]] && unset -v files_to_process;
+    [[ -n "${eligibleFile}" ]] && unset -v eligibleFile;
+    [[ -n "${target_file}" ]] && unset -v target_file;
+    [[ -n "${target_dir}" ]] && unset -v target_dir;
+    [[ -n "${file_counter}" ]] && unset -v file_counter;
+    [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
+    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -512,8 +566,11 @@ function transferRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

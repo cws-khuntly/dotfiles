@@ -11,10 +11,20 @@ function validateHostAddress()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="networkutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="networkutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local provided_hostname;
+    local provided_port;
+    local validatedHostName;
+    local validatedHostAddress;
+    local validatedPortNumber;
+    local returned_data;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -112,12 +122,12 @@ function validateHostAddress()
     fi
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${validatedPortNumber}" ]] && unset -v validatedPortNumber;
-    [[ -n "${validatedHostAddress}" ]] && unset -v validatedHostAddress;
-    [[ -n "${validatedHostName}" ]] && unset -v validatedHostName;
-    [[ -n "${returnValidatedHost}" ]] && unset -v returnValidatedHost;
-    [[ -n "${provided_port}" ]] && unset -v provided_port;
+    [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${provided_hostname}" ]] && unset -v provided_hostname;
+    [[ -n "${provided_port}" ]] && unset -v provided_port;
+    [[ -n "${validatedHostName}" ]] && unset -v validatedHostName;
+    [[ -n "${validatedHostAddress}" ]] && unset -v validatedHostAddress;
+    [[ -n "${validatedPortNumber}" ]] && unset -v validatedPortNumber;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -132,15 +142,16 @@ function validateHostAddress()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${random_generator}" ]] && unset -v random_generator;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    [[ -n "${returned_data}" ]] && printf "%s" "${returned_data}";
+    if [[ -n "${returned_data}" ]]; then printf "%s" "${returned_data}"; unset -v returned_data; fi
 
     return ${return_code};
 )
@@ -156,10 +167,20 @@ function checkForValidHost()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="networkutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="networkutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local error_count=0;
+    local ret_code=0;
+    local checkForHostname;
+    local isFQDN;
+    local searchForNameInHosts;
+    local returnedHostname;
+    local resolver_entry;
+    local search_domain;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -307,9 +328,14 @@ function checkForValidHost()
         fi
     fi
 
+    [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${searchForNameInHosts}" ]] && unset -v searchForNameInHosts;
     [[ -n "${checkForHostname}" ]] && unset -v checkForHostname;
+    [[ -n "${isFQDN}" ]] && unset -v isFQDN;
+    [[ -n "${searchForNameInHosts}" ]] && unset -v searchForNameInHosts;
+    [[ -n "${returnedHostname}" ]] && unset -v returnedHostname;
+    [[ -n "${resolver_entry}" ]] && unset -v resolver_entry;
+    [[ -n "${search_domain}" ]] && unset -v search_domain;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -324,9 +350,11 @@ function checkForValidHost()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -347,10 +375,19 @@ function checkForValidAddress()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="networkutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="networkutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local error_count=0;
+    local ret_code=0;
+    local counter=0;
+    local checkForAddress;
+    local split_up;
+    local entry;
+    local returnedHostInfo;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -386,7 +423,7 @@ function checkForValidAddress()
         fi
 
         if [[ -n "${ret_code}" ]] && (( ret_code == 0 )); then
-            split_up=( $(printf "%s" "${checkForAddress}" | tr "." "\n") );
+            mapfile -d "." -t split_up <<< "${checkForAddress}";
 
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "split_up -> ${split_up[*]}";
@@ -414,11 +451,7 @@ function checkForValidAddress()
                 [[ -n "${entry}" ]] && unset -v entry;
             done
 
-            [[ -z "${counter}" ]] || (( counter == 0 )) && returnedHostInfo="${checkForAddress}";
-
-            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "isValidAddress -> ${isValidAddress}";
-            fi
+            if [[ -z "${counter}" ]] || (( counter == 0 )); then returnedHostInfo="${checkForAddress}"; else return_code=1; fi
         else
             return_code=1;
 
@@ -428,10 +461,12 @@ function checkForValidAddress()
         fi
     fi
 
-    [[ -n "${isValidAddress}" ]] && unset -v isValidAddress;
-    [[ -n "${searchForAddressInHosts}" ]] && unset -v searchForAddressInHosts;
+    [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${counter}" ]] && unset -v counter;
     [[ -n "${checkForAddress}" ]] && unset -v checkForAddress;
+    [[ -n "${split_up[*]}" ]] && unset -v split_up;
+    [[ -n "${entry}" ]] && unset -v entry;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -446,14 +481,16 @@ function checkForValidAddress()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    if [[ -n "${returnedHostInfo}" ]]; then printf "%s" "${returnedHostInfo}"; unset -v returnedHostInfo; else return_code=1; fi
+    if [[ -n "${returnedHostInfo}" ]]; then printf "%s" "${returnedHostInfo}"; unset -v returnedHostInfo; fi
 
     return ${return_code};
 )
@@ -469,10 +506,16 @@ function checkForValidPort()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="networkutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="networkutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local error_count=0;
+    local ret_code=0;
+    local checkPortNumber;
+    local returnedPortNumber;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -514,7 +557,7 @@ function checkForValidPort()
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "The provided information failed validation.";
             fi
         else
-            if (( provided_port > 0 )) && (( provided_port <= 65535 )); then
+            if (( checkPortNumber > 0 )) && (( checkPortNumber <= 65535 )); then
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting returnedPortNumber to ${checkPortNumber}";
                 fi
@@ -524,10 +567,17 @@ function checkForValidPort()
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returnedPortNumber -> ${returnedPortNumber}";
                 fi
+            else
+                return_code=1;
+
+                if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "The provided port number is not a valid port.";
+                fi
             fi
         fi
     fi
 
+    [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${checkPortNumber}" ]] && unset -v checkPortNumber;
 
@@ -544,14 +594,16 @@ function checkForValidPort()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    if [[ -n "${returnedPortNumber}" ]]; then printf "%s" "${returnedPortNumber}"; unset -v returnedPortNumber; else return_code=1; fi
+    if [[ -n "${returnedPortNumber}" ]]; then printf "%s" "${returnedPortNumber}"; unset -v returnedPortNumber; fi
 
     return ${return_code};
 )
@@ -567,10 +619,17 @@ function checkIfHostIsAlive()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="networkutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="networkutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local error_count=0;
+    local ret_code=0;
+    local checkNetworkName;
+    local checkNetworkPort;
+    local isHostAvailable;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -680,10 +739,11 @@ function checkIfHostIsAlive()
         fi
     fi
 
+    [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${isHostAvailable}" ]] && unset -v isHostAvailable;
-    [[ -n "${checkNetworkPort}" ]] && unset -v checkNetworkPort;
     [[ -n "${checkNetworkName}" ]] && unset -v checkNetworkName;
+    [[ -n "${checkNetworkPort}" ]] && unset -v checkNetworkPort;
+    [[ -n "${isHostAvailable}" ]] && unset -v isHostAvailable;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -698,9 +758,11 @@ function checkIfHostIsAlive()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

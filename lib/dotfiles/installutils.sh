@@ -11,11 +11,23 @@ function installFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="installutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
-    continue_exec="${_TRUE}";
+    local cname="installutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local install_mode;
+    local target_host;
+    local target_port;
+    local target_user;
+    local entry;
+    local entry_target;
+    local entry_permissions;
+    local recurse_permissions;
+    local cmd_output;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -60,7 +72,7 @@ function installFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating directories found in ${INSTALL_CONF}..";
     fi
 
-    for entry in $(grep "mkdir" "${INSTALL_CONF}"); do
+    while read -r entry; do
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
         fi
@@ -86,49 +98,16 @@ function installFiles()
             fi
 
             continue;
-        fi
-
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Source -> ${entry_source}, target -> ${entry_target}";
-        fi
-
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating directory ${entry_target}";
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -pv ${entry_target}";
-        fi
-
-        [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-        [[ -n "${ret_code}" ]] && unset -v ret_code;
-
-        cmd_output=$(mkdir -pv "$(eval printf "%s" "${entry_target}")");
-        ret_code="${?}";
-
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
-        fi
-
-        if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
-        then
-            (( error_count += 1 ));
-
-            if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to create directory ${entry_target}.";
+        else
+            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating directory ${entry_target}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -pv ${entry_target}";
             fi
 
-            continue;
-        fi
-
-        if [[ -n "${entry_permissions}" ]]; then
             [[ -n "${cmd_output}" ]] && unset -v cmd_output;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            if [[ -n "${recurse_permissions}" ]] && [[ "${recurse_permissions}" == "${_TRUE}" ]]; then
-                cmd_output=$(chmod -R ${entry_permissions} $(eval printf "%s" "${entry_target}"));
-            else
-                cmd_output=$(chmod ${entry_permissions} $(eval printf "%s" "${entry_target}"));
-            fi
-
+            cmd_output="$(mkdir -pv "$(eval printf "%s" "${entry_target}")")";
             ret_code="${?}";
 
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -138,14 +117,43 @@ function installFiles()
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
             then
+                (( error_count += 1 ));
+
                 if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to change permissions of ${entry_target} to ${entry_permissions}.";
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to create directory ${entry_target}.";
+                fi
+
+                continue;
+            else
+                if [[ -n "${entry_permissions}" ]]; then
+                    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+
+                    if [[ -n "${recurse_permissions}" ]] && [[ "${recurse_permissions}" == "${_TRUE}" ]]; then
+                        cmd_output="$(chmod -R "${entry_permissions}" "$(eval printf "%s" "${entry_target}")")";
+                    else
+                        cmd_output="$(chmod "${entry_permissions}" "$(eval printf "%s" "${entry_target}")")";
+                    fi
+
+                    ret_code="${?}";
+
+                    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+                    fi
+
+                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
+                    then
+                        if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to change permissions of ${entry_target} to ${entry_permissions}.";
+                        fi
+                    fi
+                fi
+
+                if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Directory ${entry_target} created";
                 fi
             fi
-        fi
-
-        if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Directory ${entry_target} created";
         fi
 
         [[ -n "${ret_code}" ]] && unset -v ret_code;
@@ -154,9 +162,9 @@ function installFiles()
         [[ -n "${entry_permissions}" ]] && unset -v entry_permissions;
         [[ -n "${recurse_permissions}" ]] && unset -v recurse_permissions;
         [[ -n "${entry}" ]] && unset -v entry;
-    done
+    done < "$(grep "mkdir" "${INSTALL_CONF}")"
 
-    if [[ ! -z "${error_count}" ]] || (( error_count != 0 )); then
+    if [[ -n "${error_count}" ]] && (( error_count != 0 )); then
         return_code="${error_count}";
 
         if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -230,12 +238,20 @@ function installFiles()
 
     [[ -f "${TMPDIR:-${USABLE_TMP_DIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" ]] && rm -f "${TMPDIR:-${USABLE_TMP_DIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
 
+    (( error_count != 0 )) && return_code="${error_count}";
+
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${install_mode}" ]] && unset -v install_mode;
     [[ -n "${target_host}" ]] && unset -v target_host;
+    [[ -n "${target_port}" ]] && unset -v target_port;
     [[ -n "${target_user}" ]] && unset -v target_user;
-    [[ -n "${continue_exec}" ]] && unset -v continue_exec;
-
-    (( error_count != 0 )) && return_code="${error_count}";
+    [[ -n "${force_exec}" ]] && unset -v force_exec;
+    [[ -n "${entry}" ]] && unset -v entry;
+    [[ -n "${entry_target}" ]] && unset -v entry_target;
+    [[ -n "${entry_permissions}" ]] && unset -v entry_permissions;
+    [[ -n "${recurse_permissions}" ]] && unset -v recurse_permissions;
+    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -245,9 +261,11 @@ function installFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -266,11 +284,22 @@ function installLocalFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="installutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    ret_code=0;
-    return_code=0;
-    error_count=0;
+    local cname="installutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local entry;
+    local entry_command;
+    local entry_source;
+    local entry_target;
+    local entry_permissions;
+    local recurse_permissions;
+    local cmd_output;
+    local cleanup_list;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -291,7 +320,7 @@ function installLocalFiles()
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output=$(mkdir -pv "${DOTFILES_INSTALL_PATH}");
+        cmd_output="$(mkdir -pv "${DOTFILES_INSTALL_PATH}")";
         ret_code="${?}";
 
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -300,21 +329,21 @@ function installLocalFiles()
         fi
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+            return_code=1;
+
             if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while processing action ${TARGET_ACTION} on host ${target_hostname} as user ${target_ssh_user}. Please review logs.";
+                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while processing action ${TARGET_ACTION} on host $(hostname -s) as user ${LOGNAME}. Please review logs.";
             fi
         fi
-    fi
-
-    if [[ -d "${DOTFILES_INSTALL_PATH}" ]]; then
+    else
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Switch into ${DOTFILES_INSTALL_PATH}...";
-            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd ${DOTFILES_INSTALL_PATH}; tar -xf - )";
+            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd ${DOTFILES_INSTALL_PATH} || return 1; tar -xf - )";
         fi
 
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        "${UNARCHIVE_PROGRAM}" -c "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" | ( cd "${DOTFILES_INSTALL_PATH}"; tar -xf - );
+        "${UNARCHIVE_PROGRAM}" -c "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" | ( cd "${DOTFILES_INSTALL_PATH}" || return 1; tar -xf - );
         ret_code="${?}";
 
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -325,7 +354,7 @@ function installLocalFiles()
             return_code="${ret_code}"
 
             if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while processing action ${TARGET_ACTION} on host ${target_hostname} as user ${target_ssh_user}. Please review logs.";
+                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while processing action ${TARGET_ACTION} on host $(hostname -s) as user ${LOGNAME}. Please review logs.";
             fi
         else
             if [[ -s "${INSTALL_CONF}" ]]; then
@@ -355,7 +384,7 @@ function installLocalFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "recurse_permissions -> ${recurse_permissions}";
                     fi
 
-                    if [[ -z "${entry_command}" ]] || [[ -z "${entry_source}" ]] || [[ -z "${entry_target}" ]]; then
+                    if [[ -z "${entry_command}" ]] || [[ -z "${entry_source}" ]] || [[ -z "${entry_target}" ]] && [[ "${entry_command}" != "mkdir" ]]; then
                         (( error_count += 1 ));
 
                         if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -389,7 +418,7 @@ function installLocalFiles()
                             [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                            cmd_output=$(ln -s "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")");
+                            cmd_output="$(ln -s "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
                             ret_code="${?}";
 
                             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -411,7 +440,7 @@ function installLocalFiles()
                                     [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                                    cmd_output=$(chmod -h ${entry_permissions} $(eval printf "%s" "${entry_target}"));
+                                    cmd_output="$(chmod -h "${entry_permissions}" "$(eval printf "%s" "${entry_target}")")";
                                     ret_code="${?}";
 
                                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -441,7 +470,7 @@ function installLocalFiles()
                             [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                            cmd_output=$(cp -p "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")");
+                            cmd_output="$(cp -p "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
                             ret_code="${?}";
 
                             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -463,7 +492,7 @@ function installLocalFiles()
                                     [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                                    cmd_output=$(chmod ${entry_permissions} $(eval printf "%s" "${entry_target}"));
+                                    cmd_output="$(chmod "${entry_permissions}" "$(eval printf "%s" "${entry_target}")")";
                                     ret_code="${?}";
 
                                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -512,12 +541,6 @@ function installLocalFiles()
                 fi
             fi
         fi
-    else
-        return_code=1;
-
-        if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Installation path either does not exist or is unwriteable.";
-        fi
     fi
 
     ## cleanup
@@ -553,11 +576,15 @@ function installLocalFiles()
     (( error_count != 0 )) && return_code="${error_count}";
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${entry_command}" ]] && unset -v entry_command;
     [[ -n "${entry_source}" ]] && unset -v entry_source;
     [[ -n "${entry_target}" ]] && unset -v entry_target;
     [[ -n "${entry_permissions}" ]] && unset -v entry_permissions;
+    [[ -n "${recurse_permissions}" ]] && unset -v recurse_permissions;
+    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
     [[ -n "${entry}" ]] && unset -v entry;
+    [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -572,8 +599,11 @@ function installLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -592,10 +622,23 @@ function installRemoteFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="installutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="installutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code;
+    local return_code=0;
+    local error_count=0;
+    local target_host;
+    local target_port;
+    local target_user;
+    local file_verification_script;
+    local transfer_file_list;
+    local verify_response;
+    local installation_script;
+    local install_response;
+    local cleanup_list;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -721,7 +764,7 @@ function installRemoteFiles()
                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${TMPDIR:-${USABLE_TMP_DIR}}";
                     fi
-                
+
                     installation_script="$(mktemp --tmpdir="${TMPDIR:-${USABLE_TMP_DIR}}")";
 
                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -900,11 +943,20 @@ function installRemoteFiles()
 
     (( error_count != 0 )) && return_code="${error_count}";
 
+    [[ -f "${file_verification_script}" ]] && rm -f "${file_verification_script}";
+    [[ -f "${installation_script}" ]] && rm -f "${installation_script}";
+
     [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${entry_command}" ]] && unset -v entry_command;
-    [[ -n "${entry_source}" ]] && unset -v entry_source;
-    [[ -n "${entry_target}" ]] && unset -v entry_target;
-    [[ -n "${entry}" ]] && unset -v entry;
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${target_host}" ]] && unset -v target_host;
+    [[ -n "${target_port}" ]] && unset -v target_port;
+    [[ -n "${target_user}" ]] && unset -v target_user;
+    [[ -n "${file_verification_script}" ]] && unset -v file_verification_script;
+    [[ -n "${transfer_file_list}" ]] && unset -v transfer_file_list;
+    [[ -n "${verify_response}" ]] && unset -v verify_response;
+    [[ -n "${installation_script}" ]] && unset -v installation_script;
+    [[ -n "${install_response}" ]] && unset -v install_response;
+    [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -919,8 +971,11 @@ function installRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

@@ -11,10 +11,19 @@ function uninstallFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="uninstallutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="uninstallutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local return_code=0;
+    local error_count=0;
+    local ret_code=0;
+    local uninstall_mode;
+    local target_host;
+    local target_port;
+    local target_user;
+    local force_exec;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -92,14 +101,14 @@ function uninstallFiles()
             ;;
         "${UNINSTALL_LOCATION_REMOTE}")
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAddress ${target_host} ${target_port}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: uninstallRemoteFiles ${target_host} ${target_port} ${target_user}";
             fi
 
             [[ -n "${cname}" ]] && unset -v cname;
             [[ -n "${function_name}" ]] && unset -v function_name;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            validateHostAddress "${target_host}" "${target_port}";
+            uninstallRemoteFiles "${target_host}" "${target_port}" "${target_user}";
             ret_code="${?}";
 
             cname="uninstallutils.sh";
@@ -110,66 +119,14 @@ function uninstallFiles()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                return_code="${ret_code}"
+                (( error_count += 1 ));
 
                 if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Host ${target_host} does not appear to be available. Please review logs.";
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred getting SSH host keys from host ${target_host}. Please review logs.";
                 fi
             else
-                if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: getHostKeys ${target_host} ${target_port}";
-                fi
-
-                [[ -n "${cname}" ]] && unset -v cname;
-                [[ -n "${function_name}" ]] && unset -v function_name;
-                [[ -n "${ret_code}" ]] && unset -v ret_code;
-
-                getHostKeys "${target_host}" "${target_port}";
-                ret_code="${?}";
-
-                cname="uninstallutils.sh";
-                function_name="${cname}#${FUNCNAME[0]}";
-
-                if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
-                fi
-
-                if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    (( error_count += 1 ));
-
-                    if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred getting SSH host keys from host ${target_host}. Please review logs.";
-                    fi
-                else
-                    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: uninstallRemoteFiles ${target_host} ${target_port} ${target_user}";
-                    fi
-
-                    [[ -n "${cname}" ]] && unset -v cname;
-                    [[ -n "${function_name}" ]] && unset -v function_name;
-                    [[ -n "${ret_code}" ]] && unset -v ret_code;
-
-                    uninstallRemoteFiles "${target_host}" "${target_port}" "${target_user}";
-                    ret_code="${?}";
-
-                    cname="uninstallutils.sh";
-                    function_name="${cname}#${FUNCNAME[0]}";
-
-                    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
-                    fi
-
-                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                        (( error_count += 1 ));
-
-                        if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred getting SSH host keys from host ${target_host}. Please review logs.";
-                        fi
-                    else
-                        if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "File uninstall on host ${target_host} as user ${target_user} completed successfully.";
-                        fi
-                    fi
+                if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "File uninstall on host ${target_host} as user ${target_user} completed successfully.";
                 fi
             fi
             ;;
@@ -182,10 +139,14 @@ function uninstallFiles()
             ;;
     esac
 
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${uninstall_mode}" ]] && unset -v uninstall_mode;
     [[ -n "${target_host}" ]] && unset -v target_host;
+    [[ -n "${target_port}" ]] && unset -v target_port;
     [[ -n "${target_user}" ]] && unset -v target_user;
-    [[ -n "${continue_exec}" ]] && unset -v continue_exec;
+    [[ -n "${force_exec}" ]] && unset -v force_exec;
+    [[ -n "${force_exec}" ]] && unset -v force_exec;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -195,9 +156,11 @@ function uninstallFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -216,11 +179,17 @@ function uninstallLocalFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="uninstallutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    ret_code=0;
-    return_code=0;
-    error_count=0;
+    local cname="uninstallutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local entry;
+    local removable_entry;
+    local cmd_output;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -269,7 +238,7 @@ function uninstallLocalFiles()
 
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                    cmd_output=$(rm -rf "${removable_entry}");
+                    cmd_output="$(rm -rf "${removable_entry}")";
                     ret_code="${?}";
 
                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -299,7 +268,7 @@ function uninstallLocalFiles()
 
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                    cmd_output=$(unlink "${removable_entry}");
+                    cmd_output="$(unlink "${removable_entry}")";
                     ret_code="${?}";
 
                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -329,7 +298,7 @@ function uninstallLocalFiles()
 
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                    cmd_output=$(rm -f "${removable_entry}");
+                    cmd_output="$(rm -f "${removable_entry}")";
                     ret_code="${?}";
 
                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -371,7 +340,7 @@ function uninstallLocalFiles()
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            cmd_output=$(rm -rf ${DOTFILES_INSTALL_PATH});
+            cmd_output="$(rm -rf ${DOTFILES_INSTALL_PATH})";
             ret_code="${?}";
 
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -402,8 +371,10 @@ function uninstallLocalFiles()
     (( error_count != 0 )) && return_code="${error_count}";
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${removable_entry}" ]] && unset -v removable_entry;
+    [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${entry}" ]] && unset -v entry;
+    [[ -n "${removable_entry}" ]] && unset -v removable_entry;
+    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -418,8 +389,11 @@ function uninstallLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -438,10 +412,22 @@ function uninstallRemoteFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="uninstallutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    return_code=0;
-    error_count=0;
+    local cname="uninstallutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local target_host;
+    local target_port;
+    local target_user;
+    local file_removal_script;
+    local entry_command;
+    local removable_entry;
+    local cmd_output;
+    local cleanup_list;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -575,7 +561,7 @@ function uninstallRemoteFiles()
 
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                sftp -b "${file_removal_script}" -oPort="${target_port}" "${target_user}@${target_host}" > /dev/null 2>&1;
+                cmd_output="$(sftp -b "${file_removal_script}" -oPort="${target_port}" "${target_user}@${target_host}")";
                 ret_code="${?}";
 
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -631,10 +617,18 @@ function uninstallRemoteFiles()
 
     (( error_count != 0 )) && return_code="${error_count}";
 
+    [[ -f "${file_removal_script}" ]] && rm -f "${file_removal_script}";
+
     [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${target_host}" ]] && unset -v target_host;
+    [[ -n "${target_port}" ]] && unset -v target_port;
+    [[ -n "${target_user}" ]] && unset -v target_user;
+    [[ -n "${file_removal_script}" ]] && unset -v file_removal_script;
     [[ -n "${entry_command}" ]] && unset -v entry_command;
     [[ -n "${removable_entry}" ]] && unset -v removable_entry;
-    [[ -n "${entry}" ]] && unset -v entry;
+    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+    [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -649,8 +643,11 @@ function uninstallRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

@@ -12,11 +12,22 @@ function captureGpgData()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="gpgutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    ret_code=0;
-    return_code=0;
-    error_count=0;
+    local cname="gpgutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local key_algo;
+    local key_bits;
+    local subkey_type;
+    local subkey_length;
+    local real_name;
+    local email_address;
+    local key_lifetime;
+    local key_passphrase;
+    local start_epoch;
+    local end_epoch;
+    local runtime;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -136,9 +147,7 @@ function captureGpgData()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: read -p \"Desired key passphrase: \" key_passphrase";
         fi
 
-        stty -echo;
-        read -rp "Desired key passphrase: " key_passphrase;
-        stty echo;
+        read -rps "Desired key passphrase: " key_passphrase;
     done
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
@@ -191,13 +200,15 @@ function captureGpgData()
     fi
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${key_algo}" ]] && unset -v key_algo;
-    [[ -n "${key_length}" ]] && unset -v key_length;
+    [[ -n "${key_bits}" ]] && unset -v key_bits;
     [[ -n "${subkey_type}" ]] && unset -v subkey_type;
     [[ -n "${subkey_length}" ]] && unset -v subkey_length;
     [[ -n "${real_name}" ]] && unset -v real_name;
     [[ -n "${email_address}" ]] && unset -v email_address;
     [[ -n "${key_lifetime}" ]] && unset -v key_lifetime;
+    [[ -n "${key_passphrase}" ]] && unset -v key_passphrase;
     [[ -n "${key_passphrase}" ]] && unset -v key_passphrase;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -213,8 +224,11 @@ function captureGpgData()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -234,11 +248,14 @@ function generateGpgKeys()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    cname="gpgutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
-    ret_code=0;
-    return_code=0;
-    error_count=0;
+    local cname="gpgutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local ret_code=0;
+    local return_code=0;
+    local error_count=0;
+    local cmd_output;
+    local GNUPGHOME;
+    local cleanup_list;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -260,7 +277,7 @@ function generateGpgKeys()
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output=$(mkdir -pv "${HOME}"/.gnupg);
+        cmd_output="$(mkdir -pv "${HOME}"/.gnupg)";
         ret_code="${?}";
 
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -306,7 +323,7 @@ function generateGpgKeys()
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output=$("${GPG_APPLICATION_PROGRAM}" --homedir="${GNUPGHOME}" --batch --gen-key "${TMPDIR:-${USABLE_TMP_DIR}}/$(basename "${GPG_OPTION_TEMPLATE}")");
+        cmd_output="$("${GPG_APPLICATION_PROGRAM}" --homedir="${GNUPGHOME}" --batch --gen-key "${TMPDIR:-${USABLE_TMP_DIR}}/$(basename "${GPG_OPTION_TEMPLATE}")")";
         ret_code="${?}";
 
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -361,6 +378,13 @@ function generateGpgKeys()
         fi
     fi
 
+    [[ -n "${GNUPGHOME}" ]] && declare -x GNUPGHOME="${HOME}/.gnupg";
+
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+    [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
+
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
@@ -374,11 +398,11 @@ function generateGpgKeys()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
-    [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
     [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
