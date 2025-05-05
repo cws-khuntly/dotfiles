@@ -23,9 +23,6 @@
 #
 # read-only
 #
-[[ -z "${XDG_RUNTIME_DIR}" ]] && declare -rx XDG_RUNTIME_DIR="/run/user/$(id -u)";
-[[ -z "${DBUS_SESSION_BUS_ADDRESS}" ]] && declare -rx DBUS_SESSION_BUS_ADDRESS="/run/user/$(id -u)/bus";
-
 declare -rx LANG="en_US.UTF-8";
 declare -rx LC_ALL="en_US.UTF-8";
 declare -rx TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n';

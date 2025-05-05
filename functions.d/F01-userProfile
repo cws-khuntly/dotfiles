@@ -236,6 +236,8 @@ function runLoginCommands()
 
     local cname="F01-userProfile";
     local function_name="${cname}#${FUNCNAME[0]}";
+    local primary_file="${HOME}/etc/logincmds.properties";
+    local secondary_file="${HOME}/workspace/etc/logincmds.properties";
     local return_code=0;
     local error_count=0;
     local ret_code=0;
@@ -255,59 +257,71 @@ function runLoginCommands()
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "primary_file -> ${primary_file}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "secondary_file -> ${secondary_file}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
     #
     # read the commands file and execute each
     #
-    if [[ -s ${HOME}/etc/logincmds.properties ]]; then
-        for cmd_entry in $(< "${HOME}/etc/logincmds.properties"); do
-            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_entry -> ${cmd_entry}";
-            fi
+    for file in ${primary_file} ${secondary_file}; do
+        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file -> ${file}";
+        fi
 
-            [[ -z "${cmd_entry}" ]] && continue;
-            [[ "${cmd_entry}" =~ ^\# ]] && continue;
+        if [[ -s "${file}" ]]; then
+            for cmd_entry in $(< "${file}"); do
+                if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_entry -> ${cmd_entry}";
+                fi
 
-            cmd_binary="$(cut -d "|" -f 1 <<< "${cmd_entry}")";
-            cmd_args="$(cut -d "|" -f 2 <<< "${cmd_entry}")";
+                [[ -z "${cmd_entry}" ]] && continue;
+                [[ "${cmd_entry}" =~ ^\# ]] && continue;
 
-            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_binary -> ${cmd_binary}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_args -> ${cmd_args}";
-            fi
-
-            if [[ -n "$(command -v "${cmd_binary}")" ]]; then
-                [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-                [[ -n "${ret_code}" ]] && unset -v ret_code;
-
-                cmd_output="$("${cmd_binary}" "${cmd_args}")";
-                ret_code="${?}";
+                cmd_binary="$(cut -d "|" -f 1 <<< "${cmd_entry}")";
+                cmd_args="$(cut -d "|" -f 2 <<< "${cmd_entry}")";
 
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_binary -> ${cmd_binary}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_args -> ${cmd_args}";
                 fi
 
-                if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    (( error_count += 1 ));
+                if [[ -n "$(command -v "${cmd_binary}")" ]]; then
+                    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                    if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Execution of command ${cmd_binary} with arguments ${cmd_args} failed with return code ${ret_code}.";
-                        writeLogEntry "CONSOLE" "STDERR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Execution of command ${cmd_binary} with arguments ${cmd_args} failed with return code ${ret_code}.";
+                    cmd_output="$("${cmd_binary}" "${cmd_args}")";
+                    ret_code="${?}";
+
+                    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
                     fi
 
-                    continue;
+                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+                        (( error_count += 1 ));
+
+                        if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Execution of command ${cmd_binary} with arguments ${cmd_args} failed with return code ${ret_code}.";
+                            writeLogEntry "CONSOLE" "STDERR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Execution of command ${cmd_binary} with arguments ${cmd_args} failed with return code ${ret_code}.";
+                        fi
+
+                        continue;
+                    fi
                 fi
-            fi
 
-            [[ -n "${cmd_args}" ]] && unset -v cmd_args;
-            [[ -n "${cmd_binary}" ]] && unset -v cmd_binary;
-            [[ -n "${ret_code}" ]] && unset -v ret_code;
-        done
-    fi
+                [[ -n "${file}" ]] && unset -v file;
+                [[ -n "${cmd_args}" ]] && unset -v cmd_args;
+                [[ -n "${cmd_binary}" ]] && unset -v cmd_binary;
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
+            done
+        fi
+    done
 
+    [[ -n "${file}" ]] && unset -v file;
+    [[ -n "${primary_file}" ]] && unset -v primary_file;
+    [[ -n "${secondary_file}" ]] && unset -v secondary_file;
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${cmd_entry}" ]] && unset -v cmd_entry;
