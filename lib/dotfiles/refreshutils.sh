@@ -123,7 +123,7 @@ function refreshFiles()
                 fi
             else
                 if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "${refresh_mode} on host ${returned_hostname} as user ${target_ssh_user} has completed successfully.";
+                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "${refresh_mode} on host ${target_host} as user ${target_user} has completed successfully.";
                 fi
             fi
             ;;
@@ -202,15 +202,15 @@ function refreshLocalFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    if [[ ! -d "${DOTFILES_INSTALL_PATH}" ]]; then
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir ${DOTFILES_INSTALL_PATH}";
+    if [[ -f "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" ]]; then
+        if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd ${DOTFILES_INSTALL_PATH}; tar -xf - )";
         fi
 
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output="$(mkdir -pv "${DOTFILES_INSTALL_PATH}")";
+        cmd_output="$("${UNARCHIVE_PROGRAM}" -c "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" | ( cd "${DOTFILES_INSTALL_PATH}"; tar -xf - ))";
         ret_code="${?}";
 
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -218,86 +218,97 @@ function refreshLocalFiles()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
         fi
 
-        if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) || [[ -w "${DOTFILES_INSTALL_PATH}" ]]; then
+        if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
             return_code="${ret_code}"
 
             if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while processing action ${TARGET_ACTION} on host ${target_hostname} as user ${target_ssh_user}. Please review logs.";
+                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while unpacking the file archive. Please review logs.";
             fi
         else
-            if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd ${DOTFILES_INSTALL_PATH}; tar -xf - )";
-            fi
+            if [[ -s "${INSTALL_CONF}" ]]; then
+                ## change the IFS
+                IFS="${MODIFIED_IFS}";
 
-            [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-            [[ -n "${ret_code}" ]] && unset -v ret_code;
+                ## clean up home directory first
+                for entry in $(< "${INSTALL_CONF}"); do
+                    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
+                    fi
 
-            cmd_output="$("${UNARCHIVE_PROGRAM}" -c "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" | ( cd "${DOTFILES_INSTALL_PATH}"; tar -xf - ))";
-            ret_code="${?}";
+                    [[ -z "${entry}" ]] && continue;
+                    [[ "${entry}" =~ ^\# ]] && continue;
 
-            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
-            fi
+                    entry_command="$(cut -d "|" -f 1 <<< "${entry}")";
+                    entry_source="$(cut -d "|" -f 2 <<< "${entry}")";
+                    entry_target="$(cut -d "|" -f 3 <<< "${entry}")";
+                    entry_permissions="$(cut -d "|" -f 4 <<< "${entry}")";
+                    recurse_permissions="$(cut -d "|" -f 4 <<< "${entry}")";
 
-            if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                return_code="${ret_code}"
+                    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_command -> ${entry_command}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_source -> ${entry_source}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_target -> ${entry_target}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_permissions -> ${entry_permissions}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "recurse_permissions -> ${recurse_permissions}";
+                    fi
 
-                if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while unpacking the file archive. Please review logs.";
-                fi
-            else
-                if [[ -s "${INSTALL_CONF}" ]]; then
-                    ## change the IFS
-                    IFS="${MODIFIED_IFS}";
+                    if [[ -z "${entry_command}" ]] || [[ -z "${entry_source}" ]] || [[ -z "${entry_target}" ]] && [[ "${entry_command}" != "mkdir" ]]; then
+                        (( error_count += 1 ));
 
-                    ## clean up home directory first
-                    for entry in $(< "${INSTALL_CONF}"); do
-                        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
+                        if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided entry command from ${INSTALL_CONF} was empty. entry_command -> ${entry_command}, entry_source -> ${entry_source}, entry_target -> ${entry_target}";
                         fi
 
-                        [[ -z "${entry}" ]] && continue;
-                        [[ "${entry}" =~ ^\# ]] && continue;
+                        continue;
+                    fi
 
-                        entry_command="$(cut -d "|" -f 1 <<< "${entry}")";
-                        entry_source="$(cut -d "|" -f 2 <<< "${entry}")";
-                        entry_target="$(cut -d "|" -f 3 <<< "${entry}")";
-                        entry_permissions="$(cut -d "|" -f 4 <<< "${entry}")";
+                    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Command -> ${entry_command}, Source -> ${entry_source}, target -> ${entry_target}";
+                    fi
 
-                        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_command -> ${entry_command}";
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_source -> ${entry_source}";
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_target -> ${entry_target}";
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_permissions -> ${entry_permissions}";
-                        fi
+                    case "${entry_command}" in
+                        "ln")
+                            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing symbolic link ${entry_target} if exists...";
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC:
+                                    [[ -L \$(eval printf \"%s\" ${entry_target}) ]] && unlink \$(eval printf \"%s\" ${entry_target})
+                                    [[ -f \$(eval printf \"%s\" ${entry_target}) ]] && rm -f \$(eval printf \"%s\" ${entry_target})";
+                            fi
 
-                        if [[ -z "${entry_command}" ]] || [[ -z "${entry_source}" ]] || [[ -z "${entry_target}" ]]; then
-                            (( error_count += 1 ));
+                            [[ -L "$(eval printf "%s" "${entry_target}")" ]] && unlink "$(eval printf "%s" "${entry_target}")";
+                            [[ -f "$(eval printf "%s" "${entry_target}")" ]] && rm -f "$(eval printf "%s" "${entry_target}")";
 
-                            [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided entry command from ${INSTALL_CONF} was missing one of the following: entry_command -> ${entry_command}, entry_source -> ${entry_source}, entry_target -> ${entry_target}";
+                            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating symbolic link ${entry_source} -> ${entry_target}";
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ln -s eval printf \"%s\" ${entry_source} eval printf \"%s\" ${entry_target}";
+                            fi
 
-                            continue;
-                        fi
+                            [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                            [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                        case "${entry_command}" in
-                            "mkdir")
-                                if [[ -d "${entry_target}" ]]; then
-                                    if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                        writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Directory ${entry_target} exists";
-                                    fi
+                            cmd_output="$(ln -s "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
+                            ret_code="${?}";
 
-                                    continue
-                                else
-                                    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating directory ${entry_target}";
-                                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -pv ${entry_target}";
-                                    fi
+                            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+                            fi
 
+                            if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
+                            then
+                                (( error_count += 1 ));
+
+                                if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to create symbolic link ${entry_target} with source ${entry_source}.";
+                                fi
+
+                                continue;
+                            else
+                                if [[ -n "${entry_permissions}" ]]; then
                                     [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                                    cmd_output="$(mkdir -pv "$(eval printf "%s" "${entry_target}")")";
+                                    cmd_output="$(chmod -h "${entry_permissions}" "$(eval printf "%s" "${entry_target}")")";
                                     ret_code="${?}";
 
                                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -305,84 +316,51 @@ function refreshLocalFiles()
                                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
                                     fi
 
-                                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                                        (( error_count += 1 ));
-
+                                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
+                                    then
                                         if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to create directory ${entry_target}.";
+                                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to change permissions of ${entry_target} to ${entry_permissions}.";
                                         fi
-
-                                        continue;
-                                    else
-                                        if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                            writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Directory ${entry_target} created";
-                                        fi
-
-                                        [[ ! -z "${entry_permissions}" ]] && chmod "${entry_permissions}" "${entry_target}";
                                     fi
-                                fi
-                                ;;
-                            "ln")
-                                if [[ -L "${entry_target}" ]] || [[ -f "${entry_target}" ]]; then
-                                    if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                        writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Symbolic link ${entry_target} exists, removing";
-                                    fi
-
-                                    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC:
-                                            [[ -L \$(eval printf \"%s\" ${entry_target}) ]] && unlink \$(eval printf \"%s\" ${entry_target})
-                                            [[ -f \$(eval printf \"%s\" ${entry_target}) ]] && rm -f \$(eval printf \"%s\" ${entry_target})";
-                                    fi
-
-                                    [[ -L "$(eval printf "%s" "${entry_target}")" ]] && unlink "$(eval printf "%s" "${entry_target}")";
-                                    [[ -f "$(eval printf "%s" "${entry_target}")" ]] && rm -f "$(eval printf "%s" "${entry_target}")";
-                                fi
-
-                                if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating symbolic link ${entry_source} -> ${entry_target}";
-                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ln -s eval printf \"%s\" ${entry_source} eval printf \"%s\" ${entry_target}";
-                                fi
-
-                                [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-                                [[ -n "${ret_code}" ]] && unset -v ret_code;
-
-                                cmd_output="$(ln -s "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
-                                ret_code="${?}";
-
-                                if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
-                                fi
-
-                                if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
-                                then
-                                    (( error_count += 1 ));
-
-                                    if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to create symbolic link ${entry_target} with source ${entry_source}.";
-                                    fi
-
-                                    continue;
                                 fi
 
                                 if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                                     writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Symbolic link ${entry_source} -> ${entry_target} created.";
                                 fi
-                                ;;
-                            "cp")
-                                if [[ -f "${entry_target}" ]]; then
-                                    if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                        writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "File ${entry_target} exists, removing";
-                                    fi
+                            fi
+                            ;;
+                        "cp")
+                            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Copying file ${entry_source} to ${entry_target}";
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cp -p ${entry_source} ${entry_target}";
+                            fi
 
-                                    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f ${entry_target}";
-                                    fi
+                            [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                            [[ -n "${ret_code}" ]] && unset -v ret_code;
 
+                            cmd_output="$(cp -p "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
+                            ret_code="${?}";
+
+                            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+                            fi
+
+                            if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
+                            then
+                                (( error_count += 1 ));
+
+                                if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to copy file ${entry_source} to ${entry_target}.";
+                                fi
+
+                                continue;
+                            else
+                                if [[ -n "${entry_permissions}" ]]; then
                                     [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                                    cmd_output="$(rm -f "${entry_target}")";
+                                    cmd_output="$(chmod "${entry_permissions}" "$(eval printf "%s" "${entry_target}")")";
                                     ret_code="${?}";
 
                                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -390,84 +368,44 @@ function refreshLocalFiles()
                                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
                                     fi
 
-                                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                                        return_code="${ret_code}"
-
+                                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
+                                    then
                                         if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to remove existing file ${entry_target}. Please review logs.";
-                                        fi
-                                    else
-                                        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Copying file ${entry_source} to ${entry_target}";
-                                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cp ${entry_source} ${entry_target}";
-                                        fi
-
-                                        [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-                                        [[ -n "${ret_code}" ]] && unset -v ret_code;
-
-                                        cmd_output="$(cp "${entry_source}" "${entry_target}")";
-                                        ret_code="${?}";
-
-                                        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-                                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
-                                        fi
-
-                                        if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                                            (( error_count += 1 ));
-
-                                            if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to create symbolic link ${entry_target} with source ${entry_source}.";
-                                            fi
-
-                                            continue;
-                                        else
-                                            if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                                writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Symbolic link ${entry_source} -> ${entry_target} created.";
-                                            fi
+                                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to change permissions of ${entry_target} to ${entry_permissions}.";
                                         fi
                                     fi
                                 fi
-                                ;;
-                            *)
+
                                 if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Skipping entry ${entry_command}.";
+                                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "File ${entry_source} copied to ${entry_target}.";
                                 fi
+                            fi
+                            ;;
+                        *)
+                            (( error_count += 1 ));
 
-                                continue;
-                                ;;
-                        esac
+                            if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Skipping entry ${entry_command}.";
+                            fi
 
-                        [[ -n "${ret_code}" ]] && unset -v ret_code;
-                        [[ -n "${entry_command}" ]] && unset -v entry_command;
-                        [[ -n "${entry_source}" ]] && unset -v entry_source;
-                        [[ -n "${entry_target}" ]] && unset -v entry_target;
-                        [[ -n "${entry}" ]] && unset -v entry;
-                    done
+                            continue;
+                            ;;
+                    esac
 
-                    ## restore the original ifs
-                    IFS="${CURRENT_IFS}";
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+                    [[ -n "${entry_command}" ]] && unset -v entry_command;
+                    [[ -n "${entry_source}" ]] && unset -v entry_source;
+                    [[ -n "${entry_target}" ]] && unset -v entry_target;
+                    [[ -n "${entry}" ]] && unset -v entry;
+                done
 
-                    ## set appropriate permissions
-                    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: find \"${DOTFILES_INSTALL_PATH}\" -type d -exec chmod 755 {} \;";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: find \"${DOTFILES_INSTALL_PATH}\" -type f -exec chmod 644 {} \;";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: chmod 755 \"${DOTFILES_INSTALL_PATH}\"/bin/*;";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: chmod 700 \"${HOME}\"/.ssh \"${HOME}\"/.gnupg";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: chmod 600 \"${DOTFILES_INSTALL_PATH}\"/ldaprc \"${DOTFILES_INSTALL_PATH}\"/curlrc \"${DOTFILES_INSTALL_PATH}\"/netrc \"${HOME}\"/.dotfiles/wgetrc;";
-                    fi
+                ## restore the original ifs
+                IFS="${CURRENT_IFS}";
+            else
+                return_code=1;
 
-                    find "${DOTFILES_INSTALL_PATH}" -type d -exec chmod 755 {} \; ;
-                    find "${DOTFILES_INSTALL_PATH}" -type f -exec chmod 644 {} \; ;
-                    chmod 755 "${DOTFILES_INSTALL_PATH}"/bin/*;
-                    chmod 700 "${HOME}"/.ssh "${HOME}"/.gnupg;
-                    chmod 600 "${DOTFILES_INSTALL_PATH}"/ldaprc "${DOTFILES_INSTALL_PATH}"/curlrc "${DOTFILES_INSTALL_PATH}"/netrc "${HOME}"/.dotfiles/wgetrc;
-                else
-                    (( error_count += 1 ));
-
-                    if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Installation configuration file ${INSTALL_CONF} not found or cannot be read. Please ensure the file exists and can be read by the current user.";
-                    fi
+                if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Installation configuration file ${INSTALL_CONF} not found or cannot be read. Please ensure the file exists and can be read by the current user.";
                 fi
             fi
         fi

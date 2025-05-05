@@ -224,7 +224,7 @@ function generateSshKeys()
 
             ssh_key_type="$(cut -d "," -f 1 <<< "${available_ssh_key_type}")";
             ssh_key_size="$(cut -d "," -f 2 <<< "${available_ssh_key_type}")";
-            ssh_key_filename="id_${SSH_KEY_TYPE}";
+            ssh_key_filename="id_${ssh_key_type}";
 
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh_key_type -> ${ssh_key_type}";
@@ -255,7 +255,7 @@ function generateSshKeys()
                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "SSH keyfile generation for type ${ssh_key_type} failed with return code ${ret_code}";
                     fi
                 else
-                    if [[ ! -f "${TMPDIR:-${USABLE_TMP_DIR}}/${SSH_KEY_FILENAME}" ]]; then
+                    if [[ ! -f "${TMPDIR:-${USABLE_TMP_DIR}}/${ssh_key_filename}" ]]; then
                         (( error_count += 1 ));
 
                         if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -426,7 +426,7 @@ function copyKeysToTarget()
                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: read -p \"User account password for ${returned_hostname}: \" sshpass";
                         fi
 
-                        read -rp "User account password for ${returned_hostname}: " sshpass;
+                        read -s -rp "User account password for ${returned_hostname}: " sshpass;
                     done
 
                     for keyfile in "${SSH_KEY_LIST[@]}"; do

@@ -147,7 +147,7 @@ function captureGpgData()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: read -p \"Desired key passphrase: \" key_passphrase";
         fi
 
-        read -rps "Desired key passphrase: " key_passphrase;
+        read -s -rp "Desired key passphrase: " key_passphrase;
     done
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;

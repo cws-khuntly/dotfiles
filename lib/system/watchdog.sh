@@ -41,8 +41,8 @@ function watchProvidedProcess()
 		if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
 		if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-		function_name="${cname}#${FUNCNAME[0]}";
-		return_code=3;
+		local function_name="${cname}#${FUNCNAME[0]}";
+		local return_code=3;
 
 		if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
 			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter";
@@ -56,8 +56,10 @@ function watchProvidedProcess()
 		printf "    %s: %s\n" "--help | -h | -?" "Show this help menu." >&2;
 
 		if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${FUNCTION_NAME}" "${function_name} -> exit";
+			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
 		fi
+
+        [[ -n "${function_name}" ]] && unset -v function_name;
 
 		if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
 		if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

@@ -19,12 +19,12 @@
 trap 'set +v; set +x' INT TERM EXIT;
 
 ## Application constants
-global RET_CODE=0;
-global RETURN_CODE=0;
-global CNAME="$(basename "${BASH_SOURCE[0]}")";
-global FUNCTION_NAME="${CNAME}#startup";
-global SCRIPT_ROOT="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && printf "%s" "${PWD}")")";
-global DEFAULT_CONFIG_FILE="${SCRIPT_ROOT}/etc/dotfiles/application.properties";
+RET_CODE=0;
+RETURN_CODE=0;
+CNAME="$(basename "${BASH_SOURCE[0]}")";
+FUNCTION_NAME="${CNAME}#startup";
+SCRIPT_ROOT="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && printf "%s" "${PWD}")")";
+DEFAULT_CONFIG_FILE="${SCRIPT_ROOT}/etc/dotfiles/application.properties";
 
 if [[ -r "${SCRIPT_ROOT}/lib/system/logger.sh" ]] && [[ -s "${SCRIPT_ROOT}/lib/system/logger.sh" ]]; then
     source "${SCRIPT_ROOT}/lib/system/logger.sh"; ## if its here, override the above and use it
@@ -55,7 +55,7 @@ if [[ -d "${SCRIPT_ROOT}/lib/system" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found library directory ${SCRIPT_ROOT}/lib/system";
     fi
 
-    for SYSLIB in ${SCRIPT_ROOT}/lib/system/*.sh; do
+    for SYSLIB in "${SCRIPT_ROOT}/lib/system"/*.sh; do
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Library ${SYSLIB}";
         fi
@@ -883,7 +883,10 @@ function usage()
 )
 
 if (( ${#} == 0 )); then usage; exit ${?}; fi
-if (( $(capturedata "${@}"; echo "${?}") != 0 )); then usage; exit ${?}; fi
+
+FUNCTION_NAME="${CNAME}#capture";
+
+capturedata "${@}";
 
 FUNCTION_NAME="${CNAME}#validate";
 
@@ -945,7 +948,9 @@ else
                 mapfile -d "|" -t TARGET_ENTRIES <<< "${SERVER_LIST}";
             fi
         fi
+    fi
 
+    if [[ -n "${TARGET_ENTRIES[*]}" ]]; then
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ENTRIES -> ${TARGET_ENTRIES[*]}";
         fi

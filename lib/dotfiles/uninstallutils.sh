@@ -340,7 +340,7 @@ function uninstallLocalFiles()
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            cmd_output="$(rm -rf ${DOTFILES_INSTALL_PATH})";
+            cmd_output="$(rm -rf "${DOTFILES_INSTALL_PATH}")";
             ret_code="${?}";
 
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then

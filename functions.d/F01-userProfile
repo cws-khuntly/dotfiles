@@ -262,9 +262,9 @@ function runLoginCommands()
     # read the commands file and execute each
     #
     if [[ -s ${HOME}/etc/logincmds.properties ]]; then
-        for cmd_entry in $(<${HOME}/etc/logincmds.properties); do
+        for cmd_entry in $(< "${HOME}/etc/logincmds.properties"); do
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_entry -> ${cmd_entry}";
             fi
 
             [[ -z "${cmd_entry}" ]] && continue;
@@ -278,7 +278,7 @@ function runLoginCommands()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_args -> ${cmd_args}";
             fi
 
-            if [[ -n "$(command -v ${cmd_binary})" ]]; then
+            if [[ -n "$(command -v "${cmd_binary}")" ]]; then
                 [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 

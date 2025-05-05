@@ -175,7 +175,7 @@ function checkForValidHost()
     local checkForHostname;
     local isFQDN;
     local searchForNameInHosts;
-    local returnedHostname;
+    local returnedHostName;
     local resolver_entry;
     local search_domain;
     local start_epoch;
@@ -243,24 +243,24 @@ function checkForValidHost()
                 ## entry found in /etc/hosts
                 if [[ -n "${searchForNameInHosts}" ]]; then
                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting returnedHostname to ${searchForNameInHosts}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting returnedHostName to ${searchForNameInHosts}";
                     fi
 
-                    returnedHostname="${searchForNameInHosts}";
+                    returnedHostName="${searchForNameInHosts}";
 
                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returnedHostname -> ${returnedHostname}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returnedHostName -> ${returnedHostName}";
                     fi
                 fi
             else
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting returnedHostname to ${checkForHostname}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting returnedHostName to ${checkForHostname}";
                 fi
 
-                returnedHostname="${checkForHostname}";
+                returnedHostName="${checkForHostname}";
 
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returnedHostname -> ${returnedHostname}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returnedHostName -> ${returnedHostName}";
                 fi
             fi
         else
@@ -302,13 +302,13 @@ function checkForValidHost()
 
                     if [[ -n "${ret_code}" ]] && (( ret_code == 0 )); then
                         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting returnedHostname to ${checkForHostname}.${search_domain}";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting returnedHostName to ${checkForHostname}.${search_domain}";
                         fi
 
-                        returnedHostname="${checkForHostname}.${search_domain}";
+                        returnedHostName="${checkForHostname}.${search_domain}";
 
                         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returnedHostname -> ${returnedHostname}";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returnedHostName -> ${returnedHostName}";
                         fi
 
                         [[ -n "${ret_code}" ]] && unset -v ret_code;
@@ -333,7 +333,6 @@ function checkForValidHost()
     [[ -n "${checkForHostname}" ]] && unset -v checkForHostname;
     [[ -n "${isFQDN}" ]] && unset -v isFQDN;
     [[ -n "${searchForNameInHosts}" ]] && unset -v searchForNameInHosts;
-    [[ -n "${returnedHostname}" ]] && unset -v returnedHostname;
     [[ -n "${resolver_entry}" ]] && unset -v resolver_entry;
     [[ -n "${search_domain}" ]] && unset -v search_domain;
 
@@ -359,7 +358,7 @@ function checkForValidHost()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    if [[ -n "${returnedHostname}" ]]; then printf "%s" "${returnedHostname}"; unset -v returnedHostname; else return_code=1; fi
+    if [[ -n "${returnedHostName}" ]]; then printf "%s" "${returnedHostName}"; unset -v returnedHostName; else return_code=1; fi
 
     return ${return_code};
 )
@@ -384,7 +383,7 @@ function checkForValidAddress()
     local checkForAddress;
     local split_up;
     local entry;
-    local returnedHostInfo;
+    local returnedHostAddress;
     local start_epoch;
     local end_epoch;
     local runtime;
@@ -451,7 +450,7 @@ function checkForValidAddress()
                 [[ -n "${entry}" ]] && unset -v entry;
             done
 
-            if [[ -z "${counter}" ]] || (( counter == 0 )); then returnedHostInfo="${checkForAddress}"; else return_code=1; fi
+            if [[ -z "${counter}" ]] || (( counter == 0 )); then returnedHostAddress="${checkForAddress}"; else return_code=1; fi
         else
             return_code=1;
 
@@ -490,7 +489,7 @@ function checkForValidAddress()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    if [[ -n "${returnedHostInfo}" ]]; then printf "%s" "${returnedHostInfo}"; unset -v returnedHostInfo; fi
+    if [[ -n "${returnedHostAddress}" ]]; then printf "%s" "${returnedHostAddress}"; unset -v returnedHostAddress; fi
 
     return ${return_code};
 )
@@ -680,7 +679,7 @@ function checkIfHostIsAlive()
             fi
         elif [[ -n "$(shopt -u expand_aliases; command -v nmap; shopt -s expand_aliases)" ]]; then
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: nmap ${checkNetworkName} -PN -p ${validatedPortNumber} 2> /dev/null | grep \open | awk '{print $2}'";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: nmap ${checkNetworkName} -PN -p ${checkNetworkPort} 2> /dev/null | grep \open | awk '{print $2}'";
             fi
 
             [[ -n "${isHostAvailable}" ]] && unset -v isHostAvailable;
