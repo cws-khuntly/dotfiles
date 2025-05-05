@@ -20,7 +20,6 @@ function uninstallFiles()
     local target_host;
     local target_port;
     local target_user;
-    local force_exec;
     local start_epoch;
     local end_epoch;
     local runtime;
@@ -36,17 +35,19 @@ function uninstallFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    (( ${#} != 1 )) && return 3;
+    (( ${#} == 0 )) && return 3;
 
     if [[ "${target_host}" == "localhost" ]] || [[ "${target_host}" == "localhost.localdomain" ]] || [[ "${target_host}" == "127.0.0.1" ]] || \
         [[ "${target_host}" == "$(hostname -s)" ]] || [[ "${target_host}" == "$(hostname -f)" ]]; then
+        (( ${#} != 1 )) && return 3;
+
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Target host is localhost or $(hostname -s) / $(hostname -f). Performing local uninstall.";
         fi
 
         uninstall_mode="${1}";
     else
-        (( ${#} != 5 )) && return 3;
+        (( ${#} != 4 )) && return 3;
 
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Target host is remote: ${target_host}. Performing remote uninstall.";
@@ -56,7 +57,6 @@ function uninstallFiles()
         target_host="${2}";
         target_port="${3}";
         target_user="${4}";
-        force_exec="${5}";
     fi
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -64,7 +64,6 @@ function uninstallFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "force_exec -> ${force_exec}";
     fi
 
     case "${uninstall_mode}" in
@@ -145,8 +144,6 @@ function uninstallFiles()
     [[ -n "${target_host}" ]] && unset -v target_host;
     [[ -n "${target_port}" ]] && unset -v target_port;
     [[ -n "${target_user}" ]] && unset -v target_user;
-    [[ -n "${force_exec}" ]] && unset -v force_exec;
-    [[ -n "${force_exec}" ]] && unset -v force_exec;
 
     if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"

@@ -111,7 +111,6 @@ function main()
     local target_host;
     local ssh_port_number;
     local target_user;
-    local force_exec;
     local start_epoch;
     local end_epoch;
     local runtime;
@@ -129,20 +128,18 @@ function main()
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    (( ${#} != 5 )) && return 3;
+    (( ${#} != 4 )) && return 3;
 
     target_action="${1}";
     target_host="${2}";
     ssh_port_number="${3}";
     target_user="${4}";
-    force_exec="${5}";
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "target_action -> ${target_action}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "ssh_port_number -> ${ssh_port_number}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "force_exec -> ${force_exec}";
     fi
 
     case "${target_action}" in
@@ -188,7 +185,7 @@ function main()
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
-                validateAndCopyKeysForHost "${target_host}" "${ssh_port_number}";
+                validateAndCopyKeysForHost "${target_host}" "${ssh_port_number}" "${target_user}";
                 ret_code="${?}";
 
                 function_name="${CNAME}#${FUNCNAME[0]}";
@@ -206,13 +203,13 @@ function main()
                 else
                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "validateAndCopyKeysForHost has successfully completed.";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runInstallRemoteFiles ${target_host} ${ssh_port_number} ${target_user} ${force_exec}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runInstallRemoteFiles ${target_host} ${ssh_port_number} ${target_user}";
                     fi
 
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
                     [[ -n "${function_name}" ]] && unset -v function_name;
 
-                    runInstallRemoteFiles "${target_host}" "${ssh_port_number}" "${target_user}" "${force_exec}";
+                    runInstallRemoteFiles "${target_host}" "${ssh_port_number}" "${target_user}";
                     ret_code="${?}";
 
                     function_name="${CNAME}#${FUNCNAME[0]}";
@@ -281,7 +278,7 @@ function main()
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
-                validateAndCopyKeysForHost "${target_host}" "${ssh_port_number}";
+                validateAndCopyKeysForHost "${target_host}" "${ssh_port_number}" "${target_user}";
                 ret_code="${?}";
 
                 function_name="${CNAME}#${FUNCNAME[0]}";
@@ -299,13 +296,13 @@ function main()
                 else
                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "validateAndCopyKeysForHost has successfully completed.";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: deployRemoteFiles ${target_host} ${ssh_port_number} ${target_user} ${force_exec}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: deployRemoteFiles ${target_host} ${ssh_port_number} ${target_user}";
                     fi
 
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
                     [[ -n "${function_name}" ]] && unset -v function_name;
 
-                    runDeployRemoteFiles "${target_host}" "${ssh_port_number}" "${target_user}" "${force_exec}";
+                    runDeployRemoteFiles "${target_host}" "${ssh_port_number}" "${target_user}";
                     ret_code="${?}";
 
                     function_name="${CNAME}#${FUNCNAME[0]}";
@@ -399,7 +396,7 @@ function main()
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
-                validateAndCopyKeysForHost "${target_host}" "${ssh_port_number}";
+                validateAndCopyKeysForHost "${target_host}" "${ssh_port_number}" "${target_user}";
                 ret_code="${?}";
 
                 function_name="${CNAME}#${FUNCNAME[0]}";
@@ -417,13 +414,13 @@ function main()
                 else
                     if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "validateAndCopyKeysForHost has successfully completed.";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runDeployRemoteFiles ${target_host} ${ssh_port_number} ${target_user} ${force_exec}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runDeployRemoteFiles ${target_host} ${ssh_port_number} ${target_user}";
                     fi
 
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
                     [[ -n "${function_name}" ]] && unset -v function_name;
 
-                    runDeployRemoteFiles "${target_host}" "${ssh_port_number}" "${target_user}" "${force_exec}";
+                    runDeployRemoteFiles "${target_host}" "${ssh_port_number}" "${target_user}";
                     ret_code="${?}";
 
                     function_name="${CNAME}#${FUNCNAME[0]}";
@@ -441,13 +438,13 @@ function main()
                     else
                         if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "runDeployRemoteFiles has successfully completed.";
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runInstallRemoteFiles ${target_host} ${ssh_port_number} ${target_user} ${force_exec}";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runInstallRemoteFiles ${target_host} ${ssh_port_number} ${target_user}";
                         fi
 
                         [[ -n "${ret_code}" ]] && unset -v ret_code;
                         [[ -n "${function_name}" ]] && unset -v function_name;
 
-                        runInstallRemoteFiles "${target_host}" "${ssh_port_number}" "${target_user}" "${force_exec}";
+                        runInstallRemoteFiles "${target_host}" "${ssh_port_number}" "${target_user}";
                         ret_code="${?}";
 
                         function_name="${CNAME}#${FUNCNAME[0]}";
@@ -517,7 +514,7 @@ function main()
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
-                validateAndCopyKeysForHost "${target_host}" "${ssh_port_number}";
+                validateAndCopyKeysForHost "${target_host}" "${ssh_port_number}" "${target_user}";
                 ret_code="${?}";
 
                 function_name="${CNAME}#${FUNCNAME[0]}";
@@ -535,13 +532,13 @@ function main()
                 else
                     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "validateAndCopyKeysForHost has successfully completed.";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runRemoveRemoteFiles ${target_host} ${ssh_port_number} ${target_user} ${force_exec}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: runRemoveRemoteFiles ${target_host} ${ssh_port_number} ${target_user}";
                     fi
 
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
                     [[ -n "${function_name}" ]] && unset -v function_name;
 
-                    runRemoveRemoteFiles "${target_host}" "${ssh_port_number}" "${target_user}" "${force_exec}";
+                    runRemoveRemoteFiles "${target_host}" "${ssh_port_number}" "${target_user}";
                     ret_code="${?}";
 
                     function_name="${CNAME}#${FUNCNAME[0]}";
@@ -581,7 +578,6 @@ function main()
     [[ -n "${target_host}" ]] && unset -v target_host;
     [[ -n "${ssh_port_number}" ]] && unset -v ssh_port_number;
     [[ -n "${target_user}" ]] && unset -v target_user;
-    [[ -n "${force_exec}" ]] && unset -v force_exec;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -770,17 +766,6 @@ function capturedata()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ACTION -> ${TARGET_ACTION}";
                 fi
                 ;;
-            force|f)
-                if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting FORCE_EXEC...";
-                fi
-
-                FORCE_EXEC="${_TRUE}";
-
-                if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FORCE_EXEC -> ${FORCE_EXEC}";
-                fi
-                ;;
             help|\?|h)
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
@@ -867,7 +852,6 @@ function usage()
     printf "        %s: %s\n" "installFiles" "Installs dotfiles to the selected system - assumes the package has already been sent to the target system" >&2;
     printf "        %s: %s\n" "deployAndInstall" "Pushes dotfiles to the selected system and installs" >&2;
     printf "        %s: %s\n" "refreshDotFiles" "Performs a refresh of the existing dotfiles, adding/removing entries as necessary" >&2;
-    printf "    %s: %s\n" "--force | -f" "(Optional) If passed as an argument, hostname validation is disabled and target hosts will NOT be checked for life. Default value -> ${_FALSE}" >&2;
     printf "    %s: %s\n" "--help | -h | -?" "Show this help menu." >&2;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -897,7 +881,6 @@ if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SSH_PORT_NUMBER -> ${SSH_PORT_NUMBER}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_USER -> ${TARGET_USER}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ACTION -> ${TARGET_ACTION}";
-    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FORCE_EXEC -> ${FORCE_EXEC}";
 fi
 
 if [[ -z "${WORKING_CONFIG_FILE}" ]] || [[ ! -r "${WORKING_CONFIG_FILE}" ]]; then
@@ -931,7 +914,7 @@ else
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Building TARGET_ENTRIES with provided information";
         fi
 
-        TARGET_ENTRIES=("${TARGET_HOST}:${SSH_PORT_NUMBER}:${TARGET_USER}:${TARGET_ACTION}:${FORCE_EXEC}");
+        TARGET_ENTRIES=("${TARGET_HOST}:${SSH_PORT_NUMBER}:${TARGET_USER}:${TARGET_ACTION}");
     elif [[ -n "${SERVER_LIST}" ]]; then
         if [[ -f "${SERVER_LIST}" ]]; then
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -983,23 +966,21 @@ else
             SSH_PORT_NUMBER="$(cut -d ":" -f 2 <<< "${TARGET_ENTRY}")";
             TARGET_USER="$(cut -d ":" -f 3 <<< "${TARGET_ENTRY}")";
             TARGET_ACTION="$(cut -d ":" -f 4 <<< "${TARGET_ENTRY}")";
-            FORCE_EXEC="$(cut -d ":" -f 5 <<< "${TARGET_ENTRY}")";
 
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_HOST -> ${TARGET_HOST}";
                 writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SSH_PORT_NUMBER -> ${SSH_PORT_NUMBER}";
                 writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_USER -> ${TARGET_USER}";
                 writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ACTION -> ${TARGET_ACTION}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FORCE_EXEC -> ${FORCE_EXEC}";
             fi
 
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${TARGET_ACTION} ${TARGET_HOST} ${SSH_PORT_NUMBER} ${TARGET_USER} ${FORCE_EXEC}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${TARGET_ACTION} ${TARGET_HOST} ${SSH_PORT_NUMBER} ${TARGET_USER}";
             fi
 
             [[ -n "${RET_CODE}" ]] && unset -v RET_CODE;
 
-            main "${TARGET_ACTION}" "${TARGET_HOST}" "${SSH_PORT_NUMBER}" "${TARGET_USER}" "${FORCE_EXEC}";
+            main "${TARGET_ACTION}" "${TARGET_HOST}" "${SSH_PORT_NUMBER}" "${TARGET_USER}";
             RET_CODE="${?}";
 
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -1023,7 +1004,6 @@ else
             [[ -n "${SSH_PORT_NUMBER}" ]] && unset -v SSH_PORT_NUMBER;
             [[ -n "${TARGET_USER}" ]] && unset -v TARGET_USER;
             [[ -n "${TARGET_ACTION}" ]] && unset -v TARGET_ACTION;
-            [[ -n "${FORCE_EXEC}" ]] && unset -v FORCE_EXEC;
             [[ -n "${RETURN_CODE}" ]] && unset -v RETURN_CODE;
         done
     else
@@ -1061,7 +1041,6 @@ if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set
 [[ -n "${SSH_PORT_NUMBER}" ]] && unset -v SSH_PORT_NUMBER;
 [[ -n "${TARGET_USER}" ]] && unset -v TARGET_USER;
 [[ -n "${TARGET_ACTION}" ]] && unset -v TARGET_ACTION;
-[[ -n "${FORCE_EXEC}" ]] && unset -v FORCE_EXEC;
 [[ -n "${GENERATE_SSH_KEYS}" ]] && unset -v GENERATE_SSH_KEYS;
 [[ -n "${GENERATE_GPG_KEYS}" ]] && unset -v GENERATE_GPG_KEYS;
 [[ -n "${GPG_OPTION_FILE}" ]] && unset -v GPG_OPTION_FILE;

@@ -152,8 +152,6 @@ function validateHostAddress()
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
     if [[ -n "${returned_data}" ]]; then printf "%s" "${returned_data}"; unset -v returned_data; fi
-
-    return ${return_code};
 )
 
 #=====  FUNCTION  =============================================================

@@ -110,7 +110,6 @@ function runInstallRemoteFiles()
 	local target_hostname;
 	local target_ssh_port;
 	local target_ssh_user;
-	local force_exec;
     local start_epoch;
     local end_epoch;
     local runtime;
@@ -128,26 +127,24 @@ function runInstallRemoteFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-	(( ${#} != 4 )) && return 3;
+	(( ${#} != 3 )) && return 3;
 
 	target_hostname="${1}";
 	target_ssh_port="${2}";
 	target_ssh_user="${3}";
-	force_exec="${4}";
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_hostname -> ${target_hostname}";
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_ssh_port -> ${target_ssh_port}";
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_ssh_user -> ${target_ssh_user}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "force_exec -> ${force_exec}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installFiles ${INSTALL_LOCATION_REMOTE} ${target_hostname} ${target_ssh_port} ${target_ssh_user} ${force_exec}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installFiles ${INSTALL_LOCATION_REMOTE} ${target_hostname} ${target_ssh_port} ${target_ssh_user}";
 	fi
 
 	[[ -n "${cname}" ]] && unset -v cname;
 	[[ -n "${function_name}" ]] && unset -v function_name;
 	[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-	installFiles "${INSTALL_LOCATION_REMOTE}" "${target_hostname}" "${target_ssh_port}" "${target_ssh_user}" "${force_exec}";
+	installFiles "${INSTALL_LOCATION_REMOTE}" "${target_hostname}" "${target_ssh_port}" "${target_ssh_user}";
 	ret_code="${?}";
 
 	cname="managedotfiles.sh";
@@ -173,7 +170,6 @@ function runInstallRemoteFiles()
 	[[ -n "${target_hostname}" ]] && unset -v target_hostname;
 	[[ -n "${target_ssh_port}" ]] && unset -v target_ssh_port;
 	[[ -n "${target_ssh_user}" ]] && unset -v target_ssh_user;
-	[[ -n "${force_exec}" ]] && unset -v force_exec;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -344,7 +340,6 @@ function runDeployRemoteFiles()
     local target_host;
 	local ssh_port_number;
 	local target_user;
-	local force_exec;
     local transfer_file_list;
     local start_epoch;
     local end_epoch;
@@ -363,18 +358,16 @@ function runDeployRemoteFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-	(( ${#} != 4 )) && return 3;
+	(( ${#} != 3 )) && return 3;
 
 	target_host="${1}";
 	ssh_port_number="${2}";
 	target_user="${3}";
-	force_exec="${4}";
 
 	if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh_port_number -> ${ssh_port_number}";
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "force_exec -> ${force_exec}";
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: buildPackage";
 	fi
 
@@ -405,14 +398,14 @@ function runDeployRemoteFiles()
 
 		if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
 			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file_list -> ${transfer_file_list}";
-			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${ssh_port_number} ${target_user} ${force_exec}";
+			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${ssh_port_number} ${target_user}";
 		fi
 
 		[[ -n "${cname}" ]] && unset -v cname;
 		[[ -n "${function_name}" ]] && unset -v function_name;
 		[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-		transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${ssh_port_number}" "${target_user}" "${force_exec}";
+		transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${ssh_port_number}" "${target_user}";
 		ret_code="${?}";
 
 		cname="managedotfiles.sh";
@@ -572,7 +565,6 @@ function runRemoveRemoteFiles()
     local target_host;
 	local ssh_port_number;
 	local target_user;
-	local force_exec;
     local start_epoch;
     local end_epoch;
     local runtime;
@@ -590,26 +582,24 @@ function runRemoveRemoteFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-	(( ${#} != 4 )) && return 3;
+	(( ${#} != 3 )) && return 3;
 
 	target_host="${1}";
 	ssh_port_number="${2}";
 	target_user="${3}";
-	force_exec="${4}";
 
 	if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh_port_number -> ${ssh_port_number}";
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "force_exec -> ${force_exec}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: uninstallFiles ${UNINSTALL_LOCATION_REMOTE} ${target_host} ${ssh_port_number} ${target_user} ${force_exec}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: uninstallFiles ${UNINSTALL_LOCATION_REMOTE} ${target_host} ${ssh_port_number} ${target_user}";
 	fi
 
     [[ -n "${cname}" ]] && unset -v cname;
 	[[ -n "${function_name}" ]] && unset -v function_name;
 	[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-	uninstallFiles "${UNINSTALL_LOCATION_REMOTE}" "${target_host}" "${ssh_port_number}" "${target_user}" "${force_exec}";
+	uninstallFiles "${UNINSTALL_LOCATION_REMOTE}" "${target_host}" "${ssh_port_number}" "${target_user}";
 	ret_code="${?}";
 
     cname="managedotfiles.sh";
@@ -634,7 +624,6 @@ function runRemoveRemoteFiles()
     [[ -n "${target_host}" ]] && unset -v target_host;
 	[[ -n "${ssh_port_number}" ]] && unset -v ssh_port_number;
 	[[ -n "${target_user}" ]] && unset -v target_user;
-	[[ -n "${force_exec}" ]] && unset -v force_exec;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then

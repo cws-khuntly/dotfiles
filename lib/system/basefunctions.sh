@@ -171,6 +171,9 @@ function validateAndCopyKeysForHost
     local error_count=0;
     local target_host;
     local target_port;
+    local target_user;
+    local returned_host;
+    local returned_port;
     local start_epoch;
     local end_epoch;
     local runtime;
@@ -192,6 +195,7 @@ function validateAndCopyKeysForHost
     #    PARAMETERS:  None
     #       RETURNS:  0 regardless of result.
     #==============================================================================
+    # TODO
     function usage()
     (
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
@@ -215,10 +219,11 @@ function validateAndCopyKeysForHost
         return ${return_code};
     )
 
-    if (( ${#} != 2 )); then usage; exit ${?}; fi
+    if (( ${#} != 3 )); then usage; exit ${?}; fi
 
     target_host="${1}";
     target_port="${2}";
+    target_user="${3}";
 
 	if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
@@ -230,32 +235,36 @@ function validateAndCopyKeysForHost
 	[[ -n "${function_name}" ]] && unset -v function_name;
 	[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-	validateHostAddress "${target_host}" "${target_port}";
-	ret_code="${?}";
+	host_data=$(validateHostAddress "${target_host}" "${target_port}");
 
 	cname="basefunctions.sh";
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "host_data -> ${host_data}";
 	fi
 
-	if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+	if [[ -z "${host_data}" ]]; then
 		return_code="${ret_code}"
 
 		if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
 			writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "Host ${target_host} does not appear to be available. Please review logs.";
 		fi
 	else
+        returned_host="$(cut -d ":" -f 1 <<< "${host_data}")";
+        returned_port="$(cut -d ":" -f 2 <<< "${host_data}")";
+
 		if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: getHostKeys ${target_host} ${target_port}";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returned_host -> ${returned_host}";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returned_port -> ${returned_port}";
+			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: getHostKeys ${returned_host} ${returned_port}";
 		fi
 
 		[[ -n "${cname}" ]] && unset -v cname;
 		[[ -n "${function_name}" ]] && unset -v function_name;
 		[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-		getHostKeys "${target_host}" "${target_port}";
+		getHostKeys "${returned_host}" "${returned_port}";
 		ret_code="${?}";
 
 		cname="basefunctions.sh";
@@ -269,18 +278,18 @@ function validateAndCopyKeysForHost
 			return_code="${ret_code}";
 
 			if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-				writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred getting SSH host keys from host ${target_host}. Please review logs.";
+				writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred getting SSH host keys from host ${returned_host}. Please review logs.";
 			fi
 		else
 			if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-				writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: copyKeysToTarget ${target_host} ${ssh_port_number} ${target_user} ${force_exec}";
+				writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: copyKeysToTarget ${returned_host} ${returned_port} ${target_user}";
 			fi
 
 			[[ -n "${cname}" ]] && unset -v cname;
 			[[ -n "${function_name}" ]] && unset -v function_name;
 			[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-			copyKeysToTarget "${target_host}" "${ssh_port_number}" "${target_user}" "${force_exec}";
+			copyKeysToTarget "${returned_host}" "${returned_port}" "${target_user}";
 			ret_code="${?}";
 
 			cname="basefunctions.sh";
@@ -306,6 +315,9 @@ function validateAndCopyKeysForHost
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${target_host}" ]] && unset -v target_host;
     [[ -n "${target_port}" ]] && unset -v target_port;
+    [[ -n "${target_user}" ]] && unset -v target_user;
+    [[ -n "${returned_host}" ]] && unset -v returned_host;
+    [[ -n "${returned_port}" ]] && unset -v returned_port;
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
