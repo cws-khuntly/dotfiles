@@ -48,7 +48,7 @@ function runInstallLocalFiles()
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "installFiles -> ret_code -> ${ret_code}";
 	fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -153,7 +153,7 @@ function runInstallRemoteFiles()
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "installFiles -> ret_code -> ${ret_code}";
 	fi
 
 	if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -250,7 +250,7 @@ function runDeployLocalFiles()
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "buildPackage -> ret_code -> ${ret_code}";
 	fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -280,7 +280,7 @@ function runDeployLocalFiles()
 		function_name="${cname}#${FUNCNAME[0]}";
 
 		if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transferFiles -> ret_code -> ${ret_code}";
 		fi
 
 		if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -388,7 +388,7 @@ function runDeployRemoteFiles()
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "buildPackage -> ret_code -> ${ret_code}";
 	fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -418,7 +418,7 @@ function runDeployRemoteFiles()
 		function_name="${cname}#${FUNCNAME[0]}";
 
 		if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transferFiles -> ret_code -> ${ret_code}";
 		fi
 
 		if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -512,7 +512,7 @@ function runRemoveLocalFiles()
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "uninstallFiles -> ret_code -> ${ret_code}";
 	fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -616,7 +616,7 @@ function runRemoveRemoteFiles()
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "uninstallFiles -> ret_code -> ${ret_code}";
 	fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then

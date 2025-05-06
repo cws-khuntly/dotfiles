@@ -55,7 +55,9 @@ function readPropertyFile()
 
     ## clean up home directory first
     for entry in $(< "${PROPERTY_FILE}"); do
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}"; fi
+        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
+        fi
 
         [[ -z "${entry}" ]] && continue;
         [[ "${entry}" =~ ^\# ]] && continue;
@@ -212,7 +214,7 @@ function validateAndCopyKeysForHost()
 		function_name="${cname}#${FUNCNAME[0]}";
 
 		if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "getHostKeys -> ret_code -> ${ret_code}";
 		fi
 
 		if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -237,7 +239,7 @@ function validateAndCopyKeysForHost()
 			function_name="${cname}#${FUNCNAME[0]}";
 
 			if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-				writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+				writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "copyKeysToTarget -> ret_code -> ${ret_code}";
 			fi
 
 			if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
