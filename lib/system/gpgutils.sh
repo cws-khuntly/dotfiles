@@ -199,6 +199,8 @@ function captureGpgData()
         fi
     fi
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${key_algo}" ]] && unset -v key_algo;
@@ -233,7 +235,7 @@ function captureGpgData()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 )
 
 #=====  FUNCTION  =============================================================
@@ -292,7 +294,7 @@ function generateGpgKeys()
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred creating directory ${HOME}/.gnupg. Please review logs.";
             fi
 
-            return ${return_code};
+            return "${return_code}";
         fi
     fi
 
@@ -378,6 +380,8 @@ function generateGpgKeys()
         fi
     fi
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${GNUPGHOME}" ]] && declare -x GNUPGHOME="${HOME}/.gnupg";
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
@@ -407,5 +411,5 @@ function generateGpgKeys()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 )

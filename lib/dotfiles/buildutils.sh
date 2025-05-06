@@ -72,6 +72,8 @@ function buildPackage()
         fi
     fi
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
@@ -97,5 +99,5 @@ function buildPackage()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 )

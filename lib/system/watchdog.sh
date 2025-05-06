@@ -30,42 +30,6 @@ function watchProvidedProcess()
             writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} START: $(date -d @"${start_epoch}" +"${TIMESTAMP_OPTS}")";
         fi
     fi
-	#======  FUNCTION  ============================================================
-	#          NAME:  usage
-	#   DESCRIPTION:  Provides usage parameters.
-	#    PARAMETERS:  None
-	#       RETURNS:  3.
-	#==============================================================================
-	function usage()
-	(
-		if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
-		if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
-
-		local function_name="${cname}#${FUNCNAME[0]}";
-		local return_code=3;
-
-		if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter";
-		fi
-
-		printf "%s %s\n" "${function_name}" "Watch a provided process" >&2;
-		printf "%s %s\n" "Usage: ${function_name}" "[ options ]" >&2;
-		printf "    %s: %s\n" "Required" "--processid | -p <process id>: The process identifier to watch." >&2;
-		printf "    %s: %s\n" "Optional" "--wait | -w <wait time>: The length of time to wait for the process to end, multiplied by the number of passes to watch." >&2;
-		printf "    %s: %s\n" "Optional" "--count | -c <counter>: The counter of times to pass before the watchdog terminates." >&2;
-		printf "    %s: %s\n" "--help | -h | -?" "Show this help menu." >&2;
-
-		if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
-		fi
-
-        [[ -n "${function_name}" ]] && unset -v function_name;
-
-		if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
-		if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
-
-		return ${return_code};
-	)
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter";
@@ -124,6 +88,8 @@ function watchProvidedProcess()
         fi
     fi
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
 	[[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${process_id}" ]] && unset -v process_id;
     [[ -n "${process_time_wait}" ]] && unset -v process_time_wait;
@@ -152,5 +118,5 @@ function watchProvidedProcess()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 )

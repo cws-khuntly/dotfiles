@@ -84,6 +84,8 @@ function showHostInfo()
 
     printf "\n" >&2;
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}";; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${host_system_name}" ]] && unset -v host_system_name;
     [[ -n "${host_ip_address[*]}" ]] && unset -v host_ip_address;
@@ -118,7 +120,7 @@ function showHostInfo()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code}
+    return "${return_code}";
 )
 
 #=====  FUNCTION  =============================================================
@@ -142,7 +144,7 @@ function setPromptCommand()
     local color_blue='\033[0;34m';
     local PS2="continue -> ";
     local PS3="Enter selection: ";
-    local PS4='[Time: \D{%F %T} ][Thread: ${0}][Log: -][Level: TRACE] - [File: ${FUNCNAME[0]:-${SHELL}}] [Method: -] - ';
+    local PS4='\[Time: \D{%F %T} \]\[Thread: ${0}\]\[Log: -\]\[Level: TRACE\] - \[File: ${FUNCNAME[0]:-${SHELL}}\] \[Method: -\] - ';
     local git_status="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)";
     local real_user;
     local start_epoch
@@ -159,35 +161,37 @@ function setPromptCommand()
 
     case "$(uname -s)" in
         [Cc][Yy][Gg][Ww][Ii][Nn]*)
-            echo -ne "\033]0; $(printf "[%s:%s] : <%s>" "${LOGNAME}" "${HOSTNAME}" "$(basename "${PWD}")")\007";
+            echo -ne "\033\]0; $(printf "\[%s:%s\] : <%s>" "${LOGNAME}" "${HOSTNAME}" "$(basename "${PWD}")")\007";
 
             case "${git_status}" in
-                "") PS1='$(printf "${color_green}[\u:\H] ${color_green}: ${color_green}<${color_yellow}\w${color_green}>\n\n$ ${color_off}")'; ;;
-                *) PS1='$(printf "${color_green}[\u:\H] ${color_green}: ${color_green}<${color_yellow}\w ${color_blue}($(printf "%s" "${git_status}"))${color_green}>\n\n$ ${color_off}")'; ;;
+                "") PS1='$(printf "${color_green}\[\u:\H\] ${color_green}: ${color_green}<${color_yellow}\w${color_green}>\n\n$ ${color_off}")'; ;;
+                *) PS1='$(printf "${color_green}\[\u:\H\] ${color_green}: ${color_green}<${color_yellow}\w ${color_blue}($(printf "%s" "${git_status}"))${color_green}>\n\n$ ${color_off}")'; ;;
             esac
             ;;
         *)
             case "${EUID}" in
                 "${UID}")
-                    echo -ne "\033]0; $(printf "[%s:%s] : <%s>" "${LOGNAME}" "${HOSTNAME}" "$(basename "${PWD}")")\007";
+                    echo -ne "\033\]0; $(printf "\[%s:%s\] : <%s>" "${LOGNAME}" "${HOSTNAME}" "$(basename "${PWD}")")\007";
 
                     case "${git_status}" in
-                        "") PS1='$(printf "${color_green}[\u:\H] ${color_green}: ${color_green}<${color_yellow}\w${color_green}>\n\n$ ${color_off}")'; ;;
-                        *) PS1='$(printf "${color_green}[\u:\H] ${color_green}: ${color_green}<${color_yellow}\w ${color_blue}($(printf "%s" "${git_status}"))${color_green}>\n\n$ ${color_off}")'; ;;
+                        "") PS1='$(printf "${color_green}\[\u:\H\] ${color_green}: ${color_green}<${color_yellow}\w${color_green}>\n\n$ ${color_off}")'; ;;
+                        *) PS1='$(printf "${color_green}\[\u:\H\] ${color_green}: ${color_green}<${color_yellow}\w ${color_blue}($(printf "%s" "${git_status}"))${color_green}>\n\n$ ${color_off}")'; ;;
                     esac
                     ;;
                 *)
                     real_user="$(grep -w "${EUID}" /etc/passwd | cut -d ":" f 1)";
 
-                    echo -ne "\033]0; $(printf "[%s:%s as %s] : <%s>" "${LOGNAME}" "${HOSTNAME}" "${real_user}" "$(basename "${PWD}")")\007";
+                    echo -ne "\033\]0; $(printf "\[%s:%s as %s\] : <%s>" "${LOGNAME}" "${HOSTNAME}" "${real_user}" "$(basename "${PWD}")")\007";
 
                     case "${git_status}" in
-                        "") PS1='$(printf "${color_red}NOTE: YOU ARE ${real_user}\n${color_green}[\u:\h as ${color_red}%s ${color_green}: ${color_green}<${color_yellow}\w${color_green}>\n\n$ ${color_off}")'; ;;
-                        *) PS1='$(printf "${color_red}NOTE: YOU ARE ${real_user}\n${color_green}[\u:\h as ${color_red}%s ${color_green}: ${color_green}<${color_yellow}\w ${color_blue}($(printf "%s" "${git_status}")${color_green})\n\n$ ${color_off}")'; ;;
+                        "") PS1='$(printf "${color_red}NOTE: YOU ARE ${real_user}\n${color_green}\[\u:\h as ${color_red}%s ${color_green}: ${color_green}<${color_yellow}\w${color_green}>\n\n$ ${color_off}")'; ;;
+                        *) PS1='$(printf "${color_red}NOTE: YOU ARE ${real_user}\n${color_green}\[\u:\h as ${color_red}%s ${color_green}: ${color_green}<${color_yellow}\w ${color_blue}($(printf "%s" "${git_status}")${color_green})\n\n$ ${color_off}")'; ;;
                     esac
                     ;;
             esac
     esac
+
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
     [[ -n "${color_off}" ]] && unset -v color_off;
     [[ -n "${color_red}" ]] && unset -v color_red;
@@ -196,7 +200,6 @@ function setPromptCommand()
     [[ -n "${color_blue}" ]] && unset -v color_blue;
     [[ -n "${git_status}" ]] && unset -v git_status;
     [[ -n "${real_user}" ]] && unset -v real_user;
-
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -220,7 +223,7 @@ function setPromptCommand()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 }
 
 #=====  FUNCTION  =============================================================
@@ -319,6 +322,8 @@ function runLoginCommands()
         fi
     done
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}";; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${file}" ]] && unset -v file;
     [[ -n "${primary_file}" ]] && unset -v primary_file;
     [[ -n "${secondary_file}" ]] && unset -v secondary_file;
@@ -328,8 +333,6 @@ function runLoginCommands()
     [[ -n "${cmd_binary}" ]] && unset -v cmd_binary;
     [[ -n "${cmd_args}" ]] && unset -v cmd_args;
     [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-
-    (( error_count != 0 )) && return_code="${error_count}";
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -353,7 +356,7 @@ function runLoginCommands()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code}
+    return "${return_code}";
 )
 
 #=====  FUNCTION  =============================================================
@@ -410,6 +413,8 @@ function logoutUser()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}";; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${start_epoch}" ]] && unset -v start_epoch;
     [[ -n "${end_epoch}" ]] && unset -v end_epoch;
     [[ -n "${runtime}" ]] && unset -v runtime;
@@ -419,5 +424,5 @@ function logoutUser()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code}
+    return "${return_code}";
 )

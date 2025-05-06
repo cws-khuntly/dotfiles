@@ -21,11 +21,12 @@ trap 'set +v; set +x' INT TERM EXIT;
 ## Application constants
 RET_CODE=0;
 RETURN_CODE=0;
+PACKAGE_NAME="dotfiles";
 CNAME="$(basename "${BASH_SOURCE[0]}")";
 FUNCTION_NAME="${CNAME}#startup";
 SCRIPT_ROOT="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && printf "%s" "${PWD}")")";
-PRIMARY_CONFIG_FILE="${SCRIPT_ROOT}/etc/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
-SECONDARY_CONFIG_FILE="";
+PRIMARY_CONFIG_FILE="${SCRIPT_ROOT}/etc/${PACKAGE_NAME}/${PACKAGE_NAME}.properties";
+SECONDARY_CONFIG_FILE="${HOME}/.dotfiles/etc/${PACKAGE_NAME}/${PACKAGE_NAME}.properties";
 
 if [[ -r "${SCRIPT_ROOT}/lib/system/logger.sh" ]] && [[ -s "${SCRIPT_ROOT}/lib/system/logger.sh" ]]; then
     source "${SCRIPT_ROOT}/lib/system/logger.sh"; ## if its here, override the above and use it
@@ -71,6 +72,8 @@ for CONFIG_FILE in "${PRIMARY_CONFIG_FILE}" "${SECONDARY_CONFIG_FILE}"; do
 
         WORKING_CONFIG_FILE="${CONFIG_FILE}";
         source "${WORKING_CONFIG_FILE}";
+
+        break;
     fi
 done
 
@@ -588,6 +591,8 @@ function main()
             ;;
     esac
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${target_action}" ]] && unset -v target_action;
@@ -808,6 +813,8 @@ function capturedata()
         (( arg_counter += 1 ));
     done
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${arg_counter}" ]] && unset -v arg_counter;
     [[ -n "${argument}" ]] && unset -v argument;
     [[ -n "${argument_name}" ]] && unset -v argument_name;
@@ -874,12 +881,14 @@ function usage()
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "${function_name} -> exit";
     fi
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${function_name}" ]] && unset -v function_name;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 )
 
 if (( ${#} == 0 )); then usage; exit ${?}; fi

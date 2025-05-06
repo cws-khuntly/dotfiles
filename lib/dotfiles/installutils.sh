@@ -50,6 +50,8 @@ function installFiles()
 
     case "${install_mode}" in
         "${INSTALL_LOCATION_LOCAL}")
+            (( ${#} != 1 )) && return 3;
+
             if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installLocalFiles";
             fi
@@ -61,6 +63,8 @@ function installFiles()
 
                 [[ -z "${entry}" ]] && continue;
                 [[ "${entry}" =~ ^\# ]] && continue;
+
+                [[ "$(cut -d "|" -f 1 <<< "${entry}")" != "mkdir" ]] && continue;
 
                 entry_target="$(cut -d "|" -f 3 <<< "${entry}")";
                 entry_permissions="$(cut -d "|" -f 4 <<< "${entry}")";
@@ -144,7 +148,7 @@ function installFiles()
                 [[ -n "${entry_permissions}" ]] && unset -v entry_permissions;
                 [[ -n "${recurse_permissions}" ]] && unset -v recurse_permissions;
                 [[ -n "${entry}" ]] && unset -v entry;
-            done < "$(grep "mkdir" "${INSTALL_CONF}")"
+            done < "${INSTALL_CONF}"
 
             [[ -n "${cname}" ]] && unset -v cname;
             [[ -n "${function_name}" ]] && unset -v function_name;
@@ -220,9 +224,9 @@ function installFiles()
             ;;
     esac
 
-    [[ -f "${TMPDIR:-${USABLE_TMP_DIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" ]] && rm -f "${TMPDIR:-${USABLE_TMP_DIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    (( error_count != 0 )) && return_code="${error_count}";
+    [[ -f "${TMPDIR:-${USABLE_TMP_DIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" ]] && rm -f "${TMPDIR:-${USABLE_TMP_DIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
@@ -253,7 +257,7 @@ function installFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 )
 
 #=====  FUNCTION  =============================================================
@@ -564,7 +568,7 @@ function installLocalFiles()
         fi
     fi
 
-    (( error_count != 0 )) && return_code="${error_count}";
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
@@ -599,7 +603,7 @@ function installLocalFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 )
 
 #=====  FUNCTION  =============================================================
@@ -662,8 +666,15 @@ function installRemoteFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${WORKING_CONFIG_FILE}|${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}") ${target_host} ${target_port} ${target_user} ${target_user}";
     fi
 
-    transferFiles "${TRANSFER_LOCATION_REMOTE}" "${initial_transfer_list}" "${target_host}" "${target_port}" "${target_user}" "${target_user}";
+    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+
+    transferFiles "${TRANSFER_LOCATION_REMOTE}" "${initial_transfer_list}" "${target_host}" "${target_port}" "${target_user}";
     ret_code="${?}";
+
+    cname="installutils.sh";
+    function_name="${cname}#${FUNCNAME[0]}";
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
@@ -958,7 +969,7 @@ function installRemoteFiles()
         fi
     fi
 
-    (( error_count != 0 )) && return_code="${error_count}";
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
     [[ -f "${file_verification_script}" ]] && rm -f "${file_verification_script}";
     [[ -f "${installation_script}" ]] && rm -f "${installation_script}";
@@ -998,5 +1009,5 @@ function installRemoteFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 )

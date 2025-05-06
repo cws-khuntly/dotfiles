@@ -326,6 +326,8 @@ function checkForValidHost()
         fi
     fi
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${checkForHostname}" ]] && unset -v checkForHostname;
@@ -358,7 +360,7 @@ function checkForValidHost()
 
     if [[ -n "${returnedHostName}" ]]; then printf "%s" "${returnedHostName}"; unset -v returnedHostName; else return_code=1; fi
 
-    return ${return_code};
+    return "${return_code}";
 )
 
 #=====  FUNCTION  =============================================================
@@ -458,6 +460,8 @@ function checkForValidAddress()
         fi
     fi
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${counter}" ]] && unset -v counter;
@@ -489,7 +493,7 @@ function checkForValidAddress()
 
     if [[ -n "${returnedHostAddress}" ]]; then printf "%s" "${returnedHostAddress}"; unset -v returnedHostAddress; fi
 
-    return ${return_code};
+    return "${return_code}";
 )
 
 #=====  FUNCTION  =============================================================
@@ -574,6 +578,8 @@ function checkForValidPort()
         fi
     fi
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${checkPortNumber}" ]] && unset -v checkPortNumber;
@@ -602,7 +608,7 @@ function checkForValidPort()
 
     if [[ -n "${returnedPortNumber}" ]]; then printf "%s" "${returnedPortNumber}"; unset -v returnedPortNumber; fi
 
-    return ${return_code};
+    return "${return_code}";
 )
 
 #=====  FUNCTION  =============================================================
@@ -736,6 +742,8 @@ function checkIfHostIsAlive()
         fi
     fi
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${checkNetworkName}" ]] && unset -v checkNetworkName;
@@ -764,5 +772,5 @@ function checkIfHostIsAlive()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 )

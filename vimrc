@@ -72,6 +72,9 @@ set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx
 " Stop vim from commenting every line when the preceding line is commented
 set paste
 
+" idk maybe
+set rtp +=~/.vim
+
 " PLUGINS ---------------------------------------------------------------- {{{
 
 " Plugin code goes here.

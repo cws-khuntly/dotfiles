@@ -48,35 +48,6 @@ function readPropertyFile()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    #======  FUNCTION  ============================================================
-    #          NAME:  usage
-    #   DESCRIPTION:
-    #    PARAMETERS:  None
-    #       RETURNS:  0 regardless of result.
-    #==============================================================================
-    function usage()
-    (
-        if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
-        if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
-
-        cname="basefunctions.sh";
-        function_name="${cname}#${FUNCNAME[1]}";
-        return_code=3;
-
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter"; fi
-
-        printf "%s %s\n" "${FUNCNAME[1]}" "Read a provided property file from the filesystem" >&2;
-        printf "%s %s\n" "Usage: ${FUNCNAME[1]}" "[ property file ]" >&2;
-        printf "    %s: %s\n" "<property file>" "The full path to the property file to be read." >&2;
-
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit"; fi
-
-        if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
-        if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
-
-        return ${return_code};
-    )
-
     if (( ${#} == 0 )); then usage; return "${?}"; fi
 
     ## change the IFS
@@ -122,7 +93,7 @@ function readPropertyFile()
     ## restore the original ifs
     IFS="${CURRENT_IFS}";
 
-    (( error_count != 0 )) && return_code="${error_count}";
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${property_name}" ]] && unset -v property_name;
@@ -150,7 +121,7 @@ function readPropertyFile()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 }
 
 #=====  FUNCTION  =============================================================
@@ -188,36 +159,6 @@ function validateAndCopyKeysForHost()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
-
-    #======  FUNCTION  ============================================================
-    #          NAME:  usage
-    #   DESCRIPTION:
-    #    PARAMETERS:  None
-    #       RETURNS:  0 regardless of result.
-    #==============================================================================
-    # TODO
-    function usage()
-    (
-        if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
-        if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
-
-        cname="basefunctions.sh";
-        function_name="${cname}#${FUNCNAME[1]}";
-        return_code=3;
-
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter"; fi
-
-        printf "%s %s\n" "${FUNCNAME[1]}" "Read a provided property file from the filesystem" >&2;
-        printf "%s %s\n" "Usage: ${FUNCNAME[1]}" "[ property file ]" >&2;
-        printf "    %s: %s\n" "<property file>" "The full path to the property file to be read." >&2;
-
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit"; fi
-
-        if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
-        if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
-
-        return ${return_code};
-    )
 
     if (( ${#} != 3 )); then usage; exit ${?}; fi
 
@@ -309,7 +250,7 @@ function validateAndCopyKeysForHost()
 		fi
 	fi
 
-    (( error_count != 0 )) && return_code="${error_count}";
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
@@ -341,7 +282,7 @@ function validateAndCopyKeysForHost()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 }
 
 #=====  FUNCTION  =============================================================
@@ -379,42 +320,17 @@ function waitForProcessFile()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    #======  FUNCTION  ============================================================
-    #          NAME:  usage
-    #   DESCRIPTION:
-    #    PARAMETERS:  None
-    #       RETURNS:  0 regardless of result.
-    #==============================================================================
-    function usage()
-    (
-        if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
-        if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
-
-        cname="basefunctions.sh";
-        function_name="${cname}#${FUNCNAME[1]}";
-        return_code=3;
-
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter"; fi
-
-        printf "%s %s\n" "${FUNCNAME[1]}" "Read a provided property file from the filesystem" >&2;
-        printf "%s %s\n" "Usage: ${FUNCNAME[1]}" "[ watchfile ] [ time to watch ] [ tries ]" >&2;
-        printf "    %s: %s\n" "<watchfile>" "The full path to the to watch for." >&2;
-		printf "    %s: %s\n" "<time to watch>" "The length of time to pause when looking for the file to watch for." >&2;
-		printf "    %s: %s\n" "<tries>" "The number of tries to pass before terminating the watch." >&2;
-
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit"; fi
-
-        if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
-        if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
-
-        return ${return_code};
-    )
-
     if (( ${#} != 3 )); then usage; exit ${?}; fi
 
 	watch_file="${1}";
 	sleep_time="${2}";
 	retry_count="${3}";
+
+    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "watch_file -> ${watch_file}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "sleep_time -> ${sleep_time}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "retry_count -> ${retry_count}";
+    fi
 
 	while [[ ! -f "${watch_file}" ]]; do
 		(( retry_counter != retry_count )) && sleep "${sleep_time}";
@@ -423,6 +339,8 @@ function waitForProcessFile()
 
 		continue
 	done
+
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
 	[[ -f "${watch_file}" ]] && rm -f "${watch_file}";
 
@@ -455,7 +373,7 @@ function waitForProcessFile()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 }
 
 #=====  FUNCTION  =============================================================
@@ -492,7 +410,7 @@ function isNaN()
 
     [[ "${1}" =~ ^-?[0-9]+$ ]] || return_code=1;
 
-    (( error_count != 0 )) && return_code="${error_count}";
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
     [[ -n "${error_count}" ]] && unset -v error_count;
 
@@ -518,7 +436,7 @@ function isNaN()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 )
 
 #=====  FUNCTION  =============================================================
@@ -555,6 +473,8 @@ function postcleanup()
     # TODO
     #
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
@@ -577,5 +497,5 @@ function postcleanup()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 }

@@ -117,6 +117,8 @@ function getHostKeys()
         (( error_count >= ${#SSH_HOST_KEYS[*]} )) && return_code="${error_count}";
     fi
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${does_key_exist}" ]] && unset -v does_key_exist;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
@@ -147,7 +149,7 @@ function getHostKeys()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 )
 
 #=====  FUNCTION  =============================================================
@@ -291,6 +293,8 @@ function generateSshKeys()
         done
     fi
 
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
     [[ -n "${cmd_output}" ]] && unset -v cmd_output;
     [[ -n "${ssh_key_type}" ]] && unset -v ssh_key_type;
     [[ -n "${ssh_key_size}" ]] && unset -v ssh_key_size;
@@ -322,7 +326,7 @@ function generateSshKeys()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 )
 
 #=====  FUNCTION  =============================================================
@@ -346,10 +350,8 @@ function copyKeysToTarget()
     local target_host;
     local target_port;
     local target_user;
-    local returnedHostInfo;
-    local returned_hostname;
-    local returned_port;
     local keyfile;
+    local sshpass;
     local start_epoch;
     local end_epoch;
     local runtime;
@@ -375,112 +377,77 @@ function copyKeysToTarget()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Checking host availibility for ${target_host}";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAddress ${target_host} ${target_port}";
     fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    if [[ -n "${SSH_KEY_LIST[*]}" ]] && (( ${#SSH_KEY_LIST[*]} != 0 )); then
+        while [[ -z "${sshpass}" ]]; do
+            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Capture user input:";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: read -s -rp Password for host ${target_host}: \" sshpass";
+            fi
 
-    returnedHostInfo="$(validateHostAddress "${target_host}" "${target_port}")";
-    ret_code="${?}";
+            read -s -rp "Password for host ${target_host}: " sshpass
+        done
 
-    cname="sshutils.sh";
-    function_name="${cname}#${FUNCNAME[0]}";
+        for keyfile in "${SSH_KEY_LIST[@]}"; do
+            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "keyfile -> ${keyfile}";
+            fi
 
-    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returnedHostInfo -> ${returnedHostInfo[*]}";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
-    fi
+            [[ -z "${keyfile}" ]] && continue;
 
-    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) && [[ -z "${returnedHostInfo}" ]]; then
-        return_code=1
+            ## check if the file actually exists, if its not there just skip it
+            if [[ -f "${keyfile}" ]] && [[ -r "${keyfile}" ]]; then
+                if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Copying public key ${keyfile}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh-copy-id -i ${keyfile} -oPort=${target_port:-${SSH_PORT_NUMBER}} ${target_user}@${target_host}";
+                fi
 
-        if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred checking host availability for host ${target_host}. Please review logs.";
-        fi
-    else
-        returned_hostname="$(cut -d ":" -f 1 <<< "${returnedHostInfo}")";
-        returned_port="$(cut -d ":" -f 2 <<< "${returnedHostInfo}")";
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returned_hostname -> ${returned_hostname}";
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returned_port -> ${returned_port}";
-        fi
+                cmd_output="$(echo "${sshpass}" | ssh-copy-id -i "${keyfile}" -oPort="${target_port:-${SSH_PORT_NUMBER}}" "${target_user}@${target_host}")";
+                ret_code="${?}";
 
-        if [[ -n "${returned_hostname}" ]] && [[ -n "${returned_port}" ]]; then
-            if [[ -n "${SSH_KEY_LIST[*]}" ]] && (( ${#SSH_KEY_LIST[*]} != 0 )); then
-                for keyfile in "${SSH_KEY_LIST[@]}"; do
-                    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "keyfile -> ${keyfile}";
+                if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+                fi
+
+                if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+                    (( error_count += 1 ));
+
+                    if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to copy SSH identity ${keyfile} to host ${target_host}";
                     fi
-
-                    [[ -z "${keyfile}" ]] && continue;
-
-                    ## check if the file actually exists, if its not there just skip it
-                    if [[ -f "${keyfile}" ]] && [[ -r "${keyfile}" ]]; then
-                        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Copying public key ${keyfile}";
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh-copy-id -i ${keyfile} -oPort=${returned_port:-${SSH_PORT_NUMBER}} ${target_user}@${returned_hostname}";
-                        fi
-
-                        [[ -n "${ret_code}" ]] && unset -v ret_code;
-set -x
-                        ssh-copy-id -i "${keyfile}" -oPort="${returned_port:-${SSH_PORT_NUMBER}}" "${target_user}@${returned_hostname}";
-                        ret_code="${?}";
-set +x
-                        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
-                        fi
-
-                        if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                            (( error_count += 1 ));
-
-                            if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to copy SSH identity ${keyfile} to host ${target_host}";
-                            fi
-                        else
-                            if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "SSH keyfile ${keyfile} applied to host ${target_host} as user ${target_user}";
-                            fi
-                        fi
-                    else
-                        ## NOT incrementing an error counter here because im not sure we actually need it
-                        if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "WARN" "${$}" "${cname}" "${LINENO}" "${function_name}" "Unable to open keyfile ${keyfile}. Please ensure the file exists and can be read by the current user.";
-                        fi
+                else
+                    if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "SSH keyfile ${keyfile} applied to host ${target_host} as user ${target_user}";
                     fi
-
-                    [[ -n "${ret_code}" ]] && unset -v ret_code;
-                    [[ -n "${keyfile}" ]] && unset -v keyfile;
-                done
+                fi
             else
-                return_code=1;
-
+                ## NOT incrementing an error counter here because im not sure we actually need it
                 if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "No SSH key list was provided.";
+                    writeLogEntry "FILE" "WARN" "${$}" "${cname}" "${LINENO}" "${function_name}" "Unable to open keyfile ${keyfile}. Please ensure the file exists and can be read by the current user.";
                 fi
             fi
-        else
-            return_code=1;
 
-            if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Returned hostname/port from ${returnedHostInfo} is empty. Please review logs.";
-            fi
+            [[ -n "${ret_code}" ]] && unset -v ret_code;
+            [[ -n "${keyfile}" ]] && unset -v keyfile;
+        done
+    else
+        return_code=1;
+
+        if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "No SSH key list was provided.";
         fi
     fi
 
-    (( error_count != 0 )) && return_code="${error_count}";
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${continue_exec}" ]] && unset -v continue_exec;
     [[ -n "${target_host}" ]] && unset -v target_host;
     [[ -n "${target_port}" ]] && unset -v target_port;
     [[ -n "${target_user}" ]] && unset -v target_user;
-    [[ -n "${returnedHostInfo}" ]] && unset -v returnedHostInfo;
-    [[ -n "${returned_hostname}" ]] && unset -v returned_hostname;
-    [[ -n "${returned_port}" ]] && unset -v returned_port;
     [[ -n "${keyfile}" ]] && unset -v keyfile;
     [[ -n "${error_count}" ]] && unset -v error_count;
 
@@ -506,5 +473,5 @@ set +x
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    return ${return_code};
+    return "${return_code}";
 )
