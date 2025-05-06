@@ -953,7 +953,7 @@ else
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Building TARGET_ENTRIES with provided information";
                 fi
 
-                mapfile -d "|" -t TARGET_ENTRIES <<< "${SERVER_LIST}";
+                mapfile -d "," -t TARGET_ENTRIES <<< "${SERVER_LIST}";
             fi
         fi
     fi
@@ -1012,7 +1012,9 @@ else
                 writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
             fi
 
-            if [[ -z "${RET_CODE}" ]] && (( RET_CODE != 0 )); then
+            if [[ -z "${RET_CODE}" ]] || (( RET_CODE != 0 )); then
+                RETURN_CODE=1;
+
                 if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";
                     writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";

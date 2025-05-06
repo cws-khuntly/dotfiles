@@ -94,14 +94,14 @@ function transferFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferRemoteFiles ${files_to_process} ${target_host} ${target_port} ${target_user}";
             fi
-
+echo "retcode1: ${ret_code}"
             [[ -n "${cname}" ]] && unset -v cname;
             [[ -n "${function_name}" ]] && unset -v function_name;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
-
+echo "retcode2: ${ret_code}"
             transferRemoteFiles "${files_to_process}" "${target_host}" "${target_port}" "${target_user}";
             ret_code="${?}";
-
+echo "retcode3: ${ret_code}"
             cname="transferutils.sh";
             function_name="${cname}#${FUNCNAME[0]}";
 
@@ -451,7 +451,7 @@ function transferRemoteFiles()
                 [[ -n "${target_dir}" ]] && unset -v target_dir;
             done
 
-            if [[ ! -s "${sftp_send_file}" ]] || (( file_counter != ${#files_to_process[*]} )); then
+            if [[ ! -s "${sftp_send_file}" ]] || (( file_counter >= ${#files_to_process[*]} )); then
                 return_code=1;
 
                 if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -497,7 +497,7 @@ function transferRemoteFiles()
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-    cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${cleanup_list}";
+    #cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${cleanup_list}";
     ret_code="${?}";
 
     cname="transferutils.sh";

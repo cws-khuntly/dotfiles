@@ -17,6 +17,7 @@ function installFiles()
     local return_code=0;
     local error_count=0;
     local install_mode;
+    local install_conf;
     local target_host;
     local target_port;
     local target_user;
@@ -56,15 +57,16 @@ function installFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installLocalFiles";
             fi
 
-            while read -r entry; do
+            [[ -f "${INSTALL_CONF}" ]] && install_conf="${INSTALL_CONF}";
+            [[ -f "${REMOTE_INSTALL_CONF}" ]] && install_conf="${REMOTE_INSTALL_CONF}";
+
+            grep "mkdir" < "${install_conf}" | while read -r entry; do
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
                 fi
 
                 [[ -z "${entry}" ]] && continue;
                 [[ "${entry}" =~ ^\# ]] && continue;
-
-                [[ "$(cut -d "|" -f 1 <<< "${entry}")" != "mkdir" ]] && continue;
 
                 entry_target="$(cut -d "|" -f 3 <<< "${entry}")";
                 entry_permissions="$(cut -d "|" -f 4 <<< "${entry}")";
@@ -148,7 +150,7 @@ function installFiles()
                 [[ -n "${entry_permissions}" ]] && unset -v entry_permissions;
                 [[ -n "${recurse_permissions}" ]] && unset -v recurse_permissions;
                 [[ -n "${entry}" ]] && unset -v entry;
-            done < "${INSTALL_CONF}"
+            done
 
             [[ -n "${cname}" ]] && unset -v cname;
             [[ -n "${function_name}" ]] && unset -v function_name;
@@ -231,6 +233,7 @@ function installFiles()
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${install_mode}" ]] && unset -v install_mode;
+    [[ -n "${install_conf}" ]] && unset -v install_conf;
     [[ -n "${target_host}" ]] && unset -v target_host;
     [[ -n "${target_port}" ]] && unset -v target_port;
     [[ -n "${target_user}" ]] && unset -v target_user;
@@ -663,7 +666,7 @@ function installRemoteFiles()
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "initial_transfer_list -> ${initial_transfer_list}";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${WORKING_CONFIG_FILE}|${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}") ${target_host} ${target_port} ${target_user} ${target_user}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${WORKING_CONFIG_FILE}|${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}") ${target_host} ${target_port} ${target_user}";
     fi
 
     [[ -n "${cname}" ]] && unset -v cname;
@@ -741,14 +744,14 @@ function installRemoteFiles()
                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file_list -> ${transfer_file_list}"
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Sending file verification script ${transfer_file_list} to host ${target_host} as user ${target_user}...";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${target_port} ${target_user} ${target_user}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${target_port} ${target_user}";
                 fi
 
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${target_port}" "${target_user}" "${target_user}";
+                transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${target_port}" "${target_user}";
                 ret_code="${?}";
 
                 cname="installutils.sh";
@@ -843,14 +846,14 @@ function installRemoteFiles()
                                 if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file_list -> ${transfer_file_list}"
                                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Sending installation script ${installation_script} to host ${target_host} as user ${target_user}...";
-                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${target_port} ${target_user} ${target_user}";
+                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${target_port} ${target_user}";
                                 fi
 
                                 [[ -n "${cname}" ]] && unset -v cname;
                                 [[ -n "${function_name}" ]] && unset -v function_name;
                                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                                transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${target_port}" "${target_user}" "${target_user}";
+                                transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${target_port}" "${target_user}";
                                 ret_code="${?}";
 
                                 cname="installutils.sh";
@@ -883,7 +886,7 @@ function installRemoteFiles()
                                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh/install_response -> ret_code -> ${ret_code}";
                                     fi
 
-                                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) && [[ -z "${install_response}" ]] || (( install_response != 0 )); then
+                                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) || [[ -z "${install_response}" ]]; then
                                         return_code="${ret_code}";
 
                                         if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then

@@ -60,7 +60,7 @@ function cleanupFiles()
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cleanupLocalFiles "${cleanup_file_list}";
+                #cleanupLocalFiles "${cleanup_file_list}";
                 ret_code="${?}";
 
                 cname="cleanuputils.sh";
@@ -100,7 +100,7 @@ function cleanupFiles()
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cleanupRemoteFiles "${cleanup_file_list}" "${target_host}" "${target_port}" "${target_user}"
+                #cleanupRemoteFiles "${cleanup_file_list}" "${target_host}" "${target_port}" "${target_user}"
                 ret_code="${?}";
 
                 cname="cleanuputils.sh";
