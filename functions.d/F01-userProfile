@@ -137,16 +137,16 @@ function setPromptCommand()
     local cname="F01-userProfile";
     local function_name="${cname}#${FUNCNAME[0]}";
     local return_code=0;
-    local color_off='\033[0m';
-    local color_red='\033[0;31m';
-    local color_green='\033[0;32m';
-    local color_yellow='\033[0;33m';
-    local color_blue='\033[0;34m';
+    local color_off='\[\e[0m\]';
+    local color_red='\[\e[91m\]';
+    local color_green='\[\e[32m\]';
+    local color_yellow='\[\e[93m\]';
+    local color_blue='\[\e[94m\]';
     local PS2="continue -> ";
     local PS3="Enter selection: ";
-    local PS4='\[Time: \D{%F %T} \]\[Thread: ${0}\]\[Log: -\]\[Level: TRACE\] - \[File: ${FUNCNAME[0]:-${SHELL}}\] \[Method: -\] - ';
+    local PS4='[Time: \D{%F %T} ] [Thread: ${0}] [Log: -] [Level: TRACE] - [File: ${FUNCNAME[0]:-${SHELL}}] [Method: -] - ';
     local git_status="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)";
-    local real_user;
+    local real_user="$(grep -w "${EUID}" /etc/passwd | cut -d ":" -f 1)";
     local start_epoch
     local end_epoch;
     local runtime;
@@ -161,31 +161,23 @@ function setPromptCommand()
 
     case "$(uname -s)" in
         [Cc][Yy][Gg][Ww][Ii][Nn]*)
-            echo -ne "\033\]0; $(printf "\[%s:%s\] : <%s>" "${LOGNAME}" "${HOSTNAME}" "$(basename "${PWD}")")\007";
-
             case "${git_status}" in
-                "") PS1='$(printf "${color_green}\[\u:\H\] ${color_green}: ${color_green}<${color_yellow}\w${color_green}>\n\n$ ${color_off}")'; ;;
-                *) PS1='$(printf "${color_green}\[\u:\H\] ${color_green}: ${color_green}<${color_yellow}\w ${color_blue}($(printf "%s" "${git_status}"))${color_green}>\n\n$ ${color_off}")'; ;;
+                "") PS1="${color_green}[\u:\H] : <${color_yellow}\w${color_green}>\n\n\$ ${color_off}"; ;;
+                *) PS1="${color_green}[\u:\H] : <${color_yellow}\w (${color_blue}${git_status})${color_green}>\n\n\$ ${color_off}"; ;;
             esac
             ;;
         *)
-            case "${EUID}" in
-                "${UID}")
-                    echo -ne "\033\]0; $(printf "\[%s:%s\] : <%s>" "${LOGNAME}" "${HOSTNAME}" "$(basename "${PWD}")")\007";
-
+            case "${real_user}" in
+                "${LOGNAME}")
                     case "${git_status}" in
-                        "") PS1='$(printf "${color_green}\[\u:\H\] ${color_green}: ${color_green}<${color_yellow}\w${color_green}>\n\n$ ${color_off}")'; ;;
-                        *) PS1='$(printf "${color_green}\[\u:\H\] ${color_green}: ${color_green}<${color_yellow}\w ${color_blue}($(printf "%s" "${git_status}"))${color_green}>\n\n$ ${color_off}")'; ;;
+                        "") PS1="${color_green}[\u:\H] : <${color_yellow}\w${color_green}>\n\n\$ ${color_off}"; ;;
+                        *) PS1="${color_green}[\u:\H] : <${color_yellow}\w (${color_blue}${git_status})${color_green}>\n\n\$ ${color_off}"; ;;
                     esac
                     ;;
                 *)
-                    real_user="$(grep -w "${EUID}" /etc/passwd | cut -d ":" f 1)";
-
-                    echo -ne "\033\]0; $(printf "\[%s:%s as %s\] : <%s>" "${LOGNAME}" "${HOSTNAME}" "${real_user}" "$(basename "${PWD}")")\007";
-
                     case "${git_status}" in
-                        "") PS1='$(printf "${color_red}NOTE: YOU ARE ${real_user}\n${color_green}\[\u:\h as ${color_red}%s ${color_green}: ${color_green}<${color_yellow}\w${color_green}>\n\n$ ${color_off}")'; ;;
-                        *) PS1='$(printf "${color_red}NOTE: YOU ARE ${real_user}\n${color_green}\[\u:\h as ${color_red}%s ${color_green}: ${color_green}<${color_yellow}\w ${color_blue}($(printf "%s" "${git_status}")${color_green})\n\n$ ${color_off}")'; ;;
+                        "") PS1="${color_red}NOTE: you are ${real_user}${color_off}\n${color_green}[\u as ${color_red}${real_user}${color_green}:\H] : <${color_yellow}\w${color_green}>\n\n\$ ${color_off}"; ;;
+                        *) PS1="${color_red}NOTE: you are ${real_user}${color_off}\n${color_green}[\u as ${color_red}${real_user}${color_green}:\H] : <${color_yellow}\w (${color_blue}${git_status})${color_green}>\n\n\$ ${color_off}";
                     esac
                     ;;
             esac
