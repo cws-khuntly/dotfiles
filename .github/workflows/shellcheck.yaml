@@ -1,0 +1,38 @@
+name: ShellCheck
+on: [push, pull_request]
+
+jobs:
+  scan:
+    name: ShellCheck Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    strategy:
+      matrix:
+        match: [ alias bashrc functions profile profiles bin/* alias.d/* alias.d/OSAliases/* functions.d/* lib/dotfiles/* lib/system/* lib/* profile.d/profiles/* profile.d/* **/*.sh ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Shellcheck Scan
+        uses: ludeeus/action-shellcheck@master
+        env:
+          SHELLCHECK_OPTS: '-x -s bash'
+        with:
+          additional_files: 'alias bashrc functions profile profiles bin/* alias.d/* alias.d/OSAliases/* functions.d/* lib/dotfiles/* lib/system/* lib/* profile.d/profiles/* profile.d/* *.sh'
+          severity: 'error'
+          check_together: 'yes'
+          format: 'gcc'
+        if: ${{ success() }}
+      - name: Shellcheck SARIF Scan
+        uses: reactive-firewall/shellcheck-scan@v1
+        with:
+          match: ${{ matrix.match }}
+          severity: 'warning'
+          shell-format: 'bash'
+          publish-artifacts: true
+        if: ${{ success() }}

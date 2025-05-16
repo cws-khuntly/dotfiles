@@ -1,0 +1,95 @@
+#!/usr/bin/env expect
+#==============================================================================
+#
+#          FILE:  telnet
+#         USAGE:  ./telnet
+#   DESCRIPTION:  Executes an telnet connection to a pre-defined server
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#==============================================================================
+
+if { [ info exists env(ENABLE_VERBOSE) ] } {
+    if { [ string match -nocase $env(ENABLE_VERBOSE) "true" ] == 1 } {
+        log_user 1
+    } else {
+        log_user 0
+    }
+} else {
+    log_user 0
+}
+
+if { [ info exists env(ENABLE_TRACE) ] } {
+    if { [ string match -nocase $env(ENABLE_TRACE) "true" ] == 1 } {
+        exp_internal 1
+    }
+}
+
+log_file -a $env(HOME)/log/telnet.log
+
+## set up some class info
+global env
+global _CNAME
+global _METHOD_NAME
+global _LINE_TERMINATOR
+
+set _CNAME "telnet"
+set _METHOD_NAME "telnet"
+set _LINE_TERMINATOR "\r\n"
+set USERNAME $env(LOGNAME);
+set timeout -1;
+
+if { [info exists env(THREAD_TIMEOUT)] } {
+    set timeout $env(THREAD_TIMEOUT);
+}
+
+source [ file join [ file dirname [ info script ] ] misc.tcl ];
+
+proc usage {} {
+    global _METHOD_NAME
+
+    puts stderr "$_METHOD_NAME Perform a telnet connection check against a specified host and port";
+    puts stderr "Usage: $_METHOD_NAME \[ --hostname <hostname> \] \[ --portnumber <port> \] ( --timeout <timeout> )";
+    puts stderr "\thostname            The target hostname to connect to. The host must be either an IP address or resolvable hostname.";
+    puts stderr "\tportnumber          The target port on the host to connect to.";
+    puts stderr "\ttimeout             A timeout value for the script to wait if it hangs. If not specified, a value of 10 seconds is used."; ## timeout
+
+    exit 3;
+}
+
+# make sure we have all our arguments
+if { [ expr { $argc < 1 } ] } {
+    usage;
+} else {
+    # set runtime information
+    for { set a 0 } { $a ne $argc } { incr a } {
+        set PARM_NAME [ string toupper [ string range [ lindex $argv $a ] 2 [ string length [ lindex $argv $a ] ] ] ]
+        set [ set PARM_NAME ] [ lindex [ split [ parseParams "[ lindex $argv $a ] [ lindex $argv [ expr "$a" + "1" ] ]" ] " " ] 1 ]
+
+        incr a;
+    }
+}
+
+eval spawn telnet $HOSTNAME $PORTNUMBER;
+
+lassign [wait] pid spawnid os_error_flag value;
+
+switch $os_error_flag {
+    0 {
+        puts stderr "Connection to $HOSTNAME on port $PORTNUMBER succeeded.";
+
+        exit 0;
+    }
+    default {
+        puts stderr "Connection to $HOSTNAME on port $PORTNUMBER failed.";
+
+        exit 1;
+    }
+}

@@ -1,0 +1,83 @@
+#!/usr/bin/env expect
+#==============================================================================
+#
+#          FILE:  ssh-add
+#         USAGE:  ./ssh-add
+#   DESCRIPTION:  Executes an scp connection to a pre-defined server
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#==============================================================================
+
+if { [ info exists env(ENABLE_VERBOSE) ] } {
+    if { [ string match -nocase $env(ENABLE_VERBOSE) "true" ] == 1 } {
+        log_user 1;
+    } else {
+        log_user 0;
+    }
+} else {
+    log_user 0;
+}
+
+if { [ info exists env(ENABLE_TRACE) ] } {
+    if { [ string match -nocase $env(ENABLE_TRACE) "true" ] == 1 } {
+        exp_internal 1;
+    }
+}
+
+log_file -a $env(HOME)/log/ssh-add.log;
+
+set _CNAME "ssh-add";
+set _METHOD_NAME "ssh-add";
+set _LINE_TERMINATOR "\r\n";
+set _KEYFILES "id_rsa id_dsa"; ## default keyfiles
+set timeout 60;
+set AUTHFILE "file:/home/khuntly/etc/password.asc";
+
+source [ file join [ file dirname [ info script ] ] misc.tcl ];
+source [ file join [ file dirname [ info script ] ] security.tcl ];
+
+## make sure we have all our arguments
+if { [ expr { $argc != 0 } ] } {
+    set _KEYFILES $argv;
+}
+
+foreach { _KEYFILE } $_KEYFILES {
+    set _AUTH_DATA [ split [ getAuthValue $_KEYFILE $_KEYFILE $AUTHFILE gpg ] " " ];
+
+    if { [ info exists _PASSPHRASE ] } {
+        eval spawn ssh-add $env(HOME)/.ssh/$_KEYFILE;
+
+        expect {
+            "Enter passphrase*" {
+                exp_send "$_PASSPHRASE\r";
+
+                exp_continue;
+            }
+            "Bad passphrase*" {
+                puts stderr "An invalid passphrase was provided for keyfile $_KEYFILE";
+
+                continue;
+            }
+            "Identity added: $env(HOME)/.ssh/$_KEYFILE ($env(HOME)/.ssh/$_KEYFILE)\r\n" {
+                puts stdout "Successfully loaded key $_KEYFILE";
+
+                continue;
+            }
+            eof {
+                append output $expect_out(buffer);
+            }
+        }
+    } else {
+        puts "No passphrase was located for the given key. Skipping.";
+
+        continue;
+    }
+}

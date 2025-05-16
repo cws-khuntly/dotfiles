@@ -1,0 +1,57 @@
+name: Release Package
+on:
+  workflow_run:
+    workflows: ['shellcheck', 'build-package']
+    branches: ['release']
+    types: ['completed']
+
+jobs:
+  on-success:
+    name: Build release package
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: true
+      - name: Build tarfile
+        run: tar --exclude-vcs --exclude-from=./etc/excludes -cf - ./* | gzip > /var/tmp/dotfiles.tar.gz;
+        if: ${{ success() }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotfiles
+          path: /var/tmp/dotfiles.tar.gz
+          compression-level: 0
+        if: ${{ success() }}
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_nane: Release ${{ github.ref }}
+          body: |
+            Changes:
+              - One
+              - Two
+          draft: false
+          prerelease: false
+      - name: Upload Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: /var/tmp/dotfiles.tgz
+          asset_name: dotfiles.tgz
+          asset_content_type: application/x-gzip
+        if: ${{ success() }}
+      - name: Remove temporary package
+        run: rm /var/tmp/dotfiles.tgz

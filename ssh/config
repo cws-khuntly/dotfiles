@@ -1,0 +1,37 @@
+#===  CONFIGURATION  ==========================================================
+#          NAME:  config
+#   DESCRIPTION:  Base SSH configuration file. Includes dropins from ~/.ssh/config.d
+#    PARAMETERS:  N/A
+#       RETURNS:  N/A
+#==============================================================================
+
+Include                         config.d/*
+
+Host *
+    AddressFamily               = inet
+    CheckHostIP                 = yes
+    Compression                 = yes
+    ConnectionAttempts          = 2
+    ConnectTimeout              = 10
+    EscapeChar                  = ~
+    ForwardAgent                = no
+    ForwardX11                  = no
+    ForwardX11Trusted           = yes
+    GlobalKnownHostsFile        = /etc/ssh/known_hosts
+    UserKnownHostsFile          = ~/.ssh/known_hosts
+    HashKnownHosts              = yes
+    HostbasedAuthentication     = no
+    PubkeyAuthentication        = yes
+    LogLevel                    = INFO
+    NumberOfPasswordPrompts     = 3
+    PreferredAuthentications    = publickey,keyboard-interactive,password
+    Protocol                    = 2
+    ServerAliveCountMax         = 30
+    ServerAliveInterval         = 60
+    StrictHostKeyChecking       = no
+    TCPKeepAlive                = yes
+    VerifyHostKeyDNS            = ask
+    XAuthLocation               = /usr/bin/xauth
+    IdentitiesOnly              = yes
+    IdentityFile                = ~/.ssh/id_ed25519
+    IdentityFile                = ~/.ssh/id_rsa

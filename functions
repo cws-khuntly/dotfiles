@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+
+#==============================================================================
+#
+#          FILE:  functions
+#         USAGE:  . functions
+#   DESCRIPTION:  Sets application-wide functions
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+CNAME="$(basename "${BASH_SOURCE[0]}")";
+FUNCTION_NAME="${CNAME}#functions";
+
+if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+    START_EPOCH="$(date +"%s")";
+
+    if [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(date -d @"${START_EPOCH}" +"${TIMESTAMP_OPTS}")";
+    fi
+fi
+
+if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
+if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
+
+## load aliases
+for FILE in ${HOME}/.functions.d/*; do
+    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
+    fi
+
+    [[ -z "${FILE}" ]] && continue;
+
+    if [[ -d "${FILE}" ]]; then
+        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Traversing directory ${FILE}";
+        fi
+
+        SUBDIR="$(awk -F "/" '{print $NF}' <<< "${FILE}")";
+
+        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SUBDIR -> ${SUBDIR}";
+        fi
+
+        [[ -z "${SUBDIR}" ]] && continue;
+
+		for SUBFILE in "${SUBDIR}"/*; do
+			if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+				writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SUBFILE -> ${SUBFILE}";
+			fi
+
+			[[ -z "${SUBFILE}" ]] && continue;
+
+			# shellcheck source=/dev/null
+            source "${SUBFILE}";
+
+			[[ -n "${SUBFILE}" ]] && unset -v SUBFILE;
+		done
+    else
+        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
+        fi
+
+        [[ -z "${FILE}" ]] && continue;
+
+        if [[ "$(cut -d "-" -f 2 <<< "${FILE}")" == "${OSNAME}" ]] && [[ -r "${FILE}" ]] && [[ -s "${FILE}" ]]; then
+            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
+            fi
+
+            # shellcheck source=/dev/null
+            source "${FILE}";
+        fi
+    fi
+
+    [[ -n "${FILE}" ]] && unset -v FILE;
+    [[ -n "${SUBDIR}" ]] && unset -v SUBDIR;
+    [[ -n "${SUBFILE}" ]] && unset -v SUBFILE;
+done
+
+if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+    END_EPOCH="$(date +"%s")"
+    RUNTIME=$(( END_EPOCH - START_EPOCH ));
+
+    writeLogEntry "FILE" "PERFORMANCE" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(date -d "@${END_EPOCH}" +"${TIMESTAMP_OPTS}")";
+    writeLogEntry "FILE" "PERFORMANCE" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
+fi
+
+if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
+if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
+
+[[ -n "${FILE}" ]] && unset -v FILE;
+[[ -n "${SUBDIR}" ]] && unset -v SUBDIR;
+[[ -n "${SUBFILE}" ]] && unset -v SUBFILE;
+[[ -n "${FUNCTION_NAME}" ]] && unset -v FUNCTION_NAME;
+[[ -n "${CNAME}" ]] && unset -v CNAME;
+[[ -n "${START_EPOCH}" ]] && unset -v START_EPOCH;
+[[ -n "${END_EPOCH}" ]] && unset -v END_EPOCH;
+[[ -n "${RUNTIME}" ]] && unset -v RUNTIME;

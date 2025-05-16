@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+#==============================================================================
+#
+#          FILE:  defaults
+#         USAGE:  . defaults
+#   DESCRIPTION:  Sets default commandline options and variables for various programs
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[[ -z "${LOGNAME}" ]] && LOGNAME="$(whoami)";
+
+#
+# read-only
+#
+[[ -z "${_TRUE}" ]] && declare -rx _TRUE="true";
+[[ -z "${_FALSE}" ]] && declare -rx _FALSE="false";
+
+declare -rx LANG="en_US.UTF-8";
+declare -rx LC_ALL="en_US.UTF-8";
+declare -rx TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n';
+declare -rx LESS="-QR";
+declare -rx BLOCKSIZE="K";
+declare -rx PAGER="less";
+declare -rx EDITOR="vim";
+declare -rx FCEDIT="vim";
+declare -rx VISUAL="vim";
+declare -rx SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket";
+
+#
+# read-write
+#
+declare -x DISPLAY=":0.0";
+declare -ix THREAD_TIMEOUT=10;
+declare -x MODIFIED_IFS="^";
+declare -x RANDOM_GENERATOR="/dev/urandom";
+declare -x ENTROPY_FILE="${HOME}/etc/entropy";
+declare -ix ENTROPY_FILE_SIZE=16384;
+
+#
+# prompt
+#
+declare -x PROMPT_COMMAND=setPromptCommand;
+
+case "$(uname -s)" in
+    [Cc][Yy][Gg][Ww][Ii][Nn]*)
+        declare -rx TERM="ansi";
+        declare -rx PATHSEP=";";
+        ;;
+    [Ll][Ii][Nn][Uu][Xx])
+        declare -rx TERM="linux";
+        declare -rx PATHSEP=":";
+        ;;
+    [Aa][Ii][Xx]|[Ss][Uu][Nn][Oo][Ss]|[Ss][Oo][Ll][Aa][Rr][Ii][Ss])
+        declare -rx TERM="ansi";
+        declare -rx PATHSEP=":";
+        ;;
+esac

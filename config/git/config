@@ -1,0 +1,47 @@
+[core]
+    autocrlf = true
+    editor = vi
+    pager = less -FRSX
+    excludesfile = ~/.config/git/ignore
+    logallrefupdates = true
+    attributesfile = ~/.config/git/attributes
+
+[branch]
+    autosetuprebase = always
+    autosetupmerge = true
+
+[help]
+    autocorrect = 1
+
+[color]
+    ui = true
+
+[http]
+
+[https]
+    sslVerify = false
+
+[alias]
+
+[commit]
+    #gpgsign = true
+
+[filter "spaces2tabs"]
+    clean = unexpand --tabs=4 --first-only
+    smudge = expand --tabs=4 --initial
+
+[merge]
+    renormalize = true
+
+[log]
+    date = rfc
+    decorate = full
+    showroot = true
+    mailmap = true
+
+[push]
+    default = simple
+
+[user]
+    name = Kevin Huntly
+    email = kmhuntly@gmail.com

@@ -1,0 +1,31 @@
+name: Build and Publish Package
+on:
+  workflow_run:
+    workflows: ['shellcheck']
+    branches: ['main', 'master', 'release']
+    types:
+      - completed
+
+jobs:
+  on-success:
+    name: Build release package
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Build tarfile
+        run: tar --exclude-vcs --exclude-from=./etc/excludes -cf - ./* | gzip > /var/tmp/dotfiles.tar.gz;
+        if: ${{ success() }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotfiles
+          path: /var/tmp/dotfiles.tar.gz
+          compression-level: 0
+        if: ${{ success() }}

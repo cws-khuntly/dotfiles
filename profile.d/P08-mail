@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+#==============================================================================
+#
+#          FILE:  mail
+#         USAGE:  . mail
+#   DESCRIPTION:  Configures mail handling
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+declare -x MAIL="/var/spool/mail/${LOGNAME:?}";
+declare -ix MAILCHECK=10;
+
+[[ ! -d "${HOME}/.mail" ]] && mkdir -p "${HOME}/.mail";
+#[ ! -z "$(mail -E 2> /dev/null)" ] && echo "$(mail -E)";

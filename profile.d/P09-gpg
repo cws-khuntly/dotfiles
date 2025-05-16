@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+#==============================================================================
+#
+#          FILE:  defaults
+#         USAGE:  . defaults
+#   DESCRIPTION:  Sets default commandline options and variables for various programs
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+declare -x GPG_TTY="$(tty)";
+
+gpg-connect-agent updatestartuptty /bye > /dev/null 2>&1;

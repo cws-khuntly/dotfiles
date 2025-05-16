@@ -1,0 +1,32 @@
+#===  CONFIGURATION  ==========================================================
+#          FILE:  shellcheckrc
+#         USAGE:  N/A
+#   DESCRIPTION:  Configuration values for the logger
+#
+#       OPTIONS:  N/A
+#  REQUIREMENTS:  bash 4+
+#          BUGS:  ---
+#         NOTES:
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#==============================================================================
+
+# Allow opening any 'source'd file, even if not specified as input
+external-sources=true
+
+# Turn on warnings for unquoted variables with safe values
+enable=quote-safe-variables
+
+# Turn on warnings for unassigned uppercase variables
+enable=check-unassigned-uppercase
+
+# require curly braces 
+enable=require-variable-braces
+
+#
+# a warning said to do this
+#
+enable=check-extra-masked-returns
