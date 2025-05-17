@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+#==============================================================================
+#
+#          FILE:  A01-meminfo
+#         USAGE:  . A01-meminfo
+#   DESCRIPTION:  Useful system information gathering aliases
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+## meminfo
+alias meminfo="free -m -l -t";
+alias psmem="ps auxf | sort -nr -k 4";
+alias psmem10="ps auxf | sort -nr -k 4 | head -10";
+alias pscpu="ps auxf | sort -nr -k 3";
+alias pscpu10="ps auxf | sort -nr -k 3 | head -10";
+alias gpumeminfo="grep -i --color memory /var/log/Xorg.0.log";
+alias hogc="ps -e -o %cpu,pid,ppid,user,cmd | sort -nr | head";
+alias hogm="ps -e -o %mem,pid,ppid,user,cmd | sort -nr | head";
+alias cpuCount="grep -c \"^processor\" /proc/cpuinfo";
