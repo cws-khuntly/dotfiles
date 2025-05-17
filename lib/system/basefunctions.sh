@@ -305,8 +305,8 @@ function waitForProcessFile()
     local error_count=0;
     local retry_counter=0;
     local watch_file;
-	local sleep_time;
-	local retry_count;
+    local sleep_time;
+    local retry_count;
     local start_epoch;
     local end_epoch;
     local runtime;
