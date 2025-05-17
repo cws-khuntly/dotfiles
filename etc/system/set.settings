@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+#==============================================================================
+#
+#          FILE:  set
+#         USAGE:  . set
+#   DESCRIPTION:  Sets shell environment options
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+case "$(uname)" in
+    [Ll][Ii][Nn][Uu][Xx])
+        set -o ignoreeof;
+        set -o monitor;
+        set -o notify;
+        set -o noclobber;
+        set -b;
+        set bell-style visible;
+        set completion-ignore-case on;
+        ;;
+esac
