@@ -19,7 +19,7 @@
 #==============================================================================
 
 CNAME="$(basename "${BASH_SOURCE[0]}")";
-FUNCTION_NAME="${CNAME}#.libs";
+FUNCTION_NAME="${CNAME}#libs";
 
 if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
     START_EPOCH="$(date +"%s")";
