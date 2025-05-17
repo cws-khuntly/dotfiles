@@ -22,7 +22,7 @@
 #    PARAMETERS:  Target host, port number (optional);
 #       RETURNS:  0 if success, 1 otherwise;
 #==============================================================================;
-function validateHostAddress()
+function validateHostAvailability()
 {
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
