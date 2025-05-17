@@ -27,7 +27,7 @@ function showHostInfo()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="F01-userProfile";
+    local cname="userprofile.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local return_code=0;
     local error_count=0;
@@ -150,7 +150,7 @@ function setPromptCommand()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="F01-userProfile";
+    local cname="userprofile.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local return_code=0;
     local color_off='\[\e[0m\]';
@@ -246,7 +246,7 @@ function runLoginCommands()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="F01-userProfile";
+    local cname="userprofile.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local primary_file="${HOME}/etc/logincmds.properties";
     local secondary_file="${HOME}/workspace/etc/logincmds.properties";
@@ -379,7 +379,7 @@ function logoutUser()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="F01=userProfile";
+    local cname="userprofile.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local return_code=0;
     local error_count=0;
