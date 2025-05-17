@@ -178,7 +178,7 @@ function validateAndCopyKeysForHost()
 	[[ -n "${function_name}" ]] && unset -v function_name;
 	[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-	host_data=$(validateHostAddress "${target_host}" "${target_port}");
+	host_data=$(validateHostAvailability "${target_host}" "${target_port}");
 
     cname="basefunctions.sh";
 	function_name="${cname}#${FUNCNAME[0]}";
