@@ -57,7 +57,7 @@ if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${
 fi
 
 source "${HOME}/.profiles";
-source "${HOME}/.alias";
+source "${HOME}/.functions";
 source "${HOME}/.alias";
 
 if [[ -z "${isReloadRequest}" ]] || [[ "${isReloadRequest}" == "${_FALSE}" ]]; then
