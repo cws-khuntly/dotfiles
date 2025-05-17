@@ -105,14 +105,8 @@ for FILE in "${HOME}/.alias.d/"*; do
 
         [[ -z "${FILE}" ]] && continue;
 
-        if [[ "$(cut -d "-" -f 2 <<< "${FILE}")" == "${OSNAME}" ]] && [[ -r "${FILE}" ]] && [[ -s "${FILE}" ]]; then
-            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
-            fi
-
-            # shellcheck source=/dev/null
-            source "${FILE}";
-        fi
+        # shellcheck source=/dev/null
+        source "${FILE}";
     fi
 
     [[ -n "${FILE}" ]] && unset -v FILE;
