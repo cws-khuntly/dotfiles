@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #==============================================================================
-#          FILE:  basefunctions.sh
+#          FILE:  misc.sh
 #         USAGE:  Import file into script and call relevant functions
 #   DESCRIPTION:  Base system functions that don't necessarily belong elsewhere
 #
@@ -16,33 +16,18 @@
 #      REVISION:  ---
 #==============================================================================
 
+#=====  FUNCTION  =============================================================
+#          NAME:  mkcd
+#   DESCRIPTION:  Creates a directory and then changes into it
+#    PARAMETERS:  Directory to create
+#       RETURNS:  0 if success, 1 otherwise
 #==============================================================================
-#          FILE:  basefunctions.sh
-#         USAGE:  Import file into script and call relevant functions
-#   DESCRIPTION:  Base system functions that don't necessarily belong elsewhere
-#
-#       OPTIONS:  See usage section
-#  REQUIREMENTS:  bash 4+
-#          BUGS:  ---
-#         NOTES:
-#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
-#       COMPANY:  ---
-#       VERSION:  1.0
-#       CREATED:  ---
-#      REVISION:  ---
-#==============================================================================
-
-#=====  FUNCTION  =============================================================;
-#          NAME:  mkcd;
-#   DESCRIPTION:  Creates a directory and then changes into it;
-#    PARAMETERS:  Directory to create;
-#       RETURNS:  0 if success, 1 otherwise;
-#==============================================================================;
 function mkcd()
 {
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
+    local cname="misc.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local return_code=0;
     local error_count=0;
@@ -64,18 +49,18 @@ function mkcd()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    #======  FUNCTION  ============================================================;
-    #          NAME:  usage;
-    #   DESCRIPTION:;
-    #    PARAMETERS:  None;
-    #       RETURNS:  0 regardless of result.;
+    #======  FUNCTION  ============================================================
+    #          NAME:  usage
+    #   DESCRIPTION:
+    #    PARAMETERS:  None
+    #       RETURNS:  3
     #==============================================================================;
     function usage()
     (
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-        local cname="F02-misc";
+        local cname="misc.sh";
         local function_name="${cname}#${FUNCNAME[1]}";
         local return_code=3;
 
@@ -173,17 +158,18 @@ function mkcd()
     return "${return_code}";
 }
 
-#=====  FUNCTION  =============================================================;
-#          NAME:  lsz;
-#   DESCRIPTION:  Lists the content of a provided archive;
-#    PARAMETERS:  Archive to list;
-#       RETURNS:  0 if success, 1 otherwise;
-#==============================================================================;
+#=====  FUNCTION  =============================================================
+#          NAME:  lsz
+#   DESCRIPTION:  Lists the content of a provided archive
+#    PARAMETERS:  Archive to list
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
 function lsz()
 {
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
+    local cname="misc.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local return_code=0;
     local error_count=0;
@@ -206,18 +192,18 @@ function lsz()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    #======  FUNCTION  ============================================================;
-    #          NAME:  usage;
-    #   DESCRIPTION:;
-    #    PARAMETERS:  None;
-    #       RETURNS:  0 regardless of result.;
-    #==============================================================================;
+    #======  FUNCTION  ============================================================
+    #          NAME:  usage
+    #   DESCRIPTION:
+    #    PARAMETERS:  None
+    #       RETURNS:  3
+    #==============================================================================
     function usage()
     (
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-        local cname="F02-misc";
+        local cname="misc.sh";
         local function_name="${cname}#${FUNCNAME[1]}";
         local return_code=3;
 
@@ -317,17 +303,18 @@ function lsz()
     return "${return_code}";
 }
 
-#=====  FUNCTION  =============================================================;
-#          NAME:  extract;
-#   DESCRIPTION:  Extracts the provided archive;
-#    PARAMETERS:  Archive to extract;
-#       RETURNS:  0 if success, 1 otherwise;
-#==============================================================================;
+#=====  FUNCTION  =============================================================
+#          NAME:  extract
+#   DESCRIPTION:  Extracts the provided archive
+#    PARAMETERS:  Archive to extract
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
 function extract()
 {
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
+    local cname="misc.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local return_code=0;
     local error_count=0;
@@ -350,12 +337,12 @@ function extract()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    #======  FUNCTION  ============================================================;
-    #          NAME:  usage;
-    #   DESCRIPTION:;
-    #    PARAMETERS:  None;
-    #       RETURNS:  0 regardless of result.;
-    #==============================================================================;
+    #======  FUNCTION  ============================================================
+    #          NAME:  usage
+    #   DESCRIPTION:
+    #    PARAMETERS:  None
+    #       RETURNS:  3
+    #==============================================================================
     function usage()
     (
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
@@ -462,18 +449,18 @@ function extract()
     return "${return_code}";
 }
 
-#=====  FUNCTION  =============================================================;
-#          NAME:  returnRandomCharacters;
-#   DESCRIPTION:  Returns a random string of alphanumeric characters;
-#    PARAMETERS:  Length of string, include special characters;
-#       RETURNS:  0 regardless of result.;
-#==============================================================================;
+#=====  FUNCTION  =============================================================
+#          NAME:  returnRandomCharacters
+#   DESCRIPTION:  Returns a random string of alphanumeric characters
+#    PARAMETERS:  Length of string, include special characters
+#       RETURNS:  0 regardless of result.
+#==============================================================================
 function returnRandomCharacters()
 {
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="F02-misc";
+    local cname="misc.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local return_code=0;
     local error_count=0;
@@ -502,11 +489,11 @@ function returnRandomCharacters()
     fi
 
     #======  FUNCTION  ============================================================;
-    #          NAME:  usage;
-    #   DESCRIPTION:;
-    #    PARAMETERS:  None;
-    #       RETURNS:  0 regardless of result.;
-    #==============================================================================;
+    #          NAME:  usage
+    #   DESCRIPTION:
+    #    PARAMETERS:  None
+    #       RETURNS:  3
+    #==============================================================================
     function usage()
     (
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
@@ -683,17 +670,18 @@ function returnRandomCharacters()
     return "${return_code}";
 }
 
-#=====  FUNCTION  =============================================================;
-#          NAME:  shredit;
-#   DESCRIPTION:  Destroys a target filesystem by overwriting the data;
-#    PARAMETERS:  File;
-#       RETURNS:  0 if success, 1 otherwise;
-#==============================================================================;
+#=====  FUNCTION  =============================================================
+#          NAME:  shredit
+#   DESCRIPTION:  Destroys a target filesystem by overwriting the data
+#    PARAMETERS:  File
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
 function shredit()
 {
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
+    local cname="misc.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local return_code=0;
     local error_count=0;
@@ -715,18 +703,18 @@ function shredit()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    #======  FUNCTION  ============================================================;
-    #          NAME:  usage;
-    #   DESCRIPTION:;
-    #    PARAMETERS:  None;
-    #       RETURNS:  0 regardless of result.;
-    #==============================================================================;
+    #======  FUNCTION  ============================================================
+    #          NAME:  usage
+    #   DESCRIPTION:
+    #    PARAMETERS:  None
+    #       RETURNS:  3
+    #==============================================================================
     function usage()
     (
         if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-        local cname="F02-misc";
+        local cname="misc.sh";
         local function_name="${cname}#${FUNCNAME[1]}";
         local return_code=3;
 
