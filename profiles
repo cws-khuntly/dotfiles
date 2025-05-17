@@ -2,9 +2,9 @@
 
 #==============================================================================
 #
-#          FILE:  profile
-#         USAGE:  . profile
-#   DESCRIPTION:  Sets application-wide profiles
+#          FILE:  profiles
+#         USAGE:  . profiles
+#   DESCRIPTION:  Sets application-wide aliases
 #
 #       OPTIONS:  ---
 #  REQUIREMENTS:  ---
@@ -19,7 +19,7 @@
 #==============================================================================
 
 CNAME="$(basename "${BASH_SOURCE[0]}")";
-FUNCTION_NAME="${CNAME}#profile";
+FUNCTION_NAME="${CNAME}#profiles";
 
 if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
     START_EPOCH="$(date +"%s")";
@@ -32,65 +32,22 @@ fi
 if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
 if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-## load aliases
-for FILE in ${HOME}/.profile.d/*; do
+## load libs
+for FILE in "${HOME}/etc/system/"*.profile "${HOME}/etc/profile/"*.profile; do
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
     fi
 
     [[ -z "${FILE}" ]] && continue;
 
-    if [[ -d "${FILE}" ]]; then
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Traversing directory ${FILE}";
-        fi
-
-        SUBDIR="$(awk -F "/" '{print $NF}' <<< "${FILE}")";
-
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SUBDIR -> ${SUBDIR}";
-        fi
-
-        [[ -z "${SUBDIR}" ]] && continue;
-
-		for SUBFILE in "${SUBDIR}"/*; do
-			if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-				writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SUBFILE -> ${SUBFILE}";
-			fi
-
-			[[ -z "${SUBFILE}" ]] && continue;
-
-			if [[ "$(cut -d "-" -f 2 <<< "${SUBFILE}")" == "${OSNAME}" ]] && [[ -r "${SUBFILE}" ]] && [[ -s "${SUBFILE}" ]]; then
-				if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-					writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${SUBFILE}";
-				fi
-
-				# shellcheck source=/dev/null
-				source "${SUBFILE}";
-			fi
-
-			[[ -n "${SUBFILE}" ]] && unset -v SUBFILE;
-		done
-    else
-        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
-        fi
-
-        [[ -z "${FILE}" ]] && continue;
-
-        if [[ "$(cut -d "-" -f 2 <<< "${FILE}")" == "${OSNAME}" ]] && [[ -r "${FILE}" ]] && [[ -s "${FILE}" ]]; then
-            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
-            fi
-
-            # shellcheck source=/dev/null
-            source "${FILE}";
-        fi
+    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
     fi
 
+    # shellcheck source=/dev/null
+    source "${FILE}";
+
     [[ -n "${FILE}" ]] && unset -v FILE;
-    [[ -n "${SUBDIR}" ]] && unset -v SUBDIR;
-    [[ -n "${SUBFILE}" ]] && unset -v SUBFILE;
 done
 
 if [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -105,8 +62,6 @@ if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then
 if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
 [[ -n "${FILE}" ]] && unset -v FILE;
-[[ -n "${SUBDIR}" ]] && unset -v SUBDIR;
-[[ -n "${SUBFILE}" ]] && unset -v SUBFILE;
 [[ -n "${FUNCTION_NAME}" ]] && unset -v FUNCTION_NAME;
 [[ -n "${CNAME}" ]] && unset -v CNAME;
 [[ -n "${START_EPOCH}" ]] && unset -v START_EPOCH;
