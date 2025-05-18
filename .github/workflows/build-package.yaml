@@ -20,7 +20,7 @@ jobs:
           persist-credentials: false
           submodules: false
       - name: Build tarfile
-        run: tar --exclude-vcs --exclude-from=./etc/excludes -cf - ./* | gzip > /var/tmp/dotfiles.tar.gz;
+        run: tar --exclude-vcs --exclude-from=./etc/profile/excludes -cf - ./* | gzip > /var/tmp/dotfiles.tar.gz;
         if: ${{ success() }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
