@@ -174,9 +174,9 @@ function watchForFile()
 
     (( ${#} != 3 )) && return 3;
 
-        watch_file="${1}";
-        sleep_time="${2}";
-        retry_count="${3}";
+    watch_file="${1}";
+    sleep_time="${2}";
+    retry_count="${3}";
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "watch_file -> ${watch_file}";
@@ -184,17 +184,20 @@ function watchForFile()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "retry_count -> ${retry_count}";
     fi
 
-        while [[ ! -f "${watch_file}" ]]; do
-                (( retry_counter != retry_count )) && sleep "${sleep_time}";
+    while [[ ! -f "${watch_file}" ]] && (( retry_counter != retry_count )); do
+        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "File ${watch_file} doesn't exist yet. Sleeping for ${sleep_time} on retry ${retry_counter}";
+			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: sleep ${sleep_time}";
+        fi
 
-                (( retry_counter += 1 ));
+        sleep "${sleep_time}"; (( retry_counter += 1 ));
 
-                continue
-        done
+        continue
+    done
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-        [[ -f "${watch_file}" ]] && rm -f "${watch_file}";
+    [[ -f "${watch_file}" ]] && rm -f "${watch_file}";
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
@@ -265,10 +268,10 @@ function watchForNetworkPort()
 
     (( ${#} != 4 )) && return 3;
 
-        target_host="${1}";
-        target_port="${2}";
-        sleep_time="${3}";
-        retry_count="${4}";
+    target_host="${1}";
+    target_port="${2}";
+    sleep_time="${3}";
+    retry_count="${4}";
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
@@ -277,30 +280,30 @@ function watchForNetworkPort()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "retry_count -> ${retry_count}";
     fi
 
-        while (( retry_counter != retry_count )); do
-            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_host} ${target_port}";
-            fi
+    while (( retry_counter != retry_count )); do
+        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_host} ${target_port}";
+        fi
 
-            [[ -n "${ret_code}" ]] && unset -v ret_code;
-            [[ -n "${function_name}" ]] && unset -v function_name;
-            [[ -n "${cname}" ]] && unset -v cname;
+        [[ -n "${ret_code}" ]] && unset -v ret_code;
+        [[ -n "${function_name}" ]] && unset -v function_name;
+        [[ -n "${cname}" ]] && unset -v cname;
 
-            validateHostAvailability "${target_host}" "${target_port}"
-            ret_code="${?}";
+        validateHostAvailability "${target_host}" "${target_port}"
+        ret_code="${?}";
 
-            cname="watchdog.sh";
-            function_name="${cname}#${FUNCNAME[0]}";
+        cname="watchdog.sh";
+        function_name="${cname}#${FUNCNAME[0]}";
 
-            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
-            fi
+        if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+        fi
 
-                case "${ret_code}" in
-                    0) return_code=0; break; ;;
-                    *) (( retry_counter += 1 )); continue; ;;
-                esac
-        done
+        case "${ret_code}" in
+            0) return_code=0; break; ;;
+            *) (( retry_counter += 1 )); continue; ;;
+        esac
+    done
 
     (( retry_counter >= retry_count )) && return_code=1;
 
