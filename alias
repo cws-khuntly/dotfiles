@@ -46,7 +46,7 @@ case "${OSNAME}" in
 
         [[ -s "${HOME}/config/system/rhel.osalias" ]] && source "${HOME}/config/system/rhel.osalias";
         ;;
-    "arch")
+    "archlinux")
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${HOME}/config/system/arch.osalias";
         fi
