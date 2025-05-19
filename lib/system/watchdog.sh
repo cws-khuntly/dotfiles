@@ -50,7 +50,118 @@ function runWatchdog()
 
     if (( ${#} != 1 )); then usage; exit ${?}; fi
 
-    # TODO
+    watch_data="${1}";
+    watch_type="$(cut -d ":" -f 1 <<< "${watch_data}")";
+
+    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "watch_data -> ${watch_data}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "watch_type -> ${watch_type}";
+    fi
+
+    case "${watch_type}" in
+        "[Pp][Rr][Oo][Cc][Cc][Ee][Ss][Ss][Ii][Dd]|[Pp][Rr][Oo][Cc][Cc][Ee][Ss]|[Pp][Ii][Dd]")
+            (( $(tr ":" "\n" <<< "${watch_data}" | wc -l) < 2 )) && return 3;
+
+            watch_pid="$(cut -d ":" -f 2 <<< "${watch_data}")";
+
+            (( $(tr ":" "\n" <<< "${watch_data}" | wc -l) >= 3 )) && wait_time="$(cut -d ":" -f 3 <<< "${wait_data}")" || wait_time="${DEFAULT_WAS_WAIT}";
+            (( $(tr ":" "\n" <<< "${watch_data}" | wc -l) >= 4 )) && retry_count="$(cut -d ":" -f 4 <<< "${wait_data}")" || retry_count="${DEFAULT_RETRY_COUNT}";
+
+            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "watch_pid -> ${watch_pid}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "wait_time -> ${wait_time}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "retry_count -> ${retry_count}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: watchForProcessID ${watch_pid} ${wait_time} ${retry_count}";
+            fi
+
+            [[ -n "${function_name}" ]] && unset -v function_name;
+            [[ -n "${cname}" ]] && unset -v cname;
+
+            watchForProcessID "${watch_pid}" "${wait_time}" "${retry_count}";
+            ret_code="${?}";
+
+            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+            fi
+
+            if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "watchForProcessID failed. Return code -> ${ret_code}";
+                fi
+            fi
+            ;;
+        "[Ff][Ii][Ll][Ee]")
+            (( $(tr ":" "\n" <<< "${watch_data}" | wc -l) < 2 )) && return 3;
+
+            watch_file="$(cut -d ":" -f 2 <<< "${watch_data}")";
+
+            (( $(tr ":" "\n" <<< "${watch_data}" | wc -l) >= 3 )) && wait_time="$(cut -d ":" -f 3 <<< "${wait_data}")" || wait_time="${DEFAULT_WAS_WAIT}";
+            (( $(tr ":" "\n" <<< "${watch_data}" | wc -l) >= 4 )) && retry_count="$(cut -d ":" -f 4 <<< "${wait_data}")" || retry_count="${DEFAULT_RETRY_COUNT}";
+
+            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "watch_pid -> ${watch_pid}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "wait_time -> ${wait_time}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "retry_count -> ${retry_count}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: watchForFile ${watch_file} ${wait_time} ${retry_count}";
+            fi
+
+            [[ -n "${function_name}" ]] && unset -v function_name;
+            [[ -n "${cname}" ]] && unset -v cname;
+
+            watchForFile "${watch_file}" "${wait_time}" "${retry_count}";
+            ret_code="${?}";
+
+            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+            fi
+
+            if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "watchForFile failed. Return code -> ${ret_code}";
+                fi
+            fi
+            ;;
+        "[Tt][Cc][Pp]|[Uu][Dd][Pp]")
+            (( $(tr ":" "\n" <<< "${watch_data}" | wc -l) < 3 )) && return 3;
+
+            watch_host="$(cut -d ":" -f 2 <<< "${watch_data}")";
+            watch_port="$(cut -d ":" -f 3 <<< "${watch_data}")";
+
+            (( $(tr ":" "\n" <<< "${watch_data}" | wc -l) >= 3 )) && wait_time="$(cut -d ":" -f 3 <<< "${wait_data}")" || wait_time="${DEFAULT_WAS_WAIT}";
+            (( $(tr ":" "\n" <<< "${watch_data}" | wc -l) >= 4 )) && retry_count="$(cut -d ":" -f 4 <<< "${wait_data}")" || retry_count="${DEFAULT_RETRY_COUNT}";
+
+            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "watch_host -> ${watch_host}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "watch_port -> ${watch_port}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "wait_time -> ${wait_time}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "retry_count -> ${retry_count}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: watchForNetworkPort ${watch_type} ${watch_host} ${watch_port} ${wait_time} ${retry_count}";
+            fi
+
+            [[ -n "${function_name}" ]] && unset -v function_name;
+            [[ -n "${cname}" ]] && unset -v cname;
+
+            watchForNetworkPort "${watch_type}" "${watch_host}" "${watch_port} "${wait_time}" "${retry_count}";
+            ret_code="${?}";
+
+            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
+            fi
+
+            if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "watchForNetworkPort failed. Return code -> ${ret_code}";
+                fi
+            fi
+            ;;
+    esac
+
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
@@ -335,14 +446,16 @@ function watchForNetworkPort()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    (( ${#} != 4 )) && return 3;
+    (( ${#} != 5 )) && return 3;
 
-    target_host="${1}";
-    target_port="${2}";
-    sleep_time="${3}";
-    retry_count="${4}";
+    target_transport="${1}";
+    target_host="${2}";
+    target_port="${3}";
+    sleep_time="${4}";
+    retry_count="${5}";
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_transport -> ${target_transport}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "sleep_time -> ${sleep_time}";
@@ -351,14 +464,14 @@ function watchForNetworkPort()
 
     while (( retry_counter != retry_count )); do
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_host} ${target_port}";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_transport} ${target_host} ${target_port}";
         fi
 
         [[ -n "${ret_code}" ]] && unset -v ret_code;
         [[ -n "${function_name}" ]] && unset -v function_name;
         [[ -n "${cname}" ]] && unset -v cname;
 
-        validateHostAvailability "${target_host}" "${target_port}"
+        validateHostAvailability "${target_transport}" "${target_host}" "${target_port}"
         ret_code="${?}";
 
         cname="watchdog.sh";
