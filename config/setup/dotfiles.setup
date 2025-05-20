@@ -34,8 +34,8 @@ LIB_PATH="${SOURCE_PATH}/lib/${PACKAGE_NAME}";
 TARGET_USER="${LOGNAME}";
 TARGET_HOST="localhost";
 DEPLOY_TO_DIR="/var/tmp";
-LOCAL_INSTALL_CONF="${SOURCE_PATH}/etc/${PACKAGE_NAME}/setup.conf";
-REMOTE_INSTALL_CONF="${DEPLOY_TO_DIR}/setup.conf";
+LOCAL_INSTALL_CONF="${SOURCE_PATH}/etc/${PACKAGE_NAME}/dotfiles.conf";
+REMOTE_INSTALL_CONF="${DEPLOY_TO_DIR}/dotfiles.conf";
 
 #==============================================================================
 # SSH configuration information
