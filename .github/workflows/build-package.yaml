@@ -2,7 +2,7 @@ name: Build and Publish Package
 on:
   workflow_run:
     workflows: ['shellcheck']
-    branches: ['main', 'master', 'release']
+    branches: ['main', 'release']
     types:
       - completed
 

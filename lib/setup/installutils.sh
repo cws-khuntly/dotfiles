@@ -76,97 +76,99 @@ function installFiles()
             [[ -f "${LOCAL_INSTALL_CONF}" ]] && install_conf="${LOCAL_INSTALL_CONF}";
             [[ -f "${REMOTE_INSTALL_CONF}" ]] && install_conf="${REMOTE_INSTALL_CONF}";
 
-            grep "mkdir" < "${install_conf}" | while read -r entry; do
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
-                fi
-
-                [[ -z "${entry}" ]] && continue;
-                [[ "${entry}" =~ ^\# ]] && continue;
-
-                entry_target="$(cut -d "|" -f 3 <<< "${entry}")";
-                entry_permissions="$(cut -d "|" -f 4 <<< "${entry}")";
-                recurse_permissions="$(cut -d "|" -f 4 <<< "${entry}")";
-
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_target -> ${entry_target}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_permissions -> ${entry_permissions}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "recurse_permissions -> ${recurse_permissions}";
-                fi
-
-                if [[ -z "${entry_target}" ]]; then
-                    (( error_count += 1 ));
-
-                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided entry target from ${instal_conf} was empty. entry_target -> ${entry_target}";
-                    fi
-
-                    continue;
-                else
+            if [[ -n "${install_conf}" ]]; then
+                grep "mkdir" < "${install_conf}" | while read -r entry; do
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating directory ${entry_target}";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -pv ${entry_target}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
                     fi
 
-                    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+                    [[ -z "${entry}" ]] && continue;
+                    [[ "${entry}" =~ ^\# ]] && continue;
 
-                    cmd_output="$(mkdir -pv "$(eval printf "%s" "${entry_target}")")";
-                    ret_code="${?}";
+                    entry_target="$(cut -d "|" -f 3 <<< "${entry}")";
+                    entry_permissions="$(cut -d "|" -f 4 <<< "${entry}")";
+                    recurse_permissions="$(cut -d "|" -f 4 <<< "${entry}")";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "mkdir/${entry_target} -> ret_code -> ${ret_code}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_target -> ${entry_target}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_permissions -> ${entry_permissions}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "recurse_permissions -> ${recurse_permissions}";
                     fi
 
-                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
-                    then
+                    if [[ -z "${entry_target}" ]]; then
                         (( error_count += 1 ));
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to create directory ${entry_target}.";
+                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided entry target from ${instal_conf} was empty. entry_target -> ${entry_target}";
                         fi
 
                         continue;
                     else
-                        if [[ -n "${entry_permissions}" ]]; then
-                            [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-                            [[ -n "${ret_code}" ]] && unset -v ret_code;
+                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating directory ${entry_target}";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -pv ${entry_target}";
+                        fi
 
-                            if [[ -n "${recurse_permissions}" ]] && [[ "${recurse_permissions}" == "${_TRUE}" ]]; then
-                                cmd_output="$(chmod -R "${entry_permissions}" "$(eval printf "%s" "${entry_target}")")";
-                            else
-                                cmd_output="$(chmod "${entry_permissions}" "$(eval printf "%s" "${entry_target}")")";
+                        [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                        [[ -n "${ret_code}" ]] && unset -v ret_code;
+
+                        cmd_output="$(mkdir -pv "$(eval printf "%s" "${entry_target}")")";
+                        ret_code="${?}";
+
+                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "mkdir/${entry_target} -> ret_code -> ${ret_code}";
+                        fi
+
+                        if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
+                        then
+                            (( error_count += 1 ));
+
+                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to create directory ${entry_target}.";
                             fi
 
-                            ret_code="${?}";
+                            continue;
+                        else
+                            if [[ -n "${entry_permissions}" ]]; then
+                                [[ -n "${cmd_output}" ]] && unset -v cmd_output;
+                                [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "chmod -> ret_code -> ${ret_code}";
-                            fi
+                                if [[ -n "${recurse_permissions}" ]] && [[ "${recurse_permissions}" == "${_TRUE}" ]]; then
+                                    cmd_output="$(chmod -R "${entry_permissions}" "$(eval printf "%s" "${entry_target}")")";
+                                else
+                                    cmd_output="$(chmod "${entry_permissions}" "$(eval printf "%s" "${entry_target}")")";
+                                fi
 
-                            if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
-                            then
-                                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to change permissions of ${entry_target} to ${entry_permissions}.";
+                                ret_code="${?}";
+
+                                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
+                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "chmod -> ret_code -> ${ret_code}";
+                                fi
+
+                                if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
+                                then
+                                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to change permissions of ${entry_target} to ${entry_permissions}.";
+                                    fi
                                 fi
                             fi
-                        fi
 
-                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Directory ${entry_target} created";
+                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                                writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Directory ${entry_target} created";
+                            fi
                         fi
                     fi
-                fi
 
-                [[ -n "${ret_code}" ]] && unset -v ret_code;
-                [[ -n "${entry_source}" ]] && unset -v entry_source;
-                [[ -n "${entry_target}" ]] && unset -v entry_target;
-                [[ -n "${entry_permissions}" ]] && unset -v entry_permissions;
-                [[ -n "${recurse_permissions}" ]] && unset -v recurse_permissions;
-                [[ -n "${entry}" ]] && unset -v entry;
-            done
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+                    [[ -n "${entry_source}" ]] && unset -v entry_source;
+                    [[ -n "${entry_target}" ]] && unset -v entry_target;
+                    [[ -n "${entry_permissions}" ]] && unset -v entry_permissions;
+                    [[ -n "${recurse_permissions}" ]] && unset -v recurse_permissions;
+                    [[ -n "${entry}" ]] && unset -v entry;
+                done
+            fi
 
             [[ -n "${cname}" ]] && unset -v cname;
             [[ -n "${function_name}" ]] && unset -v function_name;
