@@ -32,7 +32,7 @@ INSTALL_PATH="${HOME}/.dotfiles";
 LIB_PATH="${SOURCE_PATH}/lib/dotfiles";
 TARGET_USER="${LOGNAME}";
 DEPLOY_TO_DIR="/var/tmp";
-LOCAL_INSTALL_CONF="${SOURCE_PATH}/etc/dotfiles/dotfiles.conf";
+LOCAL_INSTALL_CONF="${SOURCE_PATH}/config/setup/dotfiles.conf";
 REMOTE_INSTALL_CONF="${DEPLOY_TO_DIR}/dotfiles.conf";
 
 #==============================================================================
