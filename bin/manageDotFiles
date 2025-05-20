@@ -23,7 +23,7 @@ trap 'set +v; set +x' INT TERM EXIT;
 #
 RET_CODE=0;
 RETURN_CODE=0;
-PACKAGE_NAME="dotfiles";
+PACKAGE_NAME="setup";
 CNAME="$(basename "${BASH_SOURCE[0]}")";
 FUNCTION_NAME="${CNAME}#startup";
 SCRIPT_ROOT="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && printf "%s" "${PWD}")")";
