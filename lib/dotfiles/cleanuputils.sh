@@ -87,7 +87,7 @@ function cleanupFiles()
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    return_code="${ret_code}"
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred during local cleanup. Please review logs.";
@@ -127,7 +127,7 @@ function cleanupFiles()
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    return_code="${ret_code}";
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Remote cleanup of package files failed. Please review logs.";
@@ -419,17 +419,17 @@ function cleanupRemoteFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Generating file cleanup file...";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${TMPDIR:-${USABLE_TMP_DIR}}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${USABLE_TMP_DIR:-$TMPDIR}}";
     fi
 
-    file_cleanup_file="$(mktemp --tmpdir="${TMPDIR:-${USABLE_TMP_DIR}}")";
+    file_cleanup_file="$(mktemp --tmpdir="${USABLE_TMP_DIR:-$TMPDIR}}")";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_cleanup_file -> ${file_cleanup_file}";
     fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-        return_code="${ret_code}"
+        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to generate the file cleanup script ${file_cleanup_file}. Please ensure the file exists and can be written to.";
@@ -446,7 +446,7 @@ function cleanupRemoteFiles()
         ret_code="${?}";
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-            return_code="${ret_code}"
+            [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to clear any existing content in ${file_cleanup_file}. Please review logs.";
@@ -513,22 +513,29 @@ function cleanupRemoteFiles()
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to populate the file cleanup file ${file_cleanup_file}. Please ensure the file exists and can be written to.";
                 fi
             else
+                transfer_file="${file_cleanup_file}|${USABLE_TMP_DIR:-$TMPDIR}}/$(basename "${file_cleanup_file}")";
+
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: sftp -b ${file_cleanup_file} -oPort=${target_port} ${target_user}@${target_host} > /dev/null 2>&1";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file -> ${transfer_file}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file} ${target_host} ${target_port} ${target_user}";
                 fi
 
+                [[ -n "${cname}" ]] && unset -v cname;
+                [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                ## TODO, move this to transferutils
-                sftp -b "${file_cleanup_file}" -oPort="${target_port}" "${target_user}@${target_host}" > /dev/null 2>&1;
+                transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file}" "${target_host}" "${target_port}" "${target_user}";
                 ret_code="${?}";
 
+                cname="cleanuputils.sh";
+                function_name="${cname}#${FUNCNAME[0]}";
+
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "sftp/file_cleanup_file -> ret_code -> ${ret_code}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transferFiles -> ret_code -> ${ret_code}";
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    return_code="${ret_code}"
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred during the file cleanup process on host ${target_host} as user ${target_user}. Please review logs.";

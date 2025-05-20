@@ -183,7 +183,7 @@ function installFiles()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                return_code="${ret_code}";
+                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Local installation of package failed. Please review logs.";
@@ -226,7 +226,7 @@ function installFiles()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                return_code="${ret_code}";
+                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Remote installation of package failed. Please review logs.";
@@ -244,7 +244,7 @@ function installFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -f "${TMPDIR:-${USABLE_TMP_DIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" ]] && rm -f "${TMPDIR:-${USABLE_TMP_DIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
+    [[ -f "${USABLE_TMP_DIR:-$TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" ]] && rm -f "${USABLE_TMP_DIR:-$TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
@@ -335,7 +335,7 @@ function installLocalFiles()
         fi
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-            return_code=1;
+            [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Unable to create installation directory. Please review logs.";
@@ -359,7 +359,7 @@ function installLocalFiles()
         fi
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-            return_code="${ret_code}"
+            [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while processing action ${TARGET_ACTION} on host $(hostname -s) as user ${LOGNAME}. Please review logs.";
@@ -560,7 +560,7 @@ function installLocalFiles()
     ## cleanup
     [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
-    cleanup_list="${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${TMPDIR:-${USABLE_TMP_DIR}}";
+    cleanup_list="${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${USABLE_TMP_DIR:-$TMPDIR}}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_list -> ${cleanup_list}";
@@ -582,6 +582,8 @@ function installLocalFiles()
     fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute cleanupFiles with cleanup type of ${CLEANUP_LOCATION_LOCAL}. Please review logs.";
         fi
@@ -700,17 +702,17 @@ function installRemoteFiles()
     fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-        return_code="${ret_code}";
+        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute transferFiles with transfer type of ${TRANSFER_LOCATION_REMOTE}. Please review logs.";
         fi
     else
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${TMPDIR:-${USABLE_TMP_DIR}}";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${USABLE_TMP_DIR:-$TMPDIR}}";
         fi
 
-        file_verification_script="$(mktemp --tmpdir="${TMPDIR:-${USABLE_TMP_DIR}}")";
+        file_verification_script="$(mktemp --tmpdir="${USABLE_TMP_DIR:-$TMPDIR}}")";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_verification_script -> ${file_verification_script}";
@@ -778,7 +780,7 @@ function installRemoteFiles()
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    return_code="${ret_code}";
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute transferFiles with transfer type of ${TRANSFER_LOCATION_REMOTE}. Please review logs.";
@@ -808,10 +810,10 @@ function installRemoteFiles()
                         fi
                     else
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${TMPDIR:-${USABLE_TMP_DIR}}";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${USABLE_TMP_DIR:-$TMPDIR}}";
                         fi
 
-                        installation_script="$(mktemp --tmpdir="${TMPDIR:-${USABLE_TMP_DIR}}")";
+                        installation_script="$(mktemp --tmpdir="${USABLE_TMP_DIR:-$TMPDIR}}")";
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "installation_script -> ${installation_script}";
@@ -880,7 +882,7 @@ function installRemoteFiles()
                                 fi
 
                                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                                    return_code="${ret_code}";
+                                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute transferFiles with transfer type of ${TRANSFER_LOCATION_REMOTE}. Please review logs.";
@@ -959,9 +961,9 @@ function installRemoteFiles()
     ## cleanup (local)
     [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
-    cleanup_list="${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${TMPDIR:-${USABLE_TMP_DIR}},";
-    cleanup_list+="$(basename "${file_verification_script}")|${TMPDIR:-${USABLE_TMP_DIR}},";
-    cleanup_list+="$(basename "${installation_script}")|${TMPDIR:-${USABLE_TMP_DIR}}";
+    cleanup_list="${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${USABLE_TMP_DIR:-$TMPDIR}},";
+    cleanup_list+="$(basename "${file_verification_script}")|${USABLE_TMP_DIR:-$TMPDIR}},";
+    cleanup_list+="$(basename "${installation_script}")|${USABLE_TMP_DIR:-$TMPDIR}}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_list -> ${cleanup_list}";

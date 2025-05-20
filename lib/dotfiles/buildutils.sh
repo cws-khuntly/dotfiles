@@ -54,7 +54,7 @@ function buildPackage()
 
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        ( cd "${DOTFILES_BASE_PATH}" || return 1; tar --exclude-vcs --exclude=README.md --exclude=LICENSE.md --exclude=dotfiles.code-workspace -cf - ./*) | ${ARCHIVE_PROGRAM} > "${TMPDIR:-${USABLE_TMP_DIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
+        ( cd "${DOTFILES_BASE_PATH}" || return 1; tar --exclude-vcs --exclude=README.md --exclude=LICENSE.md --exclude=dotfiles.code-workspace -cf - ./*) | ${ARCHIVE_PROGRAM} > "${USABLE_TMP_DIR:-$TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -62,13 +62,13 @@ function buildPackage()
         fi
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-            return_code="${ret_code}"
+            [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while building the package. Please review logs.";
             fi
         else
-            if [[ ! -s "${TMPDIR:-${USABLE_TMP_DIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" ]]; then
+            if [[ ! -s "${USABLE_TMP_DIR:-$TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" ]]; then
                 return_code=1;
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -76,7 +76,7 @@ function buildPackage()
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Package ${TMPDIR:-${USABLE_TMP_DIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} created successfully.";
+                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Package ${USABLE_TMP_DIR:-$TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} created successfully.";
                 fi
             fi
         fi

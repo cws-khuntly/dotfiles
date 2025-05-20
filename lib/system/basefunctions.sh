@@ -218,7 +218,7 @@ function validateAndCopyKeysForHost()
 		fi
 
 		if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-			return_code="${ret_code}";
+			[[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
 			if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
 				writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred getting SSH host keys from host ${returned_host}. Please review logs.";
@@ -243,7 +243,7 @@ function validateAndCopyKeysForHost()
 			fi
 
 			if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-				return_code="${ret_code}"
+				[[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
 				if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
 					[[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute copyKeysToTarget. Please review logs.";

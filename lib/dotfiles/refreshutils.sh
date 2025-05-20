@@ -119,7 +119,7 @@ function refreshFiles()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                return_code="${ret_code}"
+                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Remote refresh of files failed. Please review logs.";
@@ -223,7 +223,7 @@ function refreshLocalFiles()
         fi
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-            return_code="${ret_code}"
+            [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while unpacking the file archive. Please review logs.";
@@ -424,7 +424,7 @@ function refreshLocalFiles()
     ## cleanup
     [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
-    cleanup_list="${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${TMPDIR:-${USABLE_TMP_DIR}}";
+    cleanup_list="${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${USABLE_TMP_DIR:-$TMPDIR}}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_list -> ${cleanup_list}";
@@ -534,10 +534,10 @@ function refreshRemoteFiles()
     target_user="${3}";
 
 	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${TMPDIR:-${USABLE_TMP_DIR}}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${USABLE_TMP_DIR:-$TMPDIR}}";
     fi
 
-    file_verification_script="$(mktemp --tmpdir="${TMPDIR:-${USABLE_TMP_DIR}}")";
+    file_verification_script="$(mktemp --tmpdir="${USABLE_TMP_DIR:-$TMPDIR}}")";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_verification_script -> ${file_verification_script}";
@@ -603,7 +603,7 @@ function refreshRemoteFiles()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                return_code="${ret_code}";
+                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute transferFiles with transfer type of ${TRANSFER_LOCATION_REMOTE}. Please review logs.";
@@ -633,10 +633,10 @@ function refreshRemoteFiles()
                     fi
                 else
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${TMPDIR:-${USABLE_TMP_DIR}}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${USABLE_TMP_DIR:-$TMPDIR}}";
                     fi
 
-                    installation_script="$(mktemp --tmpdir="${TMPDIR:-${USABLE_TMP_DIR}}")";
+                    installation_script="$(mktemp --tmpdir="${USABLE_TMP_DIR:-$TMPDIR}}")";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "installation_script -> ${installation_script}";
@@ -703,7 +703,7 @@ function refreshRemoteFiles()
                             fi
 
                             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                                return_code="${ret_code}";
+                                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute transferFiles with transfer type of ${TRANSFER_LOCATION_REMOTE}. Please review logs.";
@@ -747,7 +747,7 @@ function refreshRemoteFiles()
     ## cleanup
     [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
-    cleanup_list="${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${TMPDIR:-${USABLE_TMP_DIR}}";
+    cleanup_list="${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${USABLE_TMP_DIR:-$TMPDIR}}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_list -> ${cleanup_list}";

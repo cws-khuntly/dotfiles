@@ -223,7 +223,7 @@ function generateSshKeys()
         fi
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-            return_code="${ret_code}";
+            [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Unable to create ${HOME}/.ssh. Please review logs.";
@@ -254,12 +254,12 @@ function generateSshKeys()
             ## if it doesnt exist then make it. if it does exist skip it;
             if [[ ! -f "${HOME}"/.ssh/"${ssh_key_filename}" ]]; then
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${SSH_KEYGEN_PROGRAM} -b ${ssh_key_size} -t ${ssh_key_type} -f ${TMPDIR:-${USABLE_TMP_DIR}}/${ssh_key_filename}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${SSH_KEYGEN_PROGRAM} -b ${ssh_key_size} -t ${ssh_key_type} -f ${USABLE_TMP_DIR:-$TMPDIR}}/${ssh_key_filename}";
                 fi
 
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cmd_output="$("${SSH_KEYGEN_PROGRAM}" -b "${ssh_key_size}" -C '' -f "${TMPDIR:-${USABLE_TMP_DIR}}/${ssh_key_filename}" -N '' -t "${ssh_key_type}")";
+                cmd_output="$("${SSH_KEYGEN_PROGRAM}" -b "${ssh_key_size}" -C '' -f "${USABLE_TMP_DIR:-$TMPDIR}}/${ssh_key_filename}" -N '' -t "${ssh_key_type}")";
                 ret_code="${?}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -274,7 +274,7 @@ function generateSshKeys()
                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "SSH keyfile generation for type ${ssh_key_type} failed with return code ${ret_code}";
                     fi
                 else
-                    if [[ ! -f "${TMPDIR:-${USABLE_TMP_DIR}}/${ssh_key_filename}" ]]; then
+                    if [[ ! -f "${USABLE_TMP_DIR:-$TMPDIR}}/${ssh_key_filename}" ]]; then
                         (( error_count += 1 ));
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -282,13 +282,13 @@ function generateSshKeys()
                         fi
                     else
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mv ${TMPDIR:-${USABLE_TMP_DIR}}/${ssh_key_filename} ${HOME}/.ssh/${ssh_key_filename}";
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mv ${TMPDIR:-${USABLE_TMP_DIR}}/${ssh_key_filename}.pub ${HOME}/.ssh/${ssh_key_filename}.pub";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mv ${USABLE_TMP_DIR:-$TMPDIR}}/${ssh_key_filename} ${HOME}/.ssh/${ssh_key_filename}";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mv ${USABLE_TMP_DIR:-$TMPDIR}}/${ssh_key_filename}.pub ${HOME}/.ssh/${ssh_key_filename}.pub";
                         fi
 
                         ## relocate the keyfiles to the user home directory;
-                        mv "${TMPDIR:-${USABLE_TMP_DIR}}/${ssh_key_filename}" "${HOME}/.ssh/${ssh_key_filename}";
-                        mv "${TMPDIR:-${USABLE_TMP_DIR}}/${ssh_key_filename}.pub" "${HOME}/.ssh/${ssh_key_filename}.pub";
+                        mv "${USABLE_TMP_DIR:-$TMPDIR}}/${ssh_key_filename}" "${HOME}/.ssh/${ssh_key_filename}";
+                        mv "${USABLE_TMP_DIR:-$TMPDIR}}/${ssh_key_filename}.pub" "${HOME}/.ssh/${ssh_key_filename}.pub";
 
                         ## make sure they exist;
                         if [[ ! -f "${HOME}/.ssh/${ssh_key_filename}" ]] || [[ ! -f "${HOME}/.ssh/${ssh_key_filename}.pub" ]]; then

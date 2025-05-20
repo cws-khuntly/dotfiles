@@ -191,7 +191,7 @@ function main()
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    return_code="${ret_code}"
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host $(hostname -s) as user ${LOGNAME}. Please review logs.";
@@ -223,7 +223,7 @@ function main()
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    return_code="${ret_code}"
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host ${target_host} as user ${target_user}. Please review logs.";
@@ -247,7 +247,7 @@ function main()
                     fi
 
                     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                        return_code="${ret_code}"
+                        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                             writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host ${target_host} as user ${target_user}. Please review logs.";
@@ -284,7 +284,7 @@ function main()
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    return_code="${ret_code}"
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host $(hostname -s) as user ${LOGNAME}. Please review logs.";
@@ -316,7 +316,7 @@ function main()
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    return_code="${ret_code}"
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host ${target_host} as user ${target_user}. Please review logs.";
@@ -340,7 +340,7 @@ function main()
                     fi
 
                     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                        return_code="${ret_code}"
+                        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                             writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host ${target_host} as user ${target_user}. Please review logs.";
@@ -377,7 +377,7 @@ function main()
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    return_code="${ret_code}"
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host $(hostname -s) as user ${LOGNAME}. Please review logs.";
@@ -401,7 +401,7 @@ function main()
                     fi
 
                     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                        return_code="${ret_code}"
+                        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                             writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host $(hostname -s) as user ${LOGNAME}. Please review logs.";
@@ -434,7 +434,7 @@ function main()
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    return_code="${ret_code}"
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host ${target_host} as user ${target_user}. Please review logs.";
@@ -458,7 +458,7 @@ function main()
                     fi
 
                     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                        return_code="${ret_code}"
+                        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                             writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host ${target_host} as user ${target_user}. Please review logs.";
@@ -482,7 +482,7 @@ function main()
                         fi
 
                         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                            return_code="${ret_code}"
+                            [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                                 writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host ${target_host} as user ${target_user}. Please review logs.";
@@ -520,7 +520,7 @@ function main()
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    return_code="${ret_code}"
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host $(hostname -s) as user ${LOGNAME}. Please review logs.";
@@ -552,7 +552,7 @@ function main()
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    return_code="${ret_code}"
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host ${target_host} as user ${target_user}. Please review logs.";
@@ -576,7 +576,7 @@ function main()
                     fi
 
                     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                        return_code="${ret_code}"
+                        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                             writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "An error occurred while processing action ${target_action} on host ${target_host} as user ${target_user}. Please review logs.";

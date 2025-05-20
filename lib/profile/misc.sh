@@ -238,11 +238,11 @@ function lsz()
 
     if [[ -s "${file_to_view}" ]]; then
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${TMPDIR:-${USABLE_TMP_DIR}}";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${USABLE_TMP_DIR:-$TMPDIR}}";
         fi
 
         file_of_type="${file_to_view##*.}";
-        extract_to_dir="$(mktemp --tmpdir="${TMPDIR:-${USABLE_TMP_DIR}}")";
+        extract_to_dir="$(mktemp --tmpdir="${USABLE_TMP_DIR:-$TMPDIR}}")";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_of_type -> ${file_of_type}";
@@ -383,11 +383,11 @@ function extract()
 
     if [[ -s "${file_to_view}" ]]; then
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${TMPDIR:-${USABLE_TMP_DIR}}";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${USABLE_TMP_DIR:-$TMPDIR}}";
         fi
 
         file_of_type="${file_to_view##*.}";
-        extract_to_dir="$(mktemp --tmpdir="${TMPDIR:-${USABLE_TMP_DIR}}")";
+        extract_to_dir="$(mktemp --tmpdir="${USABLE_TMP_DIR:-$TMPDIR}}")";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_of_type -> ${file_of_type}";

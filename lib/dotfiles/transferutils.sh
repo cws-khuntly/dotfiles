@@ -86,7 +86,7 @@ function transferFiles()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                return_code="${ret_code}"
+                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "File transfer to host $(hostname -s) has failed. Please review logs.";
@@ -126,7 +126,7 @@ function transferFiles()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                return_code="${ret_code}"
+                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "File transfer to host ${target_host} has failed. Please review logs.";
@@ -390,10 +390,10 @@ function transferRemoteFiles()
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Generating file cleanup file...";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${TMPDIR:-${USABLE_TMP_DIR}}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${USABLE_TMP_DIR:-$TMPDIR}}";
     fi
 
-    sftp_send_file="$(mktemp --tmpdir="${TMPDIR:-${USABLE_TMP_DIR}}")";
+    sftp_send_file="$(mktemp --tmpdir="${USABLE_TMP_DIR:-$TMPDIR}}")";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "sftp_send_file -> ${sftp_send_file}";
@@ -489,7 +489,7 @@ function transferRemoteFiles()
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    return_code="${ret_code}";
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while transferring the dotfiles package. Please review logs.";
@@ -502,7 +502,7 @@ function transferRemoteFiles()
     ## cleanup
     [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
-    cleanup_list="$(basename "${sftp_send_file}")|${TMPDIR:-${USABLE_TMP_DIR}}";
+    cleanup_list="$(basename "${sftp_send_file}")|${USABLE_TMP_DIR:-$TMPDIR}}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_list -> ${cleanup_list}";

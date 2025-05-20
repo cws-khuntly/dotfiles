@@ -68,7 +68,7 @@ function runInstallLocalFiles()
 	fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-		return_code="${ret_code}"
+		[[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while processing action ${TARGET_ACTION} on host $(hostname -s) as user ${LOGNAME}. Please review logs.";
@@ -173,7 +173,7 @@ function runInstallRemoteFiles()
 	fi
 
 	if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-		return_code="${ret_code}"
+		[[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
 		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
 			writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while processing action ${TARGET_ACTION} on host ${target_hostname} as user ${target_ssh_user}. Please review logs.";
@@ -270,13 +270,13 @@ function runDeployLocalFiles()
 	fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-		return_code="${ret_code}"
+		[[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute buildPackage. Please review logs.";
         fi
     else
-		transfer_file_list="${TMPDIR:-${USABLE_TMP_DIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR},";
+		transfer_file_list="${USABLE_TMP_DIR:-$TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR},";
 		transfer_file_list+="${WORKING_CONFIG_FILE}|${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}"),";
 		transfer_file_list+="${INSTALL_CONF}|${DEPLOY_TO_DIR}/$(basename "${INSTALL_CONF}")";
 
@@ -298,7 +298,7 @@ function runDeployLocalFiles()
 		fi
 
 		if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-			return_code="${ret_code}"
+			[[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
 			if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
 				writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to perform file transfer to $(hostname -s). Please review logs.";
@@ -406,13 +406,13 @@ function runDeployRemoteFiles()
 	fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-		return_code="${ret_code}"
+		[[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute buildPackage. Please review logs.";
         fi
     else
-		transfer_file_list="${TMPDIR:-${USABLE_TMP_DIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR},";
+		transfer_file_list="${USABLE_TMP_DIR:-$TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR},";
 		transfer_file_list+="${WORKING_CONFIG_FILE}|${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}"),";
 		transfer_file_list+="${INSTALL_CONF}|${DEPLOY_TO_DIR}/$(basename "${INSTALL_CONF}")";
 
@@ -436,7 +436,7 @@ function runDeployRemoteFiles()
 		fi
 
 		if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-			return_code="${ret_code}"
+			[[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
 			if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
 				writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "${TARGET_ACTION} on host ${target_host} as user ${target_user} has completed failed. Please review logs.";
@@ -530,7 +530,7 @@ function runRemoveLocalFiles()
 	fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-		return_code="${ret_code}"
+		[[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute uninstallFiles with uninstall type of ${UNINSTALL_LOCATION_LOCAL}. Please review logs.";
@@ -634,7 +634,7 @@ function runRemoveRemoteFiles()
 	fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-		return_code="${ret_code}"
+		[[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute uninstallFiles with uninstall type of ${UNINSTALL_LOCATION_REMOTE} on host ${target_host} as user ${target_user}. Please review logs.";
