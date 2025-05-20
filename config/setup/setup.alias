@@ -18,5 +18,5 @@
 #
 #==============================================================================
 
-alias deployFiles="${HOME}/bin/setupdotfiles -u ${LOGNAME}-a deployFiles";
-alias deployAndInstall="${HOME}/bin/setupdotfiles -u ${LOGNAME}-a deployAndInstall";
+alias deployFiles="${HOME}/bin/setup -u ${LOGNAME}-a deployFiles";
+alias deployAndInstall="${HOME}/bin/setup -u ${LOGNAME}-a deployAndInstall";

@@ -27,14 +27,13 @@ RELOAD_DOTFILE="${HOME}/.bash_profile";
 # RUN_TEST_ONLY: Set this value to true to allow the script to run normally
 #                but take no action against found entries.
 #==============================================================================
-PACKAGE_NAME="dotfiles";
-SOURCE_PATH="${HOME}/workspace/${PACKAGE_NAME}";
-INSTALL_PATH="${HOME}/.${PACKAGE_NAME}";
-LIB_PATH="${SOURCE_PATH}/lib/${PACKAGE_NAME}";
+SOURCE_PATH="${HOME}/workspace/dotfiles";
+INSTALL_PATH="${HOME}/.dotfiles";
+LIB_PATH="${SOURCE_PATH}/lib/dotfiles";
 TARGET_USER="${LOGNAME}";
 TARGET_HOST="localhost";
 DEPLOY_TO_DIR="/var/tmp";
-LOCAL_INSTALL_CONF="${SOURCE_PATH}/etc/${PACKAGE_NAME}/dotfiles.conf";
+LOCAL_INSTALL_CONF="${SOURCE_PATH}/etc/dotfiles/dotfiles.conf";
 REMOTE_INSTALL_CONF="${DEPLOY_TO_DIR}/dotfiles.conf";
 
 #==============================================================================
@@ -60,4 +59,4 @@ SSH_HOST_KEYS=("ecdsa" "ed25519" "ecdsa-sk" "ed25519-sk" "ecdsa-sha2-nistp256" "
 #==============================================================================
 GENERATE_GPG_KEYS="false";
 GPG_APPLICATION_PROGRAM="gpg2";
-GPG_OPTION_TEMPLATE="${SOURCE_PATH}/etc/${PACKAGE_NAME}/gpg-template.txt";
+GPG_OPTION_TEMPLATE="${SOURCE_PATH}/etc/dotfiles/gpg-template.txt";
