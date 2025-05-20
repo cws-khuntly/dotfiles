@@ -28,7 +28,7 @@ CNAME="$(basename "${BASH_SOURCE[0]}")";
 FUNCTION_NAME="${CNAME}#startup";
 SCRIPT_ROOT="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && printf "%s" "${PWD}")")";
 PRIMARY_CONFIG_FILE="${SCRIPT_ROOT}/etc/${PACKAGE_NAME}/${PACKAGE_NAME}.properties";
-SECONDARY_CONFIG_FILE="${HOME}/.dotfiles/etc/${PACKAGE_NAME}/${PACKAGE_NAME}.properties";
+SECONDARY_CONFIG_FILE="${HOME}/.setup/etc/${PACKAGE_NAME}/${PACKAGE_NAME}.properties";
 
 if [[ -r "${SCRIPT_ROOT}/lib/system/logger.sh" ]] && [[ -s "${SCRIPT_ROOT}/lib/system/logger.sh" ]]; then
     # shellcheck source=../../lib/system/logger.sh
