@@ -579,9 +579,9 @@ function returnRandomCharacters()
         return "${return_code}";
     )
 
-    if (( ${#} == 0 )) then usage; return "${?}"; fi
+    if (( ${#} == 0 )); then usage; return "${?}"; fi
 
-    while (( ${#} > 0 )) do
+    while (( ${#} > 0 )); do
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided Argument -> ${1}";
         fi
@@ -671,7 +671,7 @@ function returnRandomCharacters()
         esac
     done
 
-    while (( counter <= string_count )) do
+    while (( counter <= string_count )); do
         if [[ -n "${use_special}" ]] && [[ "${use_special}" == "${_TRUE}" ]]; then
             returned_characters="$(tr -cd '[:graph:]' < /dev/urandom | head -c "${string_length}")";
         else
@@ -683,9 +683,9 @@ function returnRandomCharacters()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returned_characters -> ${returned_characters}";
     fi
 
-    if [[ -n "${returned_characters}" ]] && (( return_code != 0 )) then printf "%s\n" "${returned_characters}"; fi
+    if [[ -n "${returned_characters}" ]] && (( return_code != 0 )); then printf "%s\n" "${returned_characters}"; fi
 
-    if [[ -n "${return_code}" ]] && (( return_code != 0 )) then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )) then return_code="${error_count}"; fi
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;

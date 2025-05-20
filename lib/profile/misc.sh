@@ -85,7 +85,7 @@ function mkcd()
         return "${return_code}";
     )
 
-    if (( ${#} == 0 )) then usage; return "${?}"; fi
+    if (( ${#} == 0 )); then usage; return "${?}"; fi
 
     directory_to_create="${1}";
 
@@ -104,7 +104,7 @@ function mkcd()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "mkdir/${directory_to_create} -> ret_code -> ${ret_code}";
     fi
 
-    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) then
+    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
         return_code="${ret_code}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -228,7 +228,7 @@ function lsz()
         return "${return_code}";
     )
 
-    if (( ${#} == 0 )) then usage; return "${?}"; fi
+    if (( ${#} == 0 )); then usage; return "${?}"; fi
 
     file_to_view="${1}";
 
@@ -373,7 +373,7 @@ function extract()
         return "${return_code}";
     )
 
-    if (( ${#} == 0 )) then usage; return "${?}"; fi
+    if (( ${#} == 0 )); then usage; return "${?}"; fi
 
     file_to_extract="${1}";
 
@@ -518,7 +518,7 @@ function shredit()
         return "${return_code}";
     )
 
-    if (( ${#} == 0 )) then usage; return "${?}"; fi
+    if (( ${#} == 0 )); then usage; return "${?}"; fi
 
     shred_file="${1}";
 
