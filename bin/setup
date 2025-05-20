@@ -26,8 +26,8 @@ RETURN_CODE=0;
 CNAME="$(basename "${BASH_SOURCE[0]}")";
 FUNCTION_NAME="${CNAME}#startup";
 SCRIPT_ROOT="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && printf "%s" "${PWD}")")";
-PRIMARY_CONFIG_FILE="${SCRIPT_ROOT}/etc/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
-SECONDARY_CONFIG_FILE="${HOME}/.setup/etc/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
+PRIMARY_CONFIG_FILE="${SCRIPT_ROOT}/config/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
+SECONDARY_CONFIG_FILE="${HOME}/.setup/config/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
 
 if [[ -r "${SCRIPT_ROOT}/lib/system/logger.sh" ]] && [[ -s "${SCRIPT_ROOT}/lib/system/logger.sh" ]]; then
     # shellcheck source=../../lib/system/logger.sh
@@ -68,7 +68,7 @@ for CONFIG_FILE in "${PRIMARY_CONFIG_FILE}" "${SECONDARY_CONFIG_FILE}"; do
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "CONFIG_FILE -> ${CONFIG_FILE}";
     fi
 
-    # shellcheck source=../etc/dotfiles/dotfiles.properties
+    # shellcheck source=../config/dotfiles/dotfiles.properties
     if [[ -r "${CONFIG_FILE}" ]] && [[ -s "${CONFIG_FILE}" ]]; then
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found configuration file ${CONFIG_FILE}";
@@ -76,7 +76,7 @@ for CONFIG_FILE in "${PRIMARY_CONFIG_FILE}" "${SECONDARY_CONFIG_FILE}"; do
 
         WORKING_CONFIG_FILE="${CONFIG_FILE}";
 
-        # shellcheck source=../etc/dotfiles/dotfiles.properties
+        # shellcheck source=../config/dotfiles/dotfiles.properties
         source "${WORKING_CONFIG_FILE}";
 
         break;
@@ -776,13 +776,13 @@ function capturedata()
                 ;;
             port|p)
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting SSH_PORT_NUMBER...";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting TARGET_PORT...";
                 fi
 
-                SSH_PORT_NUMBER="${argument_value}";
+                TARGET_PORT="${argument_value}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SSH_PORT_NUMBER -> ${SSH_PORT_NUMBER}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_PORT -> ${TARGET_PORT}";
                 fi
                 ;;
             username|u)
@@ -890,7 +890,7 @@ function usage()
     printf "    %s: %s\n" "--packagename | -p <packagename>" "(Required) The name of the package to operate using. No default value." >&2;
     printf "    %s: %s\n" "--servername | -s <hostname>" "(Optional) The target system name to process against. Default value -> ${TARGET_HOST}." >&2;
     printf "    %s: %s\n" "--username | -u <username>" "(Optional) The username to utilize for the target system. Default value -> ${TARGET_USER}." >&2;
-    printf "    %s: %s\n" "--action | -a <action>" "(Optional) The type of process to execute. One of the following. Default value -> ${DEFAULT_RUNTIME_OPTION}" >&2;
+    printf "    %s: %s\n" "--action | -a <action>" "(Optional) The type of process to execute. One of the following. Default value -> ${RUNTIME_ACTION_COMBINED}" >&2;
     printf "        %s: %s\n" "deployFiles" "Pushes dotfiles to the selected system but does not install/apply" >&2;
     printf "        %s: %s\n" "installFiles" "Installs dotfiles to the selected system - assumes the package has already been sent to the target system" >&2;
     printf "        %s: %s\n" "deployAndInstall" "Pushes dotfiles to the selected system and installs" >&2;
@@ -924,7 +924,7 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "WORKING_CONFIG_FILE -> ${WORKING_CONFIG_FILE}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PACKAGE_NAME -> ${PACKAGE_NAME}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_HOST -> ${TARGET_HOST}";
-    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SSH_PORT_NUMBER -> ${SSH_PORT_NUMBER}";
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_PORT -> ${TARGET_PORT}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_USER -> ${TARGET_USER}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ACTION -> ${TARGET_ACTION}";
 fi
@@ -937,7 +937,7 @@ if [[ -z "${WORKING_CONFIG_FILE}" ]] || [[ ! -r "${WORKING_CONFIG_FILE}" ]]; the
         writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Unable to find and/or read the configuration file supplied. Please ensure the file exists and can be read by the executing user.";
     fi
 else
-    if [[ -z "${PACKAGENAME}" ]] || [[ ! -s "${SCRIPT_ROOT}/etc/${PACKAGE_NAME}/${PACKAGE_NAME}.setup" ]]; then
+    if [[ -z "${PACKAGENAME}" ]] || [[ ! -s "${SCRIPT_ROOT}/config/${PACKAGE_NAME}/${PACKAGE_NAME}.setup" ]]; then
         RETURN_CODE="1";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -975,7 +975,7 @@ else
                 writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Building TARGET_ENTRIES with provided information";
             fi
 
-            TARGET_ENTRIES=("${TARGET_HOST}:${SSH_PORT_NUMBER}:${TARGET_USER}:${TARGET_ACTION}");
+            TARGET_ENTRIES=("${TARGET_HOST}:${TARGET_PORT:-SSH_PORT_NUMBER}:${TARGET_USER}:${DEFAULT_RUNTIME_ACTION:-DEFAULT_RUNTIME_ACTION}");
         elif [[ -n "${SERVER_LIST}" ]]; then
             if [[ -f "${SERVER_LIST}" ]]; then
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -1024,24 +1024,24 @@ else
                 [[ "${TARGET_ENTRY}" =~ ^\# ]] && continue;
 
                 TARGET_HOST="$(cut -d ":" -f 1 <<< "${TARGET_ENTRY}")";
-                SSH_PORT_NUMBER="$(cut -d ":" -f 2 <<< "${TARGET_ENTRY}")";
+                TARGET_PORT="$(cut -d ":" -f 2 <<< "${TARGET_ENTRY}")";
                 TARGET_USER="$(cut -d ":" -f 3 <<< "${TARGET_ENTRY}")";
                 TARGET_ACTION="$(cut -d ":" -f 4 <<< "${TARGET_ENTRY}")";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_HOST -> ${TARGET_HOST}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SSH_PORT_NUMBER -> ${SSH_PORT_NUMBER}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_PORT -> ${TARGET_PORT}";
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_USER -> ${TARGET_USER}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ACTION -> ${TARGET_ACTION}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ACTION -> ${TARGET_ACTION:-RUNTIME_ACTION_COMBINED}";
                 fi
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${TARGET_ACTION} ${TARGET_HOST} ${SSH_PORT_NUMBER} ${TARGET_USER}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${TARGET_ACTION:-RUNTIME_ACTION_COMBINED} ${TARGET_HOST} ${TARGET_PORT:-SSH_PORT_NUMBER} ${TARGET_USER}";
                 fi
 
                 [[ -n "${RET_CODE}" ]] && unset -v RET_CODE;
 
-                main "${TARGET_ACTION}" "${TARGET_HOST}" "${SSH_PORT_NUMBER}" "${TARGET_USER}";
+                main "${TARGET_ACTION:-RUNTIME_ACTION_COMBINED}" "${TARGET_HOST}" "${TARGET_PORT:-SSH_PORT_NUMBER}" "${TARGET_USER}";
                 RET_CODE="${?}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -1052,19 +1052,19 @@ else
                     RETURN_CODE=1;
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";
-                        writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";
+                        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${DEFAULT_RUNTIME_ACTION:-DEFAULT_RUNTIME_ACTION} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";
+                        writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${DEFAULT_RUNTIME_ACTION:-DEFAULT_RUNTIME_ACTION} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";
                     fi
                 else
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "INFO" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
-                        writeLogEntry "CONSOLE" "STDOUT" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
+                        writeLogEntry "FILE" "INFO" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${DEFAULT_RUNTIME_ACTION:-DEFAULT_RUNTIME_ACTION} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
+                        writeLogEntry "CONSOLE" "STDOUT" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${DEFAULT_RUNTIME_ACTION:-DEFAULT_RUNTIME_ACTION} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
                     fi
                 fi
 
                 [[ -n "${TARGET_ENTRY}" ]] && unset -v TARGET_ENTRY;
                 [[ -n "${TARGET_HOST}" ]] && unset -v TARGET_HOST;
-                [[ -n "${SSH_PORT_NUMBER}" ]] && unset -v SSH_PORT_NUMBER;
+                [[ -n "${TARGET_PORT}" ]] && unset -v TARGET_PORT;
                 [[ -n "${TARGET_USER}" ]] && unset -v TARGET_USER;
                 [[ -n "${TARGET_ACTION}" ]] && unset -v TARGET_ACTION;
                 [[ -n "${RETURN_CODE}" ]] && unset -v RETURN_CODE;
@@ -1103,7 +1103,7 @@ if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set
 [[ -n "${RETURN_CODE}" ]] && unset -v RETURN_CODE;
 [[ -n "${PACKAGE_NAME}" ]] && unset -v PACKAGE_NAME;
 [[ -n "${TARGET_HOST}" ]] && unset -v TARGET_HOST;
-[[ -n "${SSH_PORT_NUMBER}" ]] && unset -v SSH_PORT_NUMBER;
+[[ -n "${TARGET_PORT}" ]] && unset -v TARGET_PORT;
 [[ -n "${TARGET_USER}" ]] && unset -v TARGET_USER;
 [[ -n "${TARGET_ACTION}" ]] && unset -v TARGET_ACTION;
 [[ -n "${GENERATE_SSH_KEYS}" ]] && unset -v GENERATE_SSH_KEYS;

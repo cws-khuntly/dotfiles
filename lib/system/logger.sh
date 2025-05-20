@@ -21,13 +21,13 @@ if [[ -n "${LOGGING_PROPERTIES}" ]]; then
     # shellcheck source=/dev/null
     source "${LOGGING_PROPERTIES}";
 else
-    if [[ -r "${SCRIPT_ROOT}/etc/system/logging.properties" ]] && [[ -s "${SCRIPT_ROOT}/etc/system/logging.properties" ]]; then
-        # shellcheck source=../../etc/system/logging.properties
-        source "${SCRIPT_ROOT}/etc/system/logging.properties";
-    elif [[ -r "${HOME}/etc/system/logging.properties" ]] && [[ -s "${HOME}/etc/system/logging.properties" ]]; then
-        source "${HOME}/etc/system/logging.properties"; ## if its here, override the above and use it
-    elif [[ -r "/usr/local/etc/logging.properties" ]] && [[ -s "/usr/local/etc/logging.properties" ]]; then
-        source "/usr/local/etc/logging.properties"; ## if its here, use it
+    if [[ -r "${SCRIPT_ROOT}/config/system/logging.properties" ]] && [[ -s "${SCRIPT_ROOT}/config/system/logging.properties" ]]; then
+        # shellcheck source=../../config/system/logging.properties
+        source "${SCRIPT_ROOT}/config/system/logging.properties";
+    elif [[ -r "${HOME}/config/system/logging.properties" ]] && [[ -s "${HOME}/config/system/logging.properties" ]]; then
+        source "${HOME}/config/system/logging.properties"; ## if its here, override the above and use it
+    elif [[ -r "/usr/local/config/logging.properties" ]] && [[ -s "/usr/local/config/logging.properties" ]]; then
+        source "/usr/local/config/logging.properties"; ## if its here, use it
     else
         printf "\e[00;31m%s\e[00;32m\n" "Unable to load logging configuration. Shutting down." >&2;
 
