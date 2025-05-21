@@ -68,8 +68,18 @@ function rotateLocalFiles()
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "temp_tar_file -> ${temp_tar_file}";
     fi
+
+    if [[ -z "${temp_tar_file}" ]]; then
+        error
+    else
+        if [[ -f "${temp_tar_file}" ]] && [[ -w "${temp_tar_file}" ]]; then
 # TODO continue this fuckery
-    tar cf "${temp_tar_file}" --files-from=/dev/null
+            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Preload the archive...";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: tar cf ${temp_tar_file} --files-from=/dev/null";
+            fi
+
+            tar cf "${temp_tar_file}" --files-from=/dev/null;
 
     ( cd ${source_directory}; for file in "${file_list[@]}"; do tar -cf - ./${file_name} ) | gzip > ${BACKUP_DIRECTORY}/${file_name}.tar.gz
 
