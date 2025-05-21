@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #==============================================================================
-#          FILE:  installDotFiles
+#          FILE:  rotatefiles
 #         USAGE:  See usage section
 #   DESCRIPTION:
 #
@@ -15,19 +15,18 @@
 #       CREATED:  ---
 #      REVISION:  ---
 #==============================================================================
-TODO
-FIXME
+
 trap 'set +v; set +x' INT TERM EXIT;
 
 #
 # Application constants
 #
-RET_CODE=0;
-RETURN_CODE=0;
-CNAME="$(basename "${BASH_SOURCE[0]}")";
-FUNCTION_NAME="${CNAME}#startup";
-SCRIPT_ROOT="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && printf "%s" "${PWD}")")";
-DEFAULT_CONFIG_FILE="${SCRIPT_ROOT}/config/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
+declare -i RET_CODE=0;
+declare -i RETURN_CODE=0;
+declare CNAME="$(basename "${BASH_SOURCE[0]}")";
+declare FUNCTION_NAME="${CNAME}#startup";
+declare SCRIPT_ROOT="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && printf "%s" "${PWD}")")";
+declare DEFAULT_CONFIG_FILE="${SCRIPT_ROOT}/config/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
 
 if [[ -r "${SCRIPT_ROOT}/lib/system/logger.sh" ]] && [[ -s "${SCRIPT_ROOT}/lib/system/logger.sh" ]]; then
     # shellcheck source=../../lib/system/logger.sh
@@ -59,33 +58,29 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "CNAME -> ${CNAME}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "METHOD_NAME -> ${METHOD_NAME}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SCRIPT_ROOT -> ${SCRIPT_ROOT}";
-    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PRIMARY_CONFIG_FILE -> ${PRIMARY_CONFIG_FILE}";
-    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SECONDARY_CONFIG_FILE -> ${SECONDARY_CONFIG_FILE}";
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "DEFAULT_CONFIG_FILE -> ${DEFAULT_CONFIG_FILE}";
 fi
 
-# shellcheck source=../config/rotatefiles/rotatefiles.properties
-if [[ -r "${CONFIG_FILE}" ]] && [[ -s "${CONFIG_FILE}" ]]; then
+if [[ -r "${DEFAULT_CONFIG_FILE}" ]] && [[ -s "${DEFAULT_CONFIG_FILE}" ]]; then
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found configuration file ${CONFIG_FILE}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found configuration file ${DEFAULT_CONFIG_FILE}";
     fi
 
     WORKING_CONFIG_FILE="${DEFAULT_CONFIG_FILE}";
 
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "WORKING_CONFIG_FILE -> ${WORKING_CONFIG_FILE}";
+    fi
+
     # shellcheck source=../config/rotatefiles/rotatefiles.properties
     source "${WORKING_CONFIG_FILE}";
-fi
-
-if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "WORKING_CONFIG_FILE -> ${WORKING_CONFIG_FILE}";
-fi
-
-if [[ -z "${WORKING_CONFIG_FILE}" ]]; then
+else
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No working configuration file was located. Shutting down.";
         writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No working configuration file was located. Shutting down.";
     fi
 
-    return 1;
+    exit 1;
 fi
 
 #
@@ -104,7 +99,6 @@ if [[ -d "${SCRIPT_ROOT}/lib/system" ]]; then
         [[ -z "${SYSLIB}" ]] && continue;
         [[ "${SYSLIB}" =~ ^\# ]] && continue;
 
-        # shellcheck source=/dev/null
         if [[ -r "${SYSLIB}" ]] && [[ -s "${SYSLIB}" ]] && \
             [[ "$(basename "${SYSLIB}")" != "cws-profile.sh" ]] && [[ "$(basename "${SYSLIB}")" != "logger.sh" ]]; then
             # shellcheck source=/dev/null
@@ -125,9 +119,9 @@ function main()
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
     local function_name="${CNAME}#${FUNCNAME[0]}";
-    local ret_code=0;
-    local return_code=0;
-    local error_count=0;
+    local -i ret_code=0;
+    local -i return_code=0;
+    local -i error_count=0;
     local rotation_type;
     local source_directory;
     local source_file_pattern;
@@ -136,9 +130,9 @@ function main()
     local local_max_age;
     local remote_max_age;
     local remote_file_pattern;
-    local start_epoch;
-    local end_epoch;
-    local runtime;
+    local -i start_epoch;
+    local -i end_epoch;
+    local -i runtime;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -159,7 +153,7 @@ function main()
     source_directory="${2}";
     source_file_pattern="${3}";
     remote_directory="${4}";
-    target_file_name="${5}";
+    remote_file_name="${5}";
     local_max_age="${6}";
     remote_max_age="${7}";
     remote_file_pattern="${8}";
@@ -168,8 +162,8 @@ function main()
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "rotation_type -> ${rotation_type}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "source_directory -> ${source_directory}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "source_file_pattern -> ${source_file_pattern}";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "target_directory -> ${remote_directory}";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "target_file_name -> ${target_file_name}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "remote_directory -> ${remote_directory}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "remote_file_name -> ${remote_file_name}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "local_max_age -> ${local_max_age}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "remote_max_age -> ${remote_max_age}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "remote_file_pattern -> ${remote_file_pattern}";
@@ -178,13 +172,13 @@ function main()
     case "${rotation_type}" in
         [Ll][Oo][Cc][Aa][Ll])
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: rotateLocalFiles ${source_directory} ${source_file_pattern} ${remote_directory} ${target_file_name} ${local_max_age}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: rotateLocalFiles ${source_directory} ${source_file_pattern} ${remote_directory} ${remote_file_name} ${local_max_age}";
             fi
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
             [[ -n "${function_name}" ]] && unset -v function_name;
 
-            rotateLocalFiles "${source_directory}" "${source_file_pattern}" "${remote_directory}" "${target_file_name}" "${local_max_age}"
+            rotateLocalFiles "${source_directory}" "${source_file_pattern}" "${remote_directory}" "${remote_file_name}" "${local_max_age}"
             ret_code="${?}";
 
             function_name="${CNAME}#${FUNCNAME[0]}";
@@ -257,7 +251,7 @@ function main()
     [[ -n "${source_directory}" ]] && unset -v source_directory;
     [[ -n "${source_file_pattern}" ]] && unset -v source_file_pattern;
     [[ -n "${remote_directory}" ]] && unset -v remote_directory;
-    [[ -n "${target_file_name}" ]] && unset -v target_file_name;
+    [[ -n "${remote_file_name}" ]] && unset -v remote_file_name;
     [[ -n "${local_max_age}" ]] && unset -v local_max_age;
     [[ -n "${remote_max_age}" ]] && unset -v remote_max_age;
     [[ -n "${remote_file_pattern}" ]] && unset -v remote_file_pattern;
@@ -298,15 +292,15 @@ function capturedata()
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
     local function_name="${CNAME}#${FUNCNAME[0]}";
-    local return_code=0;
-    local error_count=0;
-    local arg_counter=0;
+    local -i return_code=0;
+    local -i error_count=0;
+    local -i arg_counter=0;
     local argument;
     local argument_name;
     local argument_value;
-    local start_epoch;
-    local end_epoch;
-    local runtime;
+    local -i start_epoch;
+    local -i end_epoch;
+    local -i runtime;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -358,40 +352,29 @@ function capturedata()
             config|c)
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "argument_value -> ${argument_value}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting RUNTIME_CONFIG_FILE...";
                 fi
 
-                PROVIDED_CONFIG_FILE="${argument_value}";
+                RUNTIME_CONFIG_FILE="${argument_value}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PROVIDED_CONFIG_FILE -> ${PROVIDED_CONFIG_FILE}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "RUNTIME_CONFIG_FILE -> ${RUNTIME_CONFIG_FILE}";
                 fi
 
                 ## make the selected config active and continue forward
-                if [[ -n "${PROVIDED_CONFIG_FILE}" ]] && [[ "${PROVIDED_CONFIG_FILE}" != "${PRIMARY_CONFIG_FILE}" ]] && [[ -r "${PROVIDED_CONFIG_FILE}" ]]; then
+                if [[ -n "${RUNTIME_CONFIG_FILE}" ]] && [[ "${RUNTIME_CONFIG_FILE}" != "${DEFAULT_CONFIG_FILE}" ]] && \
+                    [[ -f "${RUNTIME_CONFIG_FILE}" ]] && [[ -r "${RUNTIME_CONFIG_FILE}" ]] && [[ -s "${RUNTIME_CONFIG_FILE}" ]]; then
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting WORKING_CONFIG_FILE...";
-                    fi
-
-                    WORKING_CONFIG_FILE="${PROVIDED_CONFIG_FILE}";
-
-                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "WORKING_CONFIG_FILE -> ${WORKING_CONFIG_FILE}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Loading configuration file ${RUNTIME_CONFIG_FILE}";
                     fi
 
                     # shellcheck source=/dev/null
-                    if [[ -n "${WORKING_CONFIG_FILE}" ]]; then
-                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Loading configuration file ${WORKING_CONFIG_FILE}";
-                        fi
+                    source "${RUNTIME_CONFIG_FILE}";
+                else
+                    RETURN_CODE=2;
 
-                        # shellcheck source=/dev/null
-                        source "${WORKING_CONFIG_FILE}";
-                    else
-                        RETURN_CODE=2;
-
-                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Unable to load provided configuration file ${PROVIDED_CONFIG_FILE}.";
-                        fi
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Unable to load provided configuration file ${RUNTIME_CONFIG_FILE}.";
                     fi
                 fi
                 ;;
@@ -503,12 +486,10 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "WORKING_CONFIG_FILE -> ${WORKING_CONFIG_FILE}";
 fi
 
-if [[ -z "${WORKING_CONFIG_FILE}" ]] || [[ ! -r "${WORKING_CONFIG_FILE}" ]]; then
-    RETURN_CODE="1";
-
+if [[ -n "${RETURN_CODE}" ]] && (( RETURN_CODE != 0 )); then
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Unable to find and/or read the configuration file supplied. Please ensure the file exists and can be read by the executing user.";
-        writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Unable to find and/or read the configuration file supplied. Please ensure the file exists and can be read by the executing user.";
+        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "A non-zero return code was detected prior to execution. Please review logs.";
+        writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "A non-zero return code was detected prior to execution. Please review logs.";
     fi
 else
     FUNCTION_NAME="${CNAME}#loadScriptLibs";
@@ -537,12 +518,12 @@ else
     FUNCTION_NAME="${CNAME}#exec-main";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT} ${SOURCE_DIRECTORY} ${SOURCE_FILE_PATTERN:-DEFAULT_FILE_PATTERN} ${REMOTE_DIRECTORY} ${TARGET_FILE_NAME} ${LOCAL_MAX_AGE} ${REMOTE_MAX_AGE} ${REMOTE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT} ${SOURCE_DIRECTORY} ${SOURCE_FILE_PATTERN:-DEFAULT_FILE_PATTERN} ${REMOTE_DIRECTORY} ${REMOTE_FILE_NAME} ${LOCAL_MAX_AGE} ${REMOTE_MAX_AGE} ${REMOTE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}";
     fi
 
     [[ -n "${RET_CODE}" ]] && unset -v RET_CODE;
 
-    main "${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT}" "${SOURCE_DIRECTORY}" "${SOURCE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}" "${REMOTE_DIRECTORY}" "${TARGET_FILE_NAME}" "${LOCAL_MAX_AGE}" "${REMOTE_MAX_AGE}" "${REMOTE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}";
+    main "${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT}" "${SOURCE_DIRECTORY}" "${SOURCE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}" "${REMOTE_DIRECTORY}" "${REMOTE_FILE_NAME}" "${LOCAL_MAX_AGE}" "${REMOTE_MAX_AGE}" "${REMOTE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}";
     RET_CODE="${?}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
