@@ -18,4 +18,4 @@
 #
 #==============================================================================
 
-[[ -s "${HOME}/.ssh/config" ]] && complete -o "default" -o "nospace" -W "$(grep "^Host" "${HOME}/.ssh/config" | grep -v "[?*]" | cut -d " " -f 2- | tr ' ' '\n')" scp sftp ssh;
+[[ -s "${HOME}/.ssh/config" ]] && complete -o "default" -o "nospace" -W "$(grep -E "(^Host)" "${HOME}/.ssh/config" | grep -Ev "([?*])" | cut -d " " -f 2- | tr ' ' '\n')" scp sftp ssh;

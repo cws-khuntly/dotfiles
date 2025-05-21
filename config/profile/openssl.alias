@@ -18,5 +18,5 @@
 #
 #==============================================================================
 
-alias sha512sum="openssl sha512";
-alias checkCSR="openssl req -text -noout -verify -in";
+alias sha512sum='openssl sha512';
+alias checkCSR='openssl req -text -noout -verify -in';

@@ -18,6 +18,6 @@
 #
 #==============================================================================
 
-[[ ! -n "$(compgen -c | grep -Ew ^ansible | sort | uniq)" ]] && return;
+[[ -z "$(compgen -c | grep -Ew "(^ansible)" | sort | uniq)" ]] && return;
 
 declare -x ANSIBLE_HOSTS="${HOME}/etc/ansible/hosts";

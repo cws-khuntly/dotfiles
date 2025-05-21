@@ -18,6 +18,6 @@
 #
 #==============================================================================
 
-alias install="sudo dnf install";
-alias uninstall="sudo dnf erase";
-alias update="sudo dnf update";
+alias install='sudo dnf install';
+alias uninstall='sudo dnf erase';
+alias update='sudo dnf update';

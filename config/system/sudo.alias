@@ -19,12 +19,10 @@
 #==============================================================================
 
 ## sudo aliases
-alias sysadm="sudo su - sysadm";
-alias ihsadm="sudo su - ihsadm";
-alias appadm="sudo su - appadm";
-alias webadm="sudo su - webadm";
-alias wasadm="sudo su - wasadm";
-alias dnsadm="sudo su - dnsadm";
-alias db2adm="sudo su - db2adm";
-alias ldapadm="sudo su - ldapadm";
-alias root="sudo su -";
+alias sysadm='sudo su - sysadm';
+alias ihsadm='sudo su - ihsadm';
+alias wasadm='sudo su - appadm';
+alias dnsadm='sudo su - dnsadm';
+alias db2adm='sudo su - db2adm';
+alias ldapadm='sudo su - ldapadm';
+alias root='sudo su -';
