@@ -131,10 +131,11 @@ function main()
     local rotation_type;
     local source_directory;
     local source_file_pattern;
-    local target_directory;
+    local renote_directory;
     local target_file_name;
     local local_max_age;
     local remote_max_age;
+    local remote_file_pattern;
     local start_epoch;
     local end_epoch;
     local runtime;
@@ -152,36 +153,38 @@ function main()
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    (( ${#} != 5 )) && return 3;
+    (( ${#} != 8 )) && return 3;
 
     rotation_type="${1}";
     source_directory="${2}";
     source_file_pattern="${3}";
-    target_directory="${4}";
+    remote_directory="${4}";
     target_file_name="${5}";
     local_max_age="${6}";
     remote_max_age="${7}";
+    remote_file_pattern="${8}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "rotation_type -> ${rotation_type}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "source_directory -> ${source_directory}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "source_file_pattern -> ${source_file_pattern}";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "target_directory -> ${target_directory}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "target_directory -> ${remote_directory}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "target_file_name -> ${target_file_name}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "local_max_age -> ${local_max_age}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "remote_max_age -> ${remote_max_age}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "remote_file_pattern -> ${remote_file_pattern}";
     fi
 
     case "${rotation_type}" in
         [Ll][Oo][Cc][Aa][Ll])
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: rotateLocalFiles ${source_directory} ${source_file_pattern} ${target_directory} ${target_file_name} ${local_max_age}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: rotateLocalFiles ${source_directory} ${source_file_pattern} ${remote_directory} ${target_file_name} ${local_max_age}";
             fi
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
             [[ -n "${function_name}" ]] && unset -v function_name;
 
-            rotateLocalFiles "${source_directory}" "${source_file_pattern}" "${target_directory}" "${target_file_name}" "${local_max_age}"
+            rotateLocalFiles "${source_directory}" "${source_file_pattern}" "${remote_directory}" "${target_file_name}" "${local_max_age}"
             ret_code="${?}";
 
             function_name="${CNAME}#${FUNCNAME[0]}";
@@ -208,13 +211,13 @@ function main()
             ;;
         [Rr][Ee][Mm][Oo][Tt][Ee])
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: rotateRemoteFiles ${source_directory} ${source_file_pattern} ${remote_max_age}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: rotateRemoteFiles ${remote_directory} ${remote_file_pattern} ${remote_max_age}";
             fi
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
             [[ -n "${function_name}" ]] && unset -v function_name;
 
-            rotateRemoteFiles "${source_directory}" "${source_file_pattern}" "${remote_max_age}";
+            rotateRemoteFiles "${remote_directory}" "${remote_file_pattern}" "${remote_max_age}";
             ret_code="${?}";
 
             function_name="${CNAME}#${FUNCNAME[0]}";
@@ -253,10 +256,11 @@ function main()
     [[ -n "${rotation_type}" ]] && unset -v rotation_type;
     [[ -n "${source_directory}" ]] && unset -v source_directory;
     [[ -n "${source_file_pattern}" ]] && unset -v source_file_pattern;
-    [[ -n "${target_directory}" ]] && unset -v target_directory;
+    [[ -n "${remote_directory}" ]] && unset -v remote_directory;
     [[ -n "${target_file_name}" ]] && unset -v target_file_name;
     [[ -n "${local_max_age}" ]] && unset -v local_max_age;
     [[ -n "${remote_max_age}" ]] && unset -v remote_max_age;
+    [[ -n "${remote_file_pattern}" ]] && unset -v remote_file_pattern;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -533,12 +537,12 @@ else
     FUNCTION_NAME="${CNAME}#exec-main";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT} ${SOURCE_DIRECTORY} ${SOURCE_FILE_PATTERN:-DEFAULT_FILE_PATTERN} ${TARGET_DIRECTORY} ${TARGET_FILE_NAME} ${LOCAL_MAX_AGE} ${REMOTE_MAX_AGE}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT} ${SOURCE_DIRECTORY} ${SOURCE_FILE_PATTERN:-DEFAULT_FILE_PATTERN} ${REMOTE_DIRECTORY} ${TARGET_FILE_NAME} ${LOCAL_MAX_AGE} ${REMOTE_MAX_AGE} ${REMOTE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}";
     fi
 
     [[ -n "${RET_CODE}" ]] && unset -v RET_CODE;
 
-    main "${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT}" "${SOURCE_DIRECTORY}" "${SOURCE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}" "${TARGET_DIRECTORY}" "${TARGET_FILE_NAME}" "${LOCAL_MAX_AGE}" "${REMOTE_MAX_AGE}";
+    main "${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT}" "${SOURCE_DIRECTORY}" "${SOURCE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}" "${REMOTE_DIRECTORY}" "${TARGET_FILE_NAME}" "${LOCAL_MAX_AGE}" "${REMOTE_MAX_AGE}" "${REMOTE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}";
     RET_CODE="${?}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
