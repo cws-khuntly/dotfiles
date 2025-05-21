@@ -31,11 +31,13 @@ function rotateLocalFiles()
     local function_name="${cname}#${FUNCNAME[0]}";
     local return_code=0;
     local error_count=0;
+    local temp_tar_file;
     local source_directory;
     local source_file_pattern;
     local remote_directory;
     local remote_file_name;
     local -i max_age;
+    local file_list;
     local start_epoch;
     local end_epoch;
     local runtime;
@@ -53,7 +55,29 @@ function rotateLocalFiles()
 
     if (( ${#} == 0 )); then usage; return "${?}"; fi
 
-    # TODO
+    file_list=$(find "${source_directory}/${source_file_pattern}" -type f -mtime +"${MAX_LOCAL_AGE}");
+
+    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Generating empty tar file...";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: tar cf ${remote_directory}/${remote_file_name} --files-from=/dev/null";
+    fi
+
+    # make an empty tar
+    temp_tar_file="$(mktemp --tmpdir="${USABLE_TMP_DIR:-$TMPDIR}}")";
+
+    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "temp_tar_file -> ${temp_tar_file}";
+    fi
+# TODO continue this fuckery
+    tar cf "${temp_tar_file}" --files-from=/dev/null
+
+    ( cd ${source_directory}; for file in "${file_list[@]}"; do tar -cf - ./${file_name} ) | gzip > ${BACKUP_DIRECTORY}/${file_name}.tar.gz
+
+  ->    if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_list -> ${file_list}";
+    fi
+
+        
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
