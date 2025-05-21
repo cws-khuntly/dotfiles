@@ -5,6 +5,7 @@
     excludesfile = ~/.config/git/ignore
     logallrefupdates = true
     attributesfile = ~/.config/git/attributes
+    filemode = false
 
 [branch]
     autosetuprebase = always
@@ -19,12 +20,13 @@
 [http]
 
 [https]
-    sslVerify = false
+    sslVerify = true
 
 [alias]
 
 [commit]
     #gpgsign = true
+    verbose = true
 
 [filter "spaces2tabs"]
     clean = unexpand --tabs=4 --first-only
@@ -32,6 +34,32 @@
 
 [merge]
     renormalize = true
+	conflictstyle = diff3
+	keepbackup = false
+
+[diff]
+	algorithm = histogram
+	submodule = log
+
+[transfer]
+	fsckobjects = true
+
+[fetch]
+	fsckobjects = true
+	prune = true
+	prunetags = true
+
+[receive]
+	fsckobjects = true
+
+[status]
+	submoduleSummary = true
+
+[submodule]
+	recurse = true
+
+[gpg]
+	format = ssh
 
 [log]
     date = rfc
