@@ -30,8 +30,6 @@ else
         source "/usr/local/config/logging.properties"; ## if its here, use it
     else
         printf "\e[00;31m%s\e[00;32m\n" "Unable to load logging configuration. Shutting down." >&2;
-
-        exit 1;
     fi
 fi
 

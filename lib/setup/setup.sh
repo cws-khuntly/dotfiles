@@ -259,7 +259,7 @@ function runDeployLocalFiles()
 	[[ -n "${function_name}" ]] && unset -v function_name;
 	[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-	buildPackage;
+	buildPackage "${SOURCE_PATH}";
 	ret_code="${?}";
 
     cname="setup.sh";
@@ -395,7 +395,7 @@ function runDeployRemoteFiles()
 	[[ -n "${function_name}" ]] && unset -v function_name;
 	[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-	buildPackage;
+	buildPackage "${SOURCE_PATH}";
 	ret_code="${?}";
 
     cname="setup.sh";

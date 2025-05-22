@@ -32,6 +32,7 @@ function buildPackage()
     local -i return_code=0;
     local -i error_count=0;
     local -i ret_code=0;
+    local source_path;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -47,14 +48,22 @@ function buildPackage()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    if [[ -d "${SOURCE_PATH}" ]]; then
+    (( ${#} != 1 )) && return 3;
+
+    source_path="${1}";
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "source_path -> ${source_path}";
+    fi
+
+    if [[ -d "${source_path}" ]]; then
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: tar --exclude-vcs --exclude=README.md --exclude=LICENSE.md --exclude log --exclude logs -C ${SOURCE_PATH} -cf - ./*";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: tar --exclude-vcs --exclude=README.md --exclude=LICENSE.md --exclude log --exclude logs -C ${source_path} -cf - ./*";
         fi
 
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        ( cd "${SOURCE_PATH}" || return 1; tar --exclude-vcs --exclude=README.md --exclude=LICENSE.md -cf - ./*) | ${ARCHIVE_PROGRAM} > "${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
+        ( cd "${source_path}" || return 1; tar --exclude-vcs --exclude=README.md --exclude=LICENSE.md -cf - ./*) | ${ARCHIVE_PROGRAM} > "${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -84,12 +93,13 @@ function buildPackage()
         return_code=1;
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "The specified source directory ${SOURCE_PATH} does not exist. Cannot continue.";
+            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "The specified source directory ${source_path} does not exist. Cannot continue.";
         fi
     fi
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
+    [[ -n "${source_path}" ]] && unset -v source_path;
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
 

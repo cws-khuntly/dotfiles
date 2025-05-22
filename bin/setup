@@ -909,143 +909,166 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ACTION -> ${TARGET_ACTION}";
 fi
 
-if [[ -z "${PACKAGE_NAME}" ]] || [[ ! -s "${SCRIPT_ROOT}/config/${PACKAGE_NAME}/${PACKAGE_NAME}.setup" ]]; then
+if [[ -z "${PACKAGE_NAME}" ]]; then
     RETURN_CODE="1";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Unable to find and/or read the setup file for package ${PACKAGE_NAME}. Please ensure the file exists and is readable.";
-        writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Unable to find and/or read the setup file for package ${PACKAGE_NAME}. Please ensure the file exists and is readable.";
+        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No package was provided to operate with. Cannot continue.";
+        writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No package was provided to operate with. Cannot continue.";
     fi
 else
-    FUNCTION_NAME="${CNAME}#loadScriptLibs";
+    FUNCTION_NAME="${CNAME}#loadPackageConfig";
+    PACKAGE_CONFIG_FILE="${SCRIPT_ROOT}/config/${PACKAGE_NAME}/${PACKAGE_NAME}.setup"
 
-    ## bring in any library scripts
-    for LIBENTRY in "${SCRIPT_ROOT}/lib/$(basename "${CNAME}" ".sh")"/*.sh; do
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Library ${LIBENTRY}";
-        fi
-
-        [[ -z "${LIBENTRY}" ]] && continue;
-        [[ "${LIBENTRY}" =~ ^\# ]] && continue;
-
-        if [[ -r "${LIBENTRY}" ]] && [[ -s "${LIBENTRY}" ]]; then
-            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${LIBENTRY}";
-            fi
-
-            # shellcheck source=/dev/null
-            source "${LIBENTRY}";
-        fi
-
-        [[ -n "${LIBENTRY}" ]] && unset -v LIBENTRY;
-    done
-
-    FUNCTION_NAME="${CNAME}#buildTargetList";
-
-    if [[ -n "${TARGET_HOST}" ]]; then
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Building TARGET_ENTRIES with provided information";
-        fi
-
-        TARGET_ENTRIES=("${TARGET_HOST}:${TARGET_PORT:-${SSH_PORT_NUMBER}}:${TARGET_USER}:${RUNTIME_ACTION_COMBINED:-${RUNTIME_ACTION_COMBINED}}");
-    elif [[ -n "${SERVER_LIST}" ]]; then
-        if [[ -f "${SERVER_LIST}" ]]; then
-            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Loading data from ${SERVER_LIST}";
-            fi
-
-            mapfile -t TARGET_ENTRIES < "${SERVER_LIST}";
-        else
-            if [[ "${SERVER_LIST}" =~ | ]] && (( $(grep -o "|" <<< "${SERVER_LIST}" | wc -l) != 1 )); then
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Building TARGET_ENTRIES with provided information";
-                fi
-
-                mapfile -d "," -t TARGET_ENTRIES <<< "${SERVER_LIST}";
-            fi
-        fi
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PACKAGE_CONFIG_FILE -> ${PACKAGE_CONFIG_FILE}";
     fi
 
-    if [[ -n "${TARGET_ENTRIES[*]}" ]]; then
+    if [[ ! -f "${PACKAGE_CONFIG_FILE}" ]] || [[ ! -r "${PACKAGE_CONFIG_FILE}" ]] || [[ ! -s "${PACKAGE_CONFIG_FILE}" ]]; then
+        RETURN_CODE="1";
+
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Unable to find and/or read the setup file for package ${PACKAGE_NAME}. Please ensure the file exists and is readable.";
+            writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Unable to find and/or read the setup file for package ${PACKAGE_NAME}. Please ensure the file exists and is readable.";
+        fi
+    else
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ENTRIES -> ${TARGET_ENTRIES[*]}";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${PACKAGE_CONFIG_FILE}";
         fi
 
-        [[ -n "${RET_CODE}" ]] && unset -v RET_CODE;
+        # shellcheck source=/dev/null
+        source "${PACKAGE_CONFIG_FILE}";
 
-        FUNCTION_NAME="${CNAME}#generateSshKeys";
+        FUNCTION_NAME="${CNAME}#loadScriptLibs";
 
-        generateSshKeys;
-        RET_CODE="${?}";
+        ## bring in any library scripts
+        for LIBENTRY in "${SCRIPT_ROOT}/lib/$(basename "${CNAME}" ".sh")"/*.sh; do
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Library ${LIBENTRY}";
+            fi
 
-        if [[ -n "${RET_CODE}" ]] && (( RET_CODE != 0 )); then
-            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SSH key generation failed. Return code -> ${RET_CODE}. This may prevent processing from completing.";
-                writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SSH key generation failed. Return code -> ${RET_CODE}. This may prevent processing from completing.";
+            [[ -z "${LIBENTRY}" ]] && continue;
+            [[ "${LIBENTRY}" =~ ^\# ]] && continue;
+
+            if [[ -r "${LIBENTRY}" ]] && [[ -s "${LIBENTRY}" ]]; then
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${LIBENTRY}";
+                fi
+
+                # shellcheck source=/dev/null
+                source "${LIBENTRY}";
+            fi
+
+            [[ -n "${LIBENTRY}" ]] && unset -v LIBENTRY;
+        done
+
+        FUNCTION_NAME="${CNAME}#buildTargetList";
+
+        if [[ -n "${TARGET_HOST}" ]]; then
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Building TARGET_ENTRIES with provided information";
+            fi
+
+            TARGET_ENTRIES=("${TARGET_HOST}:${TARGET_PORT:-${SSH_PORT_NUMBER}}:${TARGET_USER}:${RUNTIME_ACTION_COMBINED:-${RUNTIME_ACTION_COMBINED}}");
+        elif [[ -n "${SERVER_LIST}" ]]; then
+            if [[ -f "${SERVER_LIST}" ]]; then
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Loading data from ${SERVER_LIST}";
+                fi
+
+                mapfile -t TARGET_ENTRIES < "${SERVER_LIST}";
+            else
+                if [[ "${SERVER_LIST}" =~ | ]] && (( $(grep -o "|" <<< "${SERVER_LIST}" | wc -l) != 1 )); then
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Building TARGET_ENTRIES with provided information";
+                    fi
+
+                    mapfile -d "," -t TARGET_ENTRIES <<< "${SERVER_LIST}";
+                fi
             fi
         fi
 
-        FUNCTION_NAME="${CNAME}#processTargetEntries";
-
-        for TARGET_ENTRY in "${TARGET_ENTRIES[@]}"; do
+        if [[ -n "${TARGET_ENTRIES[*]}" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ENTRY -> ${TARGET_ENTRY}";
-            fi
-
-            [[ -z "${TARGET_ENTRY}" ]] && continue;
-            [[ "${TARGET_ENTRY}" =~ ^\# ]] && continue;
-
-            TARGET_HOST="$(cut -d ":" -f 1 <<< "${TARGET_ENTRY}")";
-            TARGET_PORT="$(cut -d ":" -f 2 <<< "${TARGET_ENTRY}")";
-            TARGET_USER="$(cut -d ":" -f 3 <<< "${TARGET_ENTRY}")";
-            TARGET_ACTION="$(cut -d ":" -f 4 <<< "${TARGET_ENTRY}")";
-
-            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_HOST -> ${TARGET_HOST}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_PORT -> ${TARGET_PORT}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_USER -> ${TARGET_USER}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ACTION -> ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}}";
-            fi
-
-            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} ${TARGET_HOST} ${TARGET_PORT:-${SSH_PORT_NUMBER}} ${TARGET_USER}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ENTRIES -> ${TARGET_ENTRIES[*]}";
             fi
 
             [[ -n "${RET_CODE}" ]] && unset -v RET_CODE;
 
-            main "${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}}" "${TARGET_HOST}" "${TARGET_PORT:-${SSH_PORT_NUMBER}}" "${TARGET_USER}";
+            FUNCTION_NAME="${CNAME}#generateSshKeys";
+
+            generateSshKeys;
             RET_CODE="${?}";
 
-            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
-            fi
-
-            if [[ -z "${RET_CODE}" ]] || (( RET_CODE != 0 )); then
-                RETURN_CODE=1;
-
+            if [[ -n "${RET_CODE}" ]] && (( RET_CODE != 0 )); then
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";
-                    writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";
-                fi
-            else
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "INFO" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
-                    writeLogEntry "CONSOLE" "STDOUT" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
+                    writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SSH key generation failed. Return code -> ${RET_CODE}. This may prevent processing from completing.";
+                    writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SSH key generation failed. Return code -> ${RET_CODE}. This may prevent processing from completing.";
                 fi
             fi
 
-            [[ -n "${TARGET_ENTRY}" ]] && unset -v TARGET_ENTRY;
-            [[ -n "${TARGET_HOST}" ]] && unset -v TARGET_HOST;
-            [[ -n "${TARGET_PORT}" ]] && unset -v TARGET_PORT;
-            [[ -n "${TARGET_USER}" ]] && unset -v TARGET_USER;
-            [[ -n "${TARGET_ACTION}" ]] && unset -v TARGET_ACTION;
-        done
-    else
-        RETURN_CODE="1";
+            FUNCTION_NAME="${CNAME}#processTargetEntries";
 
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No target information was provided to operate against. Cannot continue.";
-            writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No target information was provided to operate against. Cannot continue.";
+            for TARGET_ENTRY in "${TARGET_ENTRIES[@]}"; do
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ENTRY -> ${TARGET_ENTRY}";
+                fi
+
+                [[ -z "${TARGET_ENTRY}" ]] && continue;
+                [[ "${TARGET_ENTRY}" =~ ^\# ]] && continue;
+
+                TARGET_HOST="$(cut -d ":" -f 1 <<< "${TARGET_ENTRY}")";
+                TARGET_PORT="$(cut -d ":" -f 2 <<< "${TARGET_ENTRY}")";
+                TARGET_USER="$(cut -d ":" -f 3 <<< "${TARGET_ENTRY}")";
+                TARGET_ACTION="$(cut -d ":" -f 4 <<< "${TARGET_ENTRY}")";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_HOST -> ${TARGET_HOST}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_PORT -> ${TARGET_PORT}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_USER -> ${TARGET_USER}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ACTION -> ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}}";
+                fi
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} ${TARGET_HOST} ${TARGET_PORT:-${SSH_PORT_NUMBER}} ${TARGET_USER}";
+                fi
+
+                [[ -n "${RET_CODE}" ]] && unset -v RET_CODE;
+
+                main "${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}}" "${TARGET_HOST}" "${TARGET_PORT:-${SSH_PORT_NUMBER}}" "${TARGET_USER}";
+                RET_CODE="${?}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+                fi
+
+                if [[ -z "${RET_CODE}" ]] || (( RET_CODE != 0 )); then
+                    RETURN_CODE=1;
+
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";
+                        writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";
+                    fi
+                else
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "INFO" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
+                        writeLogEntry "CONSOLE" "STDOUT" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
+                    fi
+                fi
+
+                [[ -n "${TARGET_ENTRY}" ]] && unset -v TARGET_ENTRY;
+                [[ -n "${TARGET_HOST}" ]] && unset -v TARGET_HOST;
+                [[ -n "${TARGET_PORT}" ]] && unset -v TARGET_PORT;
+                [[ -n "${TARGET_USER}" ]] && unset -v TARGET_USER;
+                [[ -n "${TARGET_ACTION}" ]] && unset -v TARGET_ACTION;
+            done
+        else
+            RETURN_CODE="1";
+
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No target information was provided to operate against. Cannot continue.";
+                writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No target information was provided to operate against. Cannot continue.";
+            fi
         fi
     fi
 fi
