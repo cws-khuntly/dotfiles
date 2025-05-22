@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #==============================================================================
-#          FILE:  installDotFiles
+#          FILE:  setup
 #         USAGE:  See usage section
 #   DESCRIPTION:
 #
@@ -79,7 +79,7 @@ for CONFIG_FILE in "${PRIMARY_CONFIG_FILE}" "${SECONDARY_CONFIG_FILE}"; do
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "WORKING_CONFIG_FILE -> ${WORKING_CONFIG_FILE}";
         fi
 
-        # shellcheck source=../config/setup/dotfiles.properties
+        # shellcheck source=../config/setup/setup.properties
         source "${WORKING_CONFIG_FILE}";
 
         break;
@@ -871,10 +871,10 @@ function usage()
     printf "    %s: %s\n" "--servername | -s <hostname>" "(Optional) The target system name to process against. Default value -> ${TARGET_HOST}." >&2;
     printf "    %s: %s\n" "--username | -u <username>" "(Optional) The username to utilize for the target system. Default value -> ${TARGET_USER}." >&2;
     printf "    %s: %s\n" "--action | -a <action>" "(Optional) The type of process to execute. One of the following. Default value -> ${RUNTIME_ACTION_COMBINED}" >&2;
-    printf "        %s: %s\n" "deployFiles" "Pushes dotfiles to the selected system but does not install/apply" >&2;
-    printf "        %s: %s\n" "installFiles" "Installs dotfiles to the selected system - assumes the package has already been sent to the target system" >&2;
-    printf "        %s: %s\n" "deployAndInstall" "Pushes dotfiles to the selected system and installs" >&2;
-    printf "        %s: %s\n" "refreshDotFiles" "Performs a refresh of the existing dotfiles, adding/removing entries as necessary" >&2;
+    printf "        %s: %s\n" "deployFiles" "Pushes files to the selected system but does not install/apply" >&2;
+    printf "        %s: %s\n" "installFiles" "Installs files to the selected system - assumes the package has already been sent to the target system" >&2;
+    printf "        %s: %s\n" "deployAndInstall" "Pushes files to the selected system and installs" >&2;
+    printf "        %s: %s\n" "refreshFiles" "Performs a refresh of the existing files, adding/removing entries as necessary" >&2;
     printf "    %s: %s\n" "--help | -h | -?" "Show this help menu." >&2;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -947,7 +947,7 @@ else
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Building TARGET_ENTRIES with provided information";
         fi
 
-        TARGET_ENTRIES=("${TARGET_HOST}:${TARGET_PORT:-${SSH_PORT_NUMBER}}:${TARGET_USER}:${DEFAULT_RUNTIME_ACTION:-${DEFAULT_RUNTIME_ACTION}}");
+        TARGET_ENTRIES=("${TARGET_HOST}:${TARGET_PORT:-${SSH_PORT_NUMBER}}:${TARGET_USER}:${RUNTIME_ACTION_COMBINED:-${RUNTIME_ACTION_COMBINED}}");
     elif [[ -n "${SERVER_LIST}" ]]; then
         if [[ -f "${SERVER_LIST}" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -1024,13 +1024,13 @@ else
                 RETURN_CODE=1;
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${DEFAULT_RUNTIME_ACTION}} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";
-                    writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${DEFAULT_RUNTIME_ACTION}} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";
+                    writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";
+                    writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} failed on host ${TARGET_HOST} as user ${TARGET_USER}. Return code -> ${RET_CODE}";
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "INFO" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${DEFAULT_RUNTIME_ACTION}} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
-                    writeLogEntry "CONSOLE" "STDOUT" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${DEFAULT_RUNTIME_ACTION}} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
+                    writeLogEntry "FILE" "INFO" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
+                    writeLogEntry "CONSOLE" "STDOUT" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
                 fi
             fi
 
@@ -1039,7 +1039,6 @@ else
             [[ -n "${TARGET_PORT}" ]] && unset -v TARGET_PORT;
             [[ -n "${TARGET_USER}" ]] && unset -v TARGET_USER;
             [[ -n "${TARGET_ACTION}" ]] && unset -v TARGET_ACTION;
-            [[ -n "${RETURN_CODE}" ]] && unset -v RETURN_CODE;
         done
     else
         RETURN_CODE="1";
@@ -1071,7 +1070,6 @@ if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set
 [[ -n "${PRIMARY_CONFIG_FILE}" ]] && unset -v PRIMARY_CONFIG_FILE;
 [[ -n "${WORKING_CONFIG_FILE}" ]] && unset -v WORKING_CONFIG_FILE;
 [[ -n "${PROVIDED_CONFIG_FILE}" ]] && unset -v PROVIDED_CONFIG_FILE;
-[[ -n "${RETURN_CODE}" ]] && unset -v RETURN_CODE;
 [[ -n "${PACKAGE_NAME}" ]] && unset -v PACKAGE_NAME;
 [[ -n "${TARGET_HOST}" ]] && unset -v TARGET_HOST;
 [[ -n "${TARGET_PORT}" ]] && unset -v TARGET_PORT;

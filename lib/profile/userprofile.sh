@@ -30,7 +30,7 @@ function showHostInfo()
     local cname="userprofile.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
-    local error_count=0;
+    local -i error_count=0;
     local host_system_name;
     local host_ip_address;
     local host_kernel_version;
@@ -251,7 +251,7 @@ function runLoginCommands()
     local primary_file="${HOME}/etc/logincmds.properties";
     local secondary_file="${HOME}/workspace/etc/logincmds.properties";
     local -i return_code=0;
-    local error_count=0;
+    local -i error_count=0;
     local -i ret_code=0;
     local cmd_entry;
     local cmd_binary;
@@ -382,7 +382,7 @@ function logoutUser()
     local cname="userprofile.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
-    local error_count=0;
+    local -i error_count=0;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;

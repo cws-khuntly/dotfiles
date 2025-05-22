@@ -380,7 +380,7 @@ function cleanupRemoteFiles()
 
     local cname="cleanuputils.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
-    local file_counter=0;
+    local -i file_counter=0;
     local -i ret_code=0;
     local -i return_code=0;
     local -i error_count=0;

@@ -453,7 +453,7 @@ function usage()
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "${function_name} -> enter";
     fi
 
-    printf "%s %s\n" "${function_name}" "Deploy and install dotfiles." >&2;
+    printf "%s %s\n" "${function_name}" "Rotate/archive provided files." >&2;
     printf "%s %s\n" "Usage: ${function_name}" "[ options ]" >&2;
     printf "    %s: %s\n" "NOTE" "All configuration options are available in the configuration file, and may be overridden with the appropriate arguments." >&2;
     printf "    %s: %s\n" "--config | -c <configuration file>" "(Required) The location to a configuration file defining what, where, and how to rotate" >&2;

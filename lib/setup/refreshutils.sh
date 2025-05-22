@@ -18,7 +18,7 @@
 
 #=====  FUNCTION  =============================================================
 #          NAME:  refreshFiles
-#   DESCRIPTION:  Re-loads existing dotfiles for use
+#   DESCRIPTION:  Re-loads existing setup for use
 #    PARAMETERS:  None
 #       RETURNS:  0 if success, non-zero otherwise
 #==============================================================================
@@ -170,7 +170,7 @@ function refreshFiles()
 
 #=====  FUNCTION  =============================================================
 #          NAME:  installLocalFiles
-#   DESCRIPTION:  Re-loads existing dotfiles for use
+#   DESCRIPTION:  Re-loads existing setup for use
 #    PARAMETERS:  None
 #       RETURNS:  0 if success, non-zero otherwise
 #==============================================================================
@@ -208,13 +208,13 @@ function refreshLocalFiles()
 
     if [[ -f "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" ]]; then
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd ${DOTFILES_INSTALL_PATH}; tar -xf - )";
+            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd ${SOURCE_PATH}; tar -xf - )";
         fi
 
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output="$("${UNARCHIVE_PROGRAM}" -c "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" | ( cd "${DOTFILES_INSTALL_PATH}" || exit 1; tar -xf - ))";
+        cmd_output="$("${UNARCHIVE_PROGRAM}" -c "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" | ( cd "${SOURCE_PATH}" || exit 1; tar -xf - ))";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -417,7 +417,7 @@ function refreshLocalFiles()
         (( error_count += 1 ));
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Package appears to be missing: DOTFILES_INSTALL_PATH -> ${DOTFILES_INSTALL_PATH} - directory is either missing or unwriteable. ";
+            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Package appears to be missing: SOURCE_PATH -> ${SOURCE_PATH} - directory is either missing or unwriteable. ";
         fi
     fi
 
@@ -489,7 +489,7 @@ function refreshLocalFiles()
 
 #=====  FUNCTION  =============================================================
 #          NAME:  refreshRemoteFiles
-#   DESCRIPTION:  Re-loads existing dotfiles for use
+#   DESCRIPTION:  Re-loads existing setup for use
 #    PARAMETERS:  None
 #       RETURNS:  0 if success, non-zero otherwise
 #==============================================================================
@@ -655,9 +655,9 @@ function refreshRemoteFiles()
                                 printf \"%s\n\n\" #!/usr/bin/env bash
                                 printf \"%s\n\n\" PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin;
                                 printf \"%s\n\" umask 022;
-                                printf \"%s\n\" [[ -d ${DOTFILES_INSTALL_PATH} ]] && rm -rf ${DOTFILES_INSTALL_PATH}; mkdir -pv ${DOTFILES_INSTALL_PATH} > /dev/null 2>&1;
-                                printf \"%s\n\" cd ${DOTFILES_INSTALL_PATH}; ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | tar -xf -
-                                printf \"%s\n\n\" ${DOTFILES_INSTALL_PATH}/bin/manageDotFiles --config=${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}") --action=refreshFiles --servername=${target_host}
+                                printf \"%s\n\" [[ -d ${SOURCE_PATH} ]] && rm -rf ${SOURCE_PATH}; mkdir -pv ${SOURCE_PATH} > /dev/null 2>&1;
+                                printf \"%s\n\" cd ${SOURCE_PATH}; ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | tar -xf -
+                                printf \"%s\n\n\" ${SOURCE_PATH}/bin/setup --config=${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}") --action=refreshFiles --servername=${target_host}
                                 printf \"%s\n\n\" printf \"%s\" \${?}";
                         fi
 
@@ -667,9 +667,9 @@ function refreshRemoteFiles()
                             printf "%s\n" "PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin;";
                             printf "%s\n\n" "error_counter=0;";
                             printf "%s\n" "umask 022";
-                            printf "%s\n" "[[ -d ${DOTFILES_INSTALL_PATH} ]] && rm -rf ${DOTFILES_INSTALL_PATH}; mkdir -pv ${DOTFILES_INSTALL_PATH} > /dev/null 2>&1;";
-                            printf "%s\n" "cd ${DOTFILES_INSTALL_PATH}; ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | tar -xf -;";
-                            printf "%s\n\n" "${DOTFILES_INSTALL_PATH}/bin/manageDotFiles --config=${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}") --action=refreshFiles --servername=${target_host}";
+                            printf "%s\n" "[[ -d ${SOURCE_PATH} ]] && rm -rf ${SOURCE_PATH}; mkdir -pv ${SOURCE_PATH} > /dev/null 2>&1;";
+                            printf "%s\n" "cd ${SOURCE_PATH}; ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | tar -xf -;";
+                            printf "%s\n\n" "${SOURCE_PATH}/bin/setup --config=${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}") --action=refreshFiles --servername=${target_host}";
                             printf "%s\n\n" "printf \"%s\" \${?}";
                         } >| "${installation_script}";
 
@@ -682,7 +682,7 @@ function refreshRemoteFiles()
                         else
                             [[ -n "${transfer_file_list}" ]] && unset -v transfer_file_list;
 
-                            transfer_file_list="${installation_script}|${DEPLOY_TO_DIR}/$(basename "${installation_script}lib/dotfiles/refreshutils.sh")";
+                            transfer_file_list="${installation_script}|${DEPLOY_TO_DIR}/$(basename "${installation_script}lib/setup/refreshutils.sh")";
 
                             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file_list -> ${transfer_file_list}"
@@ -733,7 +733,7 @@ function refreshRemoteFiles()
                                     fi
                                 else
                                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                        writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "dotfiles successfully installed to host ${target_host} as user ${target_user}";
+                                        writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "setup successfully installed to host ${target_host} as user ${target_user}";
                                     fi
                                 fi
                             fi

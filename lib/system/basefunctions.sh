@@ -303,7 +303,7 @@ function waitForProcessFile()
     local -i ret_code=0;
     local -i return_code=0;
     local -i error_count=0;
-    local retry_counter=0;
+    local -i retry_counter=0;
     local watch_file;
     local sleep_time;
     local retry_count;
@@ -518,8 +518,8 @@ function returnRandomCharacters()
     local -i return_code=0;
     local -i error_count=0;
     local -i ret_code=0;
-    local string_count=1;
-    local counter=0;
+    local -i string_count=1;
+    local -i counter=0;
     local argument;
     local argument_name;
     local argument_value;

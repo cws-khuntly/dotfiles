@@ -400,7 +400,7 @@ function checkForValidAddress()
     local -i return_code=0;
     local -i error_count=0;
     local -i ret_code=0;
-    local counter=0;
+    local -i counter=0;
     local checkForAddress;
     local split_up;
     local entry;

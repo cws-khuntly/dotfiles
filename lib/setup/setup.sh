@@ -27,7 +27,7 @@ function runInstallLocalFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="managedotfiles.sh";
+    local cname="setup.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i ret_code=0;
     local -i return_code=0;
@@ -60,7 +60,7 @@ function runInstallLocalFiles()
 	installFiles "${INSTALL_LOCATION_LOCAL}";
 	ret_code="${?}";
 
-    cname="managedotfiles.sh";
+    cname="setup.sh";
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -120,7 +120,7 @@ function runInstallRemoteFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="managedotfiles.sh";
+    local cname="setup.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i ret_code=0;
     local -i return_code=0;
@@ -165,7 +165,7 @@ function runInstallRemoteFiles()
 	installFiles "${INSTALL_LOCATION_REMOTE}" "${target_hostname}" "${target_ssh_port}" "${target_ssh_user}";
 	ret_code="${?}";
 
-    cname="managedotfiles.sh";
+    cname="setup.sh";
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -228,7 +228,7 @@ function runDeployLocalFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="managedotfiles.sh";
+    local cname="setup.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local -i error_count=0;
@@ -262,7 +262,7 @@ function runDeployLocalFiles()
 	buildPackage;
 	ret_code="${?}";
 
-    cname="managedotfiles.sh";
+    cname="setup.sh";
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -352,7 +352,7 @@ function runDeployRemoteFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="managedotfiles.sh";
+    local cname="setup.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i ret_code=0;
     local -i return_code=0;
@@ -398,7 +398,7 @@ function runDeployRemoteFiles()
 	buildPackage;
 	ret_code="${?}";
 
-    cname="managedotfiles.sh";
+    cname="setup.sh";
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -428,7 +428,7 @@ function runDeployRemoteFiles()
 		transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${ssh_port_number}" "${target_user}";
 		ret_code="${?}";
 
-        cname="managedotfiles.sh";
+        cname="setup.sh";
 		function_name="${cname}#${FUNCNAME[0]}";
 
 		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -493,7 +493,7 @@ function runRemoveLocalFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="managedotfiles.sh";
+    local cname="setup.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i ret_code=0;
     local -i return_code=0;
@@ -522,7 +522,7 @@ function runRemoveLocalFiles()
 	uninstallFiles "${UNINSTALL_LOCATION_LOCAL}";
 	ret_code="${?}";
 
-    cname="managedotfiles.sh";
+    cname="setup.sh";
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -581,7 +581,7 @@ function runRemoveRemoteFiles()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="managedotfiles.sh";
+    local cname="setup.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local -i error_count=0;
@@ -626,7 +626,7 @@ function runRemoveRemoteFiles()
 	uninstallFiles "${UNINSTALL_LOCATION_REMOTE}" "${target_host}" "${ssh_port_number}" "${target_user}";
 	ret_code="${?}";
 
-    cname="managedotfiles.sh";
+    cname="setup.sh";
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then

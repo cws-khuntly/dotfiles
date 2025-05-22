@@ -25,6 +25,7 @@
 # RUN_TEST_ONLY: Set this value to true to allow the script to run normally
 #                but take no action against found entries.
 #==============================================================================
+TARGET_ACTION="deployAndInstall";
 SOURCE_PATH="${HOME}/workspace/dotfiles";
 INSTALL_PATH="${HOME}/.dotfiles";
 LIB_PATH="${SOURCE_PATH}/lib/dotfiles";

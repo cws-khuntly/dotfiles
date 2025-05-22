@@ -332,7 +332,7 @@ function watchForFile()
     local -i ret_code=0;
     local -i return_code=0;
     local -i error_count=0;
-    local retry_counter=0;
+    local -i retry_counter=0;
     local watch_file;
     local sleep_time;
     local retry_count;
