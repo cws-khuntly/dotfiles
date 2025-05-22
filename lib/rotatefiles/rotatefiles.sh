@@ -88,7 +88,7 @@ function rotateLocalFiles()
         fi
     else
         # make an empty tar
-        temp_tar_file="$(mktemp --tmpdir="${USABLE_TMP_DIR:-TMPDIR}")";
+        temp_tar_file="$(mktemp --tmpdir="${USABLE_TMP_DIR:-${TMPDIR}}")";
 
         if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "temp_tar_file -> ${temp_tar_file}";

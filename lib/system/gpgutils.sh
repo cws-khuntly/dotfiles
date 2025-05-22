@@ -171,7 +171,7 @@ function captureGpgData()
     ## at this point we should have enough information to populate the file
     sed -e "s/&key-algo/${key_algo}/" -e "s/&key-bits/${key_bits}/" -e "s/&key-type/${subkey_type}/" \
         -e "s/&key-length/${subkey_length}/" -e "s/&real-name/${real_name}/" -e "s/&emailaddr/${email_address}/" \
-        -e "s/&expiry/${key_lifetime}/" -e "s/&passphrase/${key_passphrase}/" "${GPG_OPTION_TEMPLATE}" >| "${USABLE_TMP_DIR:-$TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")";
+        -e "s/&expiry/${key_lifetime}/" -e "s/&passphrase/${key_passphrase}/" "${GPG_OPTION_TEMPLATE}" >| "${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")";
     ret_code="${?}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -185,7 +185,7 @@ function captureGpgData()
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while transferring the input to the answer file.";
         fi
     else
-        if (( $(grep -c "&" "${USABLE_TMP_DIR:-$TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")") != 0 )); then
+        if (( $(grep -c "&" "${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")") != 0 )); then
             return_code="${ret_code}"
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -193,19 +193,19 @@ function captureGpgData()
             fi
         else
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: chmod 0600 ${USABLE_TMP_DIR:-$TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")";
+                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: chmod 0600 ${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")";
             fi
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            chmod 0600 "${USABLE_TMP_DIR:-$TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")";
+            chmod 0600 "${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")";
             ret_code="${?}";
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
                 [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred setting permissions on file ${USABLE_TMP_DIR:-$TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}"). Please review logs.";
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred setting permissions on file ${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}"). Please review logs.";
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -317,10 +317,10 @@ function generateGpgKeys()
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Directory created: ${HOME}/.gnupg;";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Create temporary directory for GNUPGHOME...";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp -d --tmpdir=${USABLE_TMP_DIR:-$TMPDIR}})";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp -d --tmpdir=${USABLE_TMP_DIR:-${TMPDIR}})";
     fi
 
-    GNUPGHOME="$(mktemp -d --tmpdir="${USABLE_TMP_DIR:-$TMPDIR}}")";
+    GNUPGHOME="$(mktemp -d --tmpdir="${USABLE_TMP_DIR:-${TMPDIR}}")";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "GNUPGHOME -> ${GNUPGHOME}";
@@ -335,13 +335,13 @@ function generateGpgKeys()
     else
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "GNUPGHOME -> ${GNUPGHOME}";
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${GPG_APPLICATION_PROGRAM} --batch --gen-key ${USABLE_TMP_DIR:-$TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${GPG_APPLICATION_PROGRAM} --batch --gen-key ${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")";
         fi
 
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output="$("${GPG_APPLICATION_PROGRAM}" --homedir="${GNUPGHOME}" --batch --gen-key "${USABLE_TMP_DIR:-$TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")")";
+        cmd_output="$("${GPG_APPLICATION_PROGRAM}" --homedir="${GNUPGHOME}" --batch --gen-key "${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")")";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -365,7 +365,7 @@ function generateGpgKeys()
     ## cleanup
     [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
-    cleanup_list="$(basename "${GPG_OPTION_TEMPLATE}")|${USABLE_TMP_DIR:-$TMPDIR}}";
+    cleanup_list="$(basename "${GPG_OPTION_TEMPLATE}")|${USABLE_TMP_DIR:-${TMPDIR}}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_list -> ${cleanup_list}";

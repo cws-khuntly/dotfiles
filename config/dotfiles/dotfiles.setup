@@ -14,8 +14,6 @@
 #      REVISION:  ---
 #==============================================================================
 
-RELOAD_DOTFILE="${HOME}/.bash_profile";
-
 #==============================================================================
 # base information, required for normal program operations. can be overridden
 # via arguments.
@@ -30,26 +28,17 @@ RELOAD_DOTFILE="${HOME}/.bash_profile";
 SOURCE_PATH="${HOME}/workspace/dotfiles";
 INSTALL_PATH="${HOME}/.dotfiles";
 LIB_PATH="${SOURCE_PATH}/lib/dotfiles";
-TARGET_USER="${LOGNAME}";
 DEPLOY_TO_DIR="/var/tmp";
-LOCAL_INSTALL_CONF="${SOURCE_PATH}/config/setup/dotfiles.conf";
+LOCAL_INSTALL_CONF="${SOURCE_PATH}/config/dotfiles/dotfiles.conf";
 REMOTE_INSTALL_CONF="${DEPLOY_TO_DIR}/dotfiles.conf";
+RELOAD_DOTFILE="${HOME}/.bash_profile";
 
 #==============================================================================
 # SSH configuration information
 #
-# SSH_PORT_NUMBER: The target port number of the SSH server being logged into
-# SSH_KEY_LIST: The list of keys to send to the target for SSH capability
-# SSH_KEY_TYPES: The list of available keys (and bitsizes) for generation
 # GENERATE_SSH_KEYS: Determines whether or not keys are generated on the target
 #==============================================================================
 GENERATE_SSH_KEYS="false";
-SSH_PORT_NUMBER=22;
-SSH_KEYGEN_PROGRAM="ssh-keygen";
-SSH_KNOWN_HOSTS="${HOME}/.ssh/known_hosts";
-SSH_KEY_LIST=("${HOME}/.ssh/id_rsa.pub" "${HOME}/.ssh/id_dsa.pub" "${HOME}/.ssh/id_ecdsa.pub" "${HOME}/.ssh/id_ed2551.pub");
-SSH_KEY_TYPES=("rsa,4096" "ecdsa,521" "ed25519,4096");
-SSH_HOST_KEYS=("ecdsa" "ed25519" "ecdsa-sk" "ed25519-sk" "ecdsa-sha2-nistp256" "ed25519" "rsa");
 
 #==============================================================================
 # GPG configuration information
@@ -57,5 +46,3 @@ SSH_HOST_KEYS=("ecdsa" "ed25519" "ecdsa-sk" "ed25519-sk" "ecdsa-sha2-nistp256" "
 # GENERATE_GPG_KEYS: Determines whether or not keys are generated on the target
 #==============================================================================
 GENERATE_GPG_KEYS="false";
-GPG_APPLICATION_PROGRAM="gpg2";
-GPG_OPTION_TEMPLATE="${SOURCE_PATH}/etc/dotfiles/gpg-template.txt";

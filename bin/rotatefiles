@@ -518,12 +518,12 @@ else
     FUNCTION_NAME="${CNAME}#exec-main";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT} ${SOURCE_DIRECTORY} ${SOURCE_FILE_PATTERN:-DEFAULT_FILE_PATTERN} ${REMOTE_DIRECTORY} ${REMOTE_FILE_NAME} ${LOCAL_MAX_AGE} ${REMOTE_MAX_AGE} ${REMOTE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${ROTATION_TYPE:-${ROTATION_TYPE_DEFAULT}} ${SOURCE_DIRECTORY} ${SOURCE_FILE_PATTERN:-${DEFAULT_FILE_PATTERN}} ${REMOTE_DIRECTORY} ${REMOTE_FILE_NAME} ${LOCAL_MAX_AGE} ${REMOTE_MAX_AGE} ${REMOTE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}";
     fi
 
     [[ -n "${RET_CODE}" ]] && unset -v RET_CODE;
 
-    main "${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT}" "${SOURCE_DIRECTORY}" "${SOURCE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}" "${REMOTE_DIRECTORY}" "${REMOTE_FILE_NAME}" "${LOCAL_MAX_AGE}" "${REMOTE_MAX_AGE}" "${REMOTE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}";
+    main "${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT}" "${SOURCE_DIRECTORY}" "${SOURCE_FILE_PATTERN:-${DEFAULT_FILE_PATTERN}}" "${REMOTE_DIRECTORY}" "${REMOTE_FILE_NAME}" "${LOCAL_MAX_AGE}" "${REMOTE_MAX_AGE}" "${REMOTE_FILE_PATTERN:-${DEFAULT_FILE_PATTERN}}";
     RET_CODE="${?}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -534,13 +534,13 @@ else
         RETURN_CODE=1;
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT} failed on directory ${SOURCE_DIRECTORY}. Return code -> ${RET_CODE}";
-            writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT} failed on directory ${SOURCE_DIRECTORY}. Return code -> ${RET_CODE}";
+            writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${ROTATION_TYPE:-${ROTATION_TYPE_DEFAULT}} failed on directory ${SOURCE_DIRECTORY}. Return code -> ${RET_CODE}";
+            writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${ROTATION_TYPE:-${ROTATION_TYPE_DEFAULT}} failed on directory ${SOURCE_DIRECTORY}. Return code -> ${RET_CODE}";
         fi
     else
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "INFO" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT} on directory ${SOURCE_DIRECTORY} completed successfully.";
-            writeLogEntry "CONSOLE" "STDOUT" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT} on directory ${SOURCE_DIRECTORY} completed successfully.";
+            writeLogEntry "FILE" "INFO" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${ROTATION_TYPE:-${ROTATION_TYPE_DEFAULT}} on directory ${SOURCE_DIRECTORY} completed successfully.";
+            writeLogEntry "CONSOLE" "STDOUT" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${ROTATION_TYPE:-${ROTATION_TYPE_DEFAULT}} on directory ${SOURCE_DIRECTORY} completed successfully.";
         fi
     fi
 fi
