@@ -26,8 +26,7 @@ declare -i RETURN_CODE=0;
 declare CNAME="$(basename "${BASH_SOURCE[0]}")";
 declare FUNCTION_NAME="${CNAME}#startup";
 declare SCRIPT_ROOT="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && printf "%s" "${PWD}")")";
-declare PRIMARY_CONFIG_FILE="${SCRIPT_ROOT}/config/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
-declare SECONDARY_CONFIG_FILE="${HOME}/.setup/config/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
+    declare CONFIG_FILE="${SCRIPT_ROOT}/config/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
 
 if [[ -r "${SCRIPT_ROOT}/lib/system/logger.sh" ]] && [[ -s "${SCRIPT_ROOT}/lib/system/logger.sh" ]]; then
     # shellcheck source=../../lib/system/logger.sh
@@ -60,31 +59,22 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "METHOD_NAME -> ${METHOD_NAME}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SCRIPT_ROOT -> ${SCRIPT_ROOT}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PRIMARY_CONFIG_FILE -> ${PRIMARY_CONFIG_FILE}";
-    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SECONDARY_CONFIG_FILE -> ${SECONDARY_CONFIG_FILE}";
 fi
 
-for CONFIG_FILE in "${PRIMARY_CONFIG_FILE}" "${SECONDARY_CONFIG_FILE}"; do
+if [[ -f "${CONFIG_FILE}" ]] && [[ -r "${CONFIG_FILE}" ]] && [[ -s "${CONFIG_FILE}" ]]; then
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "CONFIG_FILE -> ${CONFIG_FILE}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found configuration file ${CONFIG_FILE}";
     fi
 
-    if [[ -f "${CONFIG_FILE}" ]] && [[ -r "${CONFIG_FILE}" ]] && [[ -s "${CONFIG_FILE}" ]]; then
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found configuration file ${CONFIG_FILE}";
-        fi
+    WORKING_CONFIG_FILE="${CONFIG_FILE}";
 
-        WORKING_CONFIG_FILE="${CONFIG_FILE}";
-
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "WORKING_CONFIG_FILE -> ${WORKING_CONFIG_FILE}";
-        fi
-
-        # shellcheck source=../config/setup/setup.properties
-        source "${WORKING_CONFIG_FILE}";
-
-        break;
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "WORKING_CONFIG_FILE -> ${WORKING_CONFIG_FILE}";
     fi
-done
+
+    # shellcheck source=../config/setup/setup.properties
+    source "${WORKING_CONFIG_FILE}";
+fi
 
 #
 # load the system libs
@@ -198,13 +188,13 @@ function main()
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: validateAndCopyKeysForHost ${target_host} ${ssh_port_number}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: validateAndCopyKeysForHost ${SSH_TRANSPORT_TYPE} ${target_host} ${ssh_port_number}";
                 fi
 
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
-                validateAndCopyKeysForHost "${target_host}" "${ssh_port_number}" "${target_user}";
+                validateAndCopyKeysForHost "${SSH_TRANSPORT_TYPE}" "${target_host}" "${ssh_port_number}" "${target_user}";
                 ret_code="${?}";
 
                 function_name="${CNAME}#${FUNCNAME[0]}";
@@ -291,13 +281,13 @@ function main()
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: validateAndCopyKeysForHost ${target_host} ${ssh_port_number}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: validateAndCopyKeysForHost ${SSH_TRANSPORT_TYPE} ${target_host} ${ssh_port_number}";
                 fi
 
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
-                validateAndCopyKeysForHost "${target_host}" "${ssh_port_number}" "${target_user}";
+                validateAndCopyKeysForHost "${SSH_TRANSPORT_TYPE}" "${target_host}" "${ssh_port_number}" "${target_user}";
                 ret_code="${?}";
 
                 function_name="${CNAME}#${FUNCNAME[0]}";
@@ -409,13 +399,13 @@ function main()
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: validateAndCopyKeysForHost ${target_host} ${ssh_port_number}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: validateAndCopyKeysForHost ${SSH_TRANSPORT_TYPE} ${target_host} ${ssh_port_number}";
                 fi
 
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
-                validateAndCopyKeysForHost "${target_host}" "${ssh_port_number}" "${target_user}";
+                validateAndCopyKeysForHost "${SSH_TRANSPORT_TYPE}" "${target_host}" "${ssh_port_number}" "${target_user}";
                 ret_code="${?}";
 
                 function_name="${CNAME}#${FUNCNAME[0]}";
@@ -527,13 +517,13 @@ function main()
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: validateAndCopyKeysForHost ${target_host} ${ssh_port_number}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${function_name}" "EXEC: validateAndCopyKeysForHost ${SSH_TRANSPORT_TYPE} ${target_host} ${ssh_port_number}";
                 fi
 
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${function_name}" ]] && unset -v function_name;
 
-                validateAndCopyKeysForHost "${target_host}" "${ssh_port_number}" "${target_user}";
+                validateAndCopyKeysForHost "${SSH_TRANSPORT_TYPE}" "${target_host}" "${ssh_port_number}" "${target_user}";
                 ret_code="${?}";
 
                 function_name="${CNAME}#${FUNCNAME[0]}";

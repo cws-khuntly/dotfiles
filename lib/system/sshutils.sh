@@ -400,10 +400,10 @@ function copyKeysToTarget()
         while [[ -z "${sshpass}" ]]; do
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Capture user input:";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: read -s -rp Password for host ${target_host}: \" sshpass";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: read -s -rp Password for ${target_user}@${target_host}: \" sshpass";
             fi
 
-            read -s -rp "Password for host ${target_host}: " sshpass;
+            read -s -rp "Password for ${target_user}@${target_host}: " sshpass;
         done
 
         for keyfile in "${SSH_KEY_LIST[@]}"; do

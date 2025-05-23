@@ -57,7 +57,7 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
 fi
 
 source "${HOME}/.profiles";
-source "${HOME}/.libs";
+source "${HOME}/.lib";
 source "${HOME}/.alias";
 
 if [[ -z "${isReloadRequest}" ]] || [[ "${isReloadRequest}" == "${_FALSE}" ]]; then

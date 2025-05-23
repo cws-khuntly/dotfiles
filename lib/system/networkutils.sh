@@ -97,7 +97,7 @@ function validateHostAvailability()
 
         if [[ -n "${validatedHostName}" ]] || [[ -n "${validatedHostAddress}" ]] && [[ -n "${validatedPortNumber}" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: checkIfHostIsAlive ${validatedHostName} ${validatedPortNumber}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: checkIfHostIsAlive ${target_transport} ${validatedHostName} ${validatedPortNumber}";
             fi
 
             [[ -n "${validatedHostName}" ]] && returnValidatedHost="${validatedHostName}" || returnValidatedHost="${validatedHostAddress}";
@@ -110,7 +110,7 @@ function validateHostAvailability()
             [[ -n "${function_name}" ]] && unset -v function_name;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            checkIfHostIsAlive "${returnValidatedHost}" "${validatedPortNumber}";
+            checkIfHostIsAlive "${target_transport}" "${returnValidatedHost}" "${validatedPortNumber}";
             ret_code="${?}";
 
             cname="networkutils.sh";
@@ -146,6 +146,7 @@ function validateHostAvailability()
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${target_host}" ]] && unset -v target_host;
     [[ -n "${target_port}" ]] && unset -v target_port;
+    [[ -n "${target_transport}" ]] && unset -v target_transport;
     [[ -n "${validatedHostName}" ]] && unset -v validatedHostName;
     [[ -n "${validatedHostAddress}" ]] && unset -v validatedHostAddress;
     [[ -n "${validatedPortNumber}" ]] && unset -v validatedPortNumber;

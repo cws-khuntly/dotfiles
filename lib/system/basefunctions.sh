@@ -144,6 +144,7 @@ function validateAndCopyKeysForHost()
     local -i error_count=0;
     local target_host;
     local target_port;
+    local target_transport;
     local target_user;
     local returned_host;
     local returned_port;
@@ -162,23 +163,26 @@ function validateAndCopyKeysForHost()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    (( ${#} != 3 )) && return 3;
+    (( ${#} != 4 )) && return 3;
 
-    target_host="${1}";
-    target_port="${2}";
-    target_user="${3}";
+    target_transport="${1}";
+    target_host="${2}";
+    target_port="${3}";
+    target_user="${4}";
 
 	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAddress ${target_host} ${target_port}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_transport -> ${target_transport}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_transport} ${target_host} ${target_port}";
 	fi
 
     [[ -n "${cname}" ]] && unset -v cname;
 	[[ -n "${function_name}" ]] && unset -v function_name;
 	[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-	host_data=$(validateHostAvailability "${target_host}" "${target_port}");
+	host_data="$(validateHostAvailability "${target_transport}" "${target_host}" "${target_port}")";
 
     cname="basefunctions.sh";
 	function_name="${cname}#${FUNCNAME[0]}";
@@ -258,6 +262,7 @@ function validateAndCopyKeysForHost()
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${target_host}" ]] && unset -v target_host;
     [[ -n "${target_port}" ]] && unset -v target_port;
+    [[ -n "${target_transport}" ]] && unset -v target_transport;
     [[ -n "${target_user}" ]] && unset -v target_user;
     [[ -n "${returned_host}" ]] && unset -v returned_host;
     [[ -n "${returned_port}" ]] && unset -v returned_port;
