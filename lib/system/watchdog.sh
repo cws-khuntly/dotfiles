@@ -85,7 +85,7 @@ function runWatchdog()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+                [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "watchForProcessID failed. Return code -> ${ret_code}";
@@ -118,7 +118,7 @@ function runWatchdog()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+                [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "watchForFile failed. Return code -> ${ret_code}";
@@ -153,7 +153,7 @@ function runWatchdog()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+                [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "watchForNetworkPort failed. Return code -> ${ret_code}";

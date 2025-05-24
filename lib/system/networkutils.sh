@@ -574,7 +574,7 @@ function checkForValidPort()
         fi
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-            [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+            [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "The provided information failed validation.";
@@ -708,7 +708,7 @@ function checkIfHostIsAlive()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+                [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while checking host availability via nc - no return code/a non-zero return code was received.";
@@ -747,7 +747,7 @@ function checkIfHostIsAlive()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) && [[ -z "${isHostAvailable}" ]] || [[ "${isHostAvailable}" != "open" ]]; then
-                return_code="${ret_code}";
+                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while checking host availability via nmap - no return code/a non-zero return code was received.";
@@ -778,7 +778,7 @@ function checkIfHostIsAlive()
             ret_code="${?}";
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+                [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while checking host availability via bash - no return code/a non-zero return code was received.";

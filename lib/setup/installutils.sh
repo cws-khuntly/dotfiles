@@ -822,22 +822,27 @@ function installRemoteFiles()
                 else
                     ## verify files have been transferred
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh -F ${SCRIPT_ROOT}/config/setup/sshconfig -ql ${target_user} -p ${target_port} ${target_host} \"bash -s\" < \"${DEPLOY_TO_DIR}/$(basename "${file_verification_script}")\"";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: fssh ${SCRIPT_ROOT}/config/setup/sshconfig ${target_host} ${target_port} ${target_user} \"bash -s < ${DEPLOY_TO_DIR}/$(basename "${file_verification_script}")\"";
                     fi
 
                     [[ -n "${verify_response}" ]] && unset -v verify_response;
+					[[ -n "${function_name}" ]] && unset -v function_name;
+					[[ -n "${cname}" ]] && unset -v cname;
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                    verify_response=$(ssh -F "${SCRIPT_ROOT}/config/setup/sshconfig" -ql "${target_user}" -p "${target_port}" "${target_host}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${file_verification_script}")");
+                    verify_response="$(fssh "${SCRIPT_ROOT}/config/setup/sshconfig" "${target_host}" "${target_port}" "${target_user}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${file_verification_script}")")";
                     ret_code="${?}";
+
+					cname="installutils.sh";
+					function_name="${cname}#${FUNCNAME[0]}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "verify_response -> ${verify_response}";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh/verify_response -> ret_code -> ${ret_code}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh / verify_response -> ret_code -> ${ret_code}";
                     fi
 
                     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) && [[ -z "${verify_response}" ]] || (( verify_response != 0 )); then
-                        return_code="${ret_code}";
+                        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while verifying files on remote host ${target_host}.";
@@ -924,22 +929,27 @@ function installRemoteFiles()
                                 else
                                     ## ok, files should be out there. lets go
                                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh -F ${SCRIPT_ROOT}/config/setup/sshconfig -ql ${target_user} -p ${target_port} ${target_host} \"bash -s\" < \"${DEPLOY_TO_DIR}/$(basename "${installation_script}")\"";
+                                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: fssh ${SCRIPT_ROOT}/config/setup/sshconfig ${target_host} ${target_port} ${target_user} \"bash -s < ${DEPLOY_TO_DIR}/$(basename "${installation_script}")\"";
                                     fi
 
                                     [[ -n "${install_response}" ]] && unset -v install_response;
+                					[[ -n "${function_name}" ]] && unset -v function_name;
+                					[[ -n "${cname}" ]] && unset -v cname;
                                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                                    install_response=$(ssh -F "${SCRIPT_ROOT}/config/setup/sshconfig" -ql "${target_user}" -p "${target_port}" "${target_host}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${installation_script}")");
+                                    install_response="$(fssh "${SCRIPT_ROOT}/config/setup/sshconfig" "${target_host}" "${target_port}" "${target_user}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${installation_script}")")";
                                     ret_code="${?}";
+
+                					cname="installutils.sh";
+                					function_name="${cname}#${FUNCNAME[0]}";
 
                                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "install_response -> ${install_response}";
-                                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh/install_response -> ret_code -> ${ret_code}";
+                                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh / install_response -> ret_code -> ${ret_code}";
                                     fi
 
                                     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) || [[ -z "${install_response}" ]]; then
-                                        return_code="${ret_code}";
+                                        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                                             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while performing installation on remote host ${target_host}. install_response -> ${install_response}";

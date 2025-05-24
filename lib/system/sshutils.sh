@@ -16,12 +16,12 @@
 #      REVISION:  ---
 #==============================================================================
 
-#=====  FUNCTION  =============================================================;
-#          NAME:  getHostKeys;
-#   DESCRIPTION:  Obtains and stores the public key for a remote SSH node;
-#    PARAMETERS:  Target host or private key to transform;
-#       RETURNS:  0 if success, 1 otherwise;
-#==============================================================================;
+#=====  FUNCTION  =============================================================
+#          NAME:  getHostKeys
+#   DESCRIPTION:  Obtains and stores the public key for a remote SSH node
+#    PARAMETERS:  Target host or private key to transform
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
 function getHostKeys()
 (
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
@@ -169,13 +169,13 @@ function getHostKeys()
     return "${return_code}";
 )
 
-#=====  FUNCTION  =============================================================;
-#          NAME:  generateSshKeys;
-#   DESCRIPTION:  ssh's to a target host and removes the existing dotfiles;
-#                 directory and copies the new one;
-#    PARAMETERS:  None;
-#       RETURNS:  0 if success, non-zero otherwise;
-#==============================================================================;
+#=====  FUNCTION  =============================================================
+#          NAME:  generateSshKeys
+#   DESCRIPTION:  ssh's to a target host and removes the existing dotfiles
+#                 directory and copies the new one
+#    PARAMETERS:  None
+#       RETURNS:  0 if success, non-zero otherwise
+#==============================================================================
 function generateSshKeys()
 (
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
@@ -346,13 +346,13 @@ function generateSshKeys()
     return "${return_code}";
 )
 
-#=====  FUNCTION  =============================================================;
-#          NAME:  deployFiles;
-#   DESCRIPTION:  ssh's to a target host and removes the existing dotfiles;
-#                 directory and copies the new one;
-#    PARAMETERS:  None;
-#       RETURNS:  0 if success, non-zero otherwise;
-#==============================================================================;
+#=====  FUNCTION  =============================================================
+#          NAME:  deployFiles
+#   DESCRIPTION:  ssh's to a target host and removes the existing dotfiles
+#                 directory and copies the new one
+#    PARAMETERS:  None
+#       RETURNS:  0 if success, non-zero otherwise
+#==============================================================================
 function copyKeysToTarget()
 (
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
@@ -467,6 +467,233 @@ function copyKeysToTarget()
     [[ -n "${target_user}" ]] && unset -v target_user;
     [[ -n "${keyfile}" ]] && unset -v keyfile;
     [[ -n "${error_count}" ]] && unset -v error_count;
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
+    fi
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
+        end_epoch="$(date +"%s")";
+        runtime=$(( end_epoch - start_epoch ));
+
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} END: $(date -d "@${end_epoch}" +"${TIMESTAMP_OPTS}")";
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
+    fi
+
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
+    [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
+
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
+
+    return "${return_code}";
+)
+
+#=====  FUNCTION  =============================================================
+#          NAME:  fssh
+#   DESCRIPTION:  Obtains and stores the public key for a remote SSH node
+#    PARAMETERS:  Target host or private key to transform
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function fssh()
+(
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
+
+    local cname="sshutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local -i return_code=0;
+    local -i error_count=0;
+	local -i ret_code;
+    local sshconfig;
+    local target_host;
+    local target_port;
+	local target_user;
+	local run_cmd;
+	local cmd_output;
+    local -i start_epoch;
+    local -i end_epoch;
+    local -i runtime;
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
+        start_epoch="$(date +"%s")";
+
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} START: $(date -d @"${start_epoch}" +"${TIMESTAMP_OPTS}")";
+    fi
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
+    fi
+
+    (( ${#} != 6 )) && return 3;
+
+	sshconfig="${1}";
+    target_host="${2}";
+    target_port="${3}";
+	target_user="${4}";
+	run_cmd="${5}";
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "sshconfig -> ${sshconfig}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "run_cmd -> ${run_cmd}";
+    fi
+
+	if [[ ! -f "${sshconfig}" ]] && [[ ! -r "${sshconfig}" ]] && [[ ! -f "${sshkey}" ]] && [[ ! -r "${sshkey}" ]]; then
+		return_code=1;
+
+		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+			writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided SSH configuration file could not be found or was not readable.";
+		fi
+	else
+		cmd_output="$(ssh -F "${sshconfig}" -ql "${target_user}" -p "${target_port}" "${target_host}" "${run_cmd}")";
+		ret_code="${?}";
+
+		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
+			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh / run_cmd -> ret_code -> ${ret_code}";
+		fi
+
+		if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) && [[ -z "${verify_response}" ]] || (( verify_response != 0 )); then
+			[[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
+			if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+				writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred running command ${run_cmd} on remote host ${target_host}.";
+			fi
+		fi
+	fi
+
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${sshconfig}" ]] && unset -v sshconfig;
+    [[ -n "${sshkey}" ]] && unset -v sshkey;
+    [[ -n "${target_host}" ]] && unset -v target_host;
+    [[ -n "${target_port}" ]] && unset -v target_port;
+    [[ -n "${target_user}" ]] && unset -v target_user;
+	[[ -n "${run_cmd}" ]] && unset -v run_cmd;
+	[[ -n "${cmd_output}" ]] && unset -v cmd_output;
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
+    fi
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
+        end_epoch="$(date +"%s")";
+        runtime=$(( end_epoch - start_epoch ));
+
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} END: $(date -d "@${end_epoch}" +"${TIMESTAMP_OPTS}")";
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
+    fi
+
+    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
+    [[ -n "${runtime}" ]] && unset -v runtime;
+    [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${cname}" ]] && unset -v cname;
+
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
+
+    return "${return_code}";
+)
+
+#=====  FUNCTION  =============================================================
+#          NAME:  fsftp
+#   DESCRIPTION:  Obtains and stores the public key for a remote SSH node
+#    PARAMETERS:  Target host or private key to transform
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function fsftp()
+(
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
+
+    local cname="sshutils.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local -i return_code=0;
+    local -i error_count=0;
+	local -i ret_code;
+    local sshconfig;
+    local target_host;
+    local target_port;
+	local target_user;
+	local sftpfile;
+	local cmd_output;
+    local -i start_epoch;
+    local -i end_epoch;
+    local -i runtime;
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
+        start_epoch="$(date +"%s")";
+
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} START: $(date -d @"${start_epoch}" +"${TIMESTAMP_OPTS}")";
+    fi
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
+    fi
+
+    (( ${#} != 5 )) && return 3;
+
+	sshconfig="${1}";
+    target_host="${2}";
+    target_port="${3}";
+	target_user="${4}";
+	sftpfile="${5}";
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "sshconfig -> ${sshconfig}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "sftpfile -> ${sftpfile}";
+    fi
+
+	if [[ ! -f "${sshconfig}" ]] && [[ ! -r "${sshconfig}" ]]; then
+		return_code=1;
+
+		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+			writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided SSH configuration file could not be found or was not readable.";
+		fi
+	else
+		cmd_output="$(sftp -F "${sshconfig}" -b "${sftpfile}" -P "${target_port}" "${target_user}@${target_host}")";
+		ret_code="${?}";
+
+		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
+			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh / run_cmd -> ret_code -> ${ret_code}";
+		fi
+
+		if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) && [[ -z "${verify_response}" ]] || (( verify_response != 0 )); then
+			[[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
+			if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+				writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred running command ${run_cmd} on remote host ${target_host}.";
+			fi
+		fi
+	fi
+
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
+    [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${sshconfig}" ]] && unset -v sshconfig;
+    [[ -n "${target_host}" ]] && unset -v target_host;
+    [[ -n "${target_port}" ]] && unset -v target_port;
+    [[ -n "${target_user}" ]] && unset -v target_user;
+	[[ -n "${sftpfile}" ]] && unset -v sftpfile;
+	[[ -n "${cmd_output}" ]] && unset -v cmd_output;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";

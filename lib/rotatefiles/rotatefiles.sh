@@ -81,7 +81,7 @@ function rotateLocalFiles()
     fi
 
     if [[ -z "${file_list[*]}" ]] || (( ${#file_list[*]} == 0 )); then
-        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+        [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "No files were found to rotate. Cannot continue.";
@@ -95,14 +95,14 @@ function rotateLocalFiles()
         fi
 
         if [[ -z "${temp_tar_file}" ]]; then
-            [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+            [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to generate temporary file for archive.";
             fi
         else
             if [[ ! -f "${temp_tar_file}" ]] || [[ ! -w "${temp_tar_file}" ]]; then
-                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+                [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to generate temporary file for archive.";
@@ -125,7 +125,7 @@ function rotateLocalFiles()
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+                    [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while creating the pre-loaded archive. Please review logs.";
@@ -196,7 +196,7 @@ function rotateLocalFiles()
                     done
 
                     if [[ -n "${error_count}" ]] && (( error_count != 0 )) && [[ -n "${ret_code}" ]] && (( ret_code != 0 )); then
-                        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+                        [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "One or more failures occurred during the rotation process. Cannot continue.";
@@ -218,7 +218,7 @@ function rotateLocalFiles()
                         ret_code="${?}";
 
                         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                            [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+                            [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to copy source archive ${temp_tar_file} to target ${remote_directory}/${remote_file_name}";
@@ -347,7 +347,7 @@ function rotateRemoteFiles()
     fi
 
     if [[ -z "${file_list[*]}" ]] || (( ${#file_list[*]} == 0 )); then
-        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+        [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "No files were found to rotate. Cannot continue.";

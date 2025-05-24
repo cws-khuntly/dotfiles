@@ -467,7 +467,7 @@ function transferRemoteFiles()
                 [[ -n "${target_dir}" ]] && unset -v target_dir;
             done
 
-            if [[ ! -s "${sftp_send_file}" ]] || (( file_counter >= ${#files_to_process[*]} )); then
+            if [[ ! -s "${sftp_send_file}" ]] || (( file_counter != ${#files_to_process[*]} )); then
                 return_code=1;
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -476,16 +476,21 @@ function transferRemoteFiles()
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Sending requested files to host ${target_host} as user ${target_user}...";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: sftp -b ${sftp_send_file} -P ${target_port} ${target_user}@${target_host}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: fsftp ${SCRIPT_ROOT}/config/setup/sshconfig ${target_host} ${target_port} ${target_user} ${sftp_send_file}";
                 fi
 
+                [[ -n "${function_name}" ]] && unset -v function_name;
+                [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cmd_output="$(sftp -b "${sftp_send_file}" -P "${target_port}" "${target_user}@${target_host}")";
+                cmd_output="$(fsftp "${SCRIPT_ROOT}/config/setup/sshconfig" "${target_host}" "${target_port}" "${target_user}" "${sftp_send_file}")";
                 ret_code="${?}";
 
+                cname="transferutils.sh";
+                function_name="${cname}#${FUNCNAME[0]}";
+
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "sftp/sftp_send_file -> ret_code -> ${ret_code}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "sftp / sftp_send_file -> ret_code -> ${ret_code}";
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then

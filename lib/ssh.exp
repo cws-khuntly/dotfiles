@@ -97,22 +97,22 @@ if { [ expr { $argc < 2 } ] } {
 if { [ info exists CFGFILE ] } {
     if { [ info exists EXEC ] } {
         if { [ string match -nocase $EXEC "shell" ] } {
-            set _SSH_COMMAND "ssh -qaCktl $USERNAME -F $CFGFILE";
+            set _SSH_COMMAND "ssh -q $USERNAME -F $CFGFILE";
         } else {
-            set _SSH_COMMAND "ssh -qaCktl $USERNAME -F $CFGFILE $HOSTNAME \"$EXEC\"";
+            set _SSH_COMMAND "ssh -q $USERNAME -F $CFGFILE $HOSTNAME \"$EXEC\"";
         }
     } else {
-        set _SSH_COMMAND "ssh -qaCktl $USERNAME $HOSTNAME screen -RR";
+        set _SSH_COMMAND "ssh -q $USERNAME $HOSTNAME screen -RR";
     }
 } else {
     if { [ info exists EXEC ] } {
         if { [ string match -nocase $EXEC "shell" ] } {
-            set _SSH_COMMAND "ssh -qaCktl $USERNAME $HOSTNAME";
+            set _SSH_COMMAND "ssh -q $USERNAME $HOSTNAME";
         } else {
-            set _SSH_COMMAND "ssh -qaCktl $USERNAME $HOSTNAME \"$EXEC\"";
+            set _SSH_COMMAND "ssh -q $USERNAME $HOSTNAME \"$EXEC\"";
         }
     } else {
-        set _SSH_COMMAND "ssh -qaCktl $USERNAME $HOSTNAME screen -RR";
+        set _SSH_COMMAND "ssh -q $USERNAME $HOSTNAME screen -RR";
     }
 }
 

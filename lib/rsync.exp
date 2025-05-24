@@ -93,11 +93,11 @@ if { [ expr { $argc < 4 } ] } {
 }
 
 if { [ info exists CFGFILE ] } {
-    set _RSYNC_COMMAND "rsync -qCcarulKHpEAgtSzihs -e \"ssh -qaCkT -E $env(HOME)/log/ssh.log -l $USERNAME -F $CFGFILE\" ";
+    set _RSYNC_COMMAND "rsync -qCcarulKHpEAgtSzihs -e \"ssh -q -E $env(HOME)/log/ssh.log -l $USERNAME -F $CFGFILE\" ";
     append _RSYNC_COMMAND "--temp-dir=/var/tmp --timeout=10 --no-motd --delete --delete-excluded --progress ";
     append _RSYNC_COMMAND "--exclude-from=$env(HOME)/etc/excludes --blocking-io --stats --progress --log-file=$env(HOME)/log/rsync.log ";
 } else {
-    set _RSYNC_COMMAND "rsync -qCcarulKHpEAgtSihs -e \"ssh -qaCkT -E $env(HOME)/log/ssh.log -l $USERNAME\" ";
+    set _RSYNC_COMMAND "rsync -qCcarulKHpEAgtSihs -e \"ssh -q -E $env(HOME)/log/ssh.log -l $USERNAME\" ";
     append _RSYNC_COMMAND "--temp-dir=/var/tmp --timeout=10 --no-motd --delete --delete-excluded --progress ";
     append _RSYNC_COMMAND "--exclude-from=$env(HOME)/etc/excludes --blocking-io --stats --progress --log-file=$env(HOME)/log/rsync.log ";
 }

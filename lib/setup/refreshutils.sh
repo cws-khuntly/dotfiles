@@ -119,7 +119,7 @@ function refreshFiles()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+                [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Remote refresh of files failed. Please review logs.";
@@ -223,7 +223,7 @@ function refreshLocalFiles()
         fi
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-            [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+            [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while unpacking the file archive. Please review logs.";
@@ -544,7 +544,7 @@ function refreshRemoteFiles()
     fi
 
     if [[ ! -e "${file_verification_script}" ]] || [[ ! -w "${file_verification_script}" ]]; then
-        return_code="${ret_code}";
+        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to generate the file verification script ${file_verification_script}. Please ensure the file exists and can be written to.";
@@ -603,7 +603,7 @@ function refreshRemoteFiles()
             fi
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+                [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute transferFiles with transfer type of ${TRANSFER_LOCATION_REMOTE}. Please review logs.";
@@ -611,18 +611,23 @@ function refreshRemoteFiles()
             else
                 ## verify files have been transferred
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh -F ${SCRIPT_ROOT}/config/setup/sshconfig -ql ${target_user} -p ${target_port} ${target_host} \"bash -s\" < \"${DEPLOY_TO_DIR}/$(basename "${file_verification_script}")\"";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: fssh ${SCRIPT_ROOT}/config/setup/sshconfig ${target_host} ${target_port} ${target_user} \"bash -s < ${DEPLOY_TO_DIR}/$(basename "${file_verification_script}")\"";
                 fi
 
                 [[ -n "${verify_response}" ]] && unset -v verify_response;
+				[[ -n "${function_name}" ]] && unset -v function_name;
+				[[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                verify_response=$(ssh -F "${SCRIPT_ROOT}/config/setup/sshconfig" -ql "${target_user}" -p "${target_port}" "${target_host}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${file_verification_script}")");
+                verify_response="$(fssh "${SCRIPT_ROOT}/config/setup/sshconfig" "${target_host}" "${target_port}" "${target_user}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${file_verification_script}")")";
                 ret_code="${?}";
+
+				cname="installutils.sh";
+				function_name="${cname}#${FUNCNAME[0]}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "verify_response -> ${verify_response}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh/verify_response -> ret_code -> ${ret_code}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh / verify_response -> ret_code -> ${ret_code}";
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) && [[ -z "${verify_response}" ]] || (( verify_response != 0 )); then
@@ -703,7 +708,7 @@ function refreshRemoteFiles()
                             fi
 
                             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+                                [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute transferFiles with transfer type of ${TRANSFER_LOCATION_REMOTE}. Please review logs.";
@@ -711,22 +716,27 @@ function refreshRemoteFiles()
                             else
                                 ## ok, files should be out there. lets go
                                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh -F ${SCRIPT_ROOT}/config/setup/sshconfig -ql ${target_user} -p ${target_port} ${target_host} \"bash -s\" < \"${DEPLOY_TO_DIR}/$(basename "${installation_script}")\"";
+                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: fssh ${SCRIPT_ROOT}/config/setup/sshconfig ${target_host} ${target_port} ${target_user} \"bash -s < ${DEPLOY_TO_DIR}/$(basename "${installation_script}")\"";
                                 fi
 
                                 [[ -n "${refresh_response}" ]] && unset -v refresh_response;
+            					[[ -n "${function_name}" ]] && unset -v function_name;
+            					[[ -n "${cname}" ]] && unset -v cname;
                                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                                refresh_response=$(ssh -F "${SCRIPT_ROOT}/config/setup/sshconfig" -ql "${target_user}" -p "${target_port}" "${target_host}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${installation_script}")");
+                                refresh_response="$(fssh "${SCRIPT_ROOT}/config/setup/sshconfig" "${target_host}" "${target_port}" "${target_user}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${installation_script}")")";
                                 ret_code="${?}";
+
+            					cname="installutils.sh";
+            					function_name="${cname}#${FUNCNAME[0]}";
 
                                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "refresh_response -> ${refresh_response}";
-                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh/refresh_response -> ret_code -> ${ret_code}";
+                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh / refresh_response -> ret_code -> ${ret_code}";
                                 fi
 
                                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) && [[ -z "${refresh_response}" ]]; then
-                                    return_code="${ret_code}";
+                                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while performing installation on remote host ${target_host}. refresh_response -> ${refresh_response}";

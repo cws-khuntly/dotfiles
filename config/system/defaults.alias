@@ -30,7 +30,7 @@ alias scp='sftp -qr';
 alias sftp='sftp -qr';
 alias ssh-keygen='ssh-keygen -C ""';
 alias ssh-keyscan='ssh-keyscan -H';
-alias rsync='rsync -vcarbupEogtIzChi4 --append --safe-links --delete --delete-excluded --exclude-from=${HOME}/config/excludes --timeout 10000 --temp-dir=/var/tmp --no-motd --blocking-io --stats --progress -e "ssh -qaCkT -E ${HOME}/log/ssh.log" --log-file=${HOME}/log/rsync.log';
+alias rsync='rsync -avz --append --safe-links --delete --delete-excluded --exclude-from=${HOME}/config/excludes --timeout 10000 --temp-dir=/var/tmp --no-motd --blocking-io --stats --progress -e "ssh -q -E ${HOME}/log/ssh.log" --log-file=${HOME}/log/rsync.log';
 alias mailx='mailx';
 alias du='du -sh';
 alias df='df -h';
