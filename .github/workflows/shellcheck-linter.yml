@@ -1,4 +1,4 @@
-name: ShellCheck
+name: ShellCheck Linter
 on: [push, pull_request]
 
 jobs:
