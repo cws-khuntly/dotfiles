@@ -8,5 +8,6 @@
     file: "{{ item }}"
   loop:
     - checkout-files.yml
+    - create-dotfiles-setup.yml
     - permission-setup.yml
     - setup-files.yml

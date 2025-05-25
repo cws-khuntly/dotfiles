@@ -7,4 +7,5 @@
   ansible.builtin.include_tasks:
     file: "{{ item }}"
   loop:
-    - create-dotfiles-setup.yml
+    - checkout-setup.yml
+    - permission-setup.yml
