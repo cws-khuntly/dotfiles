@@ -3,3 +3,5 @@
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
 ---
+remote_username: khuntly
+checkout_path: /var/tmp/dotfiles

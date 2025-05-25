@@ -1,0 +1,11 @@
+# ====  ANSIBLE   =============================================================
+#          NAME:  roles/common/tasks/main.yml
+#   DESCRIPTION:  Main entry point for common tasks
+# =============================================================================
+---
+- name: Create dotfiles.setup
+  ansible.builtin.template:
+    src: templates/dotfiles.setup.j2
+    dest: "{{ checkout_path }}/config/dotfiles/dotfiles.setup"
+    owner: {{ ansible_user_id }}
+    mode: '0644'

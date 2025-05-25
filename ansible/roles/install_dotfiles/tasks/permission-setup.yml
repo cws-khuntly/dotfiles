@@ -6,6 +6,5 @@
 - name: Make /var/tmp/ansible-installer/bin/setup executable
   ansible.builtin.file:
     path: /var/tmp/ansible-installer/bin/setup
-    owner: khuntly
-    group: users
+    owner: {{ ansible_user_id }}
     mode: '0755'
