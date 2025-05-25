@@ -3,7 +3,7 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: Make /var/tmp/ansible-installer/bin/setup executable
+- name: Make {{ installer_path }}/bin/setup executable
   ansible.builtin.file:
     path: "{{ installer_path }}/bin/setup"
     owner: "{{ remote_username }}"
