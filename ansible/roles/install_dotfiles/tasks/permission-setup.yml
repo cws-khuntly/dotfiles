@@ -6,5 +6,5 @@
 - name: Make /var/tmp/ansible-installer/bin/setup executable
   ansible.builtin.file:
     path: "{{ installer_path }}/bin/setup"
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ remote_username }}"
     mode: '0755'

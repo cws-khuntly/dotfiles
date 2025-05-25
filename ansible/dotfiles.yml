@@ -19,13 +19,11 @@
         path: "{{ installer_path }}"
         state: directory
         mode: '0700'
-        owner: "{{ ansible_user_id }}"
     - name: Create temporary directory for dotfiles checkout
       ansible.builtin.file:
         path: "{{ checkout_path }}"
         state: directory
         mode: '0700'
-        owner: "{{ ansible_user_id }}"
 
   hosts: dotfiles
   become: true

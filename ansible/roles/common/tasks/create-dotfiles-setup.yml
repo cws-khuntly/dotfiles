@@ -7,5 +7,4 @@
   ansible.builtin.template:
     src: templates/dotfiles.setup.j2
     dest: "{{ checkout_path }}/config/dotfiles/dotfiles.setup"
-    owner: "{{ ansible_user_id }}"
     mode: '0644'
