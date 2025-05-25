@@ -1,3 +1,7 @@
+#======  WORKFLOW  ============================================================
+#          NAME:  shellcheck-linter.yml
+#   DESCRIPTION:  GitHub action for shellcheck
+#=============================================================================
 name: ShellCheck Linter
 on: [push, pull_request]
 
