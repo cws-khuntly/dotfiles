@@ -3,7 +3,3 @@
 #   DESCRIPTION:  Main entry point for common tasks
 #==============================================================================
 ---
-- name: post-cleanup
-  ansible.builtin.file:
-    path: {{ role_tempdir }}
-    state: absent
