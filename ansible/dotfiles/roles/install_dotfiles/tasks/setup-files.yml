@@ -5,6 +5,6 @@
 ---
 - name: Deploy installation files
   ansible.builtin.command:
-    cmd: /opt/tmp/ansible-installer/bin/setup -n dotfiles"
+    cmd: /var/tmp/ansible-installer/bin/setup -n dotfiles"
   changed_when: true
   register: deploy_out
