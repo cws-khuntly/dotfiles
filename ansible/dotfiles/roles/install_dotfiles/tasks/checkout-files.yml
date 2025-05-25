@@ -7,3 +7,4 @@
   ansible.builtin.git:
     repo: https://github.com/cws-khuntly/dotfiles.git
     dest: "{{ role_tempdir }}"
+    version: main

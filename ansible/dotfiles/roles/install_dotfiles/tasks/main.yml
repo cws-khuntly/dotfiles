@@ -10,5 +10,7 @@
     - checkout-dotfiles.yml
     - deploy-files.yml
     - install-files.yml
+
+- name: Send notifications
   notify:
     - post-install-cleanup
