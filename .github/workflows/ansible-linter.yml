@@ -1,0 +1,24 @@
+name: yaml linter
+on: [push, pull_request]
+
+jobs:
+  lint:
+    name: Run yaml linter on Ansible playbooks
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      checks: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Run Ansible linter on playbooks
+        uses: ansible/ansible-lint@main
+        with:
+          args: ""
+          setup_python: "true"
+          working_directory: "ansible"
+          requirements_file: ""
