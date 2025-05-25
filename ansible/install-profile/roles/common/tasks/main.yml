@@ -1,5 +1,9 @@
 #=====  ANSIBLE   =============================================================
-#          NAME:  group_vars/all/main.yml
-#   DESCRIPTION:  Common variables that apply to this play
+#          NAME:  roles/common/tasks/main.yml
+#   DESCRIPTION:  Main entry point for common tasks
 #==============================================================================
 ---
+- name: Main entry point for common tasks
+  tasks:
+    include_tasks:
+      - tasks/create-tempdir.yml
