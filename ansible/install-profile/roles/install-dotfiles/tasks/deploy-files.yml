@@ -5,10 +5,5 @@
 ---
 - name: Deploy installation files
   ansible.builtin.command:
-    argv:
-      - {{ role_tempdir }}/bin/setup
-      - -n dotfiles
-      - -s {{ ansible_fqdn }}
-      - -u {{ ansible_user }}
-      - -a deployFiles
+    cmd: {{ role_tempdir }}/bin/setup -n dotfiles -s {{ ansible_fqdn }} -u {{ ansible_user }} -a deployFiles
   register: deploy_out
