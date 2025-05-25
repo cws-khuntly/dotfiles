@@ -1,5 +1,0 @@
-#=====  ANSIBLE   =============================================================
-#          NAME:  roles/common/handlers/post-cleanup.yml
-#   DESCRIPTION:  Main entry point for common tasks
-#==============================================================================
----

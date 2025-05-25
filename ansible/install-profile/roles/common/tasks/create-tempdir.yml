@@ -1,7 +1,7 @@
-#=====  ANSIBLE   =============================================================
+# ====  ANSIBLE   =============================================================
 #          NAME:  roles/common/tasks/create-tempdir.yml
 #   DESCRIPTION:  Creates a temporary directory for use throughout the role
-#==============================================================================
+# =============================================================================
 ---
 - name: Create temporary directory
   ansible.builtin.tempfile:
