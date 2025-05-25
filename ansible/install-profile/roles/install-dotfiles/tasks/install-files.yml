@@ -3,28 +3,10 @@
 #   DESCRIPTION:  Primary entry point for this play
 #==============================================================================
 ---
-- name: Check if WebSphere Application Server nodeagent started
-  command: systemctl status ibm-was-nodeagent@{{ was_profile_name }}.service
-  ignore_errors: yes
-  changed_when: false
-  register: service_nodeagent_status
-
-- name: WebSphere Application Server nodeagent status
-  fail:
-    msg: |
-      Service ibm-was-nodeagent is not running.
-      Output of `systemctl status inm-was-nodeagent@{{ was_profile_name }}.service`:
-      {{ service_nodeagent_status.stdout }}
-      {{ service_nodeagent_status.stderr }}
-  when: service_nodeagent_status | failed
-
-- name: Check if WebSphere Application Server target started
-  command: systemctl status ibm-was-services@{{ was_profile_name }}.target
-  ignore_errors: yes
-  changed_when: false
-  register: service_wasprofile_status
-
-- name: WebSphere Application Server target status
-  fail:
-    msg: |
-      Service target ibm-was-services@{{ was_profile_name }}.target is not running
+- name: Run installation
+  ansible.builtin.command:
+    argv:
+      - {{ repo_tempdir }}/bin/setup
+      - -n dotfiles
+      - -a deployFiles
+  register: install_out
