@@ -1,3 +1,7 @@
+#======  WORKFLOW  ============================================================
+#          NAME:  build-paxkage.yml
+#   DESCRIPTION:  GitHub action to build dotfiles package
+#=============================================================================
 name: Build and Publish Package
 on:
   workflow_run:
