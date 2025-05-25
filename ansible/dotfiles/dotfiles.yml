@@ -6,6 +6,10 @@
 - name: Deploy and install dotfiles
 
   pre_tasks:
+    - name: Pre-installation cleanup
+      ansible.builtin.file:
+        path: /var/tmp/ansible-installer
+        state: absent
     - name: Create temporary directory for code checkout
       ansible.builtin.file:
         path: /var/tmp/ansible-installer
