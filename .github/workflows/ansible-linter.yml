@@ -1,3 +1,7 @@
+#======  WORKFLOW  ============================================================
+#          NAME:  ansible-linter.yml
+#   DESCRIPTION:  GitHub action for yaml linter
+#=============================================================================
 name: yaml linter
 on: [push, pull_request]
 
