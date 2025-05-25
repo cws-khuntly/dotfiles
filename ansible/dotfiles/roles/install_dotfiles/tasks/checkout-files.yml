@@ -3,8 +3,14 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
+- name: Checkout setup from Github
+  ansible.builtin.git:
+    repo: https://github.com/cws-khuntly/dotfiles-setup.git
+    dest: /var/tmp/ansible-installer
+    version: main
+
 - name: Checkout dotfiles from Github
   ansible.builtin.git:
     repo: https://github.com/cws-khuntly/dotfiles.git
-    dest: /var/tmp/ansible-installer
+    dest: /var/tmp/dotfiles
     version: main

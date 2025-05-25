@@ -10,9 +10,16 @@
       ansible.builtin.file:
         path: /var/tmp/ansible-installer
         state: absent
-    - name: Create temporary directory for code checkout
+    - name: Create temporary directory for setup checkout
       ansible.builtin.file:
         path: /var/tmp/ansible-installer
+        state: directory
+        mode: '0700'
+        owner: khuntly
+        group: users
+    - name: Create temporary directory for dotfiles checkout
+      ansible.builtin.file:
+        path: /var/tmp/dotfiles
         state: directory
         mode: '0700'
         owner: khuntly
@@ -26,7 +33,11 @@
     - install_dotfiles
 
   post_tasks:
-    - name: Post-installation cleanup
+    - name: Post-installation cleanup of /var/tmp/ansible-installer
       ansible.builtin.file:
         path: /var/tmp/ansible-installer
+        state: absent
+    - name: Post-installation cleanup of /var/tmp/dotfiles
+      ansible.builtin.file:
+        path: /var/tmp/dotfiles
         state: absent
