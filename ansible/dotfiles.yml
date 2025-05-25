@@ -12,7 +12,7 @@
         state: absent
       with_items:
         - "{{ checkout_path }}"
-        - ansible-installer
+        - "{{ installer_path }}"
 
     - name: Create temporary directory for setup checkout
       ansible.builtin.file:
@@ -39,4 +39,4 @@
         state: absent
       with_items:
         - "{{ checkout_path }}"
-        - ansible-installer
+        - "{{ installer_path }}"
