@@ -19,5 +19,5 @@ galaxy_info:
     - name: Amazon
       versions:
         - all
-  categories:
+  galaxy_tags:
     - system
