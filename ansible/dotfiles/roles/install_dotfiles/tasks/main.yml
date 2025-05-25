@@ -8,5 +8,4 @@
     file: "{{ item }}"
   loop:
     - checkout-files.yml
-    - deploy-files.yml
-    - install-files.yml
+    - setup-files.yml

@@ -1,10 +1,10 @@
 # =====  ANSIBLE  ============================================================
-#          NAME:  tasks/main.yml
+#          NAME:  tasks/deploy-files.yml
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: Run installation
+- name: Deploy installation files
   ansible.builtin.command:
-    cmd: "{{ role_tempdir }}/bin/setup -n dotfiles -s {{ ansible_fqdn }} -u {{ ansible_user }} -a installFiles"
-  changed_when: true
-  register: install_out
+    cmd: "{{ role_tempdir }}/bin/setup -n dotfiles"
+  changed_when: false
+  register: deploy_out
