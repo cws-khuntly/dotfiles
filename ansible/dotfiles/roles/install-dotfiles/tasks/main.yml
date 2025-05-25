@@ -5,9 +5,11 @@
 ---
 - name: Kick off dotfiles install
   tasks:
-    include_tasks:
-      - checkout-files
-      - deploy-files
-      - install-files
-    notify:
-      - post-cleanup
+    ansible.builtin.include_tasks:
+      file: {{ item }}
+  loop:
+    - checkout-files.yml
+    - deploy-files.yml
+    - install-files.yml
+  notify:
+    - post-cleanup
