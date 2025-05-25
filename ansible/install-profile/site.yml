@@ -1,0 +1,10 @@
+#======  ANSIBLE  ============================================================
+#          NAME:  site.yml
+#   DESCRIPTION:  Entry point for playbook
+#=============================================================================
+---
+- name: Run postup healthcheck
+  hosts: appservers
+  roles:
+    - postup
+    - healthcheck

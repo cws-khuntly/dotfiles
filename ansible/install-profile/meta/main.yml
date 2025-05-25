@@ -1,0 +1,23 @@
+#=====  ANSIBLE   =============================================================
+#          NAME:  meta/main.yml
+#   DESCRIPTION:  Meta information for this playbook
+#==============================================================================
+---
+galaxy_info:
+  author: "Kevin Huntly"
+  company: "CWS, Inc."
+  description: "dotfiles stuff."
+  license: CC0 1.0 Universal
+  min_ansible_version: 1.2
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: Amazon
+      versions:
+        - all
+  categories:
+    - system

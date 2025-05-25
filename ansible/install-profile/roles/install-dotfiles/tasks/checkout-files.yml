@@ -1,0 +1,23 @@
+#======  ANSIBLE  ============================================================
+#          NAME:  tasks/main.yml
+#   DESCRIPTION:  Primary entry point for this play
+#==============================================================================
+---
+- name: Create temporary checkout directory
+  ansible.builtin.tempfile:
+    state: directory
+    suffix: repo
+  register: repo_tempdir
+
+- name: Checkout dotfiles from Github
+  ansible.builtin.git:
+    repo: https://github.com/cws-khuntly/dotfiles.git
+    dest: {{ repo_tempdir }}
+
+- name: Run installation
+  ansible.builtin.command:
+    argv:
+      - {{ repo_tempdir }}/bin/setup
+      - -n dotfiles
+      - -a deployFiles
+  register: install_out

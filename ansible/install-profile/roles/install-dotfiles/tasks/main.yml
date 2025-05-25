@@ -1,0 +1,10 @@
+#======  ANSIBLE  ============================================================
+#          NAME:  tasks/main.yml
+#   DESCRIPTION:  Primary entry point for this play
+#==============================================================================
+---
+- name: Kick off dotfiles install
+  tasks:
+    include_tasks:
+      - tasks/deploy-files.yml
+      - tasks/install-files.yml
