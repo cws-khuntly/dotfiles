@@ -3,10 +3,10 @@
 #   DESCRIPTION:  Main entry point for common tasks
 # =============================================================================
 ---
-- name: Main entry point for dotfiles install
+- name: Main entry point for files install
   ansible.builtin.include_tasks:
     file: "{{ item }}"
   loop:
-    - checkout-dotfiles.yml
+    - checkout-files.yml
     - deploy-files.yml
     - install-files.yml
