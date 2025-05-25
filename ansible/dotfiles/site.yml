@@ -4,7 +4,21 @@
 # ============================================================================
 ---
 - name: Deploy and install dotfiles
+
+  pre_tasks:
+    - name: Create temporary directory for code checkout
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: role
+      register: role_tempdir
+
   hosts: all
   roles:
     - common
     - install_dotfiles
+
+  post_tasks:
+    - name: Post-installation cleanup
+      ansible.builtin.file:
+        path: "{{ role_tempdir }}"
+        state: absent

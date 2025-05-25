@@ -3,8 +3,4 @@
 #   DESCRIPTION:  Main entry point for common tasks
 # =============================================================================
 ---
-- name: Main entry point for common tasks
-  ansible.builtin.include_tasks:
-    file: "{{ item }}"
-  loop:
-    - create-tempdir.yml
+
