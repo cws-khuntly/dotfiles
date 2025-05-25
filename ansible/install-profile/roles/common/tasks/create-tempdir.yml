@@ -1,5 +1,10 @@
-- name: Create temporary checkout directory
+#=====  ANSIBLE   =============================================================
+#          NAME:  roles/common/tasks/create-tempdir.yml
+#   DESCRIPTION:  Creates a temporary directory for use throughout the role
+#==============================================================================
+---
+- name: Create temporary directory
   ansible.builtin.tempfile:
     state: directory
-    suffix: repo
-  register: repo_tempdir
+    suffix: role
+  register: role_tempdir
