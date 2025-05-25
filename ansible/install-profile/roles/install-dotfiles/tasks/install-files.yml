@@ -8,5 +8,5 @@
     argv:
       - {{ repo_tempdir }}/bin/setup
       - -n dotfiles
-      - -a deployFiles
+      - -a installFiles
   register: install_out
