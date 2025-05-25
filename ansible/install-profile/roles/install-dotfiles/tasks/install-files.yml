@@ -6,7 +6,7 @@
 - name: Run installation
   ansible.builtin.command:
     argv:
-      - {{ repo_tempdir }}/bin/setup
+      - {{ role_tempdir }}/bin/setup
       - -n dotfiles
       - -a installFiles
   register: install_out
