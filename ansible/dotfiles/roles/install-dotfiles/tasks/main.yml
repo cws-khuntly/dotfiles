@@ -1,14 +1,13 @@
-# =====  ANSIBLE  ============================================================
-#          NAME:  tasks/main.yml
-#   DESCRIPTION:  Primary entry point for this play
+# ====  ANSIBLE   =============================================================
+#          NAME:  roles/common/tasks/main.yml
+#   DESCRIPTION:  Main entry point for common tasks
 # =============================================================================
 ---
-- name: Kick off dotfiles install
-  tasks:
-    ansible.builtin.include_tasks:
-      file: {{ item }}
+- name: Main entry point for dotfiles install
+  ansible.builtin.include_tasks:
+    file: {{ item }}
   loop:
-    - checkout-files.yml
+    - checkout-dotfiles.yml
     - deploy-files.yml
     - install-files.yml
   notify:
