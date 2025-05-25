@@ -11,4 +11,4 @@
     - deploy-files.yml
     - install-files.yml
   notify:
-    - post-cleanup
+    - post-install-cleanup

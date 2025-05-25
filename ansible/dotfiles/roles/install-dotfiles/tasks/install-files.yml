@@ -6,4 +6,5 @@
 - name: Run installation
   ansible.builtin.command:
     cmd: "{{ role_tempdir }}/bin/setup -n dotfiles -s {{ ansible_fqdn }} -u {{ ansible_user }} -a installFiles"
+  changed_when: true
   register: install_out
