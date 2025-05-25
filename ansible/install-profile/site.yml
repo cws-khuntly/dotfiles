@@ -3,7 +3,7 @@
 #   DESCRIPTION:  Entry point for playbook
 #=============================================================================
 ---
-- name: Run postup healthcheck
+- name: Deploy and install dotfiles
   hosts: all
   roles:
     - common
