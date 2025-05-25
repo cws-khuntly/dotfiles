@@ -7,7 +7,7 @@
 - name: Deploy installation files
   ansible.builtin.command:
     argv:
-      - {{ repo_tempdir }}/bin/setup
+      - {{ role_tempdir }}/bin/setup
       - -n dotfiles
       - -a deployFiles
   register: deploy_out
