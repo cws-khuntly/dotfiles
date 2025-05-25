@@ -6,8 +6,8 @@
 - name: Kick off dotfiles install
   tasks:
     include_tasks:
-      - tasks/checkout-files
-      - tasks/deploy-files
-      - tasks/install-files
+      - checkout-files
+      - deploy-files
+      - install-files
     notify:
-      - handlers/post-cleanup
+      - post-cleanup

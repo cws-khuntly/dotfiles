@@ -6,4 +6,4 @@
 - name: Main entry point for common tasks
   tasks:
     include_tasks:
-      - tasks/create-tempdir.yml
+      - create-tempdir.yml
