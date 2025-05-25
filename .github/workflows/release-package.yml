@@ -1,3 +1,7 @@
+#======  WORKFLOW  ============================================================
+#          NAME:  release-package.yml
+#   DESCRIPTION:  GitHub action to release a dotfiles package
+#=============================================================================
 name: Release Package
 on:
   workflow_run:
