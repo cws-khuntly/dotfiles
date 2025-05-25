@@ -1,6 +1,6 @@
 #======  WORKFLOW  ============================================================
-#          NAME:  build-paxkage.yml
-#   DESCRIPTION:  GitHub action to build dotfiles package
+#          NAME:  build-package.yml
+#   DESCRIPTION:  GitHub action to build/publish dotfiles package
 #=============================================================================
 name: Build and Publish Package
 on:
