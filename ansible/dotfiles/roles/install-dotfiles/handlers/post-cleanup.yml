@@ -5,5 +5,5 @@
 ---
 - name: post-cleanup
   ansible.builtin.file:
-    path: {{ role_tempdir }}
+    path: "{{ role_tempdir }}"
     state: absent

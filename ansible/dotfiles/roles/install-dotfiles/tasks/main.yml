@@ -5,7 +5,7 @@
 ---
 - name: Main entry point for dotfiles install
   ansible.builtin.include_tasks:
-    file: {{ item }}
+    file: "{{ item }}"
   loop:
     - checkout-dotfiles.yml
     - deploy-files.yml

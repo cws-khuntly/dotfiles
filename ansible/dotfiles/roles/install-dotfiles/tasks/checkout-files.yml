@@ -6,4 +6,4 @@
 - name: Checkout dotfiles from Github
   ansible.builtin.git:
     repo: https://github.com/cws-khuntly/dotfiles.git
-    dest: {{ role_tempdir }}
+    dest: "{{ role_tempdir }}"
