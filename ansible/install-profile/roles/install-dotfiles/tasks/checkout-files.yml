@@ -3,12 +3,6 @@
 #   DESCRIPTION:  Primary entry point for this play
 #==============================================================================
 ---
-- name: Create temporary checkout directory
-  ansible.builtin.tempfile:
-    state: directory
-    suffix: repo
-  register: repo_tempdir
-
 - name: Checkout dotfiles from Github
   ansible.builtin.git:
     repo: https://github.com/cws-khuntly/dotfiles.git
