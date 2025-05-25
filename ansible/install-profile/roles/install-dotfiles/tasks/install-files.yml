@@ -8,5 +8,7 @@
     argv:
       - {{ role_tempdir }}/bin/setup
       - -n dotfiles
+      - -s {{ ansible_fqdn }}
+      - -u {{ ansible_user }}
       - -a installFiles
   register: install_out
