@@ -10,4 +10,4 @@
       - tasks/deploy-files.yml
       - tasks/install-files.yml
     notify:
-      - post_cleanup
+      - post-cleanup
