@@ -5,6 +5,6 @@
 ---
 - name: Deploy installation files
   ansible.builtin.command:
-    cmd: "{{ role_tempdir }}/bin/setup -n dotfiles"
+    cmd: "{{ role_tempdir.path }}/bin/setup -n dotfiles"
   changed_when: false
   register: deploy_out

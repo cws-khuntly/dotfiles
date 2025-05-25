@@ -22,5 +22,5 @@
   post_tasks:
     - name: Post-installation cleanup
       ansible.builtin.file:
-        path: "{{ role_tempdir }}"
+        path: "{{ role_tempdir.path }}"
         state: absent
