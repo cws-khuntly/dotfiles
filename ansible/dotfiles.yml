@@ -8,7 +8,7 @@
   pre_tasks:
     - name: Pre-installation cleanup
       ansible.builtin.file:
-        path: /var/tmp/{{ item }}
+        path: "{{ item }}"
         state: absent
       with_items:
         - "{{ checkout_path }}"
@@ -16,32 +16,29 @@
 
     - name: Create temporary directory for setup checkout
       ansible.builtin.file:
-        path: /var/tmp/ansible-installer
+        path: "{{ installer_path }}"
         state: directory
         mode: '0700'
-        owner: {{ ansible_user_id }}
-        group: users
+        owner: "{{ ansible_user_id }}"
     - name: Create temporary directory for dotfiles checkout
       ansible.builtin.file:
-        path: {{ checkout_path }}
+        path: "{{ checkout_path }}"
         state: directory
         mode: '0700'
-        owner: {{ ansible_user_id }}
-        group: users
+        owner: "{{ ansible_user_id }}"
 
   hosts: dotfiles
   become: true
-  become_user: {{ remote_username }}
+  become_user: "{{ remote_username }}"
   roles:
     - common
     - install_dotfiles
 
   post_tasks:
-    - name: Post-installation cleanup of /var/tmp/ansible-installer
+    - name: Post-installation cleanup
       ansible.builtin.file:
-        path: /var/tmp/ansible-installer
+        path: "{{ item }}"
         state: absent
-    - name: Post-installation cleanup of /var/tmp/dotfiles
-      ansible.builtin.file:
-        path: {{ checkout_path }}
-        state: absent
+      with_items:
+        - "{{ checkout_path }}"
+        - ansible-installer

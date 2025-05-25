@@ -6,11 +6,11 @@
 - name: Checkout setup from Github
   ansible.builtin.git:
     repo: https://github.com/cws-khuntly/dotfiles-setup.git
-    dest: /var/tmp/ansible-installer
+    dest: "{{ installer_path }}"
     version: main
 
 - name: Checkout dotfiles from Github
   ansible.builtin.git:
     repo: https://github.com/cws-khuntly/dotfiles.git
-    dest: /var/tmp/dotfiles
+    dest: "{{ checkout_path }}"
     version: main

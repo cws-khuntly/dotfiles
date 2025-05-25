@@ -5,3 +5,4 @@
 ---
 remote_username: khuntly
 checkout_path: /var/tmp/dotfiles
+installer_path: /var/tmp/ansible-installer
