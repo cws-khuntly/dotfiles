@@ -8,4 +8,5 @@
     file: "{{ item }}"
   loop:
     - checkout-files.yml
+    - permission-setup.yml
     - setup-files.yml

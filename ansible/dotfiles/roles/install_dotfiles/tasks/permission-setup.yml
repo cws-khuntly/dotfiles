@@ -1,0 +1,11 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  tasks/deploy-files.yml
+#   DESCRIPTION:  Primary entry point for this play
+# =============================================================================
+---
+- name: Make /var/tmp/ansible-installer/bin/setup executable
+  ansible.builtin.file:
+    path: /var/tmp/ansible-installer/bin/setup
+    owner: khuntly
+    group: users
+    mode: '0755'
