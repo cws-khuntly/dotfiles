@@ -13,6 +13,8 @@
       register: role_tempdir
 
   hosts: dotfiles
+  become: true
+  become_user: khuntly
   roles:
     - common
     - install_dotfiles
