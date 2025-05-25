@@ -6,5 +6,5 @@
 - name: Run postup healthcheck
   hosts: appservers
   roles:
-    - postup
-    - healthcheck
+    - common
+    - install-dotfiles
