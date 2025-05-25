@@ -7,10 +7,12 @@
 
   pre_tasks:
     - name: Create temporary directory for code checkout
-      ansible.builtin.tempfile:
+      ansible.builtin.file:
+        path: /opt/tmp/ansible-installer
         state: directory
-        suffix: role
-      register: role_tempdir
+        mode: '0700'
+        owner: khuntly
+        group: users
 
   hosts: dotfiles
   become: true
@@ -22,5 +24,5 @@
   post_tasks:
     - name: Post-installation cleanup
       ansible.builtin.file:
-        path: "{{ role_tempdir.path }}"
+        path: /opt/tmp/ansible-installer
         state: absent
