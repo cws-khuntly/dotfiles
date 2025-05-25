@@ -12,7 +12,7 @@
         suffix: role
       register: role_tempdir
 
-  hosts: all
+  hosts: dotfiles
   roles:
     - common
     - install_dotfiles
