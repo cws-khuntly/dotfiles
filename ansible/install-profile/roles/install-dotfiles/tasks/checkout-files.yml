@@ -13,11 +13,3 @@
   ansible.builtin.git:
     repo: https://github.com/cws-khuntly/dotfiles.git
     dest: {{ repo_tempdir }}
-
-- name: Run installation
-  ansible.builtin.command:
-    argv:
-      - {{ repo_tempdir }}/bin/setup
-      - -n dotfiles
-      - -a deployFiles
-  register: install_out
