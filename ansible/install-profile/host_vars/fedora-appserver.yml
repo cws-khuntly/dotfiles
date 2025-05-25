@@ -3,5 +3,3 @@
 #   DESCRIPTION:  Common variables that apply to this play
 #==============================================================================
 ---
-target_server: {{ ansible_fqdn }}
-target_user: {{ ansible_user }}
