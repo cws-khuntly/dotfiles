@@ -28,11 +28,11 @@ PACKAGE_NAME="dotfiles";
 #                but take no action against found entries.
 #==============================================================================
 TARGET_ACTION="deployAndInstall";
-SOURCE_PATH="{{ checkout_path }}";
+SOURCE_PATH="{{ global_checkout_path }}";
 INSTALL_PATH="${HOME}/.dotfiles";
-LIB_PATH="{{ checkout_path }}/lib/dotfiles";
+LIB_PATH="{{ global_checkout_path }}/lib/dotfiles";
 DEPLOY_TO_DIR="/var/tmp";
-LOCAL_INSTALL_CONF="{{ checkout_path }}/config/dotfiles/dotfiles.conf";
+LOCAL_INSTALL_CONF="{{ global_checkout_path }}/config/dotfiles/dotfiles.conf";
 REMOTE_INSTALL_CONF="${DEPLOY_TO_DIR}/dotfiles.conf";
 
 #==============================================================================
