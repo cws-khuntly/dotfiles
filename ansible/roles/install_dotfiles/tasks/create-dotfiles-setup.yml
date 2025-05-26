@@ -6,5 +6,5 @@
 - name: Create dotfiles.setup
   ansible.builtin.template:
     src: templates/dotfiles.setup.j2
-    dest: "{{ common_checkout_path }}/config/dotfiles/dotfiles.setup"
+    dest: "{{ global_checkout_path }}/config/dotfiles/dotfiles.setup"
     mode: '0644'

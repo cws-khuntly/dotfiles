@@ -3,5 +3,3 @@
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
 ---
-common_checkout_path: /var/tmp/dotfiles
-common_installer_path: /var/tmp/ansible-installer
