@@ -25,12 +25,16 @@
         state: directory
         mode: '0700'
 
-  hosts: dotfiles
+  hosts: user_defined
   become: true
   become_user: "{{ remote_username }}"
-  roles:
-    - common
-    - install_dotfiles
+  tasks:
+    - name: Run package roles
+      ansible.builtin.include_role:
+        name: "{{ item }}"
+      with_items:
+        - common
+        - install_dotfiles
 
   post_tasks:
     - name: Post-installation cleanup
