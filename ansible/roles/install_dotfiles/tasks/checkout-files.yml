@@ -6,5 +6,5 @@
 - name: Checkout dotfiles from Github
   ansible.builtin.git:
     repo: https://github.com/cws-khuntly/dotfiles.git
-    dest: "{{ checkout_path }}"
+    dest: "{{ common_checkout_path }}"
     version: main
