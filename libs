@@ -45,7 +45,6 @@ for FILE in "${HOME}/libs/system/"*.sh "${HOME}/lib/profile/"*.sh; do
     fi
 
     [[ "${FILE}" == "logger.sh" ]] && continue;
-    [[ "${FILE}" == "cws-profile.sh" ]] && continue;
 
     # shellcheck source=/dev/null
     source "${FILE}";
