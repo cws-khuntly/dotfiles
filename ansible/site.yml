@@ -11,10 +11,10 @@
         path: "{{ item }}"
         state: absent
       with_items:
-        - "{{ common_checkout_path }}"
         - "{{ common_installer_path }}"
+        - "{{ common_checkout_path }}"
 
-    - name: Create temporary directory for setup checkout
+    - name: Create temporary directories
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
@@ -27,11 +27,13 @@
   become: true
   become_user: "{{ common_remote_username }}"
   tasks:
-    - name: Run package roles
+    - name: Run common role
+      ansible.builtin.include_role:
+        name: common
+    - name: Run custom roles
       ansible.builtin.include_role:
         name: "{{ item }}"
       with_items:
-        - common
         - install_dotfiles
 
   post_tasks:
@@ -41,4 +43,4 @@
         state: absent
       with_items:
         - "{{ common_checkout_path }}"
-        - "{{ common_installer_path }}"
+        - "{{ common_setup_path }}"
