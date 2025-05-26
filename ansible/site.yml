@@ -25,7 +25,7 @@
 
   hosts: user_defined
   become: true
-  become_user: "{{ common_remote_username }}"
+  become_user: "{{ global_remote_username }}"
   tasks:
     - name: Run common role
       ansible.builtin.include_role:
