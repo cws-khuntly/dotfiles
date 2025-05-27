@@ -24,7 +24,7 @@ ConditionPathExists=%h/workspace/%i
 [Service]
 Type=oneshot
 ExecStart=/bin/git -C %h/workspace/%i fetch origin
-ExecStart=/bin/git -C %h/workspace/%i reset --hard origin/master
+ExecStart=/bin/git -C %h/workspace/%i git pou
 ExecStart=/bin/git -C %h/workspace/%i pull
 SuccessExitStatus=0
 
