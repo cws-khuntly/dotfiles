@@ -1,0 +1,15 @@
+profile: production
+strict: true
+use_default_rules: true
+
+skip_list:
+  - '403'
+
+enable_list:
+  - args
+  - empty-string-compare
+  - no-log-password
+  - no-same-owner
+  - name
+  - yaml
+  - jinja
