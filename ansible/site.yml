@@ -10,8 +10,6 @@
       - id_ed25519
       - id_rsa
   hosts: all
-  become: true
-  become_user: "{{ default_remote_username }}"
 
   pre_tasks:
     - name: "Check for local SSH key(s) - {{ item }}"
