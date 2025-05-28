@@ -175,3 +175,4 @@ cython_debug/
 *.tgz
 
 #dotfiles
+config/ansible/credentials.yml
