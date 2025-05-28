@@ -5,5 +5,5 @@
 ---
 - name: Remove existing dotfiles directory
   ansible.builtin.file:
-    path: "{{ ansible_facts.ansible_user_home }}/.dotfiles"
+    path: "{{ dotfiles_base_path }} | default({{ ansible_facts.ansible_user_home }} + '/.dotfiles"
     state: absent
