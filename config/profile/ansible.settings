@@ -20,9 +20,9 @@
 
 [[ -z "$(compgen -c | grep -Ew "(^ansible-playbook)" | sort | uniq)" ]] && return;
 
-alias ansible-dotfiles='ansible-playbook -i ${HOME}workspace/dotfiles/ansible/hosts.yml ${HOME}/workspace/dotfiles/ansible/site.yml
+alias ansible-dotfiles='ansible-playbook -i ${HOME}workspace/dotfiles/ansible/hosts.yml ${HOME}/workspace/dotfiles/ansible/site.yml';
 
-if [[ "${LOGNAME}" == "ansible" ]] && (( EUID == 5000 )); then
+if [[ "${LOGNAME}" == "ansible" ]] && (( EUID == 6000 )); then
     alias pull-ansible-cfg='git fetch origin && git reset --hard origin && git pull';
     alias pull-workspaces='for workspace in $(ls -ltr ${HOME}/workspace | awk '{print $NF}'); do git -C ${HOME}/workspace/${workspace} fetch origin && git -C ${HOME}/workspace/${workspace} reset --hard origin && git pull';
     alias build-system='ansible-playbook -i workspace/ansible/inventory/build.yml --vault-id buildcreds@prompt workspace/system-build/site.yml'
