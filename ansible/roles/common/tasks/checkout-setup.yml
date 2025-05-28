@@ -6,5 +6,5 @@
 - name: Checkout setup from Github
   ansible.builtin.git:
     repo: https://github.com/cws-khuntly/dotfiles-setup.git
-    dest: "{{ global_installer_path }}"
+    dest: "{{ global_installer_path | default('/var/tmp/checkout-dotfiles') }}"
     version: main
