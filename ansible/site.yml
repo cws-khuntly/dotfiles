@@ -41,8 +41,8 @@
         path: "{{ item }}"
         state: absent
       with_items:
-        - "{{ global_installer_path }}"
-        - "{{ global_checkout_path }}"
+        - "{{ global_installer_path | default('/var/tmp/checkout-setup') }}"
+        - "{{ global_checkout_path | default('/var/tmp/checkout-dotfiles') }}"
 
     - name: Create temporary directories
       ansible.builtin.file:
@@ -50,8 +50,8 @@
         state: directory
         mode: '0700'
       with_items:
-        - "{{ global_installer_path }}"
-        - "{{ global_checkout_path }}"
+        - "{{ global_installer_path | default('/var/tmp/checkout-setup') }}"
+        - "{{ global_checkout_path | default('/var/tmp/checkout-dotfiles') }}"
 
   tasks:
     - name: Run common role
@@ -68,5 +68,5 @@
         path: "{{ item }}"
         state: absent
       with_items:
-        - "{{ global_checkout_path }}"
-        - "{{ global_setup_path }}"
+        - "{{ global_installer_path | default('/var/tmp/checkout-setup') }}"
+        - "{{ global_checkout_path | default('/var/tmp/checkout-dotfiles') }}"
