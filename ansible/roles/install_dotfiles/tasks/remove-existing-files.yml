@@ -1,0 +1,24 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  site.yml
+#   DESCRIPTION:  Entry point for playbook
+# ============================================================================
+---
+- name: Find and delete all symbolic links
+  ansible.builtin.find:
+    paths: "${HOME}"
+    recurse: no
+    follow: no
+    type: "l"
+  register: symlinks
+
+- name: Delete found symlinks
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ symlinks.files }}"
+
+- name: Remove existing dotfiles directory
+  ansible.
+  ansible.builtin.file:
+    path: "${HOME}/.dotfiles"
+    state: absent
