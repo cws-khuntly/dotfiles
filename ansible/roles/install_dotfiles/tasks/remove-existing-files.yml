@@ -6,9 +6,8 @@
 - name: Find and delete all symbolic links
   ansible.builtin.find:
     paths: "{{ ansible_facts.ansible_user_home }}"
-    recurse: no
-    follow: no
-    type: "l"
+    file_type: "link"
+    hidden: true
   register: symlinks
 
 - name: Delete found symlinks
