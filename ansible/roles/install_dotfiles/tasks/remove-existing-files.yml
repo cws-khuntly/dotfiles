@@ -3,19 +3,6 @@
 #   DESCRIPTION:  Entry point for playbook
 # ============================================================================
 ---
-- name: Find and delete all symbolic links
-  ansible.builtin.find:
-    paths: "{{ ansible_facts.ansible_user_home }}"
-    file_type: "link"
-    hidden: true
-  register: symlinks
-
-- name: Delete found symlinks
-  ansible.builtin.file:
-    path: "{{ item.path }}"
-    state: absent
-  with_items: "{{ symlinks.files }}"
-
 - name: Remove existing dotfiles directory
   ansible.builtin.file:
     path: "{{ ansible_facts.ansible_user_home }}/.dotfiles"
