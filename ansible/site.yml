@@ -6,9 +6,33 @@
 - name: Deploy and install dotfiles
   hosts: all
   become: true
-  become_user: "{{ global_remote_username }}"
+  become_user: "{{ default_remote_username }}"
 
   pre_tasks:
+    - name: "Check for local SSH key(s) - {{ item }}"
+      delegate_to: localhost
+      ansible.builtin.stat:
+        path: "{{ lookup('env','HOME') + '/.ssh/id_{{ item }}.pub') }}"
+      register: ssh_key_exists
+      with_items: "{{ ssh_key_list }}"
+
+    - name: "Generate SSH key(s) - {{ item }}"
+      delegate_to: localhost
+      community.crypto.openssh_keypair:
+        passphrase: "{{ default_ssh_passphrase }}"
+        type: "{{ item }}"
+        path: "{{ lookup('env','HOME') + '/.ssh/id_{{ item }}.pub') }}"
+      when: not ssh_key_exists.stat.exists
+      with_items: "{{ ssh_key_list }}"
+
+    - name: "Send authorized SSH key(s) - {{ item }}"
+      delegate_to: localhost
+      ansible.posix.authorized_key:
+        user: "{{ default_remote_username }}"
+        state: present
+        key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_{ item }}.pub') }}"
+      with_items: "{{ ssh_key_list }}"
+
     - name: Pre-installation cleanup
       ansible.builtin.file:
         path: "{{ item }}"
