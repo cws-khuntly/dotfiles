@@ -4,6 +4,9 @@
 # ============================================================================
 ---
 - name: Deploy and install dotfiles
+  hosts: all
+  become: true
+  become_user: "{{ global_remote_username }}"
 
   pre_tasks:
     - name: Pre-installation cleanup
@@ -23,9 +26,6 @@
         - "{{ global_installer_path }}"
         - "{{ global_checkout_path }}"
 
-  hosts: all
-  become: true
-  become_user: "{{ global_remote_username }}"
   tasks:
     - name: Run common role
       ansible.builtin.include_role:
