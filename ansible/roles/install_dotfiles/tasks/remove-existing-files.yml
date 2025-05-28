@@ -5,7 +5,7 @@
 ---
 - name: Find and delete all symbolic links
   ansible.builtin.find:
-    paths: "{{ lookup('env', 'HOME') + '/.dotfiles' }}"
+    paths: "{{ ansible_facts.ansible_user_home }}"
     recurse: no
     follow: no
     type: "l"
@@ -19,5 +19,5 @@
 
 - name: Remove existing dotfiles directory
   ansible.builtin.file:
-    path: "{{ lookup('env', 'HOME') + '/.dotfiles' }}"
+    path: "{{ ansible_facts.ansible_user_home }}/.dotfiles"
     state: absent
