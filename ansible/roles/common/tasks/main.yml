@@ -3,7 +3,7 @@
 #   DESCRIPTION:  Main entry point for common tasks
 # =============================================================================
 ---
-- name: Main entry point for common tasks
+- name: "Main common role running subtask {{ item }}"
   ansible.builtin.include_tasks:
     file: "{{ item }}"
   loop:
