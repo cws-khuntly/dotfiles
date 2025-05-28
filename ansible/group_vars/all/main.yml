@@ -3,6 +3,5 @@
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
 ---
-default_remote_username: khuntly
 global_checkout_path: /var/tmp/dotfiles
 global_installer_path: /var/tmp/ansible-installer
