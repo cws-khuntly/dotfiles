@@ -3,4 +3,4 @@
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
 ---
-dotfiles_base_path: "{{ lookup('ansible.builtin.vars', 'HOME' + '/.dotfiles') }}"
+install_dotfiles_base_path: "{{ lookup('ansible.builtin.vars', 'HOME' + '/.dotfiles') }}"
