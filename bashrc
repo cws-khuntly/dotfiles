@@ -55,7 +55,7 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${HOME}/.alias";
 fi
 
-source "${HOME}/.profiles";
+source "${HOME}/.settings";
 source "${HOME}/.lib";
 source "${HOME}/.alias";
 
