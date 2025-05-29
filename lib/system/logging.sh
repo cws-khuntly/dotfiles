@@ -54,7 +54,7 @@ function usage()
 
     set +o noclobber;
 
-    local cname="logger.sh";
+    local cname="logging.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local return_code=3;
 
@@ -101,7 +101,7 @@ function writeLogEntry()
 
     set +o noclobber;
 
-    local cname="logger.sh";
+    local cname="logging.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local action="${1}";
@@ -142,7 +142,7 @@ function writeLogEntryToConsole()
 
     set +o noclobber;
 
-    local cname="logger.sh";
+    local cname="logging.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local log_level="${1}";
@@ -178,7 +178,7 @@ function writeLogEntryToFile()
 
     set +o noclobber;
 
-    local cname="logger.sh";
+    local cname="logging.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local log_level="${1}";
     local log_pid="${2}";

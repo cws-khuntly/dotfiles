@@ -44,7 +44,7 @@ for FILE in "${HOME}/libs/system/"*.sh "${HOME}/lib/profile/"*.sh; do
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
     fi
 
-    [[ "${FILE}" == "logger.sh" ]] && continue;
+    [[ "${FILE}" == "logging.sh" ]] && continue;
 
     # shellcheck source=/dev/null
     source "${FILE}";

@@ -26,10 +26,10 @@ FUNCTION_NAME="${CNAME}#bashrc";
 [[ -f ${HOME}/.profile ]] && source "${HOME}/.profile";
 
 ## load the logger
-if [[ -r "${HOME}/lib/system/logger.sh" ]] && [[ -s "${HOME}/lib/system/logger.sh" ]]; then
-    source "${HOME}/lib/system/logger.sh"; ## if its here, override the above and use it
-elif [[ -r "/usr/local/bin/logger.sh" ]] && [[ -s "/usr/local/bin/logger.sh" ]]; then
-    source "/usr/local/bin/logger.sh"; ## if its here, use it
+if [[ -r "${HOME}/lib/system/logging.sh" ]] && [[ -s "${HOME}/lib/system/logging.sh" ]]; then
+    source "${HOME}/lib/system/logging.sh"; ## if its here, override the above and use it
+elif [[ -r "/usr/local/bin/logging.sh" ]] && [[ -s "/usr/local/bin/logging.sh" ]]; then
+    source "/usr/local/bin/logging.sh"; ## if its here, use it
 else
     printf "\e[00;31m%s\e[00;32m\n" "Unable to load logger. No logging enabled!" >&2;
 fi

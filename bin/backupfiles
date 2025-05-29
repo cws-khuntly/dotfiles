@@ -28,14 +28,14 @@ declare FUNCTION_NAME="${CNAME}#startup";
 declare SCRIPT_ROOT="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && printf "%s" "${PWD}")")";
 declare DEFAULT_CONFIG_FILE="${SCRIPT_ROOT}/config/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
 
-if [[ -r "${SCRIPT_ROOT}/lib/system/logger.sh" ]] && [[ -s "${SCRIPT_ROOT}/lib/system/logger.sh" ]]; then
-    # shellcheck source=../../lib/system/logger.sh
-    source "${SCRIPT_ROOT}/lib/system/logger.sh";
-elif [[ -r "${HOME}/lib/system/logger.sh" ]] && [[ -s "${HOME}/lib/system/logger.sh" ]]; then
-    # shellcheck source=${HOME}/lib/system/logger.sh
-    source "${HOME}/lib/system/logger.sh";
-elif [[ -r "/usr/local/bin/logger.sh" ]] && [[ -s "/usr/local/bin/logger.sh" ]]; then
-    source "/usr/local/bin/logger.sh";
+if [[ -r "${SCRIPT_ROOT}/lib/system/logging.sh" ]] && [[ -s "${SCRIPT_ROOT}/lib/system/logging.sh" ]]; then
+    # shellcheck source=../../lib/system/logging.sh
+    source "${SCRIPT_ROOT}/lib/system/logging.sh";
+elif [[ -r "${HOME}/lib/system/logging.sh" ]] && [[ -s "${HOME}/lib/system/logging.sh" ]]; then
+    # shellcheck source=${HOME}/lib/system/logging.sh
+    source "${HOME}/lib/system/logging.sh";
+elif [[ -r "/usr/local/bin/logging.sh" ]] && [[ -s "/usr/local/bin/logging.sh" ]]; then
+    source "/usr/local/bin/logging.sh";
 else
     printf "\e[00;31m%s\e[00;32m\n" "Unable to load logger. No logging enabled!" >&2;
 fi
@@ -100,7 +100,7 @@ if [[ -d "${SCRIPT_ROOT}/lib/system" ]]; then
         [[ "${SYSLIB}" =~ ^\# ]] && continue;
 
         if [[ -r "${SYSLIB}" ]] && [[ -s "${SYSLIB}" ]] && \
-            [[ "$(basename "${SYSLIB}")" != "cws-profile.sh" ]] && [[ "$(basename "${SYSLIB}")" != "logger.sh" ]]; then
+            [[ "$(basename "${SYSLIB}")" != "cws-profile.sh" ]] && [[ "$(basename "${SYSLIB}")" != "logging.sh" ]]; then
             # shellcheck source=/dev/null
             source "${SYSLIB}";
         fi
