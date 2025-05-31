@@ -47,24 +47,23 @@ alias telnet='nc -vz';
 alias shred='shred -vzu';
 
 ## script tracing
-alias enableDebug='ENABLE_DEBUG="${_TRUE}"';
-alias enableVerbose='ENABLE_VERBOSE="${_TRUE}"';
-alias enableTrace='ENABLE_TRACE="${_TRUE}"';
-alias enablePerf='ENABLE_PERFORMANCE="${_TRUE}"';
-alias disableDebug='ENABLE_DEBUG="${_FALSE}"';
-alias disableVerbose='ENABLE_VERBOSE="${_FALSE}"';
-alias disableTrace='ENABLE_TRACE="${_FALSE}"';
-alias disablePerf='ENABLE_PERFORMANCE="${_FALSE}"';
+alias enableDebug='declare -x ENABLE_DEBUG="${_TRUE}"';
+alias enableVerbose='declare -x ENABLE_VERBOSE="${_TRUE}"';
+alias enableTrace='declare -x ENABLE_TRACE="${_TRUE}"';
+alias enablePerf='declare -x ENABLE_PERFORMANCE="${_TRUE}"';
+alias disableDebug='declare -x ENABLE_DEBUG="${_FALSE}"';
+alias disableVerbose='declare -x ENABLE_VERBOSE="${_FALSE}"';
+alias disableTrace='declare -x ENABLE_TRACE="${_FALSE}"';
+alias disablePerf='declare -x ENABLE_PERFORMANCE="${_FALSE}"';
 
 ## expect
-alias scp.exp='${HOME}/lib/scp.exp';
-alias ssh.exp='${HOME}/lib/ssh.exp';
-alias ssh-copy-id.exp='${HOME}/lib/sshCopyIdentity.exp';
-alias sudo.exp='${HOME}/lib/sudo.exp';
-alias rsync.exp='${HOME}/lib/rsync.exp';
-alias gpg.exp='${HOME}/lib/gpg.exp';
-alias keychain.exp='${HOME}/lib/keychain.exp';
-alias telnet.exp='${HOME}/lib/telnet.exp';
+alias escp='${HOME}/lib/scp.exp';
+alias essh='${HOME}/lib/ssh.exp';
+alias essh-copy-id='${HOME}/lib/sshCopyIdentity.exp';
+alias esudo='${HOME}/lib/sudo.exp';
+alias ersync='${HOME}/lib/rsync.exp';
+alias egpg='${HOME}/lib/gpg.exp';
+alias ekeychain='${HOME}/lib/keychain.exp';
 alias reload='source ${HOME}/.bashrc';
 alias listFunctions='compgen -A function';
 alias listAliases='compgen -A alias';
