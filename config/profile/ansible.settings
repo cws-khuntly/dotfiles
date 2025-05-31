@@ -20,10 +20,12 @@
 
 [[ -z "$(compgen -c | grep -Ew "(^ansible-playbook)" | sort | uniq)" ]] && return;
 
-alias ansible-dotfiles='ansible-playbook -i ${HOME}workspace/dotfiles/ansible/hosts.yml ${HOME}/workspace/dotfiles/ansible/site.yml';
+alias ansible-dotfiles='ansible-playbook -i ${HOME}workspace/ansible/hosts.yml ${HOME}/workspace/dotfiles/ansible/site.yml';
 
-if [[ "${LOGNAME}" == "ansible" ]] && (( EUID == 6000 )); then
-    alias pull-ansible-cfg='git fetch origin && git reset --hard origin && git pull';
-    alias pull-workspaces='for workspace in $(ls -ltr ${HOME}/workspace | awk '{print $NF}'); do git -C ${HOME}/workspace/${workspace} fetch origin && git -C ${HOME}/workspace/${workspace} reset --hard origin && git pull';
-    alias build-system='ansible-playbook -i workspace/ansible/inventory/build.yml --vault-id buildcreds@prompt workspace/system-build/site.yml'
+if [[ "${LOGNAME}" == "ansible" ]] && (( EUID == 5000 )); then
+    ANSIBLE_WORKSPACE="/opt/ansible-projects/workspace";
+
+    alias pull-ansible-config='git -C ${HOME} fetch origin && git -C ${HOME} reset --hard origin && git -C ${HOME} pull';
+    alias pull-workspaces='for WORKSPACE in $(${ANSIBLE_WORKSPACE} | awk '{print $NF}'); do git -C ${WORKSPACE} fetch origin && git -C ${WORKSPACE} reset --hard origin && git -C ${WORKSPACE} pull; [[ -n "${WORKSPACE}" ]] && unset -v WORKSPACE; done; [[ -n "${WORKSPACE}" ]] && unset -v WORKSPACE';
+    alias build-system='ansible-playbook -i workspace/ansible/inventory/build.yml --vault-id buildcreds@prompt ${ANSIBLE_WORKSPACE}/system-build/ansible/site.yml'
 fi
