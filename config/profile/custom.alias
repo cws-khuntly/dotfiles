@@ -44,6 +44,7 @@ alias icanhazip='dig +short @resolver1.opendns.com myip.opendns.com';
 alias ipv4sort='sort -t . -k 1,1 -k 2,2 -k 3,3 -k 4,4';
 alias tailf='tail -f';
 alias telnet='nc -vz';
+alias shred='shred -vzu';
 
 ## script tracing
 alias enableDebug='ENABLE_DEBUG="${_TRUE}"';
