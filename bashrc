@@ -23,7 +23,8 @@ FUNCTION_NAME="${CNAME}#bashrc";
 
 [[ "$-" != *i* ]] || [ -z "${PS1}" ] && return;
 
-[[ -f ${HOME}/.profile ]] && source "${HOME}/.profile";
+# shellcheck source=/home/khuntly/workspace/dotfiles/profile
+[[ -f "${HOME}/.profile" ]] && source "${HOME}/.profile";
 
 ## load the logger
 if [[ -r "${HOME}/lib/system/logging.sh" ]] && [[ -s "${HOME}/lib/system/logging.sh" ]]; then
@@ -55,8 +56,11 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${HOME}/.alias";
 fi
 
+# shellcheck source=/home/khuntly/workspace/dotfiles/settings
 source "${HOME}/.settings";
-source "${HOME}/.lib";
+# shellcheck source=/home/khuntly/workspace/dotfiles/libs
+source "${HOME}/.libs";
+# shellcheck source=/home/khuntly/workspace/dotfiles/alias
 source "${HOME}/.alias";
 
 if [[ -z "${isReloadRequest}" ]] || [[ "${isReloadRequest}" == "${_FALSE}" ]]; then
@@ -66,6 +70,13 @@ if [[ -z "${isReloadRequest}" ]] || [[ "${isReloadRequest}" == "${_FALSE}" ]]; t
     fi
 
     showHostInfo;
+
+    if [[ -f "/etc/motd" ]] && [[ -r "/etc/motd" ]] && [[ -s "/etc/motd" ]]; then
+        printf "%s\n\n" "Message of the day:";
+
+        cat /etc/motd;
+    fi
+
     runLoginCommands;
 fi
 
