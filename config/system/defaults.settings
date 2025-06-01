@@ -202,3 +202,15 @@ stty -ixon;
 stty echoe;
 stty istrip;
 
+#
+# history
+#
+history -a;
+history -n;
+
+declare -x HISTFILE="${HOME}/.bash_history";
+declare -ix HISTSIZE=10000;
+declare -ix HISTFILESIZE=10000;
+declare -x HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S ";
+declare -x HISTCONTROL="ignoredups:ignorespace";
+declare -x HISTIGNORE="ls:ll:lt:la:l:cd:pwd:exit:mc:su:df:clear:cls:bg:fg";
