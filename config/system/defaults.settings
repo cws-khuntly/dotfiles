@@ -148,3 +148,10 @@ declare -ix MAILCHECK=10;
 
 [[ -d "${HOME}/.mail" ]] || mkdir -p "${HOME}/.mail";
 [[ -n "$(mail -E 2> /dev/null)" ]] && echo "$(mail -E)";
+
+#
+# gpg
+#
+declare -x GPG_TTY="$(tty)";
+
+gpg-connect-agent updatestartuptty /bye > /dev/null 2>&1;
