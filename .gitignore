@@ -2,3 +2,4 @@
 # dotfiles ignores
 #
 config/ansible/credentials.yml
+ansible/inventory/hosts.yml
