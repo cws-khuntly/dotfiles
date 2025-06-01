@@ -20,13 +20,11 @@
 
 [[ -z "$(compgen -c | grep -Ew "(^ansible)" | sort | uniq)" ]] && return;
 
-alias ansible-dotfiles='ansible-playbook -i ${HOME}workspace/ansible/hosts.yml ${HOME}/workspace/dotfiles/ansible/site.yml';
-alias self-ansible='tempfile=$(mktemp) && ansible-vault create --vault-id=credentials@prompt ${tmpfile} && ansible-pull -u cws-khuntly -U git@github.com:cws-khuntly/system-build.git --full --private-key ${HOME}/.ssh/id_ed25519@cws-khuntly -i localhost -d /tmp/system-build --purge --vault-id credentials@prompt -J -e "createcustomusers=true" -e "vaultfile=/tmp/tempfile.yml" /tmp/ansible/site.yml && rm -f ${tmpfile} && shred -vuz ${tmpfile} && unset -v tmpfile';
+alias ansible-dotfiles='ansible-playbook -i ${HOME}/workspace/dotfiles/ansible/inventory/hosts.yml ${HOME}/workspace/dotfiles/ansible/site.yml';
 
 if [[ "${LOGNAME}" == "ansible" ]] && (( EUID == 5000 )); then
     ANSIBLE_WORKSPACE="/opt/ansible-projects/workspace";
 
     alias pull-ansible-config='git -C ${HOME} fetch origin && git -C ${HOME} reset --hard origin && git -C ${HOME} pull';
-    alias pull-workspaces='for WORKSPACE in $(${ANSIBLE_WORKSPACE} | awk '{print $NF}'); do git -C ${WORKSPACE} fetch origin && git -C ${WORKSPACE} reset --hard origin && git -C ${WORKSPACE} pull; [[ -n "${WORKSPACE}" ]] && unset -v WORKSPACE; done; [[ -n "${WORKSPACE}" ]] && unset -v WORKSPACE';
     alias build-system='ansible-playbook -i workspace/ansible/inventory/build.yml --vault-id buildcreds@prompt ${ANSIBLE_WORKSPACE}/system-build/ansible/site.yml'
 fi
