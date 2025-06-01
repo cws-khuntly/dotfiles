@@ -28,7 +28,7 @@
       ansible.posix.authorized_key:
         user: "{{ ansible_facts.ansible_user_name }}"
         state: present
-        key: "{{ lookup('file', ansible_facts.ansible_user_home + '/.ssh/' + item + '.pub"
+        key: "{{ lookup('file', ansible_facts.ansible_user_home + '/.ssh/' + item + '.pub') }}"
       with_items: "{{ global_ssh_key_list }}"
 
     - name: Pre-installation cleanup
