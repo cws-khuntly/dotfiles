@@ -170,3 +170,25 @@ case "$(uname)" in
         set completion-ignore-case on;
         ;;
 esac
+
+#
+# shopt
+#
+case "$(awk -F "/" '{print $NF}' <<< "${SHELL}")" in
+    [Bb][Aa][Ss][Hh])
+        shopt -s expand_aliases;
+        shopt -s huponexit;
+        shopt -s mailwarn;
+        shopt -s histreedit;
+        shopt -s histappend;
+        shopt -s histverify;
+        shopt -s hostcomplete;
+        shopt -s cmdhist;
+        shopt -s checkwinsize;
+        shopt -s checkhash;
+        shopt -s cdspell;
+        shopt -s dirspell;
+        shopt -s mailwarn;
+        shopt -s checkjobs;
+        ;;
+esac
