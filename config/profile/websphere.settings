@@ -2,9 +2,9 @@
 
 #==============================================================================
 #
-#          FILE:  A05-openssl
-#         USAGE:  . A05-openssl
-#   DESCRIPTION:  Useful git aliases
+#          FILE:  websphere
+#         USAGE:  . websphere
+#   DESCRIPTION:  Loads keychain and adds available keys to it
 #
 #       OPTIONS:  ---
 #  REQUIREMENTS:  ---
@@ -18,7 +18,12 @@
 #
 #==============================================================================
 
-[[ -z "$(compgen -c | grep -Ew "(^openssl)" | sort | uniq)" ]] && return;
+if [[ -z "$(compgen -c | grep -Ew "(^docker)" | sort | uniq)" ]]; then alias websphere-liberty='docker pull websphere-liberty'; fi
 
-alias sha512sum='openssl sha512';
-alias checkCSR='openssl req -text -noout -verify -in';
+[[ ! -d "/opt/IBM/WebSphere" ]] && return;
+
+alias wasadm='sudo su - wasadm';
+
+[[ ! -d "/opt/IBM/HTTPServer" ]] && return;
+
+alias ihsadm='sudo su - ihsadm';

@@ -2,8 +2,8 @@
 
 #==============================================================================
 #
-#          FILE:  P01-oracle
-#         USAGE:  . P01-oracle
+#          FILE:  websphere
+#         USAGE:  . websphere
 #   DESCRIPTION:  Loads keychain and adds available keys to it
 #
 #       OPTIONS:  ---
@@ -18,8 +18,12 @@
 #
 #==============================================================================
 
-[[ -z "$(compgen -c | grep -Ew "(^sqlplus)" | sort | uniq)" ]] && return;
+[[ ! -d "/var/named" ]] && return;
 
-if [[ ! -d "${HOME}/workspace/Oracle/admin" ]] && [[ ! -f "${HOME}/workspace/Oracle/admin/tnsnames.ora" ]]; then return; fi
+alias dnsadm='sudo su - dnsadm';
 
-declare -x TNS_ADMIN="${HOME}/workspace/Oracle/admin";
+[[ -z "$(compgen -c | grep -Ew "(^named)" | sort | uniq)" ]] && return;
+
+alias rndc='sudo -u named rndc -c /var/named/etc/conf.d/rndc.conf';
+alias named-checkconf='sudo -u named named-checkconf -t /var/named';
+alias named-checkzone='sudo -u named named-checkzone -t /var/named';
