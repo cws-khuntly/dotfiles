@@ -19,9 +19,6 @@
 #==============================================================================
 
 [[ ! -d "/var/named" ]] && return;
-
-alias dnsadm='sudo su - dnsadm';
-
 [[ -z "$(compgen -c | grep -Ew "(^named)" | sort | uniq)" ]] && return;
 
 alias rndc='sudo -u named rndc -c /var/named/etc/conf.d/rndc.conf';
