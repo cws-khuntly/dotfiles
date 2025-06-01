@@ -1,9 +1,0 @@
-# =====  ANSIBLE  ============================================================
-#          NAME:  site.yml
-#   DESCRIPTION:  Entry point for playbook
-# ============================================================================
----
-- name: Remove existing dotfiles directory
-  ansible.builtin.file:
-    path: "{{ install_dotfiles_base_path }} | default({{ ansible_facts.ansible_user_home }} + '/.dotfiles"
-    state: absent

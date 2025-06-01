@@ -5,6 +5,6 @@
 ---
 global_checkout_path: /var/tmp/dotfiles
 global_installer_path: /var/tmp/ansible-installer
-global_remote_username: "{{ lookup('env', 'LOGNAME') }}"
+global_remote_username: "{{ ansible_facts['user_id'] }}"
 global_ssh_key_list:
   - id_ed25519

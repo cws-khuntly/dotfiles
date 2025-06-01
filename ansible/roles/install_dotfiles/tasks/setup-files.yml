@@ -8,6 +8,5 @@
     argv:
       - "{{ global_installer_path | default('/var/tmp/checkout-setup') }}/bin/setup"
       - -n {{ global_checkout_path | default('/var/tmp/checkout-dotfiles') }}/config/dotfiles/dotfiles.setup"
-      - "-a deployAndInstall"
   changed_when: true
   register: deploy_out
