@@ -34,6 +34,8 @@ LIB_PATH="${SCRIPT_ROOT}/lib/dotfiles";
 DEPLOY_TO_DIR="/var/tmp";
 INSTALL_CONF="${INSTALL_PATH}/config/dotfiles/dotfiles.conf";
 RELOAD_DOTFILE="${HOME}/.bash_profile";
+BACKUP_ENABLED="${_FALSE:-false}";
+BACKUP_DATE_STAMP="$(date +"%d-%m-%Y_%H-%M-%S")";
 
 #==============================================================================
 # SSH configuration information
