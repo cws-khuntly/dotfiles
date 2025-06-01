@@ -107,3 +107,24 @@ if [[ "$(uname -s)" =~ [Cc][Yy][Gg][Ww][Ii][Nn]* ]]; then
     alias sudo='cygstart --action=runas';
     alias gpg='gpg2';
 fi
+
+#
+# safety
+#
+case '$(uname)' in
+    [Aa][Ii][Xx])
+        alias rm='rm -i';
+        alias mv='mv -i';
+        alias cp='cp -i';
+        alias ln='ln -i';
+        ;;
+    *)
+        alias rm='rm -i --preserve-root';
+        alias chown='chown --preserve-root';
+        alias chmod='chmod --preserve-root';
+        alias chgrp='chgrp --preserve-root';
+        alias mv='mv -i';
+        alias cp='cp -i';
+        alias ln='ln -i';
+        ;;
+esac
