@@ -6,7 +6,7 @@
 - name: Deploy installation files
   ansible.builtin.command:
     argv:
-      - "{{ global_installer_path | default('/var/tmp/checkout-setup') }}/bin/setup"
-      - -n {{ global_checkout_path | default('/var/tmp/checkout-dotfiles') }}/config/dotfiles/dotfiles.setup"
+      - "{{ global_installer_path }}/bin/setup"
+      - "-n {{ global_installer_path }}/dotfiles.setup"
   changed_when: true
   register: deploy_out
