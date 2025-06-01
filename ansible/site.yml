@@ -10,26 +10,26 @@
     - name: "Check for local SSH key(s) - {{ item }}"
       delegate_to: localhost
       ansible.builtin.stat:
-        path: "{{ ansible_facts.ansible_user_home }}/.ssh/id_{{ item }}"
+        path: "{{ ansible_facts.ansible_user_home }}/.ssh/{{ item }}"
       register: ssh_key_exists
-      with_items: "{{ ssh_key_list }}"
+      with_items: "{{ global_ssh_key_list }}"
 
     - name: "Generate SSH key(s) - {{ item }}"
       delegate_to: localhost
       community.crypto.openssh_keypair:
         passphrase: "{{ default_ssh_passphrase }}"
         type: "{{ item }}"
-        path: "{{ ansible_facts.ansible_user_home }}/.ssh/id_{{ item }}"
+        path: "{{ ansible_facts.ansible_user_home }}/.ssh/{{ item }}"
       when: not ssh_key_exists.stat.exists
-      with_items: "{{ ssh_key_list }}"
+      with_items: "{{ global_ssh_key_list }}"
 
     - name: "Send authorized SSH key(s) - {{ item }}"
       delegate_to: localhost
       ansible.posix.authorized_key:
-        user: "{{ default_remote_username }}"
+        user: "{{ ansible_facts.ansible_user_name }}"
         state: present
-        key: "{{ ansible_facts.ansible_user_home }}/.ssh/id_{{ item }}.pub"
-      with_items: "{{ ssh_key_list }}"
+        key: "{{ lookup('file', ansible_facts.ansible_user_home + '/.ssh/' + item + '.pub"
+      with_items: "{{ global_ssh_key_list }}"
 
     - name: Pre-installation cleanup
       ansible.builtin.file:
