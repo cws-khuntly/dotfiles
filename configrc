@@ -32,29 +32,21 @@ fi
 if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
 if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-case "${OSNAME}" in
-    "fedoralinux"|"redhatenterpriselinux")
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${USER_CONFIG_PATH}/system/rhel.osalias";
-        fi
+OSNAME="$(grep -E "(^ID=)" /etc/os-release | cut -d "=" -f 2)";
 
-        if [[ -f "${USER_CONFIG_PATH}/system/rhel.osalias" ]] && [[ -r "${USER_CONFIG_PATH}/system/rhel.osalias" ]] && [[ -s "${USER_CONFIG_PATH}/system/rhel.osalias" ]]; then source "${USER_CONFIG_PATH}/system/rhel.osalias"; fi
-        ;;
-    "archlinux")
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${USER_CONFIG_PATH}/system/arch.osalias";
-        fi
+if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "OSNAME -> ${OSNAME}";
+fi
 
-        if [[ -f "${USER_CONFIG_PATH}/system/arch.osalias" ]] && [[ -r "${USER_CONFIG_PATH}/system/arch.osalias" ]] && [[ -s "${USER_CONFIG_PATH}/system/arch.osalias" ]]; then source "${USER_CONFIG_PATH}/system/arch.osalias"; fi
-        ;;
-    "ubuntu")
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${USER_CONFIG_PATH}/system/ubuntu.osalias";
-        fi
+if [[ -f "${USER_CONFIG_PATH}/system/${OSNAME}.settings" ]] && [[ -r "${USER_CONFIG_PATH}/system/${OSNAME}.settings" ]] && \
+    [[ -s "${USER_CONFIG_PATH}/system/${OSNAME}.settings" ]]; then
 
-        if [[ -f "${USER_CONFIG_PATH}/system/ubuntu.osalias" ]] && [[ -r "${USER_CONFIG_PATH}/system/ubuntu.osalias" ]] && [[ -s "${USER_CONFIG_PATH}/system/ubuntu.osalias" ]]; then source "${USER_CONFIG_PATH}/system/ubuntu.osalias"; fi
-    ;;
-esac
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${USER_CONFIG_PATH}/system/${OSNAME}.settings";
+    fi
+
+    source "${USER_CONFIG_PATH}/system/${OSNAME}.settings";
+fi
 
 ## load libs
 USER_CONFIG_PATHS=( "${USER_CONFIG_PATH}/system" "${USER_CONFIG_PATH}/profile" "${USER_CONFIG_PATH}/dotfiles" );
