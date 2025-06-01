@@ -3,4 +3,4 @@
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
 ---
-install_dotfiles_base_path: "{{ lookup('env', 'HOME' + '/.dotfiles') }}"
+install_dotfiles_base_path: "{{ ansible_facts.ansible_user_home }}/.dotfiles"
