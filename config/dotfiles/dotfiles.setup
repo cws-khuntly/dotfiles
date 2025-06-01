@@ -28,7 +28,7 @@ PACKAGE_NAME="dotfiles";
 #                but take no action against found entries.
 #==============================================================================
 TARGET_ACTION="deployAndInstall";
-SOURCE_PATH="${SCRIPT_ROOT}";
+SOURCE_PATH="${HOME}/workspace/dotfiles";
 INSTALL_PATH="${HOME}/.dotfiles";
 LIB_PATH="${SCRIPT_ROOT}/lib/dotfiles";
 DEPLOY_TO_DIR="/var/tmp";
