@@ -21,7 +21,7 @@
 #
 # completion
 #
-ssh_config_files=( "${HOME}/.ssh/config" )
+ssh_config_files=( "${HOME}/.ssh/config" "$(find ${HOME}/.ssh/config.d -type f)" )
 
 for ssh_config_file in "${ssh_config_files[@]}"; do
     if [[ -f "${ssh_config_file}" ]] && [[ -r "${ssh_config_file}" ]] && [[ -s "${ssh_config_file}" ]]; then
