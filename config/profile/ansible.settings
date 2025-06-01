@@ -18,10 +18,6 @@
 #
 #==============================================================================
 
-[[ -z "$(compgen -c | grep -Ew "(^ansible)" | sort | uniq)" ]] && return;
-
-alias ansible-dotfiles='ansible-playbook -i ${HOME}/workspace/dotfiles/ansible/inventory/hosts.yml ${HOME}/workspace/dotfiles/ansible/site.yml';
-
 if [[ "${LOGNAME}" == "ansible" ]] && (( EUID == 5000 )); then
     ANSIBLE_WORKSPACE="/opt/ansible-projects/workspace";
 
