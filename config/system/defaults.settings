@@ -155,3 +155,18 @@ declare -ix MAILCHECK=10;
 declare -x GPG_TTY="$(tty)";
 
 gpg-connect-agent updatestartuptty /bye > /dev/null 2>&1;
+
+#
+# sets
+#
+case "$(uname)" in
+    [Ll][Ii][Nn][Uu][Xx])
+        set -o ignoreeof;
+        set -o monitor;
+        set -o notify;
+        set -o noclobber;
+        set -b;
+        set bell-style visible;
+        set completion-ignore-case on;
+        ;;
+esac
