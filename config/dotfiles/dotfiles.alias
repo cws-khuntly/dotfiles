@@ -17,3 +17,7 @@
 #      REVISION:  ---
 #
 #==============================================================================
+
+[[ -z "$(compgen -c | grep -Ew "(^ansible)" | sort | uniq)" ]] && return;
+
+alias ansible-dotfiles='ansible-playbook -i ${HOME}/workspace/dotfiles/ansible/inventory/hosts.yml ${HOME}/workspace/dotfiles/ansible/site.yml';
