@@ -46,6 +46,19 @@ alias tailf='tail -f';
 alias telnet='nc -vz';
 alias shred='shred -vzu';
 
+#
+# meminfo
+#
+alias meminfo='free -m -l -t';
+alias psmem='ps auxf | sort -nr -k 4';
+alias psmem10='ps auxf | sort -nr -k 4 | head -10';
+alias pscpu='ps auxf | sort -nr -k 3';
+alias pscpu10='ps auxf | sort -nr -k 3 | head -10';
+alias gpumeminfo='grep -i --color memory /var/log/Xorg.0.log';
+alias hogc='ps -e -o %cpu,pid,ppid,user,cmd | sort -nr | head';
+alias hogm='ps -e -o %mem,pid,ppid,user,cmd | sort -nr | head';
+alias cpuCount='grep -c "^processor" /proc/cpuinfo';
+
 ## script tracing
 alias enableDebug='declare -x ENABLE_DEBUG="${_TRUE}"';
 alias enableVerbose='declare -x ENABLE_VERBOSE="${_TRUE}"';
