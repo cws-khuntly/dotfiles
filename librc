@@ -33,7 +33,7 @@ if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then
 if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
 ## load libs
-USER_LIB_PATHS=( "${USER_LIB_PATH}/system" "${USER_LIB_PATH}/profile" "${USER_LIB_PATH}/dotfiles" );
+USER_LIB_PATHS=( "${USER_LIB_PATH}/system" "${USER_LIB_PATH}/programs" "${USER_LIB_PATH}/profile" "${USER_LIB_PATH}/dotfiles" );
 
 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "USER_LIB_PATH -> ${USER_LIB_PATH}";
