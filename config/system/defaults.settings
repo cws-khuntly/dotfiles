@@ -192,3 +192,13 @@ case "$(awk -F "/" '{print $NF}' <<< "${SHELL}")" in
         shopt -s checkjobs;
         ;;
 esac
+
+#
+# stty
+#
+stty erase "^?";
+stty kill "^B";
+stty -ixon;
+stty echoe;
+stty istrip;
+
