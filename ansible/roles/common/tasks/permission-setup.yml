@@ -6,5 +6,5 @@
 - name: Make setup executable
   ansible.builtin.file:
     path: "{{ global_installer_path | default('/var/tmp/checkout-setup') }}/bin/setup"
-    owner: "{{ remote_username | default(ansible_fact.ansible_user_id) }}"
+    owner: "{{ ansible_facts.ansible_user_name }}"
     mode: '0755'
