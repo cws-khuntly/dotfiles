@@ -2,8 +2,8 @@
 
 #==============================================================================
 #
-#          FILE:  libs
-#         USAGE:  . libs
+#          FILE:  alias
+#         USAGE:  . alias
 #   DESCRIPTION:  Sets application-wide aliases
 #
 #       OPTIONS:  ---
@@ -19,7 +19,7 @@
 #==============================================================================
 
 CNAME="$(basename "${BASH_SOURCE[0]}")";
-FUNCTION_NAME="${CNAME}#libs";
+FUNCTION_NAME="${CNAME}#alias";
 
 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
     START_EPOCH="$(date +"%s")";
@@ -32,8 +32,38 @@ fi
 if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
 if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
+OSNAME="$(grep -E "(^NAME=)" /etc/os-release | awk -F "=" '{print $2}' | sed -e "s/\"//g" -e "s/ //g" | tr '[:upper:]' '[:lower:]')"
+
+if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "OSNAME -> ${OSNAME}";
+fi
+
+case "${OSNAME}" in
+    "fedoralinux"|"redhatenterpriselinux")
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${HOME}/config/system/rhel.osalias";
+        fi
+
+        [[ -s "${HOME}/config/system/rhel.osalias" ]] && source "${HOME}/config/system/rhel.osalias";
+        ;;
+    "archlinux")
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${HOME}/config/system/arch.osalias";
+        fi
+
+        [[ -s "${HOME}/config/system/arch.osalias" ]] && source "${HOME}/config/system/arch.osalias";
+        ;;
+    "ubuntu")
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${HOME}/config/system/ubuntu.osalias";
+        fi
+
+        [[ -s "${HOME}/config/system/ubuntu.osalias" ]] && source "${HOME}/config/system/ubuntu.osalias";
+    ;;
+esac
+
 ## load libs
-for FILE in "${HOME}/libs/system/"*.sh "${HOME}/lib/profile/"*.sh; do
+for FILE in "${HOME}/config/system/"*.alias "${HOME}/config/profile/"*.alias "${HOME}/config/dotfiles/"*.alias; do
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
     fi
@@ -44,7 +74,22 @@ for FILE in "${HOME}/libs/system/"*.sh "${HOME}/lib/profile/"*.sh; do
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
     fi
 
-    [[ "${FILE}" == "logging.sh" ]] && continue;
+    # shellcheck source=/dev/null
+    source "${FILE}";
+
+    [[ -n "${FILE}" ]] && unset -v FILE;
+done
+
+for FILE in "${HOME}/config/system/"*.settings "${HOME}/config/profile/"*.settings "${HOME}/config/dotfiles/"*.settings; do
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
+    fi
+
+    [[ -z "${FILE}" ]] && continue;
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
+    fi
 
     # shellcheck source=/dev/null
     source "${FILE}";
@@ -63,6 +108,7 @@ fi
 if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
 if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
+[[ -n "${OSNAME}" ]] && unset -v OSNAME;
 [[ -n "${FILE}" ]] && unset -v FILE;
 [[ -n "${FUNCTION_NAME}" ]] && unset -v FUNCTION_NAME;
 [[ -n "${CNAME}" ]] && unset -v CNAME;
