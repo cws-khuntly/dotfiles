@@ -66,3 +66,44 @@ case "$(uname -s)" in
         declare -rx PATHSEP=":";
         ;;
 esac
+
+#
+# default aliases
+#
+alias mountt='mount | column -t';
+alias ls='ls -lhpF --color=auto';
+alias grep='grep --color=auto';
+alias egrep='grep -E --color=auto';
+alias fgrep='grep -F --color=auto';
+alias wget='wget -c';
+alias stat='stat -c "%n: Permissions: %a, Owner: %U, Group: %G"';
+alias scp='sftp -qr';
+alias sftp='sftp -qr';
+alias ssh-keygen='ssh-keygen -C ""';
+alias ssh-keyscan='ssh-keyscan -H';
+alias rsync='rsync -avz --append --safe-links --delete --delete-excluded --exclude-from=${HOME}/config/excludes --timeout 10000 --temp-dir=/var/tmp --no-motd --blocking-io --stats --progress -e "ssh -q -E ${HOME}/log/ssh.log" --log-file=${HOME}/log/rsync.log';
+alias mailx='mailx';
+alias du='du -sh';
+alias df='df -h';
+alias netstat='netstat -an';
+alias ldapsearch='ldapsearch -W';
+alias ping='ping -c 4 -q -W ${THREAD_TIMEOUT:-10}';
+alias mysql='mysql --protocol tcp -u ${LOGNAME} -p';
+alias nc='nc -w ${THREAD_TIMEOUT:-10}';
+alias jmap='jmap -dump:format=b,file=/var/tmp/dump.hprof';
+alias pssh='pssh -p 5 -o ${HOME}/log/pssh -e ${HOME}/log/pssh -t 900 -P -l ${LOGNAME} -h ${HOME}/config/pssh/hosts';
+alias prsync='prsync -p 5 -o ${HOME}/log/pssh -e ${HOME}/log/pssh -t 900 -l ${LOGNAME} -h ${HOME}/config/pssh/hosts';
+alias recode='recode -qt';
+alias sshfs='sshfs -o sshfs_sync,reconnect,no_readahead,idmap=user,umask=644,uid=$(id -u),gid=$(id -g)';
+alias apg='apg -M SNCL';
+alias curl='curl --dump-header ${HOME}/log/curl-headers';
+alias xlaunch='nohup xlaunch -run ${HOME}/config/config.xlaunch &';
+
+## make some customizations IF the command exists
+[[ -n "$(compgen -c | grep -E -w "(^vim)" 2> /dev/null)" ]] && alias vi='vim';
+[[ -n "$(compgen -c | grep -E -w "(^colordiff)" 2> /dev/null)" ]] && alias diff='colordiff';
+
+if [[ "$(uname -s)" =~ [Cc][Yy][Gg][Ww][Ii][Nn]* ]]; then
+    alias sudo='cygstart --action=runas';
+    alias gpg='gpg2';
+fi
