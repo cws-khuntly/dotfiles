@@ -32,8 +32,7 @@ SOURCE_PATH="${SCRIPT_ROOT}";
 INSTALL_PATH="${HOME}/.dotfiles";
 LIB_PATH="${SCRIPT_ROOT}/lib/dotfiles";
 DEPLOY_TO_DIR="/var/tmp";
-LOCAL_INSTALL_CONF="${SCRIPT_ROOT}/config/dotfiles/dotfiles.conf";
-REMOTE_INSTALL_CONF="${DEPLOY_TO_DIR}/dotfiles.conf";
+INSTALL_CONF="${INSTALL_PATH}/config/dotfiles/dotfiles.conf";
 RELOAD_DOTFILE="${HOME}/.bash_profile";
 
 #==============================================================================
