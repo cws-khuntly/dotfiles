@@ -23,11 +23,12 @@ FUNCTION_NAME="${CNAME}#bashrc";
 
 [[ "$-" != *i* ]] || [ -z "${PS1}" ] && return;
 
-# shellcheck source=/home/khuntly/workspace/dotfiles/profile
+# shellcheck source=/home/khuntly/.profile
 [[ -f "${HOME}/.profile" ]] && source "${HOME}/.profile";
 
 ## load the logger
 if [[ -r "${HOME}/lib/system/logging.sh" ]] && [[ -s "${HOME}/lib/system/logging.sh" ]]; then
+    # shellcheck source=/home/khuntly/lib/system/logging.sh
     source "${HOME}/lib/system/logging.sh"; ## if its here, override the above and use it
 elif [[ -r "/usr/local/bin/logging.sh" ]] && [[ -s "/usr/local/bin/logging.sh" ]]; then
     source "/usr/local/bin/logging.sh"; ## if its here, use it
@@ -52,11 +53,11 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${HOME}/.alias";
 fi
 
-# shellcheck source=/home/khuntly/workspace/dotfiles/settings
+# shellcheck source=/home/khuntly/.settings
 source "${HOME}/.settings";
-# shellcheck source=/home/khuntly/workspace/dotfiles/libs
+# shellcheck source=/home/khuntly/.libs
 source "${HOME}/.libs";
-# shellcheck source=/home/khuntly/workspace/dotfiles/alias
+# shellcheck source=/home/khuntly/.alias
 source "${HOME}/.alias";
 
 if [[ -z "${isReloadRequest}" ]] || [[ "${isReloadRequest}" == "${_FALSE}" ]]; then
