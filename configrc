@@ -2,8 +2,8 @@
 
 #==============================================================================
 #
-#          FILE:  alias
-#         USAGE:  . alias
+#          FILE:  libs
+#         USAGE:  . libs
 #   DESCRIPTION:  Sets application-wide aliases
 #
 #       OPTIONS:  ---
@@ -19,7 +19,7 @@
 #==============================================================================
 
 CNAME="$(basename "${BASH_SOURCE[0]}")";
-FUNCTION_NAME="${CNAME}#alias";
+FUNCTION_NAME="${CNAME}#configrc";
 
 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
     START_EPOCH="$(date +"%s")";
@@ -32,69 +32,69 @@ fi
 if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
 if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-OSNAME="$(grep -E "(^NAME=)" /etc/os-release | awk -F "=" '{print $2}' | sed -e "s/\"//g" -e "s/ //g" | tr '[:upper:]' '[:lower:]')"
-
-if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "OSNAME -> ${OSNAME}";
-fi
-
 case "${OSNAME}" in
     "fedoralinux"|"redhatenterpriselinux")
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${HOME}/config/system/rhel.osalias";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${USER_CONFIG_PATH}/system/rhel.osalias";
         fi
 
-        [[ -s "${HOME}/config/system/rhel.osalias" ]] && source "${HOME}/config/system/rhel.osalias";
+        if [[ -f "${USER_CONFIG_PATH}/system/rhel.osalias" ]] && [[ -r "${USER_CONFIG_PATH}/system/rhel.osalias" ]] && [[ -s "${USER_CONFIG_PATH}/system/rhel.osalias" ]]; then source "${USER_CONFIG_PATH}/system/rhel.osalias"; fi
         ;;
     "archlinux")
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${HOME}/config/system/arch.osalias";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${USER_CONFIG_PATH}/system/arch.osalias";
         fi
 
-        [[ -s "${HOME}/config/system/arch.osalias" ]] && source "${HOME}/config/system/arch.osalias";
+        if [[ -f "${USER_CONFIG_PATH}/system/arch.osalias" ]] && [[ -r "${USER_CONFIG_PATH}/system/arch.osalias" ]] && [[ -s "${USER_CONFIG_PATH}/system/arch.osalias" ]]; then source "${USER_CONFIG_PATH}/system/arch.osalias"; fi
         ;;
     "ubuntu")
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${HOME}/config/system/ubuntu.osalias";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${USER_CONFIG_PATH}/system/ubuntu.osalias";
         fi
 
-        [[ -s "${HOME}/config/system/ubuntu.osalias" ]] && source "${HOME}/config/system/ubuntu.osalias";
+        if [[ -f "${USER_CONFIG_PATH}/system/ubuntu.osalias" ]] && [[ -r "${USER_CONFIG_PATH}/system/ubuntu.osalias" ]] && [[ -s "${USER_CONFIG_PATH}/system/ubuntu.osalias" ]]; then source "${USER_CONFIG_PATH}/system/ubuntu.osalias"; fi
     ;;
 esac
 
 ## load libs
-for FILE in "${HOME}/config/system/"*.alias "${HOME}/config/profile/"*.alias "${HOME}/config/dotfiles/"*.alias; do
+USER_CONFIG_PATHS=( "${USER_CONFIG_PATH}/system" "${USER_CONFIG_PATH}/profile" "${USER_CONFIG_PATH}/dotfiles" );
+
+if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "USER_CONFIG_PATH -> ${USER_CONFIG_PATH}";
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "USER_CONFIG_PATHS -> ${USER_CONFIG_PATHS[*]}";
+fi
+
+for CONFIG_PATH in "${USER_CONFIG_PATHS[@]}"; do
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "CONFIG_PATH -> ${CONFIG_PATH}";
     fi
 
-    [[ -z "${FILE}" ]] && continue;
+    FILE_LIST=( "$(ls -ltr "${CONFIG_PATH}" | grep -E "(\.alias$|\.settings$)" | awk '{print $NF}')" );
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_LIST -> ${FILE_LIST[*]}";
     fi
 
-    # shellcheck source=/dev/null
-    source "${FILE}";
+    if [[ -z "${FILE_LIST[*]}" ]] || (( ${#FILE_LIST[*]} == 0 )); then continue; fi
 
-    [[ -n "${FILE}" ]] && unset -v FILE;
-done
+    for FILE in "${FILE_LIST[@]}"; do
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
+        fi
 
-for FILE in "${HOME}/config/system/"*.settings "${HOME}/config/profile/"*.settings "${HOME}/config/dotfiles/"*.settings; do
-    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
-    fi
+        [[ -z "${FILE}" ]] && continue;
 
-    [[ -z "${FILE}" ]] && continue;
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${CONFIG_PATH}/${FILE}";
+        fi
 
-    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
-    fi
+        # shellcheck source=/dev/null
+        source "${CONFIG_PATH}/${FILE}";
 
-    # shellcheck source=/dev/null
-    source "${FILE}";
+        [[ -n "${FILE}" ]] && unset -v FILE;
+    done
 
-    [[ -n "${FILE}" ]] && unset -v FILE;
+    [[ -n "${CONFIG_PATH}" ]] && unset -v CONFIG_PATH;
 done
 
 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
@@ -108,8 +108,11 @@ fi
 if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
 if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-[[ -n "${OSNAME}" ]] && unset -v OSNAME;
 [[ -n "${FILE}" ]] && unset -v FILE;
+[[ -n "${FILE_LIST}" ]] && unset -v FILE_LIST;
+[[ -n "${CONFIG_PATH}" ]] && unset -v CONFIG_PATH;
+[[ -n "${USER_CONFIG_PATHS[*]}" ]] && unset -v USER_CONFIG_PATHS;
+
 [[ -n "${FUNCTION_NAME}" ]] && unset -v FUNCTION_NAME;
 [[ -n "${CNAME}" ]] && unset -v CNAME;
 [[ -n "${START_EPOCH}" ]] && unset -v START_EPOCH;

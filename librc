@@ -19,7 +19,7 @@
 #==============================================================================
 
 CNAME="$(basename "${BASH_SOURCE[0]}")";
-FUNCTION_NAME="${CNAME}#libs";
+FUNCTION_NAME="${CNAME}#librc";
 
 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
     START_EPOCH="$(date +"%s")";
@@ -33,23 +33,44 @@ if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then
 if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
 ## load libs
-for FILE in "${HOME}/lib/system/"*.sh "${HOME}/lib/profile/"*.sh "${HOME}/lib/dotfiles/"*.sh; do
+USER_LIB_PATHS=( "${USER_LIB_PATH}/system" "${USER_LIB_PATH}/profile" "${USER_LIB_PATH}/dotfiles" );
+
+if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "USER_LIB_PATH -> ${USER_LIB_PATH}";
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "USER_LIB_PATHS -> ${USER_LIB_PATHS[*]}";
+fi
+
+for LIB_PATH in "${USER_LIB_PATHS[@]}"; do
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "LIB_PATH -> ${LIB_PATH}";
     fi
 
-    [[ -z "${FILE}" ]] && continue;
+    FILE_LIST=( "$(ls -ltr "${LIB_PATH}" | grep -E "(\.sh$)" | awk '{print $NF}')" );
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_LIST -> ${FILE_LIST[*]}";
     fi
 
-    [[ "${FILE}" == "logging.sh" ]] && continue;
+    if [[ -z "${FILE_LIST[*]}" ]] || (( ${#FILE_LIST[*]} == 0 )); then continue; fi
 
-    # shellcheck source=/dev/null
-    source "${FILE}";
+    for FILE in "${FILE_LIST[@]}"; do
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
+        fi
 
-    [[ -n "${FILE}" ]] && unset -v FILE;
+        [[ -z "${FILE}" ]] && continue;
+
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${LIB_PATH}/${FILE}";
+        fi
+
+        # shellcheck source=/dev/null
+        source "${LIB_PATH}/${FILE}";
+
+        [[ -n "${FILE}" ]] && unset -v FILE;
+    done
+
+    [[ -n "${LIB_PATH}" ]] && unset -v LIB_PATH;
 done
 
 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
@@ -64,6 +85,10 @@ if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then
 if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
 [[ -n "${FILE}" ]] && unset -v FILE;
+[[ -n "${FILE_LIST}" ]] && unset -v FILE_LIST;
+[[ -n "${CONFIG_PATH}" ]] && unset -v CONFIG_PATH;
+[[ -n "${USER_LIB_PATHS[*]}" ]] && unset -v USER_LIB_PATHS;
+
 [[ -n "${FUNCTION_NAME}" ]] && unset -v FUNCTION_NAME;
 [[ -n "${CNAME}" ]] && unset -v CNAME;
 [[ -n "${START_EPOCH}" ]] && unset -v START_EPOCH;
