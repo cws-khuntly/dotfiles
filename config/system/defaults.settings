@@ -139,3 +139,12 @@ declare -x LESS_TERMCAP_se=$'\e[0m';
 declare -x LESS_TERMCAP_so=$'\e[01;33m';
 declare -x LESS_TERMCAP_ue=$'\e[0m';
 declare -x LESS_TERMCAP_us=$'\e[1;4;31m';
+
+#
+# mail
+#
+declare -x MAIL="/var/spool/mail/${LOGNAME:?}";
+declare -ix MAILCHECK=10;
+
+[[ -d "${HOME}/.mail" ]] || mkdir -p "${HOME}/.mail";
+[[ -n "$(mail -E 2> /dev/null)" ]] && echo "$(mail -E)";
