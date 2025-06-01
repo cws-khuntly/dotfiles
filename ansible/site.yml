@@ -4,11 +4,6 @@
 # ============================================================================
 ---
 - name: Deploy and install dotfiles
-  vars:
-    default_remote_username: "{{ lookup('env', 'LOGNAME') }}"
-    ssh_key_list:
-      - id_ed25519
-      - id_rsa
   hosts: all
 
   pre_tasks:
