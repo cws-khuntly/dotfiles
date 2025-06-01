@@ -49,7 +49,7 @@ if [[ -f "${USER_CONFIG_PATH}/system/${OSNAME}.settings" ]] && [[ -r "${USER_CON
 fi
 
 ## load libs
-USER_CONFIG_PATHS=( "${USER_CONFIG_PATH}/system" "${USER_CONFIG_PATH}/profile" "${USER_CONFIG_PATH}/dotfiles" );
+USER_CONFIG_PATHS=( "${USER_CONFIG_PATH}/system" "${USER_CONFIG_PATH}/programs" "${USER_CONFIG_PATH}/profile" "${USER_CONFIG_PATH}/dotfiles" );
 
 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "USER_CONFIG_PATH -> ${USER_CONFIG_PATH}";
