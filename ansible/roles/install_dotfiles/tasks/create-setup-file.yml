@@ -5,8 +5,8 @@
 ---
 - name: Create dotfiles.setup
   ansible.builtin.template:
-    src: templates/dotfiles.setup.j2
-    dest: "{{ install_dotfiles_dotfiles_path }}/dotfiles.setup"
+    src: templates/setup.properties.j2
+    dest: "{{ install_dotfiles_dotfiles_path }}/setup.properties"
     mode: "0644"
     owner: "{{ global_remote_username }}"
     group: "{{ ansible_facts['ansible_user_group'] }}"
