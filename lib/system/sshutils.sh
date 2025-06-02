@@ -397,14 +397,16 @@ function copyKeysToTarget()
     fi
 
     if [[ -n "${SSH_KEY_LIST[*]}" ]] && (( ${#SSH_KEY_LIST[*]} != 0 )); then
-        while [[ -z "${sshpass}" ]]; do
-            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Capture user input:";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: read -s -rp Password for ${target_user}@${target_host}: \" sshpass";
-            fi
+        if [[ -z "$(compgen -c | grep -Ew "(^expect)" | sort | uniq)" ]]; then
+            while [[ -z "${sshpass}" ]]; do
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Capture user input:";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: read -s -rp Password for ${target_user}@${target_host}: \" sshpass";
+                fi
 
-            read -s -rp "Password for ${target_user}@${target_host}: " sshpass;
-        done
+                read -s -rp "Password for ${target_user}@${target_host}: " sshpass;
+            done
+        fi
 
         for keyfile in "${SSH_KEY_LIST[@]}"; do
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -422,7 +424,9 @@ function copyKeysToTarget()
 
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cmd_output="$(echo "${sshpass}" | ssh-copy-id -i "${keyfile}" -f -oPort="${target_port:-${SSH_PORT_NUMBER}}" "${target_user}@${target_host}")";
+
+                [[ -z "$(compgen -c | grep -Ew "(^expect)" | sort | uniq)" ]] && cmd_output="$(echo "${sshpass}" | ssh-copy-id -i "${keyfile}" -f -oPort="${target_port:-${SSH_PORT_NUMBER}}" "${target_user}@${target_host}")";
+                [[ -n "$(compgen -c | grep -Ew "(^expect)" | sort | uniq)" ]] && cmd_output="$(expect "${USER_LIB_PATH}/expect/ssh-copy-id.tcl ${target_host} ${target_port:-${SSH_PORT_NUMBER}} ${target_user}")";
                 ret_code="${?}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
