@@ -30,8 +30,8 @@ proc getAuthValue { _HOSTNAME _USERNAME { _AUTH_FILE "" } { _ID_FILE "" } { _ENC
 
     if { [ string length $_AUTH_FILE ] != 0 } {
         set _AUTH_VARIABLE [ split $_AUTH_FILE ":" ];
-    } elseif { [ info exists env(PASSWD_FILE) ] } {
-        set _AUTH_VARIABLE [ split $env(PASSWD_FILE) ":" ];
+    } elseif { [ info exists env(AUTHFILE) ] } {
+        set _AUTH_VARIABLE [ split $env(AUTHFILE) ":" ];
     }
 
     if { $_ENCRYPTED ne 0 } {
