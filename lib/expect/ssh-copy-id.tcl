@@ -45,8 +45,6 @@ if { [ info exists env(THREAD_TIMEOUT) ] } {
     set timeout $env(THREAD_TIMEOUT);
 }
 
-set AUTHFILE [format "file:%s/.config/profile/password.asc"];
-
 source [ file join [ file dirname [ info script ] ] env(HOME)/lib/tcl/misc.tcl ];
 source [ file join [ file dirname [ info script ] ] env(HOME)/lib/tcl/security.tcl ];
 
