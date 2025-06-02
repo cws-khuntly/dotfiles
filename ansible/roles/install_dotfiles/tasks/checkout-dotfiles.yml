@@ -5,12 +5,12 @@
 ---
 - name: Pre-checkout cleanup - global dotfiles path
   ansible.builtin.file:
-    path: "{{ global_dotfiles_path }}"
+    path: "{{ install_dotfiles_dotfiles_path }}"
     state: absent
 
 - name: Create global dotfiles path
   ansible.builtin.file:
-    path: "{{ global_dotfiles_path }}"
+    path: "{{ install_dotfiles_dotfiles_path }}"
     state: directory
     mode: "0700"
     owner: "{{ ansible_facts['ansible_user_name'] }}"
@@ -19,5 +19,5 @@
 - name: Checkout dotfiles from Github
   ansible.builtin.git:
     repo: https://github.com/cws-khuntly/dotfiles.git
-    dest: "{{ global_dotfiles_path }}"
+    dest: "{{ install_dotfiles_dotfiles_path }}"
     version: main
