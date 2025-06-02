@@ -24,9 +24,3 @@ declare -x USER_PATH="${HOME}/bin";
 declare -x USER_LIB_PATH="${HOME}/lib";
 declare -x USER_CONFIG_PATH="${HOME}/.config";
 declare -x PATH="${PATH}:${SYSTEM_PATH}:${USER_PATH}";
-
-## trap logout
-trap 'logoutUser; exit' EXIT;
-
-## make the umask sane
-umask 022;

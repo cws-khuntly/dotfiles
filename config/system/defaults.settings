@@ -23,9 +23,6 @@
 #
 # read-only
 #
-[[ -z "${_TRUE}" ]] && declare -rx _TRUE="true" 2>/dev/null;
-[[ -z "${_FALSE}" ]] && declare -rx _FALSE="false" 2>/dev/null;
-
 declare -rx LANG="en_US.UTF-8" 2>/dev/null;
 declare -rx LC_ALL="en_US.UTF-8" 2>/dev/null;
 declare -rx TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n' 2>/dev/null;
