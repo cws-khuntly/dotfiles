@@ -284,12 +284,12 @@ function runLoginCommands()
 
         if [[ -s "${file}" ]]; then
             for cmd_entry in $(< "${file}"); do
+                [[ -z "${cmd_entry}" ]] && continue;
+                [[ "${cmd_entry}" =~ ^\# ]] && continue;
+
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_entry -> ${cmd_entry}";
                 fi
-
-                [[ -z "${cmd_entry}" ]] && continue;
-                [[ "${cmd_entry}" =~ ^\# ]] && continue;
 
                 cmd_binary="$(cut -d "|" -f 1 <<< "${cmd_entry}")";
                 cmd_args="$(cut -d "|" -f 2 <<< "${cmd_entry}")";

@@ -55,12 +55,12 @@ function readPropertyFile()
 
     ## clean up home directory first
     for entry in $(< "${PROPERTY_FILE}"); do
+        [[ -z "${entry}" ]] && continue;
+        [[ "${entry}" =~ ^\# ]] && continue;
+
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
         fi
-
-        [[ -z "${entry}" ]] && continue;
-        [[ "${entry}" =~ ^\# ]] && continue;
 
         property_name="$(echo -e "$(cut -d "=" -f 1 <<< "${entry}")" | xargs)";
         property_value="$(echo -e "$(cut -d "=" -f 2 <<< "${entry}")" | xargs)";

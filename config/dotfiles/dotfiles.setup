@@ -16,42 +16,31 @@
 
 PACKAGE_NAME="dotfiles";
 
-#==============================================================================
-# base information, required for normal program operations. can be overridden
-# via arguments.
 #
-# BASE_PATH: Full path to the absolute root for the directory to be cleaned.
-# BASE_FILE_NAME: The filename/pattern to match when searching for entries.
-# BASE_FILE_EXT: The related file extension to match when searching for entries.
-# MAX_DIRECTORY_DEPTH: The maximum depth for find to recurse into subdirectories.
-# RUN_TEST_ONLY: Set this value to true to allow the script to run normally
-#                but take no action against found entries.
-#==============================================================================
+# overrides i think
+#
 TARGET_ACTION="deployAndInstall";
 BUILD_PATH="${HOME}/workspace/dotfiles";
 LIB_PATH="${SCRIPT_ROOT}/lib/dotfiles";
 BACKUP_ENABLED="${_FALSE:-false}";
 BACKUP_DATE_STAMP="$(date +"%d-%m-%Y_%H-%M-%S")";
 IGNORE_FUNCTION_LIST="${HOME}/config/dotfiles/functions.ignore";
+RUN_CLEANUP="${_FALSE}";
 
 #
 # stuff
 #
 INSTALL_PATH="${HOME}/.dotfiles";
 DEPLOY_TO_DIR="/var/tmp";
-INSTALL_CONF="${DEPLOY_TO_DIR}/dotfiles.conf";
+INSTALL_CONF="${INSTALL_PATH}/config/dotfiles/dotfiles.conf";
 INSTALL_TAR="${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
 
-#==============================================================================
-# SSH configuration information
 #
-# GENERATE_SSH_KEYS: Determines whether or not keys are generated on the target
-#==============================================================================
+# ssh stuff
+#
 GENERATE_SSH_KEYS="false";
 
-#==============================================================================
-# GPG configuration information
 #
-# GENERATE_GPG_KEYS: Determines whether or not keys are generated on the target
-#==============================================================================
+# gpg stuff
+#
 GENERATE_GPG_KEYS="false";

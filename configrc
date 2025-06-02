@@ -61,7 +61,7 @@ for CONFIG_PATH in "${USER_CONFIG_PATHS[@]}"; do
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "CONFIG_PATH -> ${CONFIG_PATH}";
     fi
 
-    FILE_LIST=( "$(ls -ltr "${CONFIG_PATH}" | grep -E "(\.alias$|\.settings$)" | awk '{print $NF}')" );
+    mapfile -t FILE_LIST < <(ls -ltr "${CONFIG_PATH}"/*.settings | awk '{print $NF}');
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_LIST -> ${FILE_LIST[*]}";
@@ -81,7 +81,7 @@ for CONFIG_PATH in "${USER_CONFIG_PATHS[@]}"; do
         fi
 
         # shellcheck source=/dev/null
-        source "${CONFIG_PATH}/${FILE}";
+        source "${FILE}";
 
         [[ -n "${FILE}" ]] && unset -v FILE;
     done

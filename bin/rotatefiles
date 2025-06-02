@@ -89,12 +89,12 @@ if [[ -d "${SCRIPT_ROOT}/lib/system" ]]; then
     fi
 
     for SYSLIB in "${SCRIPT_ROOT}/lib/system"/*.sh; do
+        [[ -z "${SYSLIB}" ]] && continue;
+        [[ "${SYSLIB}" =~ ^\# ]] && continue;
+
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Library ${SYSLIB}";
         fi
-
-        [[ -z "${SYSLIB}" ]] && continue;
-        [[ "${SYSLIB}" =~ ^\# ]] && continue;
 
         if [[ -r "${SYSLIB}" ]] && [[ -s "${SYSLIB}" ]] && \
             [[ "$(basename "${SYSLIB}")" != "cws-profile.sh" ]] && [[ "$(basename "${SYSLIB}")" != "logging.sh" ]]; then
@@ -493,12 +493,12 @@ else
 
     ## bring in any library scripts
     for LIBENTRY in "${SCRIPT_ROOT}/lib/$(basename "${CNAME}" ".sh")"/*.sh; do
+        [[ -z "${LIBENTRY}" ]] && continue;
+        [[ "${LIBENTRY}" =~ ^\# ]] && continue;
+
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Library ${LIBENTRY}";
         fi
-
-        [[ -z "${LIBENTRY}" ]] && continue;
-        [[ "${LIBENTRY}" =~ ^\# ]] && continue;
 
         if [[ -r "${LIBENTRY}" ]] && [[ -s "${LIBENTRY}" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then

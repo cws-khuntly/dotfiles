@@ -18,9 +18,4 @@
 #
 #==============================================================================
 
-if [[ "${LOGNAME}" == "ansible" ]] && (( EUID == 5000 )); then
-    ANSIBLE_WORKSPACE="/opt/ansible-projects/workspace";
-
-    alias pull-ansible-config='git -C ${HOME} fetch origin && git -C ${HOME} reset --hard origin && git -C ${HOME} pull';
-    alias build-system='ansible-playbook -i workspace/ansible/inventory/build.yml --vault-id buildcreds@prompt ${ANSIBLE_WORKSPACE}/system-build/ansible/site.yml'
-fi
+[[ -z "$(compgen -c | grep -Ew "(^openssl)" | sort | uniq)" ]] && return;

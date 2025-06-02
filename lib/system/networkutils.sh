@@ -294,13 +294,13 @@ function checkForValidHost()
 
             ## clean up home directory first;
             for resolver_entry in $(< "/etc/resolv.conf"); do
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "resolver_entry -> ${resolver_entry}";
-                fi
-
                 [[ -z "${resolver_entry}" ]] && continue;
                 [[ "${resolver_entry}" =~ ^\# ]] && continue;
                 [[ "${resolver_entry}" =~ ^nameserver ]] && continue;
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "resolver_entry -> ${resolver_entry}";
+                fi
 
                 if [[ "${resolver_entry}" =~ ^search ]]; then
                     search_domain="$(awk '{print $NF}' <<< "${resolver_entry}")";
