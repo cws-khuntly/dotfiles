@@ -426,7 +426,7 @@ function copyKeysToTarget()
 
 
                 [[ -z "$(compgen -c | grep -Ew "(^expect)" | sort | uniq)" ]] && cmd_output="$(echo "${sshpass}" | ssh-copy-id -i "${keyfile}" -f -oPort="${target_port:-${SSH_PORT_NUMBER}}" "${target_user}@${target_host}")";
-                [[ -n "$(compgen -c | grep -Ew "(^expect)" | sort | uniq)" ]] && cmd_output="$(expect "${USER_LIB_PATH}/expect/ssh-copy-id.tcl ${target_host} ${target_port:-${SSH_PORT_NUMBER}} ${target_user}")";
+                [[ -n "$(compgen -c | grep -Ew "(^expect)" | sort | uniq)" ]] && cmd_output="$(expect "${USER_LIB_PATH}/expect/ssh-copy-id.tcl hostname ${target_host} port ${target_port:-${SSH_PORT_NUMBER}} username ${target_user} identity ${keyfile}")";
                 ret_code="${?}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
