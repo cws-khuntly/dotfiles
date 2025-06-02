@@ -10,4 +10,3 @@
     mode: "0644"
     owner: "{{ global_remote_username }}"
     group: "{{ ansible_facts['ansible_user_group'] }}"
-    mode: "0644"
