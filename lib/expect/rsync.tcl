@@ -45,10 +45,10 @@ set _METHOD_NAME "rsync"
 set _LINE_TERMINATOR "\r\n"
 set USERNAME $env(LOGNAME);
 set timeout -1
-set AUTHFILE "file:" + env(HOME) + "/.config/profile/password.asc";
+set AUTHFILE [format "file:%s/.config/profile/password.asc"];
 
-source [ file join [ file dirname [ info script ] ] misc.tcl ];
-source [ file join [ file dirname [ info script ] ] security.tcl ];
+source [ file join [ file dirname [ info script ] ] env(HOME)/lib/tcl/misc.tcl ];
+source [ file join [ file dirname [ info script ] ] env(HOME)/lib/tcl/security.tcl ];
 
 proc usage {} {
     global _METHOD_NAME
