@@ -18,7 +18,6 @@
 set _AUTH_VALUE "none";
 set _PASSWD_LENGTH "64";
 set _RANDOM_GENERATOR "/dev/urandom";
-set _DEFAULT_AUTH "file:$env(HOME)/etc/passwd.asc";
 
 proc getAuthValue { _HOSTNAME _USERNAME { _AUTH_FILE "" } { _ID_FILE "" } { _ENCRYPTED 1 } { _ENCRYPTION_PRG "gpg" } } {
     global env;
@@ -33,8 +32,6 @@ proc getAuthValue { _HOSTNAME _USERNAME { _AUTH_FILE "" } { _ID_FILE "" } { _ENC
         set _AUTH_VARIABLE [ split $_AUTH_FILE ":" ];
     } elseif { [ info exists env(PASSWD_FILE) ] } {
         set _AUTH_VARIABLE [ split $env(PASSWD_FILE) ":" ];
-    } else {
-        set _AUTH_VARIABLE [ split $_DEFAULT_AUTH ":" ];
     }
 
     if { $_ENCRYPTED ne 0 } {
@@ -59,46 +56,6 @@ proc getAuthValue { _HOSTNAME _USERNAME { _AUTH_FILE "" } { _ID_FILE "" } { _ENC
             if { [ llength $_AUTH_VARIABLE ] == 3 } {
                 # key has a password
                 set _USER_PASSWD [ lindex $_AUTH_VARIABLE 2 ]
-            }
-        }
-        java {
-            set _DECRYPTED [ split [ exec -ignorestderr bash -c ". $env(HOME)/.functions.d/F05-security; passwordRepository decrypt $_HOSTNAME $_USERNAME 2> /dev/null" ] "\n" ]
-
-            foreach _ENTRY $_DECRYPTED {
-                if { [ string match "#*" $_ENTRY ] } {
-                    # ignore by just going straight to the next loop iteration
-                    continue;
-                }
-
-                set _AUTH_ENTRY [ split $_ENTRY ";" ];
-                set _ENTRY_NAME [ string trim [ lindex [ split [ lindex $_AUTH_ENTRY 0 ] ":" ] 1 ] ];
-                set _USER_NAME [ string trim [ lindex [ split [ lindex $_AUTH_ENTRY 1 ] ":" ] 1 ] ];
-                set _PLAIN_ENTRY [ string trim [ lindex [ split [ lindex $_AUTH_ENTRY 2 ] ":" ] 1 ] ];
-
-                if { [ string match "$_HOSTNAME:$_USERNAME" "$_ENTRY_NAME" ] } {
-                    ## set the password to the proper value
-                    set _AUTH_VALUE "$_PLAIN_ENTRY";
-
-                    break;
-                } elseif { [ string match "$_HOSTNAME" "$_ENTRY_NAME" ] } {
-                    ## set the password to the proper value
-                    set _AUTH_VALUE "$_PLAIN_ENTRY";
-
-                    break;
-                } elseif { [ string match "$_USERNAME" "$_ENTRY_NAME" ] } {
-                    ## set the password to the proper value
-                    set _AUTH_VALUE "$_PLAIN_ENTRY";
-
-                    break;
-                } else {
-                    continue;
-                }
-
-                if { [ info exists _ENTRY ] } { unset _ENTRY; }
-                if { [ info exists _AUTH_ENTRY ] } { unset _AUTH_ENTRY; }
-                if { [ info exists _ENTRY_NAME ] } { unset _ENTRY_NAME; }
-                if { [ info exists _USER_NAME ] } { unset _USER_NAME; }
-                if { [ info exists _PLAIN_ENTRY ] } { unset _PLAIN_ENTRY; }
             }
         }
         file {
@@ -419,4 +376,3 @@ proc changeAccountPassword { _REQUEST_TYPE _USER_NAME _CURRENT_PASSWD { _NEW_PAS
         }
     }
 }
-
