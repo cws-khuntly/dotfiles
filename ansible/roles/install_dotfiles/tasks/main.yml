@@ -7,6 +7,6 @@
   ansible.builtin.include_tasks:
     file: "{{ item }}"
   loop:
-    - checkout-files.yml
+    - checkout-dotfiles.yml
     - create-dotfiles-setup.yml
-    - setup-files.yml
+    - setup-dotfiles.yml
