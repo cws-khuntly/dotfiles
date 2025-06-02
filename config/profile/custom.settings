@@ -55,7 +55,7 @@ alias zero='cat /dev/null >|';
 alias ssh='ssh -qt4AC';
 alias removeKey='ssh-keygen -R';
 alias win2unix='sed -e "s/$/\r/"';
-alias fixtty='stty sane';
+alias fixtty='clear; reset; stty sane; clear; reset;';
 alias time='time --format="%C took %e seconds"';
 alias pdftotext='pdftotext -enc UTF-8 -layout';
 alias ff='find . -type f';
@@ -98,7 +98,7 @@ alias esudo='${HOME}/lib/sudo.exp';
 alias ersync='${HOME}/lib/rsync.exp';
 alias egpg='${HOME}/lib/gpg.exp';
 alias ekeychain='${HOME}/lib/keychain.exp';
-alias reloadProfile='source ${HOME}/.bashrc';
+alias reloadProfile='source ${HOME}/.bash_profile';
 alias listFunctions='compgen -A function';
 alias listAliases='compgen -A alias';
 
