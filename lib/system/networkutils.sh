@@ -725,17 +725,17 @@ function checkIfHostIsAlive()
             case "${checkNetworkType}" in
                 "[Tt][Cc][Pp]")
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: nmap -sT -p ${checkNetworkPort}  ${checkNetworkHost} 2>/dev/null";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: nmap -sT -p ${checkNetworkPort}  ${checkNetworkName} 2>/dev/null";
                     fi
 
-                    isHostAvailable="$(nmap -sT -p "${checkNetworkPort}"  "${checkNetworkHost}" 2>/dev/null)";
+                    isHostAvailable="$(nmap -sT -p "${checkNetworkPort}"  "${checkNetworkName}" 2>/dev/null)";
                     ;;
                 "[Uu][Dd][Pp]")
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: nmap -sU -p ${checkNetworkPort}  ${checkNetworkHost} 2>/dev/null";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: nmap -sU -p ${checkNetworkPort}  ${checkNetworkName} 2>/dev/null";
                     fi
 
-                    isHostAvailable="$(nmap -sU -p "${checkNetworkPort}"  "${checkNetworkHost}" 2>/dev/null)";
+                    isHostAvailable="$(nmap -sU -p "${checkNetworkPort}"  "${checkNetworkName}" 2>/dev/null)";
                     ;;
             esac
 
@@ -761,14 +761,14 @@ function checkIfHostIsAlive()
             case "${checkNetworkType}" in
                 "[Tt][Cc][Pp]")
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: timeout "${REQUEST_TIMEOUT:-10}" bash -c \"cat < /dev/null > /dev/tcp/${checkNetworkName}/${checkNetworkPort}\"";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: timeout ${REQUEST_TIMEOUT:-10} bash -c \"cat < /dev/null > /dev/tcp/${checkNetworkName}/${checkNetworkPort}\"";
                     fi
 
                     timeout "${REQUEST_TIMEOUT:-10}" bash -c "cat < /dev/null > /dev/tcp/${checkNetworkName}/${checkNetworkPort}";
                     ;;
                 "[Uu][Dd][Pp]")
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: timeout "${REQUEST_TIMEOUT:-10}" bash -c \"cat < /dev/null > /dev/udp/${checkNetworkName}/${checkNetworkPort}\"";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: timeout ${REQUEST_TIMEOUT:-10} bash -c \"cat < /dev/null > /dev/udp/${checkNetworkName}/${checkNetworkPort}\"";
                     fi
 
                     timeout "${REQUEST_TIMEOUT:-10}" bash -c "cat < /dev/null > /dev/udp/${checkNetworkName}/${checkNetworkPort}";
