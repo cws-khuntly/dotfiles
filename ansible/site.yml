@@ -25,23 +25,6 @@
       loop:
         - "{{ global_ssh_key_list }}"
 
-    - name: Pre-installation cleanup
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: absent
-      loop:
-        - "{{ global_installer_path }}"
-        - "{{ global_checkout_path }}"
-
-    - name: Create temporary directories
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-        mode: '0700'
-      loop:
-        - "{{ global_installer_path }}"
-        - "{{ global_checkout_path }}"
-
   tasks:
     - name: Run common role
       ansible.builtin.include_role:
