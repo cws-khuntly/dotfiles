@@ -13,6 +13,8 @@
     path: "{{ global_installer_path }}"
     state: directory
     mode: "0700"
+    owner: "{{ ansible_facts['ansible_user_name'] }}"
+    group: "{{ ansible_facts['ansible_user_group'] }}"
         
 - name: Checkout setup from Github
   ansible.builtin.git:
