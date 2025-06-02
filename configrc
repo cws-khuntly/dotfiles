@@ -61,7 +61,7 @@ for CONFIG_PATH in "${USER_CONFIG_PATHS[@]}"; do
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "CONFIG_PATH -> ${CONFIG_PATH}";
     fi
 
-    mapfile -t FILE_LIST < <(find "${LIB_PATH}" -type f -name \*.settings);
+    mapfile -t FILE_LIST < <(find "${LIB_PATH}" -type f -name \*.settings 2>/dev/null);
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_LIST -> ${FILE_LIST[*]}";

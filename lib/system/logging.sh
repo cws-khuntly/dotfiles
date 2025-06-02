@@ -21,8 +21,9 @@ if [[ -n "${LOGGING_PROPERTIES}" ]]; then
     # shellcheck source=/dev/null
     source "${LOGGING_PROPERTIES}";
 else
-    if [[ -r "${HOME}/config/system/logging.properties" ]] && [[ -s "${HOME}/config/system/logging.properties" ]]; then
-        source "${HOME}/config/system/logging.properties"; ## if its here, override the above and use it
+    if [[ -r "${HOME}/.config/system/logging.properties" ]] && [[ -s "${HOME}/.config/system/logging.properties" ]]; then
+        # shellcheck source=../../config/system/logging.properties
+        source "${HOME}/.config/system/logging.properties"; ## if its here, override the above and use it
     elif [[ -r "/usr/local/config/logging.properties" ]] && [[ -s "/usr/local/config/logging.properties" ]]; then
         source "/usr/local/config/logging.properties"; ## if its here, use it
     else
