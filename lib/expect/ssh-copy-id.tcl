@@ -16,24 +16,6 @@
 #      REVISION:  ---
 #==============================================================================
 
-if { [ info exists env(ENABLE_VERBOSE) ] } {
-    if { [ string match -nocase $env(ENABLE_VERBOSE) "true" ] == 1 } {
-        log_user 1;
-    } else {
-        log_user 0;
-    }
-} else {
-    log_user 0;
-}
-
-if { [ info exists env(ENABLE_TRACE) ] } {
-    if { [ string match -nocase $env(ENABLE_TRACE) "true" ] == 1 } {
-        exp_internal 1;
-    }
-}
-
-log_file -a $env(HOME)/log/sshCopyIdentity.log;
-
 ## set up some class info
 global env;
 global _CNAME;
@@ -46,20 +28,34 @@ set _LINE_TERMINATOR "\r\n";
 set USERNAME $env(LOGNAME);
 set timeout 30;
 
+if { [ info exists env(ENABLE_VERBOSE) ] } {
+    if { [ string match -nocase $env(ENABLE_VERBOSE) "true" ] == 1 } {
+        log_user 1;
+        log_file -a $env(HOME)/log/ssh-copy-id.log;
+    }
+}
+
+if { [ info exists env(ENABLE_TRACE) ] } {
+    if { [ string match -nocase $env(ENABLE_TRACE) "true" ] == 1 } {
+        exp_internal 1;
+    }
+}
+
 if { [ info exists env(THREAD_TIMEOUT) ] } {
     set timeout $env(THREAD_TIMEOUT);
 }
 
-## bring in the files
-source [ file join [ file dirname [ info script ] ] misc.tcl ];
-source [ file join [ file dirname [ info script ] ] security.tcl ];
+set AUTHFILE [format "file:%s/.config/profile/password.asc"];
+
+source [ file join [ file dirname [ info script ] ] env(HOME)/lib/tcl/misc.tcl ];
+source [ file join [ file dirname [ info script ] ] env(HOME)/lib/tcl/security.tcl ];
 
 proc usage {} {
     global _METHOD_NAME;
 
     puts stderr "$_METHOD_NAME Perform an automated SSH-based task without user interaction.";
     puts stderr "Usage: $_METHOD_NAME \[ hostname \] \[ user \] \[ identity \]";
-    puts stderr "\thostname                The target hostname to connect to. The host must be either an IP address or resolvable hostname."; ## _TARGET_SYSTEM
+    puts stderr "\thostname            The target hostname to connect to. The host must be either an IP address or resolvable hostname."; ## _TARGET_SYSTEM
     puts stderr "\tusername            The user to connect to the remote system as."; ## _USER_LOGINID
     puts stderr "\tidentity            The identity file to send"; ## _IDENTITY_FILE
     puts stderr "\ttimeout             A timeout value for the script to wait if it hangs. If not specified, a value of 10 seconds is used.";
