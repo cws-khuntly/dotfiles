@@ -37,10 +37,10 @@ IGNORE_FUNCTION_LIST="${HOME}/config/dotfiles/functions.ignore";
 #
 # stuff
 #
-INSTALL_TAR="${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
 INSTALL_PATH="${HOME}/.dotfiles";
 DEPLOY_TO_DIR="/var/tmp";
-INSTALL_CONF="${INSTALL_PATH}/config/dotfiles/dotfiles.conf";
+INSTALL_CONF="${DEPLOY_TO_DIR}/dotfiles.conf";
+INSTALL_TAR="${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
 
 #==============================================================================
 # SSH configuration information
