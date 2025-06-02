@@ -28,14 +28,19 @@ PACKAGE_NAME="dotfiles";
 #                but take no action against found entries.
 #==============================================================================
 TARGET_ACTION="deployAndInstall";
-SOURCE_PATH="${HOME}/workspace/dotfiles";
-INSTALL_PATH="${HOME}/.dotfiles";
+BUILD_PATH="${HOME}/workspace/dotfiles";
 LIB_PATH="${SCRIPT_ROOT}/lib/dotfiles";
-DEPLOY_TO_DIR="/var/tmp";
-INSTALL_CONF="${INSTALL_PATH}/config/dotfiles/dotfiles.conf";
 BACKUP_ENABLED="${_FALSE:-false}";
 BACKUP_DATE_STAMP="$(date +"%d-%m-%Y_%H-%M-%S")";
 IGNORE_FUNCTION_LIST="${HOME}/config/dotfiles/functions.ignore";
+
+#
+# stuff
+#
+INSTALL_TAR="${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
+INSTALL_PATH="${HOME}/.dotfiles";
+DEPLOY_TO_DIR="/var/tmp";
+INSTALL_CONF="${INSTALL_PATH}/config/dotfiles/dotfiles.conf";
 
 #==============================================================================
 # SSH configuration information
