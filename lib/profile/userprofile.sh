@@ -165,8 +165,8 @@ function setPromptCommand()
     local -i end_epoch;
     local -i runtime;
 
-    git_status="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"; local git_status;
-    real_user="$(grep -w "${EUID}" /etc/passwd | cut -d ":" -f 1)"; local real_user;
+    git_status="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)";
+    real_user="$(grep -w "${EUID}" /etc/passwd | cut -d ":" -f 1)";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";

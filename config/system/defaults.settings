@@ -23,28 +23,28 @@
 #
 # read-only
 #
-[[ -z "${_TRUE}" ]] && declare -rx _TRUE="true";
-[[ -z "${_FALSE}" ]] && declare -rx _FALSE="false";
+[[ -z "${_TRUE}" ]] && declare -rx _TRUE="true" 2>/dev/null;
+[[ -z "${_FALSE}" ]] && declare -rx _FALSE="false" 2>/dev/null;
 
-declare -rx LANG="en_US.UTF-8";
-declare -rx LC_ALL="en_US.UTF-8";
-declare -rx TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n';
-declare -rx LESS="-QR";
-declare -rx BLOCKSIZE="K";
-declare -rx PAGER="less";
-declare -rx EDITOR="vim";
-declare -rx FCEDIT="vim";
-declare -rx VISUAL="vim";
-declare -rx SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket";
+declare -rx LANG="en_US.UTF-8" 2>/dev/null;
+declare -rx LC_ALL="en_US.UTF-8" 2>/dev/null;
+declare -rx TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n' 2>/dev/null;
+declare -rx LESS="-QR" 2>/dev/null;
+declare -rx BLOCKSIZE="K" 2>/dev/null;
+declare -rx PAGER="less" 2>/dev/null;
+declare -rx EDITOR="vim" 2>/dev/null;
+declare -rx FCEDIT="vim" 2>/dev/null;
+declare -rx VISUAL="vim" 2>/dev/null;
+declare -rx SSH_AUTH_SOCK="${XDG_RUNTIME_DIR:-/run/user/${UID}}/ssh-agent.socket" 2>/dev/null;
 
 #
 # read-write
 #
-declare -x DISPLAY=":0.0";
+declare -x DISPLAY="127.0.0.1:0.0";
 declare -ix THREAD_TIMEOUT=10;
 declare -x MODIFIED_IFS="^";
 declare -x RANDOM_GENERATOR="/dev/urandom";
-declare -x ENTROPY_FILE="${HOME}/etc/entropy";
+declare -x ENTROPY_FILE="${HOME}/config/entropy";
 declare -ix ENTROPY_FILE_SIZE=16384;
 
 #
@@ -54,16 +54,26 @@ declare -x PROMPT_COMMAND=setPromptCommand;
 
 case "$(uname -s)" in
     [Cc][Yy][Gg][Ww][Ii][Nn]*)
-        declare -rx TERM="ansi";
-        declare -rx PATHSEP=";";
+        declare -rx TERM="ansi" 2>/dev/null;
+        declare -rx PATHSEP=";" 2>/dev/null;
+
+        alias grep='grep --color=auto';
+        alias egrep='grep -E --color=auto';
+        alias fgrep='grep -F --color=auto';
+        alias ls='ls -lhpF --color=auto';
         ;;
     [Ll][Ii][Nn][Uu][Xx])
-        declare -rx TERM="linux";
-        declare -rx PATHSEP=":";
+        declare -rx TERM="linux" 2>/dev/null;
+        declare -rx PATHSEP=":" 2>/dev/null;
+
+        alias grep='grep --color=auto';
+        alias egrep='grep -E --color=auto';
+        alias fgrep='grep -F --color=auto';
+        alias ls='ls -lhpF --color=auto';
         ;;
     [Aa][Ii][Xx]|[Ss][Uu][Nn][Oo][Ss]|[Ss][Oo][Ll][Aa][Rr][Ii][Ss])
-        declare -rx TERM="ansi";
-        declare -rx PATHSEP=":";
+        declare -rx TERM="ansi" 2>/dev/null;
+        declare -rx PATHSEP=":" 2>/dev/null;
         ;;
 esac
 
@@ -71,10 +81,6 @@ esac
 # default aliases
 #
 alias mountt='mount | column -t';
-alias ls='ls -lhpF --color=auto';
-alias grep='grep --color=auto';
-alias egrep='grep -E --color=auto';
-alias fgrep='grep -F --color=auto';
 alias wget='wget -c';
 alias stat='stat -c "%n: Permissions: %a, Owner: %U, Group: %G"';
 alias scp='sftp -qr';

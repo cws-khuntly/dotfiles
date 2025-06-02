@@ -63,13 +63,14 @@ if [[ -z "${isReloadRequest}" ]] || [[ "${isReloadRequest}" == "${_FALSE}" ]]; t
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: showHostInfo";
     fi
 
-    showHostInfo;
+    [[ "$(uname -s)" =~ [Aa][Ii][Xx] ]] || showHostInfo;
 
     if [[ -f "/etc/motd" ]] && [[ -r "/etc/motd" ]] && [[ -s "/etc/motd" ]]; then
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: printf \"%s\n\n\" \"Message of the day:\"";
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: cat /etc/motd";
         fi
+
         printf "%s\n\n" "Message of the day:";
 
         cat /etc/motd;
@@ -83,7 +84,8 @@ if [[ -z "${isReloadRequest}" ]] || [[ "${isReloadRequest}" == "${_FALSE}" ]]; t
 fi
 
 ## trap logout
-trap 'logoutUser; exit' EXIT;
+
+trap '[[ -n "$(compgen -A function | grep -Ew "(^logoutUser)" | sort | uniq)" ]] && logoutUser; exit' EXIT;
 
 ## make the umask sane
 umask 022;
