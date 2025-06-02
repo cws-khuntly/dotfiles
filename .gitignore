@@ -1,5 +1,6 @@
 #
 # dotfiles ignores
 #
+!bin
 config/ansible/vault.yml
 config/ansible/hosts.yml
