@@ -54,8 +54,9 @@ proc usage {} {
     global _METHOD_NAME;
 
     puts stderr "$_METHOD_NAME Perform an automated SSH-based task without user interaction.";
-    puts stderr "Usage: $_METHOD_NAME \[ hostname \] \[ user \] \[ identity \]";
-    puts stderr "\thostname            The target hostname to connect to. The host must be either an IP address or resolvable hostname."; ## _TARGET_SYSTEM
+    puts stderr "Usage: $_METHOD_NAME \[ hostname \] \[ port \] \[ user \] \[ identity \]";
+    puts stderr "\thostname            The target hostname to connect to. The host must be either an IP address or resolvable hostname.";
+    puts stderr "\tport                The target port to connect to.";
     puts stderr "\tusername            The user to connect to the remote system as."; ## _USER_LOGINID
     puts stderr "\tidentity            The identity file to send"; ## _IDENTITY_FILE
     puts stderr "\ttimeout             A timeout value for the script to wait if it hangs. If not specified, a value of 10 seconds is used.";
@@ -64,7 +65,7 @@ proc usage {} {
 }
 
 ## make sure we have all our arguments
-if { [ expr { $argc < 3 } ] } {
+if { [ expr { $argc < 4 } ] } {
     usage;
 } else {
     ## set runtime information
@@ -94,7 +95,7 @@ if { ! [ info exists _USER_PASSWD ] } {
     exit 1;
 }
 
-eval spawn ssh-copy-id -i "$IDENTITY" "$USERNAME@$HOSTNAME";
+eval spawn ssh-copy-id -i "$IDENTITY" -f -oPort="$PORT "$USERNAME@$HOSTNAME";
 
 set i 0;
 
