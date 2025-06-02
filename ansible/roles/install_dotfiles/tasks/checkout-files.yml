@@ -13,6 +13,8 @@
     path: "{{ global_dotfiles_path }}"
     state: directory
     mode: "0700"
+    owner: "{{ ansible_facts['ansible_user_name'] }}"
+    group: "{{ ansible_facts['ansible_user_group'] }}"
 
 - name: Checkout dotfiles from Github
   ansible.builtin.git:
