@@ -1,5 +1,5 @@
 #
 # dotfiles ignores
 #
-config/ansible/credentials.yml
-ansible/inventory/hosts.yml
+config/ansible/vault.yml
+config/ansible/hosts.yml
