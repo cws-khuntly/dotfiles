@@ -15,7 +15,7 @@
     mode: "0700"
     owner: "{{ global_remote_username }}"
     group: "{{ global_remote_username }}"
-        
+
 - name: Checkout setup from Github
   ansible.builtin.git:
     repo: https://github.com/cws-khuntly/dotfiles-setup.git
