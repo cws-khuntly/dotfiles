@@ -20,7 +20,7 @@ PACKAGE_NAME="dotfiles";
 # overrides
 #
 TARGET_ACTION="deployAndInstall";
-BUILD_PATH="${HOME}/workspace/dotfiles";
+BUILD_PATH="{{ install_dotfiles_dotfiles_path }}";
 BACKUP_ENABLED="${_TRUE}";
 BACKUP_DATE_STAMP="$(date +"%d-%m-%Y_%H-%M-%S")";
 IGNORE_FUNCTION_LIST="${HOME}/config/dotfiles/functions.ignore";
