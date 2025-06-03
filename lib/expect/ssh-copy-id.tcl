@@ -22,11 +22,15 @@ global _CNAME;
 global _METHOD_NAME;
 global _LINE_TERMINATOR;
 
-set _CNAME "sshCopyIdentity";
-set _METHOD_NAME "sshCopyIdentity";
+set _CNAME "ssh-copy-id.tcl";
+set _METHOD_NAME "ssh-copy-id.tcl";
 set _LINE_TERMINATOR "\r\n";
 set USERNAME $env(LOGNAME);
 set timeout 30;
+
+if { ! [ info exists env(AUTHFILE) ] } {
+    return -code error "No authfile was located in the environment. Cannot continue.";
+}
 
 if { [ info exists env(ENABLE_VERBOSE) ] } {
     if { [ string match -nocase $env(ENABLE_VERBOSE) "true" ] == 1 } {
@@ -46,7 +50,6 @@ if { [ info exists env(THREAD_TIMEOUT) ] } {
 }
 
 source [ file join [ file dirname [ info script ] ] env(HOME)/lib/tcl/misc.tcl ];
-source [ file join [ file dirname [ info script ] ] env(HOME)/lib/tcl/security.tcl ];
 
 proc usage {} {
     global _METHOD_NAME;
