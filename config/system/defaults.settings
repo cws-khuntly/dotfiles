@@ -94,8 +94,6 @@ alias ping='ping -c 4 -q -W ${THREAD_TIMEOUT:-10}';
 alias mysql='mysql --protocol tcp -u ${LOGNAME} -p';
 alias nc='nc -w ${THREAD_TIMEOUT:-10}';
 alias jmap='jmap -dump:format=b,file=/var/tmp/dump.hprof';
-alias pssh='pssh -p 5 -o ${HOME}/log/pssh -e ${HOME}/log/pssh -t 900 -P -l ${LOGNAME} -h ${HOME}/config/pssh/hosts';
-alias prsync='prsync -p 5 -o ${HOME}/log/pssh -e ${HOME}/log/pssh -t 900 -l ${LOGNAME} -h ${HOME}/config/pssh/hosts';
 alias recode='recode -qt';
 alias sshfs='sshfs -o sshfs_sync,reconnect,no_readahead,idmap=user,umask=644,uid=$(id -u),gid=$(id -g)';
 alias apg='apg -M SNCL';
