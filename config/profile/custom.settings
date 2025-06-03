@@ -42,6 +42,7 @@ done
 AUTHFILE="${HOME}/.config/profile/authfile.gpg";
 
 ## customs
+alias mountt='mount | column -t';
 alias lt='ls -ltrhpF --color=auto';
 alias la='ls -ltrahpF --color=auto';
 alias ll='ls -lhpF --color=auto';
