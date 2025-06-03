@@ -91,15 +91,6 @@ alias disableDebug='ENABLE_DEBUG="${_FALSE}"';
 alias disableVerbose='ENABLE_VERBOSE="${_FALSE}"';
 alias disableTrace='ENABLE_TRACE="${_FALSE}"';
 alias disablePerf='ENABLE_PERFORMANCE="${_FALSE}"';
-
-## expect
-alias escp='${HOME}/lib/scp.exp';
-alias essh='${HOME}/lib/ssh.exp';
-alias essh-copy-id='${HOME}/lib/sshCopyIdentity.exp';
-alias esudo='${HOME}/lib/sudo.exp';
-alias ersync='${HOME}/lib/rsync.exp';
-alias egpg='${HOME}/lib/gpg.exp';
-alias ekeychain='${HOME}/lib/keychain.exp';
 alias reloadProfile='source ${HOME}/.bash_profile';
 alias listFunctions='compgen -A function';
 alias listAliases='compgen -A alias';
