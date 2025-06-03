@@ -18,6 +18,10 @@
 #
 #==============================================================================
 
+if [[ -z "$(compgen -c | grep -Ew "(^tmux)" | sort | uniq)" ]]; then
+    [[ -z "${TMUX}" ]] && tmux new-session -A -s main || tmux attach -t main
+fi
+
 CNAME="$(basename "${BASH_SOURCE[0]}")";
 FUNCTION_NAME="${CNAME}#bashrc";
 LOGGING_PROPERTIES="${HOME}/.config/system/logging.properties";
