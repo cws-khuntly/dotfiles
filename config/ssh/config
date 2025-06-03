@@ -8,6 +8,7 @@
 Include                         config.d/*
 
 Host *
+    AddKeysToAgent              = yes
     AddressFamily               = inet
     CheckHostIP                 = yes
     Compression                 = yes
