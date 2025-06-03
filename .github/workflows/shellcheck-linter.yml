@@ -15,7 +15,7 @@ jobs:
       contents: read
     strategy:
       matrix:
-        match: [ ./alias ./bashrc ./functions ./profile ./profiles ./bin/* ./lib/system/*.sh ./lib/profile/*.sh ./lib/setup/*.sh ./lib/*.sh ./etc/system/*.alias ./etc/system/*.settings ./etc/profile/*.alias ./etc/profile/*.settings **/*.sh ]
+        match: [ ./profile ./bashrc ./librc ./configrc ./bin/* ./lib/system/*.sh ./lib/system/*.settings ./lib/setup/*.sh ./lib/setup/*.settings ./lib/profile/*.sh ./lib/profile/*.settings ./lib/*.sh **/*.sh ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
