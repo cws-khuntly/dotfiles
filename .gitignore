@@ -4,3 +4,4 @@
 !bin
 config/ansible/vault.yml
 config/ansible/hosts.yml
+config/profile/authfile.gpg
