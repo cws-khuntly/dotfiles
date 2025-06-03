@@ -15,7 +15,7 @@ jobs:
       contents: read
     strategy:
       matrix:
-        match: [ ./profile ./bashrc ./librc ./configrc ./bin/* ./lib/system/*.sh ./lib/system/*.settings ./lib/setup/*.sh ./lib/setup/*.settings ./lib/profile/*.sh ./lib/profile/*.settings ./lib/*.sh **/*.sh ]
+        match: [ ./profile ./bashrc ./librc ./configrc ./bin/* ./lib/system/*.sh ./lib/setup/*.sh ./lib/profile/*.sh ./lib/*.sh ./config/system/*.settings ./config/setup/*.settings ./config/profile/*.settings ./config/programs/*.settings **/*.sh ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
         env:
           SHELLCHECK_OPTS: '-x -s bash'
         with:
-          additional_files: './profile ./bashrc ./librc ./configrc ./bin/* ./lib/system/*.sh ./lib/system/*.settings ./lib/setup/*.sh ./lib/setup/*.settings ./lib/profile/*.sh ./lib/profile/*.settings ./lib/*.sh *.sh'
+          additional_files: './profile ./bashrc ./librc ./configrc ./bin/* ./lib/system/*.sh ./lib/setup/*.sh ./lib/profile/*.sh ./lib/*.sh ./config/system/*.settings ./config/setup/*.settings ./config/profile/*.settings ./config/programs/*.settings *.sh'
           severity: 'error'
           check_together: 'yes'
           format: 'gcc'
