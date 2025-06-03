@@ -74,7 +74,7 @@ if { [ expr { $argc < 4 } ] } {
         incr a;
     }
 
-    set _AUTH_DATA [ split [ getAuthValue $HOSTNAME $USERNAME ] " " ];
+    set _AUTH_DATA [ split [ exec -ignorestderr bash -c "gpg --decrypt [ $env(AUTHFILE) ] 2> /dev/null | grep -Ew \"(^[ $_HOSTNAME ]|[ $_USERNAME ])\"" " " ] ];
 
     switch [ llength $_AUTH_DATA ] {
         1 {
