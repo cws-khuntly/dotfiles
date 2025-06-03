@@ -18,6 +18,11 @@
 #
 #==============================================================================
 
+alias setupFiles='setupdir="$(mktemp -d); git clone https://github.com/cws-khuntly/dotfiles-setup.git "${setupdir}"; \
+    chmod 755 "${setupdir}/bin/setup"; checkoutdir="$(mktemp -d)"; git clone https://github.com/cws-khuntly/dotfiles.git "${checkoutdir}"; \
+    sed -i\'\' -e "s/BUILD_PATH=.*/BUILD_PATH=\"${checkoutdir}\"/" "${checkoutdir}/config/dotfiles/setup.properties"; \
+    ${setupdir}/bin/setup -n "${checkoutdir}/config/dotfiles/setup.properties"';
+
 [[ -z "$(compgen -c | grep -Ew "(^ansible)" | sort | uniq)" ]] && return;
 
-alias ansible-dotfiles='ansible-playbook -i ${HOME}/workspace/dotfiles/ansible/inventory/hosts.yml ${HOME}/workspace/dotfiles/ansible/site.yml';
+alias ansibleFiles='ansible-playbook -i ${HOME}/workspace/dotfiles/ansible/inventory/hosts.yml ${HOME}/workspace/dotfiles/ansible/site.yml';
