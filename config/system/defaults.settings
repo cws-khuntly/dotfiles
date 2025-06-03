@@ -106,10 +106,7 @@ alias xlaunch='nohup xlaunch -run ${HOME}/config/config.xlaunch &';
 [[ -n "$(compgen -c | grep -E -w "(^vim)" 2> /dev/null)" ]] && alias vi='vim';
 [[ -n "$(compgen -c | grep -E -w "(^colordiff)" 2> /dev/null)" ]] && alias diff='colordiff';
 
-if [[ "$(uname -s)" =~ [Cc][Yy][Gg][Ww][Ii][Nn]* ]]; then
-    alias sudo='cygstart --action=runas';
-    alias gpg='gpg2';
-fi
+[[ "$(uname -s)" =~ [Cc][Yy][Gg][Ww][Ii][Nn]* ]] && alias sudo='cygstart --action=runas';
 
 #
 # safety
@@ -155,6 +152,7 @@ declare -ix MAILCHECK=10;
 #
 # gpg
 #
+[[ "$(uname -s)" =~ [Cc][Yy][Gg][Ww][Ii][Nn]* ]] && alias gpg='gpg2';
 declare -x GPG_TTY="$(tty)";
 
 gpg-connect-agent updatestartuptty /bye > /dev/null 2>&1;
