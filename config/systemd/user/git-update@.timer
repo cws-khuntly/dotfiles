@@ -23,8 +23,8 @@ Wants=git-update@%i.target
 BindsTo=git-update@%i.service
 
 [Timer]
-OnBootSec=1m
-OnCalendar=hourly
+OnBootSec=5m
+OnCalendar=*-*-* 03:00:00
 Persistent=true
 Unit=git-update@%i.service
 
