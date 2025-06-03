@@ -488,7 +488,7 @@ function addservice()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter";
         fi
 
-        printf "%s %s\n" "${FUNCNAME[1]}" "Enable and start a user-level systemd service."." >&2;
+        printf "%s %s\n" "${FUNCNAME[1]}" "Enable and start a user-level systemd service." >&2;
         printf "%s %s\n" "Usage: ${FUNCNAME[1]}" "[ service name ]" >&2;
         printf "    %s: %s\n" "<directory name>" "The name of the service to enable and start." >&2;
 
