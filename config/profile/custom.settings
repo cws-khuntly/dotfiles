@@ -39,6 +39,8 @@ done
 
 [[ -n "${ssh_config_file[*]}" ]] && unset -v ssh_config_files;
 
+AUTHFILE="${HOME}/.config/profile/authfile.gpg";
+
 ## customs
 alias lt='ls -ltrhpF --color=auto';
 alias la='ls -ltrahpF --color=auto';
