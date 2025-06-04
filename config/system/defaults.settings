@@ -69,7 +69,7 @@ alias nc='nc -w ${THREAD_TIMEOUT:-10}';
 alias jmap='jmap -dump:format=b,file=/var/tmp/dump.hprof';
 alias recode='recode -qt';
 alias sshfs='sshfs -o sshfs_sync,reconnect,no_readahead,idmap=user,umask=644,uid=$(id -u),gid=$(id -g)';
-alias apg='apg -M SNCL -a 1';
+alias apg='apg -M SNCL';
 alias curl='curl --dump-header ${HOME}/log/curl-headers';
 alias xlaunch='nohup xlaunch -run ${HOME}/config/config.xlaunch &';
 alias gpg='gpg --homedir="${HOME}/.gnupg"';
