@@ -689,6 +689,7 @@ function returnRandomCharacters()
             fi
 
             returned_characters="$(apg -a 0 -m "${string_length}" | tail -n 1)";
+        fi
     else
         while (( counter <= string_count )); do
             if [[ -n "${use_special}" ]] && [[ "${use_special}" == "${_TRUE}" ]]; then
