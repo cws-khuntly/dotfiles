@@ -175,7 +175,7 @@ function captureGpgData()
     ret_code="${?}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "sed/GPG_OPTION_TEMPLATE -> ret_code -> ${ret_code}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "sed / GPG_OPTION_TEMPLATE -> ret_code -> ${ret_code}";
     fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -193,7 +193,7 @@ function captureGpgData()
             fi
         else
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: chmod 0600 ${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")";
+                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: chmod 600 ${WORK_DIR}/$(basename "${GPG_OPTION_TEMPLATE}")";
             fi
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
@@ -205,7 +205,7 @@ function captureGpgData()
                 [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred setting permissions on file ${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}"). Please review logs.";
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred setting permissions on file ${WORK_DIR}/$(basename "${GPG_OPTION_TEMPLATE}"). Please review logs.";
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -338,7 +338,7 @@ function generateGpgKeys()
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output="$(gpg --homedir="${GNUPGHOME}" --batch --gen-key "${WORK_DIR}/$(basename "${GPG_OPTION_TEMPLATE}")")";
+        cmd_output="$(gpg --batch --gen-key "${WORK_DIR}/$(basename "${GPG_OPTION_TEMPLATE}")")";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
