@@ -50,11 +50,9 @@ function usage()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    set +o noclobber;
-
     local cname="logging.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
-    local return_code=3;
+    local -i return_code=3;
 
     printf "%s %s\n" "${function_name}" "Write a log message to a provided target." >&2;
     printf "%s %s\n" "Usage: ${function_name}" "[ <options> ]" >&2;
@@ -77,8 +75,8 @@ function usage()
     printf "    %s: %s\n" "Calling function" "The method within the script calling the method to write the log entry." >&2;
     printf "    %s: %s\n" "Message" "The data to write to the logfile." >&2;
 
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
@@ -97,8 +95,6 @@ function writeLogEntry()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    set +o noclobber;
-
     local cname="logging.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
@@ -116,10 +112,10 @@ function writeLogEntry()
             ;;
     esac
 
-    [[ -n "${action}" ]] && unset -v action;
+    [[ -n "${action}" ]] && unset action;
 
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
@@ -138,8 +134,6 @@ function writeLogEntryToConsole()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    set +o noclobber;
-
     local cname="logging.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
@@ -151,11 +145,11 @@ function writeLogEntryToConsole()
         [Ss][Tt][Dd][Ee][Rr][Rr]) printf "\e[00;31m%s\e[00;32m\n" "${log_message}" >&2; ;;
     esac
 
-    [[ -n "${log_level}" ]] && unset -v log_level;
-    [[ -n "${log_message}" ]] && unset -v log_message;
+    [[ -n "${log_level}" ]] && unset log_level;
+    [[ -n "${log_message}" ]] && unset log_message;
 
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
@@ -174,8 +168,6 @@ function writeLogEntryToFile()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
 
-    set +o noclobber;
-
     local cname="logging.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local log_level="${1}";
@@ -186,6 +178,8 @@ function writeLogEntryToFile()
     local log_message="${6}";
     local log_date="${7}";
     local log_file;
+
+    current_clobber="$(set -o | grep noclobber | awk '{print $NF}')";
 
     case "${log_level}" in
         [Pp][Ee][Rr][Ff][Oo][Rr][Mm][Aa][Nn][Cc][Ee]) log_file="${PERF_LOG_FILE}"; ;;
@@ -202,17 +196,20 @@ function writeLogEntryToFile()
     ## TODO
     printf "${CONVERSION_PATTERN}\n" "${log_date}" "${log_file}" "${log_level}" "${log_pid}" "${log_source}" "${log_line}" "${log_method}" "${log_message}" >> "${LOG_ROOT}/${log_file}";
 
-    [[ -n "${log_level}" ]] && unset -v log_level;
-    [[ -n "${log_pid}" ]] && unset -v log_pid;
-    [[ -n "${log_source}" ]] && unset -v log_source;
-    [[ -n "${log_line}" ]] && unset -v log_line;
-    [[ -n "${log_method}" ]] && unset -v log_method;
-    [[ -n "${log_message}" ]] && unset -v log_message;
-    [[ -n "${log_date}" ]] && unset -v log_date;
-    [[ -n "${log_file}" ]] && unset -v log_file;
+    if [[ -n "${current_clobber}" ]] && [[ "${current_clobber}" == "off" ]]; then set +o noclobber; fi
 
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${log_level}" ]] && unset log_level;
+    [[ -n "${log_pid}" ]] && unset log_pid;
+    [[ -n "${log_source}" ]] && unset log_source;
+    [[ -n "${log_line}" ]] && unset log_line;
+    [[ -n "${log_method}" ]] && unset log_method;
+    [[ -n "${log_message}" ]] && unset log_message;
+    [[ -n "${log_date}" ]] && unset log_date;
+    [[ -n "${log_file}" ]] && unset log_file;
+    [[ -n "${current_clobber}" ]] && unset current_clobber;
+
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
