@@ -54,10 +54,12 @@ declare -x PROMPT_COMMAND=setPromptCommand;
 #
 alias wget='wget -c';
 alias stat='stat -c "%n: Permissions: %a, Owner: %U, Group: %G"';
+alias ssh='ssh -qtl "${LOGNAME}"';
 alias scp='sftp -qr';
 alias sftp='sftp -qr';
 alias ssh-keygen='ssh-keygen -C ""';
 alias ssh-keyscan='ssh-keyscan -H';
+alias ssh-copy-id='ssh-copy-id -i';
 alias rsync='rsync -avz --append --safe-links --delete --delete-excluded --exclude-from=${HOME}/config/excludes --timeout 10000 --temp-dir=/var/tmp --no-motd --blocking-io --stats --progress -e "ssh -q -E ${HOME}/log/ssh.log" --log-file=${HOME}/log/rsync.log';
 alias du='du -sh';
 alias df='df -h';
@@ -77,20 +79,21 @@ alias grep='grep --color=auto';
 alias egrep='grep -E --color=auto';
 alias fgrep='grep -F --color=auto';
 alias ls='ls -lhpF --color=auto';
+alias mkdir='mkdir -pv';
+alias nmap='nmap -sp';
 
 ## make some customizations IF the command exists
 [[ -n "$(compgen -c | grep -E -w "(^vim)" 2> /dev/null)" ]] && alias vi='vim';
 [[ -n "$(compgen -c | grep -E -w "(^colordiff)" 2> /dev/null)" ]] && alias diff='colordiff';
 
 case "$(uname -s)" in
+    [Cc][Yy][Gg][Ww][Ii][Nn]*)
+        declare -rx TERM="ansi" 2>/dev/null;
+        declare -rx PATHSEP=";" 2>/dev/null;
+        ;;
     [Aa][Ii][Xx]|[Ss][Uu][Nn][Oo][Ss]|[Ss][Oo][Ll][Aa][Rr][Ii][Ss])
         declare -rx TERM="ansi" 2>/dev/null;
         declare -rx PATHSEP=":" 2>/dev/null;
-
-        alias rm='rm -i';
-        alias mv='mv -i';
-        alias cp='cp -i';
-        alias ln='ln -i';
 
         unalias ls;
         unalias grep;
