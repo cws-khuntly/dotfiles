@@ -49,31 +49,6 @@ declare -ix ENTROPY_FILE_SIZE=16384;
 #
 declare -x PROMPT_COMMAND=setPromptCommand;
 
-case "$(uname -s)" in
-    [Cc][Yy][Gg][Ww][Ii][Nn]*)
-        declare -rx TERM="ansi" 2>/dev/null;
-        declare -rx PATHSEP=";" 2>/dev/null;
-
-        alias grep='grep --color=auto';
-        alias egrep='grep -E --color=auto';
-        alias fgrep='grep -F --color=auto';
-        alias ls='ls -lhpF --color=auto';
-        ;;
-    [Ll][Ii][Nn][Uu][Xx])
-        declare -rx TERM="linux" 2>/dev/null;
-        declare -rx PATHSEP=":" 2>/dev/null;
-
-        alias grep='grep --color=auto';
-        alias egrep='grep -E --color=auto';
-        alias fgrep='grep -F --color=auto';
-        alias ls='ls -lhpF --color=auto';
-        ;;
-    [Aa][Ii][Xx]|[Ss][Uu][Nn][Oo][Ss]|[Ss][Oo][Ll][Aa][Rr][Ii][Ss])
-        declare -rx TERM="ansi" 2>/dev/null;
-        declare -rx PATHSEP=":" 2>/dev/null;
-        ;;
-esac
-
 #
 # default aliases
 #
@@ -89,7 +64,7 @@ alias du='du -sh';
 alias df='df -h';
 alias netstat='netstat -an';
 alias ldapsearch='ldapsearch -W';
-alias ping='ping -c 4 -q -W ${THREAD_TIMEOUT:-10}';
+alias ping='ping -cq -W ${THREAD_TIMEOUT:-10}';
 alias mysql='mysql --protocol tcp -u ${LOGNAME} -p';
 alias nc='nc -w ${THREAD_TIMEOUT:-10}';
 alias jmap='jmap -dump:format=b,file=/var/tmp/dump.hprof';
@@ -98,24 +73,33 @@ alias sshfs='sshfs -o sshfs_sync,reconnect,no_readahead,idmap=user,umask=644,uid
 alias apg='apg -M SNCL';
 alias curl='curl --dump-header ${HOME}/log/curl-headers';
 alias xlaunch='nohup xlaunch -run ${HOME}/config/config.xlaunch &';
+alias gpg='gpg --homedir="${HOME}/.gnupg"';
+alias grep='grep --color=auto';
+alias egrep='grep -E --color=auto';
+alias fgrep='grep -F --color=auto';
+alias ls='ls -lhpF --color=auto';
 
 ## make some customizations IF the command exists
 [[ -n "$(compgen -c | grep -E -w "(^vim)" 2> /dev/null)" ]] && alias vi='vim';
 [[ -n "$(compgen -c | grep -E -w "(^colordiff)" 2> /dev/null)" ]] && alias diff='colordiff';
 
-[[ "$(uname -s)" =~ [Cc][Yy][Gg][Ww][Ii][Nn]* ]] && alias sudo='cygstart --action=runas';
+case "$(uname -s)" in
+    [Aa][Ii][Xx]|[Ss][Uu][Nn][Oo][Ss]|[Ss][Oo][Ll][Aa][Rr][Ii][Ss])
+        declare -rx TERM="ansi" 2>/dev/null;
+        declare -rx PATHSEP=":" 2>/dev/null;
 
-#
-# safety
-#
-case '$(uname)' in
-    [Aa][Ii][Xx])
         alias rm='rm -i';
         alias mv='mv -i';
         alias cp='cp -i';
         alias ln='ln -i';
+
+        unalias ls;
+        unalias grep;
         ;;
     *)
+        declare -rx TERM="linux" 2>/dev/null;
+        declare -rx PATHSEP=":" 2>/dev/null;
+
         alias rm='rm -i --preserve-root';
         alias chown='chown --preserve-root';
         alias chmod='chmod --preserve-root';
@@ -123,7 +107,6 @@ case '$(uname)' in
         alias mv='mv -i';
         alias cp='cp -i';
         alias ln='ln -i';
-        ;;
 esac
 
 #
