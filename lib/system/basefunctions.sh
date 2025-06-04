@@ -676,13 +676,28 @@ function returnRandomCharacters()
         esac
     done
 
-    while (( counter <= string_count )); do
+    if [[ -z "$(compgen -c | grep -Ew "(^apg)" | sort | uniq)" ]]; then
         if [[ -n "${use_special}" ]] && [[ "${use_special}" == "${_TRUE}" ]]; then
-            returned_characters="$(tr -cd '[:graph:]' < /dev/urandom | head -c "${string_length}")";
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: apg -a 1 -m ${string_length} | tail -n 1";
+            fi
+
+            returned_characters="$(apg -a 1 -m "${string_length}" | tail -n 1)";
         else
-            returned_characters="$(tr -cd '[:alnum:]' < /dev/urandom | head -c "${string_length}")";
-        fi
-    done
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: apg -a 0 -m ${string_length} | tail -n 1";
+            fi
+
+            returned_characters="$(apg -a 0 -m "${string_length}" | tail -n 1)";
+    else
+        while (( counter <= string_count )); do
+            if [[ -n "${use_special}" ]] && [[ "${use_special}" == "${_TRUE}" ]]; then
+                returned_characters="$(tr -cd '[:graph:]' < /dev/urandom | head -c "${string_length}")";
+        else
+                returned_characters="$(tr -cd '[:alnum:]' < /dev/urandom | head -c "${string_length}")";
+            fi
+        done
+    fi
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returned_characters -> ${returned_characters}";
