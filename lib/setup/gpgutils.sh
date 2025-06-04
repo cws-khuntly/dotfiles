@@ -171,7 +171,7 @@ function captureGpgData()
     ## at this point we should have enough information to populate the file
     sed -e "s/&key-algo/${key_algo}/" -e "s/&key-bits/${key_bits}/" -e "s/&key-type/${subkey_type}/" \
         -e "s/&key-length/${subkey_length}/" -e "s/&real-name/${real_name}/" -e "s/&emailaddr/${email_address}/" \
-        -e "s/&expiry/${key_lifetime}/" -e "s/&passphrase/${key_passphrase}/" "${GPG_OPTION_TEMPLATE}" >| "${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")";
+        -e "s/&expiry/${key_lifetime}/" -e "s/&passphrase/${key_passphrase}/" "${GPG_OPTION_TEMPLATE}" >| "${WORK_DIR}/$(basename "${GPG_OPTION_TEMPLATE}")";
     ret_code="${?}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -185,7 +185,7 @@ function captureGpgData()
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while transferring the input to the answer file.";
         fi
     else
-        if (( $(grep -c "&" "${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")") != 0 )); then
+        if (( $(grep -c "&" "${WORK_DIR}/$(basename "${GPG_OPTION_TEMPLATE}")") != 0 )); then
             return_code="${ret_code}"
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -198,7 +198,7 @@ function captureGpgData()
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            chmod 0600 "${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")";
+            chmod 600 "${WORK_DIR}/$(basename "${GPG_OPTION_TEMPLATE}")";
             ret_code="${?}";
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -272,8 +272,9 @@ function generateGpgKeys()
     local -i return_code=0;
     local -i error_count=0;
     local cmd_output;
-    local GNUPGHOME;
     local cleanup_list;
+
+    GNUPGHOME="${HOME}/.gnupg";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -286,7 +287,7 @@ function generateGpgKeys()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    if [[ ! -d "${HOME}"/.gnupg ]]; then
+    if [[ ! -d "${GNUPGHOME}" ]]; then
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "GnuPG user configuration directory does not exist. Creating.";
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -pv ${HOME}/.gnupg";
@@ -295,7 +296,7 @@ function generateGpgKeys()
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output="$(mkdir -pv "${HOME}"/.gnupg)";
+        cmd_output="$(mkdir "${GNUPGHOME}")";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -315,12 +316,8 @@ function generateGpgKeys()
     fi
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Directory created: ${HOME}/.gnupg;";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Create temporary directory for GNUPGHOME...";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp -d --tmpdir=${USABLE_TMP_DIR:-${TMPDIR}})";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Directory created: ${GNUPGHOME};";
     fi
-
-    GNUPGHOME="$(mktemp -d --tmpdir="${USABLE_TMP_DIR:-${TMPDIR}}")";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "GNUPGHOME -> ${GNUPGHOME}";
@@ -341,7 +338,7 @@ function generateGpgKeys()
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output="$("${GPG_APPLICATION_PROGRAM}" --homedir="${GNUPGHOME}" --batch --gen-key "${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${GPG_OPTION_TEMPLATE}")")";
+        cmd_output="$(gpg --homedir="${GNUPGHOME}" --batch --gen-key "${WORK_DIR}/$(basename "${GPG_OPTION_TEMPLATE}")")";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -365,7 +362,7 @@ function generateGpgKeys()
     ## cleanup
     [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
-    cleanup_list="$(basename "${GPG_OPTION_TEMPLATE}")|${USABLE_TMP_DIR:-${TMPDIR}}";
+    cleanup_list="${WORK_DIR}/$(basename "${GPG_OPTION_TEMPLATE}")";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_list -> ${cleanup_list}";
@@ -398,7 +395,7 @@ function generateGpgKeys()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${GNUPGHOME}" ]] && declare -x GNUPGHOME="${HOME}/.gnupg";
+    [[ -n "${GNUPGHOME}" ]] && declare -x GNUPGHOME="${GNUPGHOME}";
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
