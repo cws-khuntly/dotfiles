@@ -23,8 +23,6 @@
 #
 # read-only
 #
-declare -rx LANG="en_US.UTF-8" 2>/dev/null;
-declare -rx LC_ALL="en_US.UTF-8" 2>/dev/null;
 declare -rx TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n' 2>/dev/null;
 declare -rx LESS="-QR" 2>/dev/null;
 declare -rx BLOCKSIZE="K" 2>/dev/null;
@@ -112,17 +110,6 @@ case "$(uname -s)" in
 esac
 
 #
-# termcap
-#
-declare -x LESS_TERMCAP_mb=$'\e[1;32m';
-declare -x LESS_TERMCAP_md=$'\e[1;32m';
-declare -x LESS_TERMCAP_me=$'\e[0m';
-declare -x LESS_TERMCAP_se=$'\e[0m';
-declare -x LESS_TERMCAP_so=$'\e[01;33m';
-declare -x LESS_TERMCAP_ue=$'\e[0m';
-declare -x LESS_TERMCAP_us=$'\e[1;4;31m';
-
-#
 # mail
 #
 declare -x MAIL="/var/spool/mail/${LOGNAME:?}";
@@ -134,7 +121,7 @@ declare -ix MAILCHECK=10;
 #
 # sets
 #
-case "$(uname)" in
+case "$(uname -s)" in
     [Ll][Ii][Nn][Uu][Xx])
         set -o ignoreeof;
         set -o monitor;
