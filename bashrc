@@ -28,20 +28,21 @@ fi
 
 CNAME="$(basename "${BASH_SOURCE[0]}")";
 FUNCTION_NAME="${CNAME}#bashrc";
+# shellcheck source=./.config/system/logging.properties
 LOGGING_PROPERTIES="${HOME}/.config/system/logging.properties";
 
 [[ "$-" != *i* ]] || [ -z "${PS1}" ] && return;
 
 if [[ -z "${DOT_PROFILE_LOADED}" ]] || "${DOT_PROFILE_LOADED}" =~ [Ff][AA][Ll][Ss][Ee] ]]; then
     if [[ -f "${HOME}/.profile" ]] && [[ -r "${HOME}/.profile" ]] && [[ -s "${HOME}/.profile" ]]; then
-        # shellcheck source=/home/khuntly/.dotfiles/profile
+        # shellcheck source=./profile
         source "${HOME}/.profile";
     fi
 fi
 
 ## load the logger
 if [[ -r "${HOME}/lib/system/logging.sh" ]] && [[ -s "${HOME}/lib/system/logging.sh" ]]; then
-    # shellcheck source=/home/khuntly/.dotfiles/lib/system/logging.sh
+    # shellcheck source=./lib/system/logging.sh
     source "${HOME}/lib/system/logging.sh"; ## if its here, override the above and use it
 elif [[ -r "/usr/local/bin/logging.sh" ]] && [[ -s "/usr/local/bin/logging.sh" ]]; then
     source "/usr/local/bin/logging.sh"; ## if its here, use it
@@ -66,9 +67,9 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${HOME}/.alias";
 fi
 
-# shellcheck source=/home/khuntly/.dotfiles/librc
+# shellcheck source=./librc
 source "${HOME}/.librc";
-# shellcheck source=/home/khuntly/.dotfiles/configrc
+# shellcheck source=./configrc
 source "${HOME}/.configrc";
 
 if [[ -z "${isReloadRequest}" ]] || [[ "${isReloadRequest}" == "${_FALSE}" ]]; then
