@@ -24,3 +24,5 @@ declare -x USER_PATH="${HOME}/bin";
 declare -x USER_LIB_PATH="${HOME}/lib";
 declare -x USER_CONFIG_PATH="${HOME}/.config";
 declare -x PATH="${PATH}:${SYSTEM_PATH}:${USER_PATH}";
+
+declare -x DOT_PROFILE_LOADED="true";
