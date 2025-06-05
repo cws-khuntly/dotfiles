@@ -22,7 +22,7 @@ if [[ -z "$(compgen -c | grep -Ew "(^tmux)" | sort | uniq)" ]]; then
     if [[ -z "${TMUX}" ]]; then
         tmux new-session -A -s main && exit;
     else
-        tmux attach -t main && exit;
+        [[ -n "${TERM}" ]] && [[ "${TERM}" =~ [Ss][Cc][Rr][Ee][Ee][Nn] ]] || tmux attach -t main && exit;
     fi
 fi
 
