@@ -100,9 +100,6 @@ case "$(uname -s)" in
         unalias grep;
         ;;
     *)
-        declare -rx TERM="linux" 2>/dev/null;
-        declare -rx PATHSEP=":" 2>/dev/null;
-
         alias rm='rm -i --preserve-root';
         alias chown='chown --preserve-root';
         alias chmod='chmod --preserve-root';
