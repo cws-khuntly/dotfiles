@@ -19,7 +19,7 @@
 #==============================================================================
 
 if [[ -z "$(compgen -c | grep -Ew "(^tmux)" | sort | uniq)" ]]; then
-    [[ -z "${TMUX}" ]] && tmux new-session -A -s main -E false || tmux attach -t main -E false
+    [[ -z "${TMUX}" ]] && tmux new-session -A -s main && exit; || tmux attach -t main && exit;
 fi
 
 CNAME="$(basename "${BASH_SOURCE[0]}")";
