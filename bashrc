@@ -32,8 +32,12 @@ LOGGING_PROPERTIES="${HOME}/.config/system/logging.properties";
 
 [[ "$-" != *i* ]] || [ -z "${PS1}" ] && return;
 
-# shellcheck source=/home/khuntly/.dotfiles/profile
-[[ -f "${HOME}/.profile" ]] && source "${HOME}/.profile";
+if [[ -z "${DOT_PROFILE_LOADED}" ]] || "${DOT_PROFILE_LOADED}" =~ [Ff][AA][Ll][Ss][Ee] ]]; then
+    if [[ -f "${HOME}/.profile" ]] && [[ -r "${HOME}/.profile" ]] && [[ -s "${HOME}/.profile" ]]; then
+        # shellcheck source=/home/khuntly/.dotfiles/profile
+        source "${HOME}/.profile";
+    fi
+fi
 
 ## load the logger
 if [[ -r "${HOME}/lib/system/logging.sh" ]] && [[ -s "${HOME}/lib/system/logging.sh" ]]; then
