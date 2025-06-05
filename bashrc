@@ -33,7 +33,7 @@ LOGGING_PROPERTIES="${HOME}/.config/system/logging.properties";
 
 [[ "$-" != *i* ]] || [ -z "${PS1}" ] && return;
 
-if [[ -z "${DOT_PROFILE_LOADED}" ]] || "${DOT_PROFILE_LOADED}" =~ [Ff][AA][Ll][Ss][Ee] ]]; then
+if [[ -z "${DOT_PROFILE_LOADED}" ]] || [[ "${DOT_PROFILE_LOADED}" =~ [Ff][AA][Ll][Ss][Ee] ]]; then
     if [[ -f "${HOME}/.profile" ]] && [[ -r "${HOME}/.profile" ]] && [[ -s "${HOME}/.profile" ]]; then
         # shellcheck source=./profile
         source "${HOME}/.profile";
