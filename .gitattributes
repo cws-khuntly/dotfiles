@@ -1,5 +1,5 @@
 # Auto detect text files and perform LF normalization
-* text eol=lf
+* text eol=lf filter=tabspace
 
 #
 # The above will handle all files NOT found below
