@@ -39,7 +39,7 @@ done
 
 [[ -n "${ssh_config_file[*]}" ]] && unset -v ssh_config_files;
 
-AUTHFILE="${HOME}/.config/profile/authfile.gpg";
+AUTHFILE="${HOME}/.dotfiles/config/profile/authfile.gpg";
 
 ## customs
 alias mountt='mount | column -t';

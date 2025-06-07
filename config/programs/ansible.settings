@@ -18,4 +18,4 @@
 #
 #==============================================================================
 
-[[ -z "$(compgen -c | grep -Ew "(^openssl)" | sort | uniq)" ]] && return;
+[[ -z "$(compgen -c | grep -Ew "(^ansible)" | sort | uniq)" ]] && return;

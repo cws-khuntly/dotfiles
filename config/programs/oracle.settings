@@ -20,6 +20,6 @@
 
 [[ -z "$(compgen -c | grep -Ew "(^sqlplus)" | sort | uniq)" ]] && return;
 
-if [[ ! -d "${HOME}/workspace/Oracle/admin" ]] && [[ ! -f "${HOME}/workspace/Oracle/admin/tnsnames.ora" ]]; then return; fi
+if [[ ! -d "${HOME}/.dotfiles/config/oracle/admin" ]] && [[ ! -f "${HOME}/.dotfiles/config/oracle/admin/tnsnames.ora" ]]; then return; fi
 
-declare -x TNS_ADMIN="${HOME}/workspace/Oracle/admin";
+declare -x TNS_ADMIN="${HOME}/.dotfiles/config/oracle/admin";
