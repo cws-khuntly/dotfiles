@@ -2,9 +2,9 @@
     autocrlf = true
     editor = vi
     pager = less -FRSX
-    excludesfile = ~/.config/git/ignore
     logallrefupdates = true
     attributesfile = ~/.config/git/attributes
+    excludesfile = ~/.config/git/ignore
     filemode = false
 
 [init]
@@ -31,38 +31,38 @@
     #gpgsign = true
     verbose = true
 
-[filter "spaces2tabs"]
+[filter "tabspace"]
     clean = unexpand --tabs=4 --first-only
     smudge = expand --tabs=4 --initial
 
 [merge]
     renormalize = true
-	conflictstyle = diff3
-	keepbackup = false
+    conflictstyle = diff3
+    keepbackup = false
 
 [diff]
-	algorithm = histogram
-	submodule = log
+    algorithm = histogram
+    submodule = log
 
 [transfer]
-	fsckobjects = true
+    fsckobjects = true
 
 [fetch]
-	fsckobjects = true
-	prune = true
-	prunetags = true
+    fsckobjects = true
+    prune = true
+    prunetags = true
 
 [receive]
-	fsckobjects = true
+    fsckobjects = true
 
 [status]
-	submoduleSummary = true
+    submoduleSummary = true
 
 [submodule]
-	recurse = true
+    recurse = true
 
 [gpg]
-	format = ssh
+    format = ssh
 
 [log]
     date = rfc
