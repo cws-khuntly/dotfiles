@@ -85,7 +85,7 @@ function mkcd()
         return "${return_code}";
     )
 
-    if (( ${#} == 0 )); then usage; return "${?}"; fi
+    if (( ${#} == 0 )); then usage; return ${?}; fi
 
     directory_to_create="${1}";
 
@@ -228,7 +228,7 @@ function lsz()
         return "${return_code}";
     )
 
-    if (( ${#} == 0 )); then usage; return "${?}"; fi
+    if (( ${#} == 0 )); then usage; return ${?}; fi
 
     file_to_view="${1}";
 
@@ -373,7 +373,7 @@ function extract()
         return "${return_code}";
     )
 
-    if (( ${#} == 0 )); then usage; return "${?}"; fi
+    if (( ${#} == 0 )); then usage; return ${?}; fi
 
     file_to_extract="${1}";
 
@@ -518,7 +518,7 @@ function shredit()
         return "${return_code}";
     )
 
-    if (( ${#} == 0 )); then usage; return "${?}"; fi
+    if (( ${#} == 0 )); then usage; return ${?}; fi
 
     shred_file="${1}";
 
@@ -679,7 +679,7 @@ function clean()
         return "${return_code}";
     )
 
-    if (( ${#} == 0 )); then usage; return "${?}"; fi
+    if (( ${#} == 0 )); then usage; return ${?}; fi
 
     file_to_clean="${1}";
 
@@ -688,11 +688,16 @@ function clean()
     fi
 
     if [[ ! -f "${file_to_clean}" ]] || [[ ! -r "${file_to_clean}" ]]; then
+        return_code="1";
+
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "File ${file_to_clean} either does not exist or cannot be read.";
+        fi
     else
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output="$(cat "${file_to_clean}" | grep -vE "(^#|^;|^//|^/*|*)";
+        cmd_output="$(cat "${file_to_clean}" | grep -vE "(^#|^;|^//|^/*|^*)")";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -701,7 +706,7 @@ function clean()
         fi
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-            [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+            [[ -z "${ret_code}" ]] && return_code="1" || return_code="${ret_code}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                 writeLogEntry "CONSOLE" "STDERR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to read file ${file_to_clean}.";
@@ -720,7 +725,7 @@ function clean()
                     writeLogEntry "CONSOLE" "STDOUT" "${$}" "${cname}" "${LINENO}" "${function_name}" "${cmd_output}";
                     writeLogEntry "CONSOLE" "STDOUT" "${$}" "${cname}" "${LINENO}" "${function_name}" "";
                 else
-                    printf "Cleaned file content:\n\n%s\n\n" "${cmd_output}" > &1;
+                    printf "Cleaned file content:\n\n%s\n\n" "${cmd_output}" >&1;
                 fi
             fi
         fi

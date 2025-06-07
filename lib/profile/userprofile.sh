@@ -505,7 +505,7 @@ function addservice()
         return "${return_code}";
     )
 
-    if (( ${#} == 0 )); then usage; return "${?}"; fi
+    if (( ${#} == 0 )); then usage; return ${?}; fi
 
     service_name="${1}";
 

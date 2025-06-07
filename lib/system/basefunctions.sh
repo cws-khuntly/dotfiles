@@ -48,7 +48,7 @@ function readPropertyFile()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    if (( ${#} == 0 )); then usage; return "${?}"; fi
+    if (( ${#} == 0 )); then usage; return ${?}; fi
 
     ## change the IFS
     IFS="${MODIFIED_IFS}";
@@ -170,91 +170,91 @@ function validateAndCopyKeysForHost()
     target_port="${3}";
     target_user="${4}";
 
-	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_transport -> ${target_transport}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_transport} ${target_host} ${target_port}";
-	fi
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_transport} ${target_host} ${target_port}";
+    fi
 
     [[ -n "${cname}" ]] && unset cname;
-	[[ -n "${function_name}" ]] && unset function_name;
-	[[ -n "${ret_code}" ]] && unset ret_code;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${ret_code}" ]] && unset ret_code;
 
-	host_data="$(validateHostAvailability "${target_transport}" "${target_host}" "${target_port}")";
+    host_data="$(validateHostAvailability "${target_transport}" "${target_host}" "${target_port}")";
 
     cname="basefunctions.sh";
-	function_name="${cname}#${FUNCNAME[0]}";
+    function_name="${cname}#${FUNCNAME[0]}";
 
-	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "host_data -> ${host_data}";
-	fi
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "host_data -> ${host_data}";
+    fi
 
-	if [[ -z "${host_data}" ]]; then
-		return_code="${ret_code}"
+    if [[ -z "${host_data}" ]]; then
+        return_code="${ret_code}"
 
-		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-			writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Host ${target_host} does not appear to be available. Please review logs.";
-		fi
-	else
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Host ${target_host} does not appear to be available. Please review logs.";
+        fi
+    else
         returned_host="$(cut -d ":" -f 1 <<< "${host_data}")";
         returned_port="$(cut -d ":" -f 2 <<< "${host_data}")";
 
-		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returned_host -> ${returned_host}";
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returned_port -> ${returned_port}";
-			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: getHostKeys ${returned_host} ${returned_port}";
-		fi
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: getHostKeys ${returned_host} ${returned_port}";
+        fi
 
         [[ -n "${cname}" ]] && unset cname;
-		[[ -n "${function_name}" ]] && unset function_name;
-		[[ -n "${ret_code}" ]] && unset ret_code;
+        [[ -n "${function_name}" ]] && unset function_name;
+        [[ -n "${ret_code}" ]] && unset ret_code;
 
-		getHostKeys "${returned_host}" "${returned_port}";
-		ret_code="${?}";
+        getHostKeys "${returned_host}" "${returned_port}";
+        ret_code="${?}";
 
         cname="basefunctions.sh";
-		function_name="${cname}#${FUNCNAME[0]}";
+        function_name="${cname}#${FUNCNAME[0]}";
 
-		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "getHostKeys -> ret_code -> ${ret_code}";
-		fi
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "getHostKeys -> ret_code -> ${ret_code}";
+        fi
 
-		if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-			[[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+        if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+            [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
-			if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-				writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred getting SSH host keys from host ${returned_host}. Please review logs.";
-			fi
-		else
-			if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-				writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: copyKeysToTarget ${returned_host} ${returned_port} ${target_user}";
-			fi
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred getting SSH host keys from host ${returned_host}. Please review logs.";
+            fi
+        else
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: copyKeysToTarget ${returned_host} ${returned_port} ${target_user}";
+            fi
 
             [[ -n "${cname}" ]] && unset cname;
-			[[ -n "${function_name}" ]] && unset function_name;
-			[[ -n "${ret_code}" ]] && unset ret_code;
+            [[ -n "${function_name}" ]] && unset function_name;
+            [[ -n "${ret_code}" ]] && unset ret_code;
 
-			copyKeysToTarget "${returned_host}" "${returned_port}" "${target_user}";
-			ret_code="${?}";
+            copyKeysToTarget "${returned_host}" "${returned_port}" "${target_user}";
+            ret_code="${?}";
 
             cname="basefunctions.sh";
-			function_name="${cname}#${FUNCNAME[0]}";
+            function_name="${cname}#${FUNCNAME[0]}";
 
-			if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-				writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "copyKeysToTarget -> ret_code -> ${ret_code}";
-			fi
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "copyKeysToTarget -> ret_code -> ${ret_code}";
+            fi
 
-			if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-				[[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+            if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+                [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
-				if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-					[[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute copyKeysToTarget. Please review logs.";
-				fi
-			fi
-		fi
-	fi
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute copyKeysToTarget. Please review logs.";
+                fi
+            fi
+        fi
+    fi
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
@@ -329,9 +329,9 @@ function waitForProcessFile()
 
     (( ${#} != 3 )) && return 3;
 
-	watch_file="${1}";
-	sleep_time="${2}";
-	retry_count="${3}";
+    watch_file="${1}";
+    sleep_time="${2}";
+    retry_count="${3}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "watch_file -> ${watch_file}";
@@ -339,17 +339,17 @@ function waitForProcessFile()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "retry_count -> ${retry_count}";
     fi
 
-	while [[ ! -f "${watch_file}" ]]; do
-		(( retry_counter != retry_count )) && sleep "${sleep_time}";
+    while [[ ! -f "${watch_file}" ]]; do
+        (( retry_counter != retry_count )) && sleep "${sleep_time}";
 
-		(( retry_counter += 1 ));
+        (( retry_counter += 1 ));
 
-		continue
-	done
+        continue
+    done
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-	[[ -f "${watch_file}" ]] && rm -f "${watch_file}";
+    [[ -f "${watch_file}" ]] && rm -f "${watch_file}";
 
     [[ -n "${ret_code}" ]] && unset ret_code;
     [[ -n "${error_count}" ]] && unset error_count;
@@ -584,7 +584,7 @@ function returnRandomCharacters()
         return "${return_code}";
     )
 
-    if (( ${#} == 0 )); then usage; return "${?}"; fi
+    if (( ${#} == 0 )); then usage; return ${?}; fi
 
     while (( ${#} > 0 )); do
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
