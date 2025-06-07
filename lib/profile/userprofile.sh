@@ -179,8 +179,8 @@ function setPromptCommand()
     case "$(uname -s)" in
         [Cc][Yy][Gg][Ww][Ii][Nn]*)
             case "${git_status}" in
-                "") PS1='${color_green}[\u:\H] : <${color_yellow}\w${color_green}>\n\n\$ ${color_off}'; ;;
-                *) PS1='${color_green}[\u:\H] : <${color_yellow}\w (${color_blue}${git_status})${color_green}>\n\n\$ ${color_off}'; ;;
+                "") PS1='${color_green}[\u:\H] : <${color_yellow}\w${color_green}>\n\n \$ ${color_off}'; ;;
+                *) PS1='${color_green}[\u:\H] : <${color_yellow}\w (${color_blue}${git_status})${color_green}>\n\n \$ ${color_off}'; ;;
             esac
             ;;
         *)
@@ -188,13 +188,13 @@ function setPromptCommand()
                 "${LOGNAME}")
                     case "${git_status}" in
                         "") PS1='${color_green}[\u:\H] : <${color_yellow}\w${color_green}>\n\n\$ ${color_off}'; ;;
-                        *) PS1='${color_green}[\u:\H] : <${color_yellow}\w (${color_blue}${git_status})${color_green}>\n\n\$ ${color_off}'; ;;
+                        *) PS1='${color_green}[\u:\H] : <${color_yellow}\w (${color_blue}${git_status})${color_green}>\n\n \$ ${color_off}'; ;;
                     esac
                     ;;
                 *)
                     case "${git_status}" in
-                        "") PS1='${color_red}NOTE: you are ${real_user}${color_off}\n${color_green}[\u as ${color_red}${real_user}${color_green}:\H] : <${color_yellow}\w${color_green}>\n\n\$ ${color_off}'; ;;
-                        *) PS1='${color_red}NOTE: you are ${real_user}${color_off}\n${color_green}[\u as ${color_red}${real_user}${color_green}:\H] : <${color_yellow}\w (${color_blue}${git_status})${color_green}>\n\n\$ ${color_off}';
+                        "") PS1='${color_red}NOTE: you are ${real_user}${color_off}\n${color_green}[\u as ${color_red}${real_user}${color_green}:\H] : <${color_yellow}\w${color_green}>\n\n \$ ${color_off}'; ;;
+                        *) PS1='${color_red}NOTE: you are ${real_user}${color_off}\n${color_green}[\u as ${color_red}${real_user}${color_green}:\H] : <${color_yellow}\w (${color_blue}${git_status})${color_green}>\n\n \$ ${color_off}';
                     esac
                     ;;
             esac
@@ -535,7 +535,7 @@ function addservice()
                 writeLogEntry "CONSOLE" "STDOUT" "${$}" "${cname}" "${LINENO}" "${function_name}" "Service ${service_name} has been enabled and started.";
         fi
     fi
-        
+
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${service_name}" ]] && unset -v service_name;

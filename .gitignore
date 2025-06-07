@@ -1,8 +1,24 @@
 #
 # dotfiles ignores
 #
+#
+# dont ignore these directories
+#
 !bin/
 !lib/
+
+#
+# dont ignore these files
+#
+
+#
+# ignore these directories
+#
+.ansible
+
+#
+# ignore these files
+#
 config/ansible/vault.yml
 config/ansible/hosts.yml
 config/profile/authfile.gpg

@@ -89,6 +89,8 @@ alias unset='unset -v';
 
 case "$(uname -s)" in
     [Aa][Ii][Xx]|[Ss][Uu][Nn][Oo][Ss]|[Ss][Oo][Ll][Aa][Rr][Ii][Ss])
+        declare -x TERM="term";
+
         unalias ls;
         unalias grep;
         ;;
