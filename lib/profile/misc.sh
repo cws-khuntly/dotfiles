@@ -687,7 +687,7 @@ function clean()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_to_clean -> ${file_to_clean}";
     fi
 
-    if [[ ! -f "${file_to_clean}" ]] || [[ ! -r "${file_to_clean} "]]; then
+    if [[ ! -f "${file_to_clean}" ]] || [[ ! -r "${file_to_clean}" ]]; then
     else
         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
