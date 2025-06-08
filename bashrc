@@ -73,24 +73,24 @@ if [[ -d "${HOME}/.dotfiles/bashrc.d" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_LIST -> ${FILE_LIST[*]}";
     fi
 
-    if [[ -z "${FILE_LIST[*]}" ]] || (( ${#FILE_LIST[*]} == 0 )); then continue; fi
+    if [[ -n "${FILE_LIST[*]}" ]] && (( ${#FILE_LIST[*]} >=1 )); then
+        for FILE in "${FILE_LIST[@]}"; do
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
+            fi
 
-    for FILE in "${FILE_LIST[@]}"; do
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
-        fi
+            [[ -z "${FILE}" ]] && continue;
 
-        [[ -z "${FILE}" ]] && continue;
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${CONFIG_PATH}/${FILE}";
+            fi
 
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${CONFIG_PATH}/${FILE}";
-        fi
+            # shellcheck source=/dev/null
+            source "${FILE}";
 
-        # shellcheck source=/dev/null
-        source "${FILE}";
-
-        [[ -n "${FILE}" ]] && unset -v FILE;
-    done
+            [[ -n "${FILE}" ]] && unset -v FILE;
+        done
+    fi
 fi
 
 if [[ -z "${isReloadRequest}" ]] || [[ "${isReloadRequest}" == "${_FALSE}" ]]; then
