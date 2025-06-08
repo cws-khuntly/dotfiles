@@ -94,3 +94,11 @@
 [user]
     name = Kevin Huntly
     email = kmhuntly@gmail.com
+
+[alias]
+    stat = status
+    st = status
+    s = status
+    comm = commit
+    c = commit
+    rgc = commit -sm "$(curl -s https://whatthecommit.com/index.txt)"
