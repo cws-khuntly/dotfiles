@@ -353,32 +353,32 @@ function rotateRemoteFiles()
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "No files were found to rotate. Cannot continue.";
         fi
     else
-		for file in "${file_list[@]}"; do
-			if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-				writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file -> ${file}";
-				writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f ${file}";
-			fi
+        for file in "${file_list[@]}"; do
+            if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file -> ${file}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f ${file}";
+            fi
 
-			[[ -n "${ret_code}" ]] && unset -v ret_code;
+            [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-			rm -f "${file}";
-			ret_code="${?}";
+            rm -f "${file}";
+            ret_code="${?}";
 
-			if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-				(( error_count += 1 ));
+            if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+                (( error_count += 1 ));
 
-				if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-					writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to remove archive file ${file}";
-				fi
-			fi
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to remove archive file ${file}";
+                fi
+            fi
 
-			[[ -n "${file}" ]] && unset -v file;
-		done
+            [[ -n "${file}" ]] && unset -v file;
+        done
     fi
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-	[[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${source_directory}" ]] && unset -v source_directory;
     [[ -n "${source_file_pattern}" ]] && unset -v source_file_pattern;

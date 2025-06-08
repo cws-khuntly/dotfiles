@@ -25,7 +25,7 @@
 #
 # These files are PowerShell scripts and should be CRLF
 #
-*.ps1 eol=crlf filter=tabspace
+*.ps1 text eol=crlf filter=tabspace
 
 # These files are binary and should be left untouched
 # (binary is a macro for -text -diff)
@@ -56,3 +56,6 @@
 *.PDF  diff=astextplain
 *.rtf  diff=astextplain
 *.RTF  diff=astextplain
+
+# Makefiles
+Makefile filter=spacetab

@@ -1,10 +1,10 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {
-		"ansible.python.interpreterPath": "/home/codespace/.python/current/bin/python3"
-	}
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "ansible.python.interpreterPath": "/home/codespace/.python/current/bin/python3"
+    }
 }

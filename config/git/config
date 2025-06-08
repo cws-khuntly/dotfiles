@@ -17,7 +17,7 @@
 #==============================================================================
 
 [core]
-    autocrlf = true
+    autocrlf = false
     editor = vi
     pager = less -FRSX
     logallrefupdates = true
@@ -52,6 +52,10 @@
 [filter "tabspace"]
     clean = expand --tabs=4 --first-only
     smudge = expand --tabs=4 --initial
+
+[filter "spacetab"]
+    clean = unexpand --tabs=4 --first-only
+    smudge = unexpand --tabs=4 --initial
 
 [merge]
     renormalize = true
@@ -96,9 +100,16 @@
     email = kmhuntly@gmail.com
 
 [alias]
-    stat = status
+    a = add
+    b = branch
+    comm = commit -sm "!$(curl -s https://whatthecommit.com/index.txt)"
+    cm = commit -sm "!$(curl -s https://whatthecommit.com/index.txt)"
+    rgc = commit -sm "!$(curl -s https://whatthecommit.com/index.txt)"
+    cl = clone
+    co = checkout
+    pu = push
+    pl = pull
     st = status
-    s = status
-    comm = commit
-    c = commit
-    rgc = commit -sm "$(curl -s https://whatthecommit.com/index.txt)"
+    stat = status
+    unstage = reset HEAD --
+    last = log -1 HEAD
