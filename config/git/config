@@ -102,9 +102,9 @@
 [alias]
     a = add
     b = branch
-    comm = "!_(){ git commit -sm '$(curl -s https://whatthecommit.com/index.txt)' }; _"
-    cm = "!_(){ git commit -sm \"this is a test\"; }; _"
-    rgc = "!_(){ git commit -sm '$(curl -s https://whatthecommit.com/index.txt)' }; _"
+    comm = "!f() { git commit -sm \"$(curl -s 'https://whatthecommit.com/index.txt')\"; }; f"
+    cm = "!f() { git commit -sm \"$(curl -s 'https://whatthecommit.com/index.txt')\"; }; f"
+    rgc = "!f() { git commit -sm \"$(curl -s 'https://whatthecommit.com/index.txt')\"; }; f"
     cl = clone
     co = checkout
     pu = push
