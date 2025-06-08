@@ -23,7 +23,7 @@ After=systemd-user-sessions.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/logrotate ~/.config/profile/logrotate.conf
+ExecStart=/usr/sbin/logrotate ~/.dotfiles/config/profile/logrotate.conf
 
 [Install]
 WantedBy=default.target
