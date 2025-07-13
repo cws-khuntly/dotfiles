@@ -61,16 +61,14 @@ function showHostInfo()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    clear;
-
     printf "%s\n" "+-------------------------------------------------------------------+" >&2;
-    printf "%40s %s\n" "Welcome to" "$(hostname -s | tr '[:upper:]' '[:lower:]'" >&2;
+    printf "%40s %s\n" "Welcome to" "$(hostname -s | tr '[:upper:]' '[:lower:]')" >&2;
     printf "%s\n" "+-------------------------------------------------------------------+" >&2;
     printf "\n" >&2;
     printf "%s\n" "============[ System Info ]===================================================="
     printf "%s\n" "        Hostname = $(hostname -f | tr '[:upper:]' '[:lower:]')";
-    printf "%s\n" "     Address(es) = ${host_ip_addresses[@]}
-          Kernel = $(uname -r)";
+    printf "%s\n" "     Address(es) = ${host_ip_addresses[@]}";
+    printf "%s\n" "          Kernel = $(uname -r)";
     printf "%s\n" "          Uptime = $(uptime | cut -d "," -f 1)";
     printf "%s\n" "             CPU = $(grep -c 'model name' /proc/cpuinfo) x $(grep -E 'model name' /proc/cpuinfo | uniq | cut -d ':' -f 2 | sed -e 's/^ *//g;s/ *$//g' | tr -s ' ')";
     printf "%s\n" "          Memory = ${system_free_memory} MB Free of ${system_total_memory} MB Total";
@@ -128,7 +126,8 @@ function showUserInfo()
     local cname="loginbanner.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
-    local start_epoch
+    local -i user_disk_usage;
+    local start_epoch;
     local -i end_epoch;
     local -i runtime;
 
@@ -142,6 +141,16 @@ function showUserInfo()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
+
+    printf "%s\n" "============[ User Info ]===================================================="
+    printf "%s\n" "        User = $(id -un) in group $(id -gn)";
+    printf "%s\n" "      Groups = $(id -Gn | cut -d ' ' -f 2-)";
+    printf "%s\n" "          Uptime = $(uptime | cut -d "," -f 1)";
+    printf "%s\n" "             CPU = $(grep -c 'model name' /proc/cpuinfo) x $(grep -E 'model name' /proc/cpuinfo | uniq | cut -d ':' -f 2 | sed -e 's/^ *//g;s/ *$//g' | tr -s ' ')";
+    printf "%s\n" "          Memory = ${system_free_memory} MB Free of ${system_total_memory} MB Total";
+    printf "%s\n" "     Swap Memory = ${system_swap_free} MB Free of ${system_swap_total} MB Total";
+    printf "%s\n" "       Processes = $(ps -Afl | grep -Ev '(ps|wc)' | wc -l) of a possible $(ulimit -u)";
+    printf "\n" >&2;
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
