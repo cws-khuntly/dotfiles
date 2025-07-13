@@ -27,7 +27,7 @@ function showHostInfo()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="userprofile.sh";
+    local cname="loginbanner.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local -i error_count=0;
@@ -125,7 +125,7 @@ function showUserInfo()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="userprofile.sh";
+    local cname="loginbanner.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local start_epoch
@@ -181,7 +181,7 @@ function showStorageInfo()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="userprofile.sh";
+    local cname="loginbanner.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local -i error_count=0;
@@ -242,7 +242,7 @@ function showUpdateInfo()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="userprofile.sh";
+    local cname="loginbanner.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local -i error_count=0;
