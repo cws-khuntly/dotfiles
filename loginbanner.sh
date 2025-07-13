@@ -31,16 +31,17 @@ function showHostInfo()
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local -i error_count=0;
+    local -a host_ip_addresses;
     local system_memory_info;
     local system_free_memory;
     local system_total_memory;
     local system_swap_free;
     local system_swap_total;
-    local host_ip_address;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
 
+    host_ip_addresses=( "$(ip addr show 2>/dev/null | grep "inet" | grep -Ev "(inet6|127.0.0.1)" | awk '{print $2}' | tr "\n" " ")" );
     system_memory_info=$(awk '
     /^MemFree:/ {MEMFREE=$2/1024}
     /^MemTotal:/ {MEMMAX=$2/1024}
@@ -63,7 +64,7 @@ function showHostInfo()
     clear;
 
     printf "%s\n" "+-------------------------------------------------------------------+" >&2;
-    printf "%40s %s\n" "Welcome to" "${host_system_name}" >&2;
+    printf "%40s %s\n" "Welcome to" "$(hostname -s | tr '[:upper:]' '[:lower:]'" >&2;
     printf "%s\n" "+-------------------------------------------------------------------+" >&2;
     printf "\n" >&2;
     printf "%s\n" "============[ System Info ]===================================================="
@@ -80,16 +81,13 @@ function showHostInfo()
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
     [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${host_system_name}" ]] && unset -v host_system_name;
-    [[ -n "${host_ip_address[*]}" ]] && unset -v host_ip_address;
-    [[ -n "${host_kernel_version}" ]] && unset -v host_kernel_version;
-    [[ -n "${host_cpu_count}" ]] && unset -v host_cpu_count;
-    [[ -n "${host_cpu_info}" ]] && unset -v host_cpu_info;
-    [[ -n "${host_memory_size}" ]] && unset -v host_memory_size;
-    [[ -n "${swap_memory_size}" ]] && unset -v swap_memory_size;
-    [[ -n "${system_process_count}" ]] && unset -v system_process_count;
-    [[ -n "${user_disk_usage}" ]] && unset -v user_disk_usage;
-    [[ -n "${user_process_count}" ]] && unset -v user_process_count;
+
+    [[ -n "${host_ip_addresses[*]}" ]] && unset -v host_ip_addresses;
+    [[ -n "${system_memory_info}" ]] && unset -v system_memory_info;
+    [[ -n "${system_free_memory}" ]] && unset -v system_free_memory;
+    [[ -n "${system_total_memory}" ]] && unset -v system_total_memory;
+    [[ -n "${system_swap_free}" ]] && unset -v system_swap_free;
+    [[ -n "${system_swap_total}" ]] && unset -v system_swap_total;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
