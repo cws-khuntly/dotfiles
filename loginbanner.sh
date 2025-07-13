@@ -126,7 +126,6 @@ function showUserInfo()
     local cname="loginbanner.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
-    local -i user_disk_usage;
     local start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -146,7 +145,7 @@ function showUserInfo()
     printf "%s\n" "            User = $(id -un) in group $(id -gn)";
     printf "%s\n" "          Groups = $(id -Gn | cut -d ' ' -f 2-)";
     printf "%s\n" "      Disk Usage = $(du -sh "${HOME}" 2> /dev/null | awk '{print $1}')";
-    printf "%s\n" "   Process Count = $(ps -Afl | grep -Ev '(ps|wc)' | grep ${LOGNAME} | wc -l);
+    printf "%s\n" "   Process Count = $(ps -Afl | grep -Ev '(ps|wc)' | grep ${LOGNAME} | wc -l)";
     printf "\n" >&2;
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
