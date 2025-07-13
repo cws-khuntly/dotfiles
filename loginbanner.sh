@@ -143,13 +143,10 @@ function showUserInfo()
     fi
 
     printf "%s\n" "============[ User Info ]===================================================="
-    printf "%s\n" "        User = $(id -un) in group $(id -gn)";
-    printf "%s\n" "      Groups = $(id -Gn | cut -d ' ' -f 2-)";
-    printf "%s\n" "          Uptime = $(uptime | cut -d "," -f 1)";
-    printf "%s\n" "             CPU = $(grep -c 'model name' /proc/cpuinfo) x $(grep -E 'model name' /proc/cpuinfo | uniq | cut -d ':' -f 2 | sed -e 's/^ *//g;s/ *$//g' | tr -s ' ')";
-    printf "%s\n" "          Memory = ${system_free_memory} MB Free of ${system_total_memory} MB Total";
-    printf "%s\n" "     Swap Memory = ${system_swap_free} MB Free of ${system_swap_total} MB Total";
-    printf "%s\n" "       Processes = $(ps -Afl | grep -Ev '(ps|wc)' | wc -l) of a possible $(ulimit -u)";
+    printf "%s\n" "            User = $(id -un) in group $(id -gn)";
+    printf "%s\n" "          Groups = $(id -Gn | cut -d ' ' -f 2-)";
+    printf "%s\n" "      Disk Usage = $(du -sh "${HOME}" 2> /dev/null | awk '{print $1}')";
+    printf "%s\n" "   Process Count = $(ps -Afl | grep -Ev '(ps|wc)' | grep ${LOGNAME} | wc -l);
     printf "\n" >&2;
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
