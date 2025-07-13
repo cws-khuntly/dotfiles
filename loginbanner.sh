@@ -31,19 +31,23 @@ function showHostInfo()
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local -i error_count=0;
-    local host_system_name;
+    local system_memory_info;
+    local system_free_memory;
+    local system_total_memory;
+    local system_swap_free;
+    local system_swap_total;
     local host_ip_address;
-    local host_kernel_version;
-    local host_cpu_count;
-    local host_cpu_info;
-    local host_memory_size;
-    local swap_memory_size;
-    local system_process_count;
-    local user_disk_usage;
-    local user_process_count;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
+
+    system_memory_info=$(awk '
+    /^MemFree:/ {MEMFREE=$2/1024}
+    /^MemTotal:/ {MEMMAX=$2/1024}
+    /^SwapFree:/ {SWAPFREE=$2/1024}
+    /^SwapTotal:/ {SWAPMAX=$2/1024} END
+        { printf "%.0f %.0f %.0f %.0f", system_free_memory, system_total_memory, system_swap_free, system_swap_total }' /proc/meminfo)
+    read -r system_free_memory system_total_memory system_swap_free system_swap_total <<< "${system_memory_info}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
@@ -56,48 +60,21 @@ function showHostInfo()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    ## system information
-    host_system_name="$(hostname -s | tr '[:upper:]' '[:lower:]')";
-    host_ip_address=("$(ip addr show 2> /dev/null | grep "inet" | grep -E -v "(inet6|127.0.0.1)" | awk '{print $2}' | tr "\n" " ")");
-    host_kernel_version="$(uname -r)";
-    host_cpu_count=$(grep -c "model name" /proc/cpuinfo);
-    host_cpu_info="$(grep -E "model name" /proc/cpuinfo | uniq | cut -d ":" -f 2 | sed -e 's/^ *//g;s/ *$//g' | tr -s " ")";
-    host_memory_size="$(( $(grep -E MemTotal /proc/meminfo | awk '{print $2}') / 1024 ^ 2 ))";
-    swap_memory_size="$(( $(grep -E SwapTotal /proc/meminfo | awk '{print $2}') / 1024 ^ 2 ))";
-    system_process_count=$(ps -ef | tail -n +1 | wc -l | awk '{print $1}');
-
-    ## user information
-    user_disk_usage=$(du -sh "${HOME}" 2> /dev/null | awk '{print $1}');
-    user_process_count=$(ps -ef | tail -n +1 | grep -v grep | grep -c "${LOGNAME}");
-
     clear;
 
     printf "%s\n" "+-------------------------------------------------------------------+" >&2;
     printf "%40s %s\n" "Welcome to" "${host_system_name}" >&2;
     printf "%s\n" "+-------------------------------------------------------------------+" >&2;
     printf "\n" >&2;
-    printf "%s\n" "+---------------------- System Information -------------------------+" >&2;
-    printf "%-16s : %-10s\n" "+ IP Address" "${host_ip_address[@]}" >&2;
-    printf "%-16s : %-10s\n" "+ Kernel version" "${host_kernel_version}" >&2;
-    printf "%-16s : %-10s\n" "+ CPU" "${host_cpu_count} / ${host_cpu_info}" >&2;
-    printf "%-16s : %-10d\n" "+ Processes" "${system_process_count}" >&2;
-    printf "%-16s : %-10d MB\n" "+ Memory" "${host_memory_size}" >&2;
-    printf "%-16s : %-10d MB\n" "+ Swap" "${swap_memory_size}" >&2;
-    printf "%s\n" "+-------------------------------------------------------------------+" >&2;
-    printf "\n" >&2;
-    printf "%s\n" "+----------------------- User Information --------------------------+" >&2;
-    printf "%-16s : %-10s\n" "+ Username" "${LOGNAME}" >&2;
-    printf "%-16s : %-10s %s in %s\n" "+ Disk Usage" "You're currently using" "${user_disk_usage}" "${HOME}" >&2;
-    printf "%-16s : %-10d\n" "+ Processes" "${user_process_count}" >&2;
-    printf "%s\n" "+-------------------------------------------------------------------+" >&2;
-
-    if [[ -r /etc/motd ]] && [[ -s /etc/motd ]]; then
-        printf "\n" >&2;
-        printf "%s\n" "+------------------------------ MOTD -------------------------------+" >&2;
-        cat /etc/motd >&2;
-        printf "%s\n" "+-------------------------------------------------------------------+" >&2;
-    fi
-
+    printf "%s\n" "============[ System Info ]===================================================="
+    printf "%s\n" "        Hostname = $(hostname -f | tr '[:upper:]' '[:lower:]')";
+    printf "%s\n" "     Address(es) = ${host_ip_addresses[@]}
+          Kernel = $(uname -r)";
+    printf "%s\n" "          Uptime = $(uptime | cut -d "," -f 1)";
+    printf "%s\n" "             CPU = $(grep -c 'model name' /proc/cpuinfo) x $(grep -E 'model name' /proc/cpuinfo | uniq | cut -d ':' -f 2 | sed -e 's/^ *//g;s/ *$//g' | tr -s ' ')";
+    printf "%s\n" "          Memory = ${system_free_memory} MB Free of ${system_total_memory} MB Total";
+    printf "%s\n" "     Swap Memory = ${system_swap_free} MB Free of ${system_swap_total} MB Total";
+    printf "%s\n" "       Processes = $(ps -Afl | grep -Ev '(ps|wc)' | wc -l) of a possible $(ulimit -u)";
     printf "\n" >&2;
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
