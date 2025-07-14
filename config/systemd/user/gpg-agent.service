@@ -19,14 +19,12 @@
 [Unit]
 Description=GnuPG private key agent
 After=default.target
-After=network-online.target
-After=systemd-user-sessions.service
-IgnoreOnIsolate=true
 
 [Service]
 Type=forking
 ExecStart=/usr/bin/gpg-connect-agent /bye
 ExecStop=/usr/bin/gpg-connect-agent killagent /bye
+RemainOnExit=true
 Restart=on-abort
 
 [Install]
