@@ -21,7 +21,7 @@ Description=GnuPG private key agent
 After=default.target
 
 [Service]
-Type=forking
+Type=simple
 ExecStart=/usr/bin/gpg-connect-agent /bye
 ExecStop=/usr/bin/gpg-connect-agent killagent /bye
 RemainOnExit=true
