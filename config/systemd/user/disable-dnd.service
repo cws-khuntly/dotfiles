@@ -26,4 +26,4 @@ ExecStart=gsettings set org.gnome.desktop.notifications show-banners true
 SuccessExitStatus=0
 
 [Install]
-WantedBy=configure-dnd.target
+WantedBy=scheduled-dnd.target
