@@ -18,9 +18,6 @@
 #==============================================================================
 [Unit]
 Description=SSH private key agent
-After=default.target
-After=network-online.target
-After=systemd-user-sessions.service
 IgnoreOnIsolate=true
 
 [Service]
@@ -28,6 +25,7 @@ Type=simple
 Environment=SSH_AUTH_SOCK=%t/ssh-agent.socket
 ExecStart=/usr/bin/ssh-agent -D -a $SSH_AUTH_SOCK
 ExecStop=/usr/bin/ssh-agent -k
+RemainAfterExit=true
 Restart=on-abort
 
 [Install]
