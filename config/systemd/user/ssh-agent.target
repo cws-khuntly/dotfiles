@@ -17,6 +17,7 @@
 #==============================================================================
 [Unit]
 Description=Start an SSH agent
+After=network-online.target
 After=default.target
 Wants=ssh-agent.service
 BindsTo=ssh-agent.service
