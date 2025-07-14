@@ -17,7 +17,7 @@
 #==============================================================================
 [Unit]
 Description=Rotate logs in ~/logs
-After=systemd-user-sessions.target
+After=default.target
 Wants=logrotate.service
 BindsTo=logrotate.service
 StopWhenUnneeded=yes
