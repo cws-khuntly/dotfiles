@@ -9,4 +9,4 @@
       - "{{ global_dotfiles_path }}/bin/setup"
       - "-n {{ install_dotfiles_dotfiles_path }}/dotfiles.setup"
   changed_when: true
-  register: deploy_out
+  register: install_dotfiles_deploy_out
