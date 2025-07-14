@@ -17,7 +17,7 @@
 #==============================================================================
 [Unit]
 Description=git update for specific repos
-After=default.target
+After=systemd-user-sessions.target
 Wants=git-update@%i.timer
 BindsTo=git-update@%i.timer
 
