@@ -20,7 +20,9 @@ Description=Start an SSH agent
 After=network-online.target
 After=default.target
 Wants=ssh-agent.service
+Wants=gpg-agent.service
 BindsTo=ssh-agent.service
+BindsTo=gpg-agent.service
 
 [Install]
 WantedBy=default.target
