@@ -28,5 +28,5 @@ declare -x DOT_PROFILE_LOADED="true";
 
 case "$(basename "${SHELL}")" in
     "(^[Ss][Hh]$)") if [ test -f "~/.dotfiles/sh_profile" ]; then . "~/.dotfiles/sh_profile"; fi ;;
-    "(^[Bb][Aa][Ss][Hh]$)") [[ -f "${HOME}/.dotfiles/bashrc" ]] && source "${HOME}/.dotfiles/bash_profile"; ;;
+    "(^[Bb][Aa][Ss][Hh]$)") [[ -f "${HOME}/.dotfiles/bashrc" ]] && source "${HOME}/.dotfiles/bashrc"; ;;
 esac
