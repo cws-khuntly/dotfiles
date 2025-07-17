@@ -18,7 +18,7 @@
 #
 #==============================================================================
 
-if [[ -z "$(compgen -c | grep -Ew "(^tmux)" | sort | uniq)" ]]; then
+if [[ -n "$(compgen -c | grep -Ew "(^tmux)" | sort | uniq)" ]]; then
     if [[ -z "${TMUX}" ]]; then
         tmux new-session -A -s default && exit;
     else
