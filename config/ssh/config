@@ -5,7 +5,8 @@
 #       RETURNS:  N/A
 #==============================================================================
 
-Include                         config.d/*
+Include                         ~/.ssh/config.d/*.conf
+Include                         ~/.ssh/local.d/*.conf
 
 Host *
     AddKeysToAgent              = yes
