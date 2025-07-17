@@ -33,12 +33,12 @@ if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then
 if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${HOME}/.bashrc";
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${HOME}/.dotfiles/bashrc";
 fi
 
-if [[ -f "${HOME}/.bashrc" ]] && [[ -r "${HOME}/.bashrc" ]] && [[ -s "${HOME}/.bashrc" ]]; then
+if [[ -f "${HOME}/.dotfiles/bashrc" ]] && [[ -r "${HOME}/.dotfiles/bashrc" ]] && [[ -s "${HOME}/.dotfiles/bashrc" ]]; then
     # shellcheck source=./bashrc
-    source "${HOME}/.bashrc";
+    source "${HOME}/.dotfiles/bashrc";
 fi
 
 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
