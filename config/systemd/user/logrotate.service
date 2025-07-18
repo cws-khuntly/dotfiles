@@ -18,12 +18,12 @@
 #==============================================================================
 [Unit]
 Description=Run logrotate
-After=default.target
-After=systemd-user-sessions.service
+PartOf=logrotate.target
+ReloadPropagatedFrom=logrotate.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/logrotate ~/.dotfiles/config/profile/logrotate.conf
+ExecStart=/usr/sbin/logrotate ~/.dotfiles/config/system/logrotate.conf
 
 [Install]
 WantedBy=default.target

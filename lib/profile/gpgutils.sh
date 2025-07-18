@@ -274,7 +274,7 @@ function generateGpgKeys()
     local cmd_output;
     local cleanup_list;
 
-    GNUPGHOME="${HOME}/.gnupg";
+    GNUPGHOME="${HOME}/.dotfiles/config/gnupg";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";

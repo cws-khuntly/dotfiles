@@ -2,9 +2,9 @@
 
 #==============================================================================
 #
-#          FILE:  pacman
-#         USAGE:  . pacman
-#   DESCRIPTION:  Sets application-wide functions
+#          FILE:  A02-git
+#         USAGE:  . A02-git
+#   DESCRIPTION:  Useful git aliases
 #
 #       OPTIONS:  ---
 #  REQUIREMENTS:  ---
@@ -18,5 +18,8 @@
 #
 #==============================================================================
 
-declare -x WGETRC="${HOME}/.dotfiles/config/system/wgetrc";
-declare -x LDAPRC="${HOME}/.dotfiles/config/system/ldaprc";
+declare -x XDG_CONFIG_HOME="${HOME}/.config";
+declare -x XDG_RUNTIME_DIR="/run/user/$(id -u)";
+declare -x XDG_CACHE_HOME="${HOME}/.cache";
+declare -x XDG_DATA_HOME="${HOME}/.local/share";
+declare -x XDG_STATE_HOME="${HOME}/.local/state";

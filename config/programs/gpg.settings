@@ -18,4 +18,4 @@
 #
 #==============================================================================
 
-declare -x GNUPG_HOME="${HOME}/.config/gnupg";
+declare -x GNUPGHOME="${HOME}/.dotfiles/config/gnupg";
