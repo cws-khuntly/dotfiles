@@ -73,4 +73,4 @@ set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx
 set paste
 
 " idk maybe
-set rtp +=~/.vim
+set background=dark
