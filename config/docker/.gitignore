@@ -19,8 +19,8 @@
 #
 # ignore docker data directories
 #
-config/docker/rustdesk/data
-config/docker/tomcat/webapps
-config/docker/tomcat/conf
-config/docker/bind9/named_conf
-config/docker/bind9/named_db
+config/docker/rustdesk/data/
+config/docker/tomcat/webapps/
+config/docker/tomcat/conf/
+config/docker/bind9/named_conf/
+config/docker/bind9/named_db/
