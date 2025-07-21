@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  tomcat:
+    image: tomcat:jre21
+    container_name: tomcat
+    ports:
+      - "8443:8443/tcp"
+  restart: unless-stopped
+  environment:
+    - JAVA_OPTS="-Xms4096m -Xmx4096m -Xmn3072m -Djava.io.tmpdir=/var/tmp -XX:MaxDirectMemorySize=3072M -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m \
+                 -XX:+PrintGCDetails -XX:+UseParallelGC -verbose:gc -Xlog:gc=info:file=${CATALINA_LOG_ROOT}/gc.%t.log:pid,time,uptime -XX:+PrintGCDetails \
+                 -Dsun.reflect.inflationThreshold=0 -Djava.security.egd=file:/dev/./urandom -Dcom.sun.jndi.ldap.connect.pool.maxsize=200 -Dcom.ibm.cacheLocalHost=true \
+                 -Dcom.sun.jndi.ldap.connect.pool.prefsize=200 -Dcom.sun.jndi.ldap.connect.pool.timeout=3000 -Djava.net.preferIPv4Stack=true -Dsun.net.inetaddr.ttl=600 -Djava.awt.headless=true \
+                 -Dcom.ibm.xml.xlxp.jaxb.opti.level=3 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${CATALINA_LOG_ROOT}/heapdump.%Y%m%d.%H%M%S.%pid.txt -Dfile.encoding=UTF-8 \
+                 -Dcom.sun.management.jmxremote=true -Dcom.sun.management.config.file=${CATALINA_BASE}/conf/jmxremote.properties"
+  networks:
+    tomcat_network:
+      ipv4_address: 192.168.10.28
+  volumes:
+    - webapps:/usr/local/tomcat/webapps
+    - conf:/usr/local/tomcat/conf
+    - ./logs:/usr/local/tomcat/logs
+
+volumes:
+  webapps:
+    driver: local
+  conf:
+    driver: local
+
+networks:
+  tomcat_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.10.0/27
+          gateway: 192.168.10.1
