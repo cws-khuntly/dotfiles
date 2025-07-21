@@ -39,8 +39,7 @@ declare -x DISPLAY="127.0.0.1:0.0";
 declare -ix THREAD_TIMEOUT=10;
 declare -x MODIFIED_IFS="^";
 declare -x RANDOM_GENERATOR="/dev/urandom";
-declare -x ENTROPY_FILE="${HOME}/.c
-dotfiles/config/entropy";
+declare -x ENTROPY_FILE="${HOME}/.dotfiles/config/entropy";
 declare -ix ENTROPY_FILE_SIZE=16384;
 
 #
