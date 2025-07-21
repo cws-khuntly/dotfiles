@@ -16,13 +16,4 @@
 #
 #==============================================================================
 
-#
-# dont ignore these directories
-#
-!bin/
-!lib/
-
-#
-# ignore these directories
-#
-.ansible
+authfile.gpg
