@@ -17,15 +17,9 @@ services:
     tomcat_network:
       ipv4_address: 192.168.10.28
   volumes:
-    - webapps:/usr/local/tomcat/webapps
-    - conf:/usr/local/tomcat/conf
+    - ./webapps:/usr/local/tomcat/webapps
+    - ./conf:/usr/local/tomcat/conf
     - ./logs:/usr/local/tomcat/logs
-
-volumes:
-  webapps:
-    driver: local
-  conf:
-    driver: local
 
 networks:
   tomcat_network:
