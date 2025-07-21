@@ -1,0 +1,25 @@
+    version: '3.8'
+    services:
+      bind9:
+        image: ubuntu/bind9:latest
+        container_name: bind9-dns
+        ports:
+          - "53:53/udp"
+          - "53:53/tcp"
+        volumes:
+          - ./config:/var/named/etc
+          - ./zones:/var/named/namedb
+        restart: unless-stopped
+        environment:
+          - BIND9_USER=dnsadm
+        # Optional: Define a custom network for static IP
+        networks:
+          dns_network:
+            ipv4_address: 192.168.10.29
+
+    # Optional: Define the custom network
+   networks:
+      dns_network:
+        ipam:
+          config:
+           - subnet: 192.168.10.0/27
