@@ -7,6 +7,9 @@ services:
       - "8443:8443/tcp"
   restart: unless-stopped
   environment:
+    - CATALINA_HOME=/opt/apache/tomcat/server
+    - CATALINA_BASE=/opt/apache/tomcat/instance
+    - CATALINA_LOG_ROOT=/opt/apache/tomcat/instance/logs
     - JAVA_OPTS="-Xms4096m -Xmx4096m -Xmn3072m -Djava.io.tmpdir=/var/tmp -XX:MaxDirectMemorySize=3072M -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m \
                  -XX:+PrintGCDetails -XX:+UseParallelGC -verbose:gc -Xlog:gc=info:file=${CATALINA_LOG_ROOT}/gc.%t.log:pid,time,uptime -XX:+PrintGCDetails \
                  -Dsun.reflect.inflationThreshold=0 -Djava.security.egd=file:/dev/./urandom -Dcom.sun.jndi.ldap.connect.pool.maxsize=200 -Dcom.ibm.cacheLocalHost=true \
@@ -17,9 +20,7 @@ services:
     tomcat_network:
       ipv4_address: 192.168.10.28
   volumes:
-    - ./webapps:/usr/local/tomcat/webapps
-    - ./conf:/usr/local/tomcat/conf
-    - ./logs:/usr/local/tomcat/logs
+    - ./tomcat:/opt/apache/tomcat/instance
 
 networks:
   tomcat_network:
