@@ -21,6 +21,7 @@ PartOf=scheduled-dnd.target
 ReloadPropagatedFrom=scheduled-dnd.target
 Wants=scheduled-dnd.target
 BindsTo=disable-dnd.service
+StopWhenUnneeded=yes
 
 [Timer]
 OnCalendar=*-*-* 07:00:00
