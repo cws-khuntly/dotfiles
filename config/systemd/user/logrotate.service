@@ -20,6 +20,7 @@
 Description=Run logrotate
 PartOf=logrotate.target
 ReloadPropagatedFrom=logrotate.target
+StopWhenUnneeded=yes
 
 [Service]
 Type=oneshot
