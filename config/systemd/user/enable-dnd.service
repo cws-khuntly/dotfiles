@@ -19,6 +19,7 @@
 Description=Scheduled DnD for Gnome - Turn ON DnD
 PartOf=scheduled-dnd.target
 ReloadPropagatedFrom=scheduled-dnd.target
+StopWhenUnneeded=yes
 
 [Service]
 Type=oneshot
