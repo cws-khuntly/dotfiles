@@ -22,7 +22,6 @@ Wants=enable-dnd.timer
 Wants=disable-dnd.timer
 BindsTo=enable-dnd.timer
 BindsTo=disable-dnd.timer
-StopWhenUnneeded=yes
 
 [Install]
 WantedBy=default.target
