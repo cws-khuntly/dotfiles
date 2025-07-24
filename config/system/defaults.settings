@@ -136,11 +136,7 @@ case "$(awk -F "/" '{print $NF}' <<< "${SHELL}")" in
         shopt -s expand_aliases;
         shopt -s huponexit;
         shopt -s mailwarn;
-        shopt -s histreedit;
-        shopt -s histappend;
-        shopt -s histverify;
         shopt -s hostcomplete;
-        shopt -s cmdhist;
         shopt -s checkwinsize;
         shopt -s checkhash;
         shopt -s cdspell;
@@ -158,16 +154,3 @@ stty kill "^B";
 stty -ixon;
 stty echoe;
 stty istrip;
-
-#
-# history
-#
-history -a;
-history -n;
-
-declare -x HISTFILE="${HOME}/.bash_history";
-declare -ix HISTSIZE=10000;
-declare -ix HISTFILESIZE=10000;
-declare -x HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S ";
-declare -x HISTCONTROL="ignoredups:ignorespace:ignoreboth:erasedups";
-declare -x HISTIGNORE="ls:ll:lt:la:l:cd:pwd:exit:mc:su:df:clear:cls:bg:fg";
