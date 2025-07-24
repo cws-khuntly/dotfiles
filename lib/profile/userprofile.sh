@@ -408,6 +408,9 @@ function logoutUser()
     [[ -n "$(pidof ssh-agent)" ]] && pkill ssh-agent;
     [[ -f "${HOME}/.ssh/ssh-agent.env" ]] && rm -f "${HOME}/.ssh/ssh-agent.env";
 
+    ## write history
+    history -n; history -a; history -r;
+
     ## clear terminal scrollback
     printf "\033c";
 
