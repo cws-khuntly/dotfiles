@@ -34,12 +34,7 @@ LOGGING_PROPERTIES="${HOME}/.dotfiles/config/system/logging.properties";
 [[ "$-" != *i* ]] || [ -z "${PS1}" ] && return;
 
 if [[ -f "/etc/bashrc" ]] && [[ -r "/etc/bashrc" ]] && [[ -s "/etc/bashrc" ]]; then source "/etc/bashrc"; fi
-if [[ -z "${DOT_PROFILE_LOADED}" ]] || [[ "${DOT_PROFILE_LOADED}" =~ [Ff][AA][Ll][Ss][Ee] ]]; then
-    if [[ -f "${HOME}/.profile" ]] && [[ -r "${HOME}/.profile" ]] && [[ -s "${HOME}/.profile" ]]; then
-        # shellcheck source=./profile
-        source "${HOME}/.profile";
-    fi
-fi
+if [[ -d "${HOME}/.bashrc.d" ]]; then for rc in "${HOME}/.bashrc.d/"*; do if [[ -f "${rc}" ]] && [[ -r "${rc}" ]] && [[ -s "${rc}" ]]; then source "${rc}"; [[ -n "${rc}" ]] && unset -v rc; fi done fi
 
 ## load the logger
 if [[ -r "${HOME}/lib/system/logging.sh" ]] && [[ -s "${HOME}/lib/system/logging.sh" ]]; then
