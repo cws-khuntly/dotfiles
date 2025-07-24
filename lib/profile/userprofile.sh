@@ -180,7 +180,7 @@ function setPromptCommand()
     # history things
     # UNTESTED
     #
-    history -a; history -r; history -n;
+    history -n; history -a; history -r;
 
     case "$(uname -s)" in
         [Cc][Yy][Gg][Ww][Ii][Nn]*)
