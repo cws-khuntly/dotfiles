@@ -26,9 +26,6 @@ if [[ -n "$(compgen -c | grep -Ew "(^tmux)" | sort | uniq)" ]]; then
     fi
 fi
 
-## trap logout
-trap '[[ -n "$(compgen -A function | grep -Ew "(^logoutUser)" | sort | uniq)" ]] && logoutUser; exit' EXIT
-
 CNAME="$(basename "${BASH_SOURCE[0]}")";
 FUNCTION_NAME="${CNAME}#bashrc";
 # shellcheck source=./.dotfiles/config/system/logging.properties
