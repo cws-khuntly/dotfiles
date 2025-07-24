@@ -18,6 +18,9 @@
 #
 #==============================================================================
 
+## trap exits
+trap '[[ -n "$(compgen -A function | grep -Ew "(^logoutUser)" | sort | uniq)" ]] && logoutUser; exit' EXIT
+
 ## path
 declare -x SYSTEM_PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/usr/games";
 declare -x USER_PATH="${HOME}/bin";
