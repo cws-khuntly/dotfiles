@@ -176,6 +176,12 @@ function setPromptCommand()
 
     [[ -n "${PS1}" ]] && unset -v PS1;
 
+    #
+    # history things
+    # UNTESTED
+    #
+    history -a; history -r; history -n;
+
     case "$(uname -s)" in
         [Cc][Yy][Gg][Ww][Ii][Nn]*)
             case "${git_status}" in
