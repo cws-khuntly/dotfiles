@@ -744,24 +744,6 @@ function returnRandomCharacters()
     return "${return_code}";
 }
 
-#!/usr/bin/env bash
-
-#==============================================================================
-#          FILE:  misc.sh
-#         USAGE:  Import file into script and call relevant functions
-#   DESCRIPTION:  Base system functions that don't necessarily belong elsewhere
-#
-#       OPTIONS:  See usage section
-#  REQUIREMENTS:  bash 4+
-#          BUGS:  ---
-#         NOTES:
-#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
-#       COMPANY:  ---
-#       VERSION:  1.0
-#       CREATED:  ---
-#      REVISION:  ---
-#==============================================================================
-
 #=====  FUNCTION  =============================================================
 #          NAME:  writeHistoryToDB
 #   DESCRIPTION:  Creates a directory and then changes into it
