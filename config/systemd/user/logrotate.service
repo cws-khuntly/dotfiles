@@ -24,7 +24,7 @@ StopWhenUnneeded=yes
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/logrotate ~/.dotfiles/config/system/logrotate.conf
+ExecStart=/usr/sbin/logrotate -s %s/logrotate.state %h/.dotfiles/config/system/logrotate.conf
 
 [Install]
 WantedBy=default.target
