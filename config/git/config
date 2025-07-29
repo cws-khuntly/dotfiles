@@ -59,32 +59,32 @@
 
 [merge]
     renormalize = true
-	conflictstyle = diff3
-	keepbackup = false
+    conflictstyle = diff3
+    keepbackup = false
 
 [diff]
-	algorithm = histogram
-	submodule = log
+    algorithm = histogram
+    submodule = log
 
 [transfer]
-	fsckobjects = true
+    fsckobjects = true
 
 [fetch]
-	fsckobjects = true
-	prune = true
-	prunetags = true
+    fsckobjects = true
+    prune = true
+    prunetags = true
 
 [receive]
-	fsckobjects = true
+    fsckobjects = true
 
 [status]
-	submoduleSummary = true
+    submoduleSummary = true
 
 [submodule]
-	recurse = true
+    recurse = true
 
 [gpg]
-	format = ssh
+    format = ssh
 
 [log]
     date = rfc
