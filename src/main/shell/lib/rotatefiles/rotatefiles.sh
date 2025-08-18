@@ -17,6 +17,179 @@
 #==============================================================================
 
 #=====  FUNCTION  =============================================================
+#          NAME:  rotateFiles
+#   DESCRIPTION:  Reads a provided property file into the shell
+#    PARAMETERS:  File
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function rotateFiles()
+(
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
+
+    local cname="rotatefiles.sh";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local -i ret_code=0;
+    local -i return_code=0;
+    local -i error_count=0;
+    local operating_mode;
+    local source_directory;
+    local source_file_pattern;
+    local remote_directory;
+    local remote_file_name;
+    local -i max_age;
+    local -i start_epoch;
+    local -i start_epoch;
+    local -i runtime;
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
+        start_epoch="$(date +"%s")";
+
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} START: $(date -d @"${start_epoch}" +"${TIMESTAMP_OPTS}")";
+    fi
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
+    fi
+
+    (( ${#} < 1 )) && return 3;
+
+    operating_mode="${1}";
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "operating_mode -> ${operating_mode}";
+    fi
+
+    if [[ -n "${cleanup_file_list}" ]]; then
+        case "${operating_mode}" in
+            "${ROTATE_LOCATION_LOCAL}")
+                (( ${#} != 6 )) && return 3;
+
+                source_directory="${1}";
+                source_file_pattern="${2}";
+                remote_directory="${3}";
+                remote_file_name="${4}";
+                max_age="${5}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "source_directory -> ${source_directory}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "source_file_pattern -> ${source_file_pattern}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "remote_directory -> ${remote_directory}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "remote_file_name -> ${remote_file_name}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "max_age -> ${max_age}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rotateLocalFiles ${source_directory} ${source_file_pattern} ${remote_directory} ${remote_file_name} ${max_age}";
+                fi
+
+                [[ -n "${cname}" ]] && builtin unset -v cname;
+                [[ -n "${function_name}" ]] && builtin unset -v function_name;
+                [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+
+                rotateLocalFiles "${source_directory}" "${source_file_pattern}" "${remote_directory}" "${remote_file_name}" "${max_age}";
+                ret_code="${?}";
+
+                cname="rotatefiles.sh";
+                function_name="${cname}#${FUNCNAME[0]}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "rotateLocalFiles -> ret_code -> ${ret_code}";
+                fi
+
+                if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred during local cleanup. Please review logs.";
+                    fi
+                else
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Local file cleanup completed successfully.";
+                    fi
+                fi
+                ;;
+            "${ROTATE_LOCATION_REMOTE}")
+                (( ${#} != 4 )) && return 3;
+
+                source_directory="${2}";
+                source_file_pattern="${3}";
+                max_age="${4}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "source_directory -> ${source_directory}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "source_file_pattern -> ${source_file_pattern}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "max_age -> ${max_age}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rotateRemoteFiles ${source_directory} ${source_file_pattern} ${max_age}";
+                fi
+
+                [[ -n "${cname}" ]] && builtin unset -v cname;
+                [[ -n "${function_name}" ]] && builtin unset -v function_name;
+                [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+
+                rotateRemoteFiles "${source_directory}" "${source_file_pattern}" "${max_age}"
+                ret_code="${?}";
+
+                cname="rotatefiles.sh";
+                function_name="${cname}#${FUNCNAME[0]}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "rotateRemoteFiles -> ret_code -> ${ret_code}";
+                fi
+
+                if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Remote cleanup of package files failed. Please review logs.";
+                    fi
+                fi
+                ;;
+            *)
+                return_code=1;
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An invalid operation mode was specified. operating_mode -> ${operating_mode}. Cannot continue.";
+                fi
+                ;;
+        esac
+    else
+        return_code=1;
+
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "The list of files to operate against appears to be empty. Cannot continue.";
+        fi
+    fi
+
+    if [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${operating_mode}" ]] && builtin unset -v operating_mode;
+    [[ -n "${cleanup_file_list}" ]] && builtin unset -v forcleanup_file_listce_exec;
+    [[ -n "${target_host}" ]] && builtin unset -v target_host;
+    [[ -n "${target_port}" ]] && builtin unset -v target_port;
+    [[ -n "${target_user}" ]] && builtin unset -v target_user;
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
+        end_epoch="$(date +"%s")"
+        runtime=$(( end_epoch - start_epoch ));
+
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} END: $(date -d "@${end_epoch}" +"${TIMESTAMP_OPTS}")";
+        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
+    fi
+
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
+
+    if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
+
+    return "${return_code}";
+)
+
+#=====  FUNCTION  =============================================================
 #          NAME:  rotateLocalFiles
 #   DESCRIPTION:  Reads a provided property file into the shell
 #    PARAMETERS:  File
@@ -249,7 +422,7 @@ function rotateLocalFiles()
         fi
     fi
 
-    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+    if [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
     [[ -f "${temp_tar_file}" ]] && rm -f "${temp_tar_file}";
 
@@ -328,11 +501,11 @@ function rotateRemoteFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    (( ${#} != 5 )) && return 3;
+    (( ${#} != 3 )) && return 3;
 
     source_directory="${1}";
     source_file_pattern="${2}";
-    max_age="${5}";
+    max_age="${3}";
 
     if [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "source_directory -> ${source_directory}";
@@ -376,7 +549,7 @@ function rotateRemoteFiles()
         done
     fi
 
-    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+    if [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;

@@ -73,8 +73,8 @@ if [[ -r "${DEFAULT_CONFIG_FILE}" ]] && [[ -s "${DEFAULT_CONFIG_FILE}" ]]; then
     source "${WORKING_CONFIG_FILE}";
 else
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No working configuration file was located. Shutting down.";
-        writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No working configuration file was located. Shutting down.";
+        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No working configuration file was located. fuckity Shutting down.";
+        writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No working configuration file was located. fuckity Shutting down.";
     fi
 
     exit 1;
