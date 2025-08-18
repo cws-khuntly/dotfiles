@@ -24,5 +24,5 @@ jobs:
         with:
           args: ""
           setup_python: "true"
-          working_directory: "sec/main/ansible"
+          working_directory: "src/main/ansible"
           requirements_file: ""
