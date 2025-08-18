@@ -27,7 +27,6 @@ jobs:
         env:
           SHELLCHECK_OPTS: '-x -s bash'
         with:
-          additional_files: './profile ./bashrc ./librc ./configrc ./bin/* ./lib/system/*.sh ./lib/setup/*.sh ./lib/profile/*.sh ./lib/*.sh ./config/system/*.settings ./config/setup/*.settings ./config/profile/*.settings ./config/programs/*.settings *.sh'
           severity: 'error'
           check_together: 'yes'
           format: 'gcc'
@@ -35,7 +34,7 @@ jobs:
       - name: Shellcheck SARIF Scan
         uses: reactive-firewall/shellcheck-scan@v1
         with:
-          match: ${{ matrix.match }}
+          match: '**/*'
           severity: 'warning'
           shell-format: 'bash'
           publish-artifacts: true
