@@ -13,9 +13,6 @@ jobs:
       security-events: write
       actions: read
       contents: read
-    strategy:
-      matrix:
-        match: [ ./profile ./bashrc ./librc ./configrc ./bin/* ./lib/system/*.sh ./lib/setup/*.sh ./lib/profile/*.sh ./lib/*.sh ./config/system/*.settings ./config/setup/*.settings ./config/profile/*.settings ./config/programs/*.settings **/*.sh ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
