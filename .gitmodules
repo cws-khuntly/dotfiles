@@ -1,6 +1,11 @@
 [submodule "src/test/test_helper/bats-support"]
-	path = src/test/test_helper/bats-support
-	url = https://github.com/bats-core/bats-support.git
+    path = src/test/test_helper/bats-support
+    url = https://github.com/bats-core/bats-support.git
+    branch = main
+    ignore = all
+
 [submodule "src/test/test_helper/bats-assert"]
-	path = src/test/test_helper/bats-assert
-	url = https://github.com/bats-core/bats-assert.git
+    path = src/test/test_helper/bats-assert
+    url = https://github.com/bats-core/bats-assert.git
+    branch = main
+    ignore = all
