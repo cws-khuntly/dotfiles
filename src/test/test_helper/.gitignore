@@ -19,5 +19,6 @@
 #
 # ignore these directories
 #
-bats-assert
-bats-support
+bats-assert/
+bats-support/
+

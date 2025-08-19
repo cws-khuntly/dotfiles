@@ -19,4 +19,4 @@
 #
 # ignore these directories
 #
-bats
+bats/
