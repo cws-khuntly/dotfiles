@@ -3,7 +3,9 @@
 #   DESCRIPTION:  GitHub action for yaml linter
 # ============================================================================
 name: Create release package
-on: [pull_request]
+on:
+  push:
+    tags: '*'
 
 jobs:
   release:
