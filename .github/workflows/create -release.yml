@@ -1,9 +1,9 @@
-name: Create Release
-
-on:
-  push:
-    tags:
-      - 'v*'
+# =====  WORKFLOW  ============================================================
+#          NAME:  ansible-linter.yml
+#   DESCRIPTION:  GitHub action for yaml linter
+# ============================================================================
+name: Create release package
+on: [pull_request]
 
 jobs:
   release:
