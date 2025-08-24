@@ -1,0 +1,19 @@
+# =====  WORKFLOW  ============================================================
+#          NAME:  ansible-linter.yml
+#   DESCRIPTION:  GitHub action for yaml linter
+# ============================================================================
+name: Create and upload tarball
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create tarball
+        run: tar -czvf dotfiles.tar.gz src/main/shell
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotfiles
+          path: dotfiles.tar.gz
