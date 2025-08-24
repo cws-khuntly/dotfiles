@@ -5,7 +5,8 @@
 name: Create release package
 on:
   push:
-    tags: '*'
+    tags:
+      - '*'
 
 jobs:
   release:
