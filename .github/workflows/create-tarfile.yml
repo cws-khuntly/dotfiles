@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Create tarball
-        run: tar -czvf dotfiles.tar.gz src/main/shell
+        run: tar -C src/main/shell -czvf dotfiles.tar.gz .
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
