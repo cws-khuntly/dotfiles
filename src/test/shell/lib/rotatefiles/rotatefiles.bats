@@ -25,4 +25,6 @@ setup() {
 
 @test "can run our script" {
     rotateFiles
+
+    [ status -eq 3 ]
 }
