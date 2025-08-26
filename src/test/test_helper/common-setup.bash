@@ -17,9 +17,11 @@
 #==============================================================================
 
 _common_setup() {
-    load '../../../test_helper/bats-support/load'
-    load '../../../test_helper/bats-assert/load'
+    SRCDIR="$(cd "$(dirname "${BATS_TEST_FILENAME}")" >/dev/null 2>&1 && pwd)"
+    PATH="${SRCDIR}/../../src/main/shell/lib/system:${SRCDIR}/../../src/main/shell/lib/rotatefiles:${PATH}"
 
-    DIR="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && printf "%s" "${PWD}")")"
-    PATH="${DIR}/../../src/main/shell/lib/system:${DIR}/../../src/main/shell/lib/rotatefiles:${PATH}"
+    export SRCDIR
+
+    load "${SRCDIR}/../../../test_helper/bats-support/load"
+    load "${SRCDIR}/../../../test_helper/bats-assert/load"
 }

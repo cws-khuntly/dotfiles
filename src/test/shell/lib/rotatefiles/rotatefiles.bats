@@ -17,8 +17,10 @@
 #==============================================================================
 
 setup() {
-    load '../../../test_helper/common-setup'
-    load 'rotatefiles'
+    SRCDIR="$(cd "$(dirname "${BATS_TEST_FILENAME}")" >/dev/null 2>&1 && pwd)"
+
+    load "${SRCDIR}/../../../test_helper/common-setup"
+    load "rotatefiles"
 
     _common_setup
 }
@@ -27,4 +29,12 @@ setup() {
     rotateFiles
 
     [ status -eq 3 ]
+}
+
+@test "TEST: rotateFiles local" {
+    rotateFiles "local" "/var/tmp/local" "*" "/var/tmp/remote" "backup" 7
+}
+
+@test "TEST: rotateFiles remote" {
+    rotateFiles "remote" "/var/tmp/remote" "*" 14
 }
