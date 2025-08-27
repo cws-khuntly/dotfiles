@@ -33,6 +33,7 @@ function readPropertyFile()
     local -i error_count=0;
     local property_name;
     local property_value;
+    local -A config_map;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -85,7 +86,11 @@ function readPropertyFile()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Property name -> ${property_name}, Property value -> ${property_value}";
         fi
 
-        eval "${property_name}=\"${property_value}\"";
+        config_map["${property_name}"]="${property_value}";
+
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "config_map -> ${config_map[*]}";
+        fi
 
         [[ -n "${property_name}" ]] && unset property_name;
         [[ -n "${property_value}" ]] && unset property_value;
@@ -95,7 +100,7 @@ function readPropertyFile()
     ## restore the original ifs
     IFS="${CURRENT_IFS}";
 
-    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
+    if [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
     [[ -n "${error_count}" ]] && unset error_count;
     [[ -n "${property_name}" ]] && unset property_name;
@@ -106,7 +111,7 @@ function readPropertyFile()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
     fi
 
-    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENAORMANCE}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
         runtime=$(( end_epoch - start_epoch ));
 
@@ -122,6 +127,10 @@ function readPropertyFile()
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
+
+    printf "%s\n" "${config_map[*]}";
+
+    [[ -n "${config_map[*]}" ]] && unset -v config_map;
 
     return "${return_code}";
 }
