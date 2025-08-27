@@ -33,6 +33,8 @@ function readPropertyFile()
     local -i error_count=0;
     local property_name;
     local property_value;
+    local config_file;
+    local -A config_entries;
     local -A config_map;
     local -i start_epoch;
     local -i end_epoch;
@@ -49,13 +51,25 @@ function readPropertyFile()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    if (( ${#} == 0 )); then usage; return ${?}; fi
+    (( ${#} != 1)) && return 3;
+
+    config_file="${1}";
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "config_file -> ${config_file}";
+    fi
+
+    mapfile -t config_entries < "${config_file}";
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "config_entries -> ${config_entries[*]}";
+    fi
 
     ## change the IFS
     IFS="${MODIFIED_IFS}";
 
     ## clean up home directory first
-    for entry in $(< "${PROPERTY_FILE}"); do
+    for entry in "${config_entries[*]}"; do
         [[ -z "${entry}" ]] && continue;
         [[ "${entry}" =~ ^\# ]] && continue;
 
