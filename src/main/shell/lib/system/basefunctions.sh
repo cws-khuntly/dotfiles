@@ -69,7 +69,7 @@ function readPropertyFile()
     IFS="=";
 
     ## clean up home directory first
-    for entry in "${config_entries[*]}"; do
+    for entry in ${config_entries[*]}; do
         [[ -z "${entry}" ]] && continue;
         [[ "${entry}" =~ ^\# ]] && continue;
 
