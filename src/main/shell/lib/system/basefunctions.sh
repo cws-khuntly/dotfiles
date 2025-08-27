@@ -66,7 +66,7 @@ function readPropertyFile()
     fi
 
     ## change the IFS
-    IFS="${MODIFIED_IFS}";
+    IFS="=";
 
     ## clean up home directory first
     for entry in "${config_entries[*]}"; do
@@ -77,8 +77,7 @@ function readPropertyFile()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
         fi
 
-        property_name="$(echo -e "$(cut -d "=" -f 1 <<< "${entry}")" | xargs)";
-        property_value="$(echo -e "$(cut -d "=" -f 2 <<< "${entry}")" | xargs)";
+        read -r property_name property_value <<< "${entry}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "property_name -> ${property_name}";
