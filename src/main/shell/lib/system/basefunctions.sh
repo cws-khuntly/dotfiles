@@ -51,7 +51,7 @@ function readPropertyFile()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    (( ${#} != 1)) && return 3;
+    (( ${#} != 1 )) && return 3;
 
     config_file="${1}";
 
