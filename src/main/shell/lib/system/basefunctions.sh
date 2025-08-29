@@ -129,7 +129,7 @@ function readPropertyFile()
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
-echo ${CONFIG_MAP[@]}
+
     return "${return_code}";
 }
 
