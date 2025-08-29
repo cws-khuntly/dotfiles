@@ -16,6 +16,8 @@
 #      REVISION:  ---
 #==============================================================================
 
+declare -Ax CONFIG_MAP=();
+
 #=====  FUNCTION  =============================================================
 #          NAME:  readPropertyFile
 #   DESCRIPTION:  Reads a provided property file into the shell
@@ -34,7 +36,6 @@ function readPropertyFile()
     local property_name;
     local property_value;
     local config_file;
-    local -A config_map;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -87,18 +88,16 @@ function readPropertyFile()
             property_name="$(cut -d "=" -f 1 <<< "${entry}" | xargs)";
             property_value="$(cut -d "=" -f 2- <<< "${entry}" | xargs)";
 
-            config_map["${property_name}"]="${property_value}";
+            CONFIG_MAP["${property_name}"]="${property_value}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then\
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "config_map -> ${config_map[*]}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "CONFIG_MAP -> ${CONFIG_MAP[*]}";
             fi
 
             [[ -n "${property_name}" ]] && unset property_name;
             [[ -n "${property_value}" ]] && unset property_value;
             [[ -n "${entry}" ]] && unset entry;
         done
-
-        IFS="${CURRENT_IFS}";
     fi
 
     if [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
@@ -130,11 +129,7 @@ function readPropertyFile()
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
-
-    printf "%s\n" "${config_map[*]}";
-
-    [[ -n "${config_map[*]}" ]] && unset config_map;
-
+echo ${CONFIG_MAP[@]}
     return "${return_code}";
 }
 
