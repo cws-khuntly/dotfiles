@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+#==============================================================================
+#
+#          FILE:  A02-git
+#         USAGE:  . A02-git
+#   DESCRIPTION:  Useful git aliases
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+[[ -z "$(compgen -c | grep -Ew "(^git)" | sort | uniq)" ]] && return;
+
+## git
+alias ga='git add';
+alias gp='git push';
+alias gl='git log';
+alias gs='git status';
+alias gd='git diff';
+alias gdc='git diff --cached';
+alias gm='git commit -sm';
+alias gms='git commit -S -sm';
+alias gma='git commit -asm';
+alias rgc='git commit -sm "$(curl -s https://whatthecommit.com/index.txt)"';
+alias rgsc='git commit -Ssm "$(curl -s https://whatthecommit.com/index.txt)"';
+alias gb='git branch';
+alias gc='git checkout';
+alias gr='git rm';
+alias gra='git remote add';
+alias grr='git remote rm';
+alias gpu='git pull';
+alias gcl='git clone';
+alias gvs='git log --pretty=tformat:'%h' -n 1';

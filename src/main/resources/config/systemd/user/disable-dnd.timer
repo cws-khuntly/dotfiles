@@ -1,0 +1,32 @@
+#==============================================================================
+#
+#          FILE:  disable-dnd.timer
+#         USAGE:  Install unit file using appropriate systemctl syntax.
+#     ARGUMENTS:  None
+#   DESCRIPTION:  systemd service to run git update periodically
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#==============================================================================
+[Unit]
+Description=Scheduled DnD for Gnome - Turn OFF DnD
+PartOf=scheduled-dnd.target
+ReloadPropagatedFrom=scheduled-dnd.target
+Wants=scheduled-dnd.target
+BindsTo=disable-dnd.service
+StopWhenUnneeded=yes
+
+[Timer]
+OnCalendar=*-*-* 07:00:00
+Persistent=true
+Unit=disable-dnd.service
+
+[Install]
+WantedBy=scheduled-dnd.target

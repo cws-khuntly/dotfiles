@@ -34,7 +34,6 @@ function readPropertyFile()
     local property_name;
     local property_value;
     local config_file;
-    local -A config_entries;
     local -A config_map;
     local -i start_epoch;
     local -i end_epoch;
@@ -65,66 +64,57 @@ function readPropertyFile()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "config_entries -> ${config_entries[*]}";
     fi
 
-    ## change the IFS
-    IFS="=";
+    if (( ${#config_entries[*]} == 0 )); then
+        (( error_count += 1 ));
 
-    ## clean up home directory first
-    for entry in ${config_entries[*]}; do
-        [[ -z "${entry}" ]] && continue;
-        [[ "${entry}" =~ ^\# ]] && continue;
-
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "No entries found in property file ${config_file}";
         fi
+    else
+        for entry in "${config_entries[@]}"; do
+            [[ -z "${entry}" ]] && continue;
+            [[ "${entry}" =~ ^# ]] && continue;
 
-        read -r property_name property_value <<< "${entry}";
-
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "property_name -> ${property_name}";
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "property_value -> ${property_value}";
-        fi
-
-        if [[ -z "${property_name}" ]] || [[ -z "${property_value}" ]]; then
-            (( error_count += 1 ));
-
-            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Found property name is invalid. property_name -> ${property_name}";
-                writeLogEntry "CONSOLE" "STDERR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Found property name is invalid. property_name -> ${property_name}";
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
             fi
 
-            continue;
-        fi
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "property_name -> ${property_name}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "property_value -> ${property_value}";
+            fi
 
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Property name -> ${property_name}, Property value -> ${property_value}";
-        fi
+            property_name="$(cut -d "=" -f 1 <<< "${entry}" | xargs)";
+            property_value="$(cut -d "=" -f 2- <<< "${entry}" | xargs)";
 
-        config_map["${property_name}"]="${property_value}";
+            config_map["${property_name}"]="${property_value}";
 
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "config_map -> ${config_map[*]}";
-        fi
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then\
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "config_map -> ${config_map[*]}";
+            fi
 
-        [[ -n "${property_name}" ]] && unset property_name;
-        [[ -n "${property_value}" ]] && unset property_value;
-        [[ -n "${entry}" ]] && unset entry;
-    done
+            [[ -n "${property_name}" ]] && unset property_name;
+            [[ -n "${property_value}" ]] && unset property_value;
+            [[ -n "${entry}" ]] && unset entry;
+        done
 
-    ## restore the original ifs
-    IFS="${CURRENT_IFS}";
+        IFS="${CURRENT_IFS}";
+    fi
 
     if [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && unset error_count;
     [[ -n "${property_name}" ]] && unset property_name;
     [[ -n "${property_value}" ]] && unset property_value;
+    [[ -n "${entry}" ]] && unset entry;
+    [[ -n "${config_file}" ]] && unset config_file;
+    [[ -n "${config_entries[*]}" ]] && unset config_entries;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
     fi
 
-    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENAORMANCE}" == "${_TRUE}" ]]; then
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
         runtime=$(( end_epoch - start_epoch ));
 
@@ -143,7 +133,7 @@ function readPropertyFile()
 
     printf "%s\n" "${config_map[*]}";
 
-    [[ -n "${config_map[*]}" ]] && unset -v config_map;
+    [[ -n "${config_map[*]}" ]] && unset config_map;
 
     return "${return_code}";
 }

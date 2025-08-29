@@ -1,0 +1,30 @@
+#==============================================================================
+#
+#          FILE:  enable-dnd.service
+#         USAGE:  Install unit file using appropriate systemctl syntax.
+#     ARGUMENTS:  None
+#   DESCRIPTION:  systemd service to run git update periodically
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#==============================================================================
+[Unit]
+Description=Scheduled DnD for Gnome - Turn OFF DnD
+PartOf=scheduled-dnd.target
+ReloadPropagatedFrom=scheduled-dnd.target
+StopWhenUnneeded=yes
+
+[Service]
+Type=oneshot
+ExecStart=gsettings set org.gnome.desktop.notifications show-banners true
+SuccessExitStatus=0
+
+[Install]
+WantedBy=scheduled-dnd.target

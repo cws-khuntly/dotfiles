@@ -1,0 +1,26 @@
+#==============================================================================
+#
+#          FILE:  logrotate.target
+#         USAGE:  Install unit file using appropriate systemctl syntax.
+#     ARGUMENTS:  None
+#   DESCRIPTION:  systemd service to run git update periodically
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#==============================================================================
+[Unit]
+Description=Rotate logs in ~/logs
+After=default.target
+Wants=logrotate.service
+BindsTo=logrotate.service
+StopWhenUnneeded=yes
+
+[Install]
+WantedBy=default.target
