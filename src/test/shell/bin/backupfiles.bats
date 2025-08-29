@@ -17,8 +17,12 @@
 #==============================================================================
 
 setup() {
-    DIR="$(cd "$(dirname "${BATS_TEST_FILENAME}")" >/dev/null 2>&1 && pwd)"
-    PATH="${DIR}/../../src/main/shell/bin:${DIR}/../../src/main/shell/lib/system:${DIR}/../../src/main/shell/lib/rotatefiles:${PATH}"
+    SRCDIR="$(cd "$(dirname "${BATS_TEST_FILENAME}")" >/dev/null 2>&1 && pwd)"
+
+    load "common-setup"
+    load "../rotatefiles"
+
+    _common_setup
 }
 
 @test "can run our script" {
