@@ -18,14 +18,12 @@
 
 ## get the available log config and load it
 if [[ -n "${LOGGING_PROPERTIES}" ]]; then
-    # shellcheck source=/dev/null
-    source "${LOGGING_PROPERTIES}";
+    readPropertyFile "${LOGGING_PROPERTIES}";
 else
     if [[ -r "${HOME}/.dotfiles/config/system/logging.properties" ]] && [[ -s "${HOME}/.dotfiles/config/system/logging.properties" ]]; then
-        # shellcheck source=../../config/system/logging.properties
-        source "${HOME}/.dotfiles/config/system/logging.properties";
+        readPropertyFile "${HOME}/.dotfiles/config/system/logging.properties";
     elif [[ -r "/usr/local/config/logging.properties" ]] && [[ -s "/usr/local/config/logging.properties" ]]; then
-        source "/usr/local/config/logging.properties";
+        readPropertyFile "/usr/local/config/logging.properties";
     else
         printf "\e[00;31m%s\e[00;32m\n" "Unable to load logging configuration. Shutting down." >&2;
     fi
