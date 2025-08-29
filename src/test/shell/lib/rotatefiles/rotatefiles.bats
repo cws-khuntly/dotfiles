@@ -19,8 +19,8 @@
 setup() {
     SRCDIR="$(cd "$(dirname "${BATS_TEST_FILENAME}")" >/dev/null 2>&1 && pwd)"
 
-    load "common-setup"
-    load "../rotatefiles"
+    load "../common-setup"
+    load "rotatefiles"
 
     _common_setup
 }
