@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+#==============================================================================
+#
+#          FILE:  dotfiles.alias
+#         USAGE:  . dotfiles.alias
+#   DESCRIPTION:  Sets dotfiles aliases
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+alias setupFiles='setupdir="$(mktemp -d)"; git clone https://github.com/cws-khuntly/dotfiles-setup.git "${setupdir}"; chmod 755 "${setupdir}/bin/setup"; \
+    checkoutdir="$(mktemp -d)"; git clone https://github.com/cws-khuntly/dotfiles.git "${checkoutdir}"; \
+    sed -i"" -e "s/BUILD_PATH=.*/BUILD_PATH=\"${checkoutdir}\"/" "${checkoutdir}/config/setup/setup.properties"; \
+    "${setupdir}/bin/setup" -n "${checkoutdir}/config/setup/setup.properties"; \
+    [[ -d "${checkoutdir} ]] && rm -i --preserve-root -rf "${checkoutdir:?}"; [[ -d "${setupdir} ]] && rm -i --preserve-root -rf "${setupdir:?}"';
+
+[[ -z "$(compgen -c | grep -Ew "(^ansible)" | sort | uniq)" ]] && return;
+
+alias ansibleFiles='checkoutdir="$(mktemp -d)"; git clone https://github.com/cws-khuntly/dotfiles.git "${checkoutdir}"; \
+    ansible-playbook -i "${checkoutdir}/ansible/inventory/hosts.yml" "${checkoutdir}/ansible/site.yml"; [[ -d "${checkoutdir} ]] && rm -i --preserve-root -rf "${checkoutdir:?}";';
