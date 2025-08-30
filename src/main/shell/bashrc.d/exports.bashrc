@@ -45,6 +45,7 @@ declare -x ENTROPY_FILE="${HOME}/.dotfiles/config/entropy";
 declare -ix ENTROPY_FILE_SIZE=16384;
 declare -x WGETRC="${HOME}/.dotfiles/config/system/wgetrc";
 declare -x LDAPRC="${HOME}/.dotfiles/config/system/ldaprc";
+declare -x AUTHFILE="${HOME}/.dotfiles/config/profile/authfile.gpg";
 
 #
 # mail
