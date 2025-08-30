@@ -593,7 +593,7 @@ function returnRandomCharacters()
 #==============================================================================
 function showHostInfo()
 {
-    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]} ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]} == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set -v; fi
 
     local cname="userprofile.sh";
@@ -702,7 +702,7 @@ function showHostInfo()
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${cname}" ]] && unset -v cname;
 
-    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]} ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]} == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
@@ -716,7 +716,7 @@ function showHostInfo()
 #==============================================================================
 function setPromptCommand()
 {
-    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]} ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]} == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set -v; fi
 
     local cname="userprofile.sh";
@@ -804,7 +804,7 @@ function setPromptCommand()
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${cname}" ]] && unset -v cname;
 
-    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]} ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]} == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
@@ -818,7 +818,7 @@ function setPromptCommand()
 #==============================================================================
 function runLoginCommands()
 {
-    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]} ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]} == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set -v; fi
 
     local cname="userprofile.sh";
@@ -937,7 +937,7 @@ function runLoginCommands()
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${cname}" ]] && unset -v cname;
 
-    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]} ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]} == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
@@ -951,7 +951,7 @@ function runLoginCommands()
 #==============================================================================
 function logoutUser()
 {
-    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]} ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]} == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set -v; fi
 
     local cname="userprofile.sh";
@@ -1008,7 +1008,7 @@ function logoutUser()
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${cname}" ]] && unset -v cname;
 
-    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]} ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]} == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
@@ -1022,7 +1022,7 @@ function logoutUser()
 #==============================================================================
 function addservice()
 {
-    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]} ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]} == "${_TRUE}" ]]; then set -x; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set -v; fi
 
     local cname="userprofile.sh";
@@ -1055,7 +1055,7 @@ function addservice()
     #==============================================================================;
     function usage()
     (
-        if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]} ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]} == "${_TRUE}" ]]; then set -x; fi
+        if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -x; fi
         if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set -v; fi
 
         local cname="userprofile.sh";
@@ -1077,7 +1077,7 @@ function addservice()
         [[ -n "${function_name}" ]] && unset -v function_name;
         [[ -n "${cname}" ]] && unset -v cname;
 
-        if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]} ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]} == "${_TRUE}" ]]; then set +x; fi
+        if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
         if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set +v; fi
 
         return "${return_code}";
@@ -1138,7 +1138,7 @@ function addservice()
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${cname}" ]] && unset -v cname;
 
-    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]} ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]} == "${_TRUE}" ]]; then set +x; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
