@@ -594,7 +594,7 @@ function returnRandomCharacters()
 function showHostInfo()
 {
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set -v; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set -v; fi
 
     local cname="userprofile.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
@@ -703,7 +703,7 @@ function showHostInfo()
     [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set +v; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
 }
@@ -717,7 +717,7 @@ function showHostInfo()
 function setPromptCommand()
 {
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set -v; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set -v; fi
 
     local cname="userprofile.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
@@ -805,7 +805,7 @@ function setPromptCommand()
     [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set +v; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
 }
@@ -819,7 +819,7 @@ function setPromptCommand()
 function runLoginCommands()
 {
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set -v; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set -v; fi
 
     local cname="userprofile.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
@@ -938,7 +938,7 @@ function runLoginCommands()
     [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set +v; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
 }
@@ -952,7 +952,7 @@ function runLoginCommands()
 function logoutUser()
 {
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set -v; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set -v; fi
 
     local cname="userprofile.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
@@ -1009,7 +1009,7 @@ function logoutUser()
     [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set +v; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
 }
@@ -1023,7 +1023,7 @@ function logoutUser()
 function addservice()
 {
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set -v; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set -v; fi
 
     local cname="userprofile.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
@@ -1056,7 +1056,7 @@ function addservice()
     function usage()
     (
         if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -x; fi
-        if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set -v; fi
+        if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set -v; fi
 
         local cname="userprofile.sh";
         local function_name="${cname}#${FUNCNAME[1]}";
@@ -1078,7 +1078,7 @@ function addservice()
         [[ -n "${cname}" ]] && unset -v cname;
 
         if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-        if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set +v; fi
+        if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 
         return "${return_code}";
     )
@@ -1139,7 +1139,7 @@ function addservice()
     [[ -n "${cname}" ]] && unset -v cname;
 
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]} ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]} == "${_TRUE}" ]]; then set +v; fi
+    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
 }
