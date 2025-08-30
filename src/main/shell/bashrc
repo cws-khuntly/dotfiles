@@ -33,7 +33,7 @@ LOGGING_PROPERTIES="${HOME}/.dotfiles/config/system/logging.properties";
 [[ "$-" != *i* ]] || [ -z "${PS1}" ] && return;
 
 if [[ -f "/etc/bashrc" ]] && [[ -r "/etc/bashrc" ]] && [[ -s "/etc/bashrc" ]]; then source "/etc/bashrc"; fi
-if [[ -d "${HOME}/.bashrc.d" ]]; then for rc in "${HOME}/.bashrc.d/"*; do if [[ -f "${rc}" ]] && [[ -r "${rc}" ]] && [[ -s "${rc}" ]]; then source "${rc}"; [[ -n "${rc}" ]] && unset -v rc; fi done fi
+if [[ -d "${HOME}/.dotfiles/bashrc.d" ]]; then for rc in "${HOME}/.dotfiles/bashrc.d/"*; do if [[ -f "${rc}" ]] && [[ -r "${rc}" ]] && [[ -s "${rc}" ]]; then source "${rc}"; [[ -n "${rc}" ]] && unset -v rc; fi done fi
 
 ## load the logger
 if [[ -r "${HOME}/lib/system/logging.sh" ]] && [[ -s "${HOME}/lib/system/logging.sh" ]]; then
@@ -55,37 +55,6 @@ fi
 
 if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -x; fi
 if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set -v; fi
-
-if [[ -d "${HOME}/.dotfiles/bashrc.d" ]]; then
-    if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: mapfile -t FILE_LIST < <\(find ${HOME}/.dotfiles/bashrc.d -type f -name \*.bashrc 2>/dev/null\)";
-    fi
-
-    mapfile -t FILE_LIST < <(find "${HOME}/.dotfiles/bashrc.d" -type f -name \*.bashrc 2>/dev/null);
-
-    if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_LIST -> ${FILE_LIST[*]}";
-    fi
-
-    if [[ -n "${FILE_LIST[*]}" ]] && (( ${#FILE_LIST[*]} >=1 )); then
-        for FILE in "${FILE_LIST[@]}"; do
-            if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
-            fi
-
-            [[ -z "${FILE}" ]] && continue;
-
-            if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${CONFIG_PATH}/${FILE}";
-            fi
-
-            # shellcheck source=/dev/null
-            source "${FILE}";
-
-            [[ -n "${FILE}" ]] && unset -v FILE;
-        done
-    fi
-fi
 
 if [[ -z "${isReloadRequest}" ]] || [[ "${isReloadRequest}" == "${_FALSE}" ]]; then
     if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
