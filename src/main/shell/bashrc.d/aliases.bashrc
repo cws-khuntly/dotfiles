@@ -18,29 +18,6 @@
 #
 #==============================================================================
 
-#
-# customs, but need everywhere
-#
-[[ -z "${_TRUE}" ]] && _TRUE="true" 2>/dev/null;
-[[ -z "${_FALSE}" ]] && _FALSE="false" 2>/dev/null;
-
-#
-# completion
-#
-ssh_config_files=( "${HOME}/.ssh/config" "$(find ${HOME}/.ssh/config.d -type f)" )
-
-for ssh_config_file in "${ssh_config_files[@]}"; do
-    if [[ -f "${ssh_config_file}" ]] && [[ -r "${ssh_config_file}" ]] && [[ -s "${ssh_config_file}" ]]; then
-        complete -o "default" -o "nospace" -W "$(grep -E "(^Host)" "${ssh_config_file}" | grep -Ev "([?*])" | cut -d " " -f 2- | tr ' ' '\n')" scp sftp ssh;
-    fi
-
-    [[ -n "${ssh_config_file}" ]] && unset -v ssh_config_file;
-done
-
-[[ -n "${ssh_config_file[*]}" ]] && unset -v ssh_config_files;
-
-AUTHFILE="${HOME}/.dotfiles/config/profile/authfile.gpg";
-
 ## customs
 alias mountt='mount | column -t';
 alias lt='ls -ltrhpF --color=auto';
