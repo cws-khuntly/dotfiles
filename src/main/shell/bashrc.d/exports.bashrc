@@ -23,6 +23,8 @@
 #
 # read-only
 #
+declare -rx _TRUE="true" 2>/dev/null;
+declare -rx _FALSE="false" 2>/dev/null;
 declare -rx TIMEFORMAT=$'\nreal %3R\tuser %3U\tsys %3S\tpcpu %P\n' 2>/dev/null;
 declare -rx LESS="-QR" 2>/dev/null;
 declare -rx BLOCKSIZE="K" 2>/dev/null;
