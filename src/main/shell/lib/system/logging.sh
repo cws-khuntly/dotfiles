@@ -30,7 +30,7 @@ else
 fi
 
 if [[ "${CONFIG_MAP["LOG_ROOT"]:0:1}" == "~" ]]; then
-    CONFIG_MAP["LOG_ROOT"]="$(sed -e "s/~/$(grep "${LOGNAME}" /etc/passwd | cut -d ":" -f 6)/g" <<< "${CONFIG_MAP["LOG_ROOT"]}");
+    CONFIG_MAP["LOG_ROOT"]="$(sed -e "s/~/$(grep "${LOGNAME}" /etc/passwd | cut -d ":" -f 6)/g" <<< "${CONFIG_MAP["LOG_ROOT"]}")";
 fi
 
 if [[ -z "${CONFIG_MAP["LOGGING_LOADED"]}" ]] || [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_FALSE}" ]]; then
