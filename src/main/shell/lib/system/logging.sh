@@ -29,6 +29,8 @@ else
     fi
 fi
 
+if [[ "${CONFIG_MAP["LOG_ROOT"]:0:1}" == "~" ]]; then CONFIG_MAP["LOG_ROOT"]}="$(sed -e "s/~/$(grep "${LOGNAME}" /etc/passwd | cut -d ":" -f 6) <<< ${CONFIG_MAP["LOG_ROOT"]})"; fi
+
 if [[ -z "${CONFIG_MAP["LOGGING_LOADED"]}" ]] || [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_FALSE}" ]]; then
     printf "\e[00;31m%s\033[0m\n" "Failed to load logging configuration. No logging available!" >&2;
 fi
