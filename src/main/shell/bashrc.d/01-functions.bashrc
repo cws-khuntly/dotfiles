@@ -566,7 +566,7 @@ function setPromptCommand()
 
     git_status="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)";
     real_user="$(grep -w "${EUID}" /etc/passwd | cut -d ":" -f 1)";
-    last_cmd="$(history 1 | sed -e "s/^*[0-9]+*//")";
+    last_cmd="$(history 1 | cut -d " " -f 6-)";
     last_rc="${?}";
 
     if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
