@@ -550,9 +550,6 @@ function setPromptCommand()
     local -i end_epoch;
     local -i runtime;
 
-    git_status="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)";
-    real_user="$(grep -w "${EUID}" /etc/passwd | cut -d ":" -f 1)";
-
     if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
 
@@ -566,6 +563,16 @@ function setPromptCommand()
     # UNTESTED
     #
     history -n; history -a; history -r;
+
+    git_status="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)";
+    real_user="$(grep -w "${EUID}" /etc/passwd | cut -d ":" -f 1)";
+    last_cmd="$(history 1 | sed -e "s/^*[0-9]\+*//")";
+    last_rc="${?}";
+
+    if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXECUTED: ${last_cmd}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "RETURN CODE: ${last_rc}";
+    fi
 
     case "$(uname -s)" in
         [Cc][Yy][Gg][Ww][Ii][Nn]*)
