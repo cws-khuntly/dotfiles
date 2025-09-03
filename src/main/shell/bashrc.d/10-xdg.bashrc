@@ -23,3 +23,4 @@ declare -x XDG_RUNTIME_DIR="/run/user/$(id -u)";
 declare -x XDG_CACHE_HOME="${HOME}/.cache";
 declare -x XDG_DATA_HOME="${HOME}/.local/share";
 declare -x XDG_STATE_HOME="${HOME}/.local/state";
+declare -x XDG_DATA_DIRS="${XDG_DATA_DIRS}:${HOME}/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share"
