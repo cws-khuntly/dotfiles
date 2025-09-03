@@ -29,10 +29,6 @@ else
     fi
 fi
 
-if [[ "${CONFIG_MAP["LOG_ROOT"]:0:1}" == "~" ]]; then
-    CONFIG_MAP["LOG_ROOT"]="$(sed -e "s/~/$(grep "${LOGNAME}" /etc/passwd | cut -d ":" -f 6)/g" <<< "${CONFIG_MAP["LOG_ROOT"]}")";
-fi
-
 if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
 if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 if [[ -n "${CONFIG_MAP["LOG_ROOT"]}" ]] && [[ ! -d "${CONFIG_MAP["LOG_ROOT"]}" ]]; then mkdir -p "${CONFIG_MAP["LOG_ROOT"]}"; fi
