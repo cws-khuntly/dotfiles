@@ -433,10 +433,10 @@ function setPromptCommand()
     local -i end_epoch;
     local -i runtime;
 
-    if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_PERFORMANCE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_PERFORMANCE"]}" == "${_TRUE}" ]]; then
+    if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_AUDIT"]}" ]] && [[ "${CONFIG_MAP["ENABLE_AUDIT"]}" == "${_TRUE}" ]]; then
         start_epoch="$(date +"%s")";
 
-        writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} START: $(date -d @"${start_epoch}" +"${TIMESTAMP_OPTS}")";
+        writeLogEntry "FILE" "AUDIT" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} START: $(date -d @"${start_epoch}" +"${TIMESTAMP_OPTS}")";
     fi
 
     [[ -n "${PS1}" ]] && unset -v PS1;
@@ -449,7 +449,7 @@ function setPromptCommand()
 
     git_status="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)";
     real_user="$(grep -w "${EUID}" /etc/passwd | cut -d ":" -f 1)";
-    last_cmd="$(history 1 | cut -d " " -f 6-)";
+    last_cmd="$(history 1 | cut -d " " -f 5-)";
     last_rc="${?}";
 
     if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
@@ -490,6 +490,8 @@ function setPromptCommand()
     [[ -n "${color_blue}" ]] && unset -v color_blue;
     [[ -n "${git_status}" ]] && unset -v git_status;
     [[ -n "${real_user}" ]] && unset -v real_user;
+    [[ -n "${last_cmd}" ]] && unset -v last_cmd;
+    [[ -n "${last_rc}" ]] && unset -v last_rc;
 
     if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
