@@ -70,7 +70,7 @@ if [[ -r "${DEFAULT_CONFIG_FILE}" ]] && [[ -s "${DEFAULT_CONFIG_FILE}" ]]; then
     fi
 
     # shellcheck source=../config/rotatefiles/rotatefiles.properties
-    source "${WORKING_CONFIG_FILE}";
+    readPropertyFile "${WORKING_CONFIG_FILE}";
 else
     if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No working configuration file was located. Shutting down.";
@@ -78,30 +78,6 @@ else
     fi
 
     exit 1;
-fi
-
-#
-# load the system libs
-#
-if [[ -d "${SCRIPT_ROOT}/lib/system" ]]; then
-    if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found library directory ${SCRIPT_ROOT}/lib/system";
-    fi
-
-    for SYSLIB in "${SCRIPT_ROOT}/lib/system"/*.sh; do
-        [[ -z "${SYSLIB}" ]] && continue;
-        [[ "${SYSLIB}" =~ ^\# ]] && continue;
-
-        if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Library ${SYSLIB}";
-        fi
-
-        if [[ -r "${SYSLIB}" ]] && [[ -s "${SYSLIB}" ]] && \
-            [[ "$(basename "${SYSLIB}")" != "cws-profile.sh" ]] && [[ "$(basename "${SYSLIB}")" != "logging.sh" ]]; then
-            # shellcheck source=/dev/null
-            source "${SYSLIB}";
-        fi
-    done
 fi
 
 #======  FUNCTION  ============================================================
@@ -366,7 +342,7 @@ function capturedata()
                     fi
 
                     # shellcheck source=/dev/null
-                    source "${RUNTIME_CONFIG_FILE}";
+                    readPropertyFile "${RUNTIME_CONFIG_FILE}";
                 else
                     RETURN_CODE=2;
 
@@ -515,12 +491,12 @@ else
     FUNCTION_NAME="${CNAME}#exec-main";
 
     if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${ROTATION_TYPE:-${ROTATION_TYPE_DEFAULT}} ${SOURCE_DIRECTORY} ${SOURCE_FILE_PATTERN:-${DEFAULT_FILE_PATTERN}} ${REMOTE_DIRECTORY} ${REMOTE_FILE_NAME} ${LOCAL_MAX_AGE} ${REMOTE_MAX_AGE} ${REMOTE_FILE_PATTERN:-DEFAULT_FILE_PATTERN}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: main ${ROTATION_TYPE:-${CONFIG_MAP["ROTATION_TYPE_DEFAULT"]}} ${SOURCE_DIRECTORY} ${SOURCE_FILE_PATTERN:-${CONFIG_MAP["DEFAULT_FILE_PATTERN"]}} ${REMOTE_DIRECTORY} ${REMOTE_FILE_NAME} ${LOCAL_MAX_AGE} ${REMOTE_MAX_AGE} ${REMOTE_FILE_PATTERN:-${CONFIG_MAP["DEFAULT_FILE_PATTERN"]}}";
     fi
 
     [[ -n "${RET_CODE}" ]] && unset -v RET_CODE;
 
-    main "${ROTATION_TYPE:-ROTATION_TYPE_DEFAULT}" "${SOURCE_DIRECTORY}" "${SOURCE_FILE_PATTERN:-${DEFAULT_FILE_PATTERN}}" "${REMOTE_DIRECTORY}" "${REMOTE_FILE_NAME}" "${LOCAL_MAX_AGE}" "${REMOTE_MAX_AGE}" "${REMOTE_FILE_PATTERN:-${DEFAULT_FILE_PATTERN}}";
+    main "${ROTATION_TYPE:-${CONFIG_MAP["ROTATION_TYPE_DEFAULT"]}}" "${SOURCE_DIRECTORY}" "${SOURCE_FILE_PATTERN:-${CONFIG_MAP["DEFAULT_FILE_PATTERN"]}}" "${REMOTE_DIRECTORY}" "${REMOTE_FILE_NAME}" "${LOCAL_MAX_AGE}" "${REMOTE_MAX_AGE}" "${REMOTE_FILE_PATTERN:-${CONFIG_MAP["DEFAULT_FILE_PATTERN"]}}";
     RET_CODE="${?}";
 
     if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
