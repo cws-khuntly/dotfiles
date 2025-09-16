@@ -453,6 +453,8 @@ function setPromptCommand()
     last_rc="${?}";
 
     if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "git_status -> ${git_status}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "real_user -> ${real_user}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXECUTED: ${last_cmd}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "RETURN CODE: ${last_rc}";
     fi
@@ -460,22 +462,22 @@ function setPromptCommand()
     case "$(uname -s)" in
         [Cc][Yy][Gg][Ww][Ii][Nn]*)
             case "${git_status}" in
-                "") PS1='${color_green}[\u:\H] : <${color_yellow}\w${color_green}>\n\n \$ ${color_off}'; ;;
-                *) PS1='${color_green}[\u:\H] : <${color_yellow}\w (${color_blue}${git_status})${color_green}>\n\n \$ ${color_off}'; ;;
+                "") PS1="${color_green}[\u:\H] : <${color_yellow}\w${color_green}>\n\n\$ ${color_off}"; ;;
+                *) PS1="${color_green}[\u:\H] : <${color_yellow}\w (${color_blue}${git_status})${color_green}>\n\n\$ ${color_off}"; ;;
             esac
             ;;
         *)
             case "${real_user}" in
                 "${LOGNAME}")
                     case "${git_status}" in
-                        "") PS1='${color_green}[\u:\H] : <${color_yellow}\w${color_green}>\n\n\$ ${color_off}'; ;;
-                        *) PS1='${color_green}[\u:\H] : <${color_yellow}\w (${color_blue}${git_status})${color_green}>\n\n \$ ${color_off}'; ;;
+                        "") PS1="${color_green}[\u:\H] : <${color_yellow}\w${color_green}>\n\n\$ ${color_off}"; ;;
+                        *) PS1="${color_green}[\u:\H] : <${color_yellow}\w ${color_blue}(${git_status})${color_green}>\n\n\$ ${color_off}"; ;;
                     esac
                     ;;
                 *)
                     case "${git_status}" in
-                        "") PS1='${color_red}NOTE: you are ${real_user}${color_off}\n${color_green}[\u as ${color_red}${real_user}${color_green}:\H] : <${color_yellow}\w${color_green}>\n\n \$ ${color_off}'; ;;
-                        *) PS1='${color_red}NOTE: you are ${real_user}${color_off}\n${color_green}[\u as ${color_red}${real_user}${color_green}:\H] : <${color_yellow}\w (${color_blue}${git_status})${color_green}>\n\n \$ ${color_off}';
+                        "") PS1="${color_red}NOTE: you are ${real_user}${color_off}\n${color_green}[\u as ${color_red}${real_user}${color_green}:\H] : <${color_yellow}\w${color_green}>\n\n\$ ${color_off}"; ;;
+                        *) PS1="${color_red}NOTE: you are ${real_user}${color_off}\n${color_green}[\u as ${color_red}${real_user}${color_green}:\H] : <${color_yellow}\w ${color_blue}(${git_status})${color_green}>\n\n\$ ${color_off}";
                     esac
                     ;;
             esac
