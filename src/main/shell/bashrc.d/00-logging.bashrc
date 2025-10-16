@@ -96,7 +96,7 @@ function checkLoggingStatus()
 
     logging_type="${1}";
 
-    if [[ -z "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["${logging_type}"]}" ]] && [[ "${CONFIG_MAP["${logging_type}"]}" == "${_TRUE}" ]]; then return 1; fi
+    if [[ -z "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["${logging_type}"]}" ]] && [[ "${CONFIG_MAP["${logging_type}"]}" == "${_TRUE}" ]]; then return 1; else return 0; fi
 }
 
 #======  FUNCTION  ============================================================
