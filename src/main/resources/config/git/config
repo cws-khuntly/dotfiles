@@ -53,12 +53,12 @@
     verbose = true
 
 [filter "tabspace"]
-    clean = expand --tabs=4 --first-only
-    smudge = expand --tabs=4 --initial
+    clean = expand --tabs=4
+    smudge = expand --tabs=4
 
 [filter "spacetab"]
-    clean = unexpand --tabs=4 --first-only
-    smudge = unexpand --tabs=4 --initial
+    clean = unexpand --tabs=4
+    smudge = unexpand --tabs=4
 
 [merge]
     renormalize = true
