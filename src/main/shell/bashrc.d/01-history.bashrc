@@ -33,9 +33,9 @@ esac
 history -a;
 history -n;
 
-HISTFILE="${HOME}/.bash_history";
-HISTSIZE=10000;
-HISTFILESIZE=10000;
-HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S ";
-HISTCONTROL="ignoredups:ignorespace:ignoreboth:erasedups";
-HISTIGNORE="ls:ll:lt:la:l:cd:pwd:exit:mc:su:df:clear:cls:bg:fg:passwd"
+declare -x HISTFILE="${HOME}/.bash_history";
+declare -x HISTSIZE=10000;
+declare -x HISTFILESIZE=10000;
+declare -x HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S ";
+declare -x HISTCONTROL="ignoredups:ignorespace:ignoreboth:erasedups";
+declare -x HISTIGNORE="ls:ll:lt:la:l:cd:pwd:exit:mc:su:df:clear:cls:bg:fg:passwd"
