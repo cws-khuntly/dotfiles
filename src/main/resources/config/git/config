@@ -17,7 +17,7 @@
 #==============================================================================
 
 [include]
-    path = ~./config/git/localconfig
+    path = ~/.config/git/localconfig
 
 [core]
     autocrlf = false
