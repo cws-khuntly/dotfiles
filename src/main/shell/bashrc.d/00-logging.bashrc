@@ -17,8 +17,8 @@
 #==============================================================================
 
 ## get the available log config and load it
-if [[ -n "${LOGGING_PROPERTIES}" ]]; then
-    readPropertyFile "${LOGGING_PROPERTIES}";
+if [[ -n "${LOGGING_PROPERTIES:-${HOME}/.dotfiles/config/system/logging.properties}" ]] && [[ -f "${LOGGING_PROPERTIES:-${HOME}/.dotfiles/config/system/logging.properties}" ]]; then
+    readPropertyFile "${LOGGING_PROPERTIES:-${HOME}/.dotfiles/config/system/logging.properties}";
 else
     if [[ -r "${HOME}/.dotfiles/config/system/logging.properties" ]] && [[ -s "${HOME}/.dotfiles/config/system/logging.properties" ]]; then
         readPropertyFile "${HOME}/.dotfiles/config/system/logging.properties";
