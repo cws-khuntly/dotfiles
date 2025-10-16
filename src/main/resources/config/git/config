@@ -39,7 +39,10 @@
     autocorrect = 1
 
 [color]
-    ui = true
+    ui = auto
+    diff = auto
+    status = auto
+    branch = auto
 
 [http]
 
@@ -98,9 +101,8 @@
 [push]
     default = simple
 
-[user]
-    name = Kevin Huntly
-    email = kmhuntly@gmail.com
+[pull]
+    rebase = true
 
 [alias]
     a = add
