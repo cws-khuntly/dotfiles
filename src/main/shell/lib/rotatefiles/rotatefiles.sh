@@ -335,13 +335,13 @@ function rotateLocalFiles()
                         else
                             if [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]]; then
                                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "File ${file} was found in archive file ${temp_tar_file}. Removing source file.";
-                                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f ${file}";
+                                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f -- ${file}";
                             fi
 
                             [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                            cmd_output="$(rm -f "${file}")";
+                            cmd_output="$(rm -f -- "${file}")";
                             ret_code="${?}";
 
                             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -412,7 +412,7 @@ function rotateLocalFiles()
 
     if [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -f "${temp_tar_file}" ]] && rm -f "${temp_tar_file}";
+    [[ -f "${temp_tar_file}" ]] && rm -f -- "${temp_tar_file}";
 
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${source_directory}" ]] && unset -v source_directory;
@@ -517,12 +517,12 @@ function rotateRemoteFiles()
         for file in "${file_list[@]}"; do
             if [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file -> ${file}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f ${file}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f -- ${file}";
             fi
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            rm -f "${file}";
+            rm -f -- "${file}";
             ret_code="${?}";
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
