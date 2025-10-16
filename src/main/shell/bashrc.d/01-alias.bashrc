@@ -30,7 +30,7 @@ alias ld="ls -ldhpF --color=auto";
 alias sizeof="du -sk";
 alias mktd="pushd $(mktemp)";
 alias stamp="date -d @\"${EPOCHREALTIME}\" +\"%Y%m%d %H:%M:%S\"";
-alias da="date +"%Y-%m-%d %A    %T %Z"";
+alias da="date +\"%Y-%m-%d %A    %T %Z\"";
 alias zero="cat /dev/null >|";
 alias ssh="ssh -qt4AC";
 alias removeKey="ssh-keygen -R";
@@ -92,4 +92,4 @@ alias runAs="sudo -u";
 #
 # vim
 #
-[[ -n "$(compgen -c | grep -Ew "(^vim)")" | sort | uniq ]] && alias vi="vim";
+[[ -n "$(compgen -c | grep -Ew "(^vim)" | sort | uniq)" ]] && alias vi="vim" || true;
