@@ -376,7 +376,7 @@ function watchForFile()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -f "${watch_file}" ]] && rm -f -- "${watch_file}";
+    [[ -f "${watch_file}" ]] && rm --force -- "${watch_file}";
 
     [[ -n "${ret_code}" ]] && unset ret_code;
     [[ -n "${error_count}" ]] && unset error_count;

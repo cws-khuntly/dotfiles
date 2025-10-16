@@ -341,7 +341,7 @@ function rotateLocalFiles()
                             [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                            cmd_output="$(rm -f -- "${file}")";
+                            cmd_output="$(rm --force -- "${file}")";
                             ret_code="${?}";
 
                             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -412,7 +412,7 @@ function rotateLocalFiles()
 
     if [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -f "${temp_tar_file}" ]] && rm -f -- "${temp_tar_file}";
+    [[ -f "${temp_tar_file}" ]] && rm --force -- "${temp_tar_file}";
 
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${source_directory}" ]] && unset -v source_directory;
@@ -522,7 +522,7 @@ function rotateRemoteFiles()
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            rm -f -- "${file}";
+            rm --force -- "${file}";
             ret_code="${?}";
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then

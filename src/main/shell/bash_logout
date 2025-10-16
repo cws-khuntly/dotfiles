@@ -42,7 +42,7 @@ fi
 
 ## turn off ssh-agent and keychain
 [[ -n "$(pidof ssh-agent)" ]] && pkill ssh-agent;
-[[ -f "${HOME}/.ssh/ssh-agent.env" ]] && rm -f "${HOME}/.ssh/ssh-agent.env";
+[[ -f "${HOME}/.ssh/ssh-agent.env" ]] && rm --force -- "${HOME}/.ssh/ssh-agent.env";
 
 ## write history
 history -n; history -a; history -r;
