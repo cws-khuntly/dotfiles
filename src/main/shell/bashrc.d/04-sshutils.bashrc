@@ -177,7 +177,7 @@ function validateAndCopyKeysForHost()
     [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
+    if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
 }
@@ -330,7 +330,7 @@ function getHostKeys()
     [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
+    if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
 )
@@ -508,7 +508,7 @@ function generateSshKeys()
     [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
+    if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
 )
@@ -655,7 +655,7 @@ function copyKeysToTarget()
     [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
+    if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
 )
@@ -769,7 +769,7 @@ function fssh()
     [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
+    if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
 )
@@ -882,7 +882,7 @@ function fsftp()
     [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-    if [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
+    if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 
     return "${return_code}";
 )
