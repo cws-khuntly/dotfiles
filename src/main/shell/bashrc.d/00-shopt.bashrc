@@ -16,10 +16,6 @@
 #      REVISION:  ---
 #==============================================================================
 
-set -o nounset;
-set -o errexit;
-set -o pipefail;
-set -o notify;
-set -o monitor;
-set -o bell-visible-style;
-set -o noclobber;
+shopt -s checkwinsize;
+shopt -s autocd;
+shopt -s cdspell;
