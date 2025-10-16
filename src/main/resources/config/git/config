@@ -16,6 +16,9 @@
 #
 #==============================================================================
 
+[include]
+    path = ~/.dotfiles/config/git/localconfig
+
 [core]
     autocrlf = false
     editor = vi
