@@ -339,29 +339,13 @@ function returnRandomCharacters()
         esac
     done
 
-    if [[ -z "$(compgen -c | grep -Ew "(^apg)" | sort | uniq)" ]]; then
+    while (( counter <= string_count )); do
         if [[ -n "${use_special}" ]] && [[ "${use_special}" == "${_TRUE}" ]]; then
-            if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: apg -a 1 -m ${string_length} | tail -n 1";
-            fi
-
-            returned_characters="$(apg -a 1 -m "${string_length}" | tail -n 1)";
+            returned_characters="$(tr -cd '[:graph:]' < /dev/urandom | head -c "${string_length}")";
         else
-            if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: apg -a 0 -m ${string_length} | tail -n 1";
-            fi
-
-            returned_characters="$(apg -a 0 -m "${string_length}" | tail -n 1)";
+            returned_characters="$(tr -cd '[:alnum:]' < /dev/urandom | head -c "${string_length}")";
         fi
-    else
-        while (( counter <= string_count )); do
-            if [[ -n "${use_special}" ]] && [[ "${use_special}" == "${_TRUE}" ]]; then
-                returned_characters="$(tr -cd '[:graph:]' < /dev/urandom | head -c "${string_length}")";
-        else
-                returned_characters="$(tr -cd '[:alnum:]' < /dev/urandom | head -c "${string_length}")";
-            fi
-        done
-    fi
+    done
 
     if [[ -n "${CONFIG_MAP["LOGGING_LOADED"]}" ]] && [[ "${CONFIG_MAP["LOGGING_LOADED"]}" == "${_TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returned_characters -> ${returned_characters}";
