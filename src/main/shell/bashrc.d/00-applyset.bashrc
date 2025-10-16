@@ -21,5 +21,4 @@ set -o errexit;
 set -o pipefail;
 set -o notify;
 set -o monitor;
-set -o bell-visible-style;
 set -o noclobber;
