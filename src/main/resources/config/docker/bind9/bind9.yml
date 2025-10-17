@@ -19,8 +19,12 @@ services:
 volumes:
   namedb:
     driver: local
+    driver_opts:
+      device: ":/home/dnsadm/namedb"
   named_conf:
     driver: local
+    driver_opts:
+      device: ":/home/dnsadm/etc"
 
 networks:
   dns_network:
