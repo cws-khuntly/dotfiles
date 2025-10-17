@@ -1,35 +1,43 @@
-version: '3.8'
 services:
   bind9:
     image: ubuntu/bind9:latest
+    restart: always
     container_name: bind9-dns
     ports:
-      - "53:53/udp"
-      - "53:53/tcp"
-  restart: unless-stopped
-  environment:
-    - BIND9_USER=dnsadm
-  networks:
-    dns_network:
-      ipv4_address: 192.168.10.29
-  volumes:
-    - named_conf:/var/named/etc
-    - named_db:/var/named/namedb
+      - "10953:53/udp"
+      - "10953:53/tcp"
+    networks:
+      dns_network:
+        ipv4_address: 192.168.252.3
+    volumes:
+      - config:/var/named/etc
+      - namedb:/var/named/namedb
+      - logs:/var/named/var/log
 
 volumes:
   namedb:
     driver: local
     driver_opts:
-      device: ":/home/dnsadm/namedb"
-  named_conf:
+      type: none
+      o: bind
+      device: "/home/dnsadm/namedb"
+  config:
     driver: local
     driver_opts:
-      device: ":/home/dnsadm/etc"
+      type: none
+      o: bind
+      device: "/home/dnsadm/etc"
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/home/dnsadm/logs"
 
 networks:
   dns_network:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.168.10.0/27
-          gateway: 192.168.10.1
+        - subnet: 192.168.252.0/29
+          gateway: 192.168.252.1
