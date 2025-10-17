@@ -10,9 +10,9 @@ services:
       dns_network:
         ipv4_address: 192.168.252.3
     volumes:
-      - config:/var/named/etc
-      - namedb:/var/named/namedb
-      - logs:/var/named/var/log
+      - config:/etc/bind
+      - namedb:/etc/bind/namedb
+      - logs:/etc/bind/logs
 
 volumes:
   namedb:
