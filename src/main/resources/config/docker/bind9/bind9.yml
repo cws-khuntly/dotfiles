@@ -1,6 +1,6 @@
 services:
   bind9:
-    image: ubuntu/bind9:latest
+    image: internetsystemsconsortium/bind9:latest
     restart: always
     container_name: bind9-dns
     ports:
