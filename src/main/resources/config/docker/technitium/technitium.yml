@@ -1,0 +1,48 @@
+services:
+  technitium:
+    image: technitium/dns-server:latest
+    restart: always
+    container_name: technitium-dns
+    ports:
+      - "5380:5380/tcp"
+      - "10953:53/udp"
+      - "10953:53/tcp"
+    environment:
+      - DNS_SERVER_DOMAIN=caspersbox.com
+    networks:
+      dns_network:
+        ipv4_address: 192.168.252.3
+    volumes:
+      - config:/var/named/etc
+      - namedb:/var/named/namedb
+      - logs:/var/named/var/log
+    sysctls:
+      - net.ipv4.ip_local_port_range=1024 65000
+
+volumes:
+  namedb:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/home/dnsadm/namedb"
+  config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/home/dnsadm/etc"
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/home/dnsadm/logs"
+
+networks:
+  dns_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.252.0/29
+          gateway: 192.168.252.1
