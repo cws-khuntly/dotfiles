@@ -11,8 +11,7 @@ services:
         ipv4_address: 192.168.252.3
     volumes:
       - config:/etc/bind
-      - namedb:/etc/bind/namedb
-      - logs:/etc/bind/logs
+      - namedb:/var/lib/bind
 
 volumes:
   namedb:
