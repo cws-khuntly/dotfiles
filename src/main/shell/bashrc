@@ -18,14 +18,6 @@
 #
 #==============================================================================
 
-if [[ -n "$(compgen -c | grep -Ew "(^tmux)" | sort | uniq)" ]]; then
-    if [[ -z "${TMUX}" ]]; then
-        tmux new-session -A -s default && exit;
-    else
-        if [[ -n "${TERM}" ]] && [[ "${TERM}" =~ [Ss][Cc][Rr][Ee][Ee][Nn] ]]; then tmux attach -t default; exit; fi
-    fi
-fi
-
 CNAME="$(basename "${BASH_SOURCE[0]}")";
 FUNCTION_NAME="${CNAME}#bashrc";
 
