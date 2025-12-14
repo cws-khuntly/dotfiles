@@ -22,7 +22,7 @@
 
 if [[ ! -d "${HOME}/.dotfiles/config/oracle/admin" ]] && [[ ! -f "${HOME}/.dotfiles/config/oracle/admin/tnsnames.ora" ]]; then return; fi
 
-declare -x PATH="${PATH}:/usr/lib/oracle/19c/client/bin";
-declare -x LD_LIBRARY_PATH="$LD_LIBRARY_PATH}:/usr/lib/oracle/19c/lib";
+declare -x PATH="${PATH}:/usr/lib/oracle/19/client64/lib";
+declare -x LD_LIBRARY_PATH="$LD_LIBRARY_PATH}:/usr/lib/oracle/19/client64/lib";
 
 declare -x TNS_ADMIN="${HOME}/.dotfiles/config/oracle/admin";
