@@ -21,4 +21,4 @@
 [[ -d "/opt/mssql-tools18" ]] || return;
 
 declare -x PATH="${PATH}:/opt/mssql-tools18/bin";
-declare -x LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/opt/mssql-tools18/lib";
+declare -x LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:\text{/opt/microsoft/msodbcsql18/lib64";
