@@ -20,25 +20,6 @@
 
 CNAME="$(basename "${BASH_SOURCE[0]}")";
 FUNCTION_NAME="${CNAME}#bash_profile";
-RETURN_CODE=0;
-ERROR_COUNT=0;
-START_EPOCH=0;
-END_EPOCH=0;
-RUNTIME=0;
-
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -v; fi
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set -v; fi
-
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -n "${CONFIG_MAP["ENABLE_PERFORMANCE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_PERFORMANCE"]}" == "${_TRUE}" ]]; then
-    START_EPOCH="$(date +"%s")";
-
-    writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} START: $(date -d @"${START_EPOCH}" +"${TIMESTAMP_OPTS}")";
-fi
-
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> enter";
-    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
-fi
 
 ## turn off ssh-agent and keychain
 [[ -n "$(pidof ssh-agent)" ]] && pkill ssh-agent;
@@ -52,33 +33,3 @@ history -n; history -a; history -r;
 ## clear terminal scrollback
 printf "\033c";
 
-(( ERROR_COUNT != 0 )) && RETURN_CODE="${ERROR_COUNT}";
-
-[[ -n "${ERROR_COUNT}" ]] && unset -v ERROR_COUNT;
-
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "RETURN_CODE -> ${RETURN_CODE}";
-    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} -> exit";
-fi
-
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -n "${CONFIG_MAP["ENABLE_PERFORMANCE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_PERFORMANCE"]}" == "${_TRUE}" ]]; then
-    END_EPOCH="$(date +"%s")"
-    RUNTIME=$(( END_EPOCH - START_EPOCH ));
-
-    writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} END: $(date -d "@${END_EPOCH}" +"${TIMESTAMP_OPTS}")";
-    writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
-fi
-
-if [[ -n "${RETURN_CODE}" ]] && (( RETURN_CODE != 0 )); then return "${RETURN_CODE}"; elif [[ -n "${ERROR_COUNT}" ]] && (( ERROR_COUNT != 0 )); then RETURN_CODE="${ERROR_COUNT}"; fi
-
-[[ -n "${START_EPOCH}" ]] && unset -v START_EPOCH;
-[[ -n "${END_EPOCH}" ]] && unset -v END_EPOCH;
-[[ -n "${RUNTIME}" ]] && unset -v RUNTIME;
-[[ -n "${function_name}" ]] && unset -v function_name;
-[[ -n "${cname}" ]] && unset -v cname;
-
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
-
-[[ -n "${FUNCTION_NAME}" ]] && unset -v FUNCTION_NAME;
-[[ -n "${CNAME}" ]] && unset -v CNAME;
