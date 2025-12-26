@@ -36,6 +36,22 @@ services:
     depends_on:
       - zookeeper
 
+services:
+  akhq:
+    # build:
+    #   context: .
+    image: tchiotludo/akhq
+    restart: unless-stopped
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "kafka:9092"
+    depends_on:
+      - kafka
+
 volumes:
   kafka_data:
     driver: local
