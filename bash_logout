@@ -25,7 +25,7 @@ FUNCTION_NAME="${CNAME}#bash_profile";
 [[ -n "$(pidof ssh-agent)" ]] && pkill ssh-agent;
 [[ -f "${HOME}/.ssh/ssh-agent.env" ]] && rm --force -- "${HOME}/.ssh/ssh-agent.env";
 
-[[ -n "$(docker ps | grep kafka)" ]] && docker compose -f ${HOME}/workspace/docker/kafka/kafka.yaml down;
+[[ -n "$(docker ps | grep kafka)" ]] && docker compose -f ${HOME}/workspace/docker/kafka/kafka.yml down;
 
 ## write history
 history -n; history -a; history -r;
