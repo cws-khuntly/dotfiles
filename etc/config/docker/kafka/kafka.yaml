@@ -1,5 +1,15 @@
 ---
 services:
+  zookeeper:
+    image: zookeeper:latest
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
   kafka:
     image: apache/kafka:4.1.1
     hostname: kafka
@@ -22,6 +32,8 @@ services:
       ALLOW_PLAINTEXT_LISTENER: "yes"
     volumes:
       - kafka_data:/var/lib/kafka/data
+    depends_on:
+      - zookeeper
 
 volumes:
   kafka_data:
