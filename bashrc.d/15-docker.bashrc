@@ -20,4 +20,4 @@
 
 [[ -d "${HOME}/workspace/docker" ]] || return;
 
-[[ -f "${HOME}/workspace/docker/kafka/kafka.yaml" ]] && docker compose -f ${HOME}/workspace/docker/kafka/kafka.yaml up -d;
+[[ -f "${HOME}/workspace/docker/kafka/kafka.yml" ]] && docker compose -f ${HOME}/workspace/docker/kafka/kafka.yml up -d;
