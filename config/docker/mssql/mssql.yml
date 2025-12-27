@@ -20,5 +20,5 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: "~/workspace/mssql/data"
+      device: "/opt/mssql/data"
 
