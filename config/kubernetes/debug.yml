@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debug-pod
+spec:
+  containers:
+    - name: alpine
+      image: alpine:latest
+      command: ["sleep", "infinity"]
+      volumeMounts:
+        - name: storage-volume
+          mountPath: "/mnt/data"
+      restartPolicy: never
+  volumes:
+    - name: storage-volume
+      persistentVolumeClaim:
+        claimName: "<PVC NAME>"
