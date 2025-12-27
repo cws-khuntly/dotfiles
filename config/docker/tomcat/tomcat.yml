@@ -1,12 +1,28 @@
 ---
 services:
+  mysql:
+    image: mysql:latest
+    container_name: tomcat-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: esolutions
+      MYSQL_USER: appadm
+      MYSQL_PASSWORD: apppass
+    ports:
+      - "3306:3306"
+    networks:
+      mysql:
+        ipv4_address: 172.24.199.201
+    volumes:
+      - mysql:/var/lib/mysql
+
   tomcat:
     image: tomcat:9.0.113-jdk21-corretto-al2
     container_name: tomcat-appserver
     restart: unless-stopped
     depends_on:
       - tomcat-mysql
-
     environment:
       CATALINA_HOME: /opt/apache/tomcat/server
       CATALINA_BASE: /opt/apache/tomcat/instance
@@ -19,38 +35,13 @@ services:
         -Dcom.sun.jndi.ldap.connect.pool.prefsize=200 -Dcom.sun.jndi.ldap.connect.pool.timeout=3000 -Djava.net.preferIPv4Stack=true -Dsun.net.inetaddr.ttl=600 -Djava.awt.headless=true \
         -Dcom.ibm.xml.xlxp.jaxb.opti.level=3 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${CATALINA_LOG_ROOT}/heapdump.%Y%m%d.%H%M%S.%pid.txt -Dfile.encoding=UTF-8 \
         -Dcom.sun.management.jmxremote=true -Dcom.sun.management.config.file=${CATALINA_BASE}/conf/jmxremote.properties
-
     ports:
       - "8443:8443"
-
     networks:
       tomcat:
         ipv4_address: 172.24.199.200
-
     volumes:
       - tomcat:/opt/apache/tomcat/instance
-
-  mysql:
-    build: ./mysql
-    image: mysql:latest
-    container_name: tomcat-mysql
-    restart: unless-stopped
-
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: esolutions
-      MYSQL_USER: appadm
-      MYSQL_PASSWORD: apppass
-
-    ports:
-      - "3306:3306"
-
-    networks:
-      mysql:
-        ipv4_address: 172.24.199.201
-
-    volumes:
-      - mysql:/var/lib/mysql
 
 ---
 volumes:
@@ -72,7 +63,6 @@ volumes:
 networks:
   tomcat:
     driver: bridge
-
     ipam:
       config:
         - subnet: 172.24.199.0/20
@@ -80,7 +70,6 @@ networks:
 
   mysql:
     driver: bridge
-
     ipam:
       config:
         - subnet: 172.24.199.0/20
