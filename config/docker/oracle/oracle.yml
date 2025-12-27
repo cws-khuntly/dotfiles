@@ -1,10 +1,11 @@
+---
 services:
   oracle-db:
-    image: container-registry.oracle.com/database/enterprise:19.19.0.0
+    image: container-registry.oracle.com/database/enterprise:19.3.0.0
     environment:
       - ORACLE_SID=ORCLCDB
       - ORACLE_PDB=ORCLPDB1
-      - ORACLE_PWD=Oracle_123
+      - ORACLE_PWD=MMGMHUodJurQLv2Wxi5QFg0UHSqF90
       - ORACLE_EDITION=enterprise
     ports:
       - 1521:1521
@@ -17,24 +18,19 @@ services:
       timeout: 10s
       retries: 5
 
-  oracle-sqlplus:
-    image: container-registry.oracle.com/database/instantclient:latest
-    restart: unless-stopped
-    depends_on:
-      - oracle-db
-
+---
 volumes:
   oracle-data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/home/khuntly/workspace/Oracle/oradata"
+      device: "~/workspace/Oracle/oradata"
 
   oracle-backup:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/home/khuntly/workspace/Oracle/orabackup"
+      device: "~/workspace/Oracle/orabackup"
 

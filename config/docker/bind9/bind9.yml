@@ -1,3 +1,4 @@
+---
 services:
   bind9:
     image: internetsystemsconsortium/bind9:latest
@@ -13,6 +14,7 @@ services:
       - config:/etc/bind
       - namedb:/var/lib/bind
 
+---
 volumes:
   namedb:
     driver: local
@@ -33,6 +35,7 @@ volumes:
       o: bind
       device: "/home/dnsadm/logs"
 
+---
 networks:
   dns_network:
     driver: bridge
@@ -40,3 +43,4 @@ networks:
       config:
         - subnet: 192.168.252.0/29
           gateway: 192.168.252.1
+

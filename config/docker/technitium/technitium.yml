@@ -1,3 +1,4 @@
+---
 services:
   technitium:
     image: technitium/dns-server:latest
@@ -19,6 +20,7 @@ services:
     sysctls:
       - net.ipv4.ip_local_port_range=1024 65000
 
+---
 volumes:
   namedb:
     driver: local
@@ -39,6 +41,7 @@ volumes:
       o: bind
       device: "/home/dnsadm/logs"
 
+---
 networks:
   dns_network:
     driver: bridge
@@ -46,3 +49,4 @@ networks:
       config:
         - subnet: 192.168.252.0/29
           gateway: 192.168.252.1
+

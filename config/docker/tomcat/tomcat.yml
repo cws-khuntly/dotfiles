@@ -1,3 +1,4 @@
+---
 services:
   tomcat:
     build: ./tomcat
@@ -51,12 +52,14 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
 
+---
 volumes:
   tomcat:
     driver: local
   mysql:
     driver: local
 
+---
 networks:
   tomcat:
     driver: bridge

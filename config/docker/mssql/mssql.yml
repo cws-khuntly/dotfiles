@@ -1,0 +1,24 @@
+---
+services:
+  mssql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql-container
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YBfRyAW9j7SC3Auduzz0q74COaV5ooV9"
+      MSSQL_PID: "Developer" 
+    ports:
+      - "1433:1433"
+    volumes:
+      mssql-data:/var/opt/mssql
+    restart: unless-stopped
+
+---
+volumes:
+  mssql-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "~/workspace/mssql/data"
+
