@@ -28,12 +28,12 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: "/home/khuntly/workspace/Oracle/oradata
+      device: "/home/khuntly/workspace/Oracle/oradata"
 
   oracle-backup:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/home/khuntly/workspace/Oracle/orabackup
+      device: "/home/khuntly/workspace/Oracle/orabackup"
 
