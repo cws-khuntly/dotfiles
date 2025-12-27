@@ -13,7 +13,7 @@ services:
       - oracle-data:/opt/oracle/oradata
       - oracle-backup:/opt/oracle/backup
     healthcheck:
-      test: ["CMD", "sqlplus", "-L", "sys/Oracle_123@//localhost:1521/ORCLCDB as sysdba", "@healthcheck.sql"]
+      test: ["CMD", "sqlplus", "-L", "SYS/MMGMHUodJurQLv2Wxi5QFg0UHSqF90@//localhost:1521/ORCLCDB as sysdba", "@healthcheck.sql"]
       interval: 30s
       timeout: 10s
       retries: 5
