@@ -27,19 +27,19 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: "/home/dnsadm/namedb"
+      device: "/opt/named/namedb"
   config:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/home/dnsadm/etc"
+      device: "/opt/named/etc"
   logs:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/home/dnsadm/logs"
+      device: "/opt/named/logs"
 
 ---
 networks:
