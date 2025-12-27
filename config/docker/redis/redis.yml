@@ -8,6 +8,11 @@ services:
     command: redis-server --save 20 1 --loglevel warning --requirepass 317V1jK7eMFW2mivTHzmvOvX2znkl4hn
     volumes:
       - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli --user default --pass 317V1jK7eMFW2mivTHzmvOvX2znkl4hn"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 ---
 volumes:
