@@ -7,9 +7,6 @@ services:
     ports:
       - "10953:53/udp"
       - "10953:53/tcp"
-    networks:
-      dns_network:
-        ipv4_address: 192.168.252.3
     volumes:
       - config:/etc/bind
       - namedb:/var/lib/bind
@@ -34,13 +31,3 @@ volumes:
       type: none
       o: bind
       device: "/opt/named/logs"
-
----
-networks:
-  dns_network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.252.0/29
-          gateway: 192.168.252.1
-
