@@ -20,7 +20,8 @@ services:
   oracle-sqlplus:
     image: container-registry.oracle.com/database/instantclient:latest
     restart: unless-stopped
-    depends_on: oracle-db
+    depends_on:
+      - oracle-db
 
 volumes:
   oracle-data:
