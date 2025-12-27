@@ -16,6 +16,10 @@
 #
 #==============================================================================
 
+[User]
+    name = Kevin Huntly
+    email = kmhuntly@gmail.com
+
 [include]
     path = ~/.config/git/localconfig
 
