@@ -1,11 +1,11 @@
 ---
 services:
   tomcat:
-    build: ./tomcat
-    image: tomcat:jre21
+    image: tomcat:9.0.113-jdk21-corretto-al2
     container_name: tomcat-appserver
     restart: unless-stopped
-    depends_on: tomcat-mysql
+    depends_on:
+      - tomcat-mysql
 
     environment:
       CATALINA_HOME: /opt/apache/tomcat/server
@@ -21,7 +21,7 @@ services:
         -Dcom.sun.management.jmxremote=true -Dcom.sun.management.config.file=${CATALINA_BASE}/conf/jmxremote.properties
 
     ports:
-      - "8443:8443/tcp"
+      - "8443:8443"
 
     networks:
       tomcat:
@@ -50,14 +50,23 @@ services:
         ipv4_address: 172.24.199.201
 
     volumes:
-      - mysql-data:/var/lib/mysql
+      - mysql:/var/lib/mysql
 
 ---
 volumes:
   tomcat:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/Apache/tomcat"
+
   mysql:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/Oracle/mysql"
 
 ---
 networks:
