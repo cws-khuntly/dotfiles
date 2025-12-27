@@ -1,0 +1,20 @@
+---
+services:
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning --requirepass 317V1jK7eMFW2mivTHzmvOvX2znkl4hn
+    volumes:
+      - redis-data:/data
+
+---
+volumes:
+  redis-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/redis/data"
+
