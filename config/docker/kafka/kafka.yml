@@ -128,19 +128,19 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: "~/workspace/Apache/kafka/zookeeper/data"
+      device: "/opt/Apache/kafka/zookeeper/data"
 
   zookeeper-log:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "~/workspace/Apache/kafka/zookeeper/logs"
+      device: "/opt/Apache/kafka/zookeeper/logs"
 
   kafka-data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "~/workspace/Apache/kafka/kafka/data"
+      device: "/opt/Apache/kafka/kafka/data"
 
