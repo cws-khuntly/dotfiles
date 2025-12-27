@@ -16,12 +16,12 @@
 #
 #==============================================================================
 
-LOCALDB =
+ORCLCDB =
   (DESCRIPTION =
     (ADDRESS_LIST =
       (ADDRESS =
         (PROTOCOL = TCP)
-        (HOST = localhost)
+        (HOST = 192.168.12.6)
         (PORT = 1521)
       )
     )
