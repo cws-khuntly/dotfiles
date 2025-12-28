@@ -1,6 +1,6 @@
 ---
 services:
-  bind9:
+  debugger:
     image: alpine:latest
     tty: true
     volumes:
