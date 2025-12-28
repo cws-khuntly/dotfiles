@@ -8,8 +8,8 @@ services:
       - ORACLE_PWD=T7LPKpbeXo4DuuE2z9RfxWnxTQNR9u
       - ORACLE_EDITION=enterprise
     networks:
-      oracle-network:
-        ipv4_address: 192.168.252.15
+      relx-network:
+        ipv4_address: 192.168.252.10
     ports:
       - 1521:1521
     volumes:
@@ -37,10 +37,8 @@ volumes:
       o: bind
       device: "/opt/oracle/orabackup"
 
+---
 networks:
-  oracle-network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.252.0/28
-          gateway: 192.168.252.1
+  relx-network:
+    external: true
+
