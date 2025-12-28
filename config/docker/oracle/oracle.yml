@@ -7,6 +7,9 @@ services:
       - ORACLE_PDB=ORCLPDB1
       - ORACLE_PWD=MMGMHUodJurQLv2Wxi5QFg0UHSqF90
       - ORACLE_EDITION=enterprise
+    networks:
+      oracle-network:
+        ipv4_address: 192.168.253.3
     ports:
       - 1521:1521
     volumes:
@@ -34,3 +37,10 @@ volumes:
       o: bind
       device: "/opt/oracle/orabackup"
 
+networks:
+  oracle-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.253.0/28
+          gateway: 192.168.253.1
