@@ -10,7 +10,6 @@ services:
     volumes:
       - config:/etc/bind
       - namedb:/var/lib/bind
-      - logs:/var/named/var/log
     healthcheck:
       test: ["CMD", "dig", "@", "localhost", "+short", "-t", "a", "localhost.localdomain"]
       interval: 30s
