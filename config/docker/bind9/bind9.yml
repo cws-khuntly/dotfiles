@@ -5,8 +5,8 @@ services:
     restart: on-failure
     container_name: bind9-dns
     ports:
-      - "10953:53/udp"
-      - "10953:53/tcp"
+      - "53:53/udp"
+      - "53:53/tcp"
       - "127.0.0.1:953:953/tcp"
     volumes:
       - config:/etc/bind
