@@ -1,0 +1,45 @@
+---
+services:
+  bind9:
+    image: alpine:latest
+    tty: true
+    volumes:
+      - config:/etc/bind
+      - namedb:/var/lib/bind
+      - logs:/var/log/named
+      - keys:/etc/dnssec-keys
+      - cache:/var/cache/bind
+
+---
+volumes:
+  namedb:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/namedb"
+  config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/etc"
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/logs"
+  keys:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/keys"
+  cache:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/cache"
+      
