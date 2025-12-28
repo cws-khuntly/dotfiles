@@ -19,5 +19,3 @@
 #==============================================================================
 
 [[ -d "${HOME}/workspace/docker" ]] || return;
-
-[[ -f "${HOME}/workspace/docker/kafka/kafka.yml" ]] && docker compose -f ${HOME}/workspace/docker/kafka/kafka.yml up -d;
