@@ -2,7 +2,7 @@
 services:
   bind9:
     image: internetsystemsconsortium/bind9:9.21
-    restart: always
+    restart: on-failure
     container_name: bind9-dns
     ports:
       - "10953:53/udp"
@@ -10,11 +10,11 @@ services:
     volumes:
       - config:/etc/bind
       - namedb:/var/lib/bind
-    healthcheck:
-      test: ["CMD", "dig", "@", "localhost", "+short", "-t", "a", "localhost.localdomain"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+    # healthcheck:
+    #   test: ["CMD", "dig", "@", "localhost", "+short", "-t", "a", "localhost.localdomain"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5
 
 ---
 volumes:
