@@ -1,7 +1,7 @@
 ---
 services:
   bind9:
-    image: internetsystemsconsortium/bind9:latest
+    image: internetsystemsconsortium/bind9:9.21
     restart: always
     container_name: bind9-dns
     ports:
