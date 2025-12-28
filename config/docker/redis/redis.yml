@@ -9,7 +9,7 @@ services:
     volumes:
       - redis-data:/data
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli -h localhost -p 6379 -a 317V1jK7eMFW2mivTHzmvOvX2znkl4hn ping | grep PONG"]
+      test: ["CMD", "redis-cli", "-h", "localhost", "-p", "6379", "-a", "317V1jK7eMFW2mivTHzmvOvX2znkl4hn", "ping"]
       interval: 30s
       timeout: 10s
       retries: 5
