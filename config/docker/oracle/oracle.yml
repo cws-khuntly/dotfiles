@@ -9,7 +9,7 @@ services:
       - ORACLE_EDITION=enterprise
     networks:
       oracle-network:
-        ipv4_address: 192.168.253.3
+        ipv4_address: 192.168.12.4
     ports:
       - 1521:1521
     volumes:
@@ -42,5 +42,5 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.168.253.0/28
-          gateway: 192.168.253.1
+        - subnet: 192.168.12.0/27
+          gateway: 192.168.12.1
