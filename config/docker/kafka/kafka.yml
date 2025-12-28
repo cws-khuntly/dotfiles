@@ -1,20 +1,5 @@
 ---
 services:
-  akhq:
-    image: tchiotludo/akhq:latest
-    restart: unless-stopped
-    environment:
-      AKHQ_CONFIGURATION: |
-        akhq:
-          connections:
-            docker-kafka-server:
-              properties:
-                bootstrap.servers: "kafka:9092"
-    ports:
-      - 8080:8080
-    links:
-      - kafka
-
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     restart: unless-stopped
@@ -57,7 +42,26 @@ services:
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: 'true'
     links:
       - zookeeper
+    depends_on:
+      - zookeeper
 
+  akhq:
+    image: tchiotludo/akhq:latest
+    restart: unless-stopped
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "kafka:9092"
+    ports:
+      - 8080:8080
+    links:
+      - kafka
+    depends_on:
+      - zookeeper
+      - kafka
 ---
 volumes:
   zookeeper-data:
