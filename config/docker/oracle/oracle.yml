@@ -5,18 +5,18 @@ services:
     environment:
       - ORACLE_SID=ORCLCDB
       - ORACLE_PDB=ORCLPDB1
-      - ORACLE_PWD=MMGMHUodJurQLv2Wxi5QFg0UHSqF90
+      - ORACLE_PWD=T7LPKpbeXo4DuuE2z9RfxWnxTQNR9u
       - ORACLE_EDITION=enterprise
     networks:
       oracle-network:
-        ipv4_address: 192.168.12.4
+        ipv4_address: 192.168.252.15
     ports:
       - 1521:1521
     volumes:
       - oracle-data:/opt/oracle/oradata
       - oracle-backup:/opt/oracle/backup
     healthcheck:
-      test: ["CMD", "sqlplus", "-L", "SYS/MMGMHUodJurQLv2Wxi5QFg0UHSqF90@//localhost:1521/ORCLCDB as sysdba", "@healthcheck.sql"]
+      test: ["CMD", "sqlplus", "-L", "SYS/T7LPKpbeXo4DuuE2z9RfxWnxTQNR9u@//localhost:1521/ORCLCDB as sysdba", "@healthcheck.sql"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -42,5 +42,5 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.168.12.0/27
-          gateway: 192.168.12.1
+        - subnet: 192.168.252.0/28
+          gateway: 192.168.252.1
