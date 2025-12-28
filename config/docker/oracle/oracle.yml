@@ -8,8 +8,8 @@ services:
       - ORACLE_PWD=T7LPKpbeXo4DuuE2z9RfxWnxTQNR9u
       - ORACLE_EDITION=enterprise
     networks:
-      relx-network:
-        ipv4_address: 192.168.252.10
+      server-network:
+        ipv4_address: 192.168.12.8
     ports:
       - 1521:1521
     volumes:
@@ -39,6 +39,6 @@ volumes:
 
 ---
 networks:
-  relx-network:
+  server-network:
     external: true
 
