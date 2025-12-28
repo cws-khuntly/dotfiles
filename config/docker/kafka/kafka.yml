@@ -2,10 +2,11 @@
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    pull_policy: missing
     restart: unless-stopped
     networks:
-      relx-network:
-        ipv4_address: 192.168.252.11
+      service-network:
+        ipv4_address: 192.168.1.6
     volumes:
       - zookeeper-data:/var/lib/zookeeper/data:Z
       - zookeeper-log:/var/lib/zookeeper/log:Z
@@ -15,10 +16,11 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:latest
+    pull_policy: missing
     restart: unless-stopped
     networks:
-      relx-network:
-        ipv4_address: 192.168.252.12
+      service-network:
+        ipv4_address: 192.168.1.7
     ports:
       - "9092:9092"
     volumes:
@@ -55,6 +57,7 @@ services:
 
   akhq:
     image: tchiotludo/akhq:latest
+    pull_policy: missing
     restart: unless-stopped
     environment:
       AKHQ_CONFIGURATION: |
@@ -64,8 +67,8 @@ services:
               properties:
                 bootstrap.servers: "kafka:9092"
     networks:
-      relx-network:
-        ipv4_address: 192.168.252.13
+      service-network:
+        ipv4_address: 192.168.1.8
     ports:
       - 8080:8080
     links:
@@ -99,6 +102,6 @@ volumes:
 
 ---
 networks:
-  relx-network:
+  service-network:
     external: true
 

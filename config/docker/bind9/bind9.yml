@@ -2,8 +2,12 @@
 services:
   bind9:
     image: internetsystemsconsortium/bind9:9.21
+    pull_policy: missing
     restart: on-failure
     container_name: bind9-dns
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.5
     ports:
       - "10953:53/udp"
       - "10953:53/tcp"
@@ -52,4 +56,9 @@ volumes:
       type: none
       o: bind
       device: "/opt/named/cache"
+
+---
+networks:
+  service-network:
+    external: true
 

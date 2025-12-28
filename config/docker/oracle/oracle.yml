@@ -2,14 +2,15 @@
 services:
   oracle-db:
     image: container-registry.oracle.com/database/enterprise:19.3.0.0
+    pull_policy: missing
     environment:
       - ORACLE_SID=ORCLCDB
       - ORACLE_PDB=ORCLPDB1
       - ORACLE_PWD=T7LPKpbeXo4DuuE2z9RfxWnxTQNR9u
       - ORACLE_EDITION=enterprise
     networks:
-      server-network:
-        ipv4_address: 192.168.12.8
+      service-network:
+        ipv4_address: 192.168.1.11
     ports:
       - 1521:1521
     volumes:
@@ -39,6 +40,6 @@ volumes:
 
 ---
 networks:
-  server-network:
+  service-network:
     external: true
 
