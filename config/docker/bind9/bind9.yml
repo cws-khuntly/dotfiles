@@ -7,9 +7,12 @@ services:
     ports:
       - "10953:53/udp"
       - "10953:53/tcp"
+      - "127.0.0.1:953:953/tcp"
     volumes:
       - config:/etc/bind
       - namedb:/var/lib/bind
+      - logs:/var/log/named
+      - keys:/etc/dnssec-keys
     # healthcheck:
     #   test: ["CMD", "dig", "@", "localhost", "+short", "-t", "a", "localhost.localdomain"]
     #   interval: 30s
@@ -36,3 +39,10 @@ volumes:
       type: none
       o: bind
       device: "/opt/named/logs"
+  keys:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/keys"
+
