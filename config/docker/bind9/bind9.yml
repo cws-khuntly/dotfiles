@@ -1,7 +1,7 @@
 ---
 services:
   bind9:
-    image: internetsystemsconsortium/bind9:9.21
+    image: ubuntu/bind9:9.18-22.04_beta
     pull_policy: missing
     restart: on-failure
     container_name: bind9-dns
@@ -14,10 +14,11 @@ services:
       - "127.0.0.1:953:953/tcp"
     volumes:
       - config:/etc/bind
-      - namedb:/var/lib/bind
+      - namedb:/var/lib/namedb
       - logs:/var/log/named
       - keys:/etc/dnssec-keys
       - cache:/var/cache/bind
+      - run:/var/run/named
     # healthcheck:
     #   test: ["CMD", "dig", "@", "localhost", "+short", "-t", "a", "localhost.localdomain"]
     #   interval: 30s
@@ -56,6 +57,12 @@ volumes:
       type: none
       o: bind
       device: "/opt/named/cache"
+  run:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/run"
 
 ---
 networks:
