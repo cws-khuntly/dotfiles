@@ -13,6 +13,7 @@ services:
       - namedb:/var/lib/bind
       - logs:/var/log/named
       - keys:/etc/dnssec-keys
+      - cache:/var/cache/bind
     # healthcheck:
     #   test: ["CMD", "dig", "@", "localhost", "+short", "-t", "a", "localhost.localdomain"]
     #   interval: 30s
@@ -45,4 +46,10 @@ volumes:
       type: none
       o: bind
       device: "/opt/named/keys"
+  cache:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/cache"
 
