@@ -9,6 +9,8 @@ services:
     networks:
       service-network:
         ipv4_address: 192.168.1.6
+    ports:
+      - "2181:2181"
     volumes:
       - zookeeper-data:/var/lib/zookeeper/data:Z
       - zookeeper-log:/var/lib/zookeeper/log:Z
@@ -38,7 +40,7 @@ services:
       KAFKA_NODE_ID: '0'
       KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
       KAFKA_LISTENERS: "PLAINTEXT://kafka:29092,EXTERNAL://:9092,CONTROLLER://:9093"
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,EXTERNAL://:9092
       KAFKA_LISTENER_NAMES: "CONTROLLER"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
       KAFKA_LOG_DIRS: "/var/lib/kafka/data"
