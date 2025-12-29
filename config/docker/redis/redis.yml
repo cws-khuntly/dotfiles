@@ -4,9 +4,11 @@ services:
     image: redis:latest
     pull_policy: missing
     restart: unless-stopped
+    hostname: redis
+    container_name: redis
     networks:
       service-network:
-        ipv4_address: 192.168.1.12
+        ipv4_address: 192.168.1.13
     ports:
       - "6379:6379"
     command: redis-server --save 20 1 --loglevel warning --requirepass 317V1jK7eMFW2mivTHzmvOvX2znkl4hn

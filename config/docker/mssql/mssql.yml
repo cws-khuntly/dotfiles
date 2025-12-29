@@ -3,14 +3,15 @@ services:
   mssql-server:
     image: mcr.microsoft.com/mssql/server:2022-latest
     pull_policy: missing
-    container_name: mssql-container
+    hostname: mssql
+    container_name: mssql
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: "YBfRyAW9j7SC3Auduzz0q74COaV5ooV9"
       MSSQL_PID: "Developer" 
     networks:
       service-network:
-        ipv4_address: 192.168.1.10
+        ipv4_address: 192.168.1.12
     ports:
       - "1433:1433"
     volumes:
