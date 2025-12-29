@@ -110,6 +110,8 @@ services:
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
       # Set the plugin path to include default directories
       CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
     links:
       - kafka
     depends_on:
