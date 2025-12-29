@@ -4,6 +4,8 @@ services:
     image: confluentinc/cp-zookeeper:latest
     pull_policy: missing
     restart: unless-stopped
+    hostname: zookeeper
+    container_name: zookeeper
     networks:
       service-network:
         ipv4_address: 192.168.1.6
@@ -13,11 +15,14 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: '2181'
       ZOOKEEPER_ADMIN_ENABLE_SERVER: 'false'
+      ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
     image: confluentinc/cp-kafka:latest
     pull_policy: missing
     restart: unless-stopped
+    hostname: kafka
+    container_name: kafka
     networks:
       service-network:
         ipv4_address: 192.168.1.7
@@ -60,6 +65,8 @@ services:
     image: tchiotludo/akhq:latest
     pull_policy: missing
     restart: unless-stopped
+    hostname: akhq
+    container_name: akhq
     environment:
       AKHQ_CONFIGURATION: |
         akhq:
@@ -79,7 +86,8 @@ services:
       - kafka
 
   connect:
-    image: confluentinc/cp-kafka-connect:7.5.1
+    image: confluentinc/cp-kafka-connect:7.7.7
+    pull_policy: missing
     hostname: connect
     container_name: connect
     networks:
