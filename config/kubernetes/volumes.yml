@@ -12,7 +12,7 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   storageClassName: "local"
-  hostPath: "/opt/firco/continuity"
+  hostPath: "/opt/kubernetes/data"
 
 kind: PersistentVolumeClaim
 metadata:
