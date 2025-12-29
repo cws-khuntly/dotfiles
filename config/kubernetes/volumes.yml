@@ -12,12 +12,12 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   storageClassName: "local"
-  hostPath: "/path/to/data"
+  hostPath: "/opt/firco/continuity"
 
 kind: PersistentVolumeClaim
 metadata:
   name: default-pvclaim
-  namespace: "<NAMESPACE>"
+  namespace: "continuity"
 spec:
   storageClassName: "local-path"
   accessModes:
