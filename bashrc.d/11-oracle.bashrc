@@ -18,7 +18,7 @@
 #
 #==============================================================================
 
-[[ -d "/usr/lib/oracle" ]] && return;
+[[ -d "/usr/lib/oracle" ]] || return;
 
 if [[ ! -d "${HOME}/.dotfiles/config/oracle/admin" ]] && [[ ! -f "${HOME}/.dotfiles/config/oracle/admin/tnsnames.ora" ]]; then return; fi
 
