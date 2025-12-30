@@ -7,7 +7,8 @@ services:
     container_name: mssql
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: "YBfRyAW9j7SC3Auduzz0q74COaV5ooV9"
+      SA_PASSWORD_FILE: "/run/secrets/mssql"
+      MSSQL_SA_PASSWORD_FILE: "/run/secrets/mssql'
       MSSQL_PID: "Developer" 
     networks:
       service-network:
@@ -37,3 +38,7 @@ networks:
   service-network:
     external: true
 
+---
+secrets:
+  mssql:
+    file: "~/workspace/mssql/mssql.txt"
