@@ -19,7 +19,7 @@ services:
       - oracle-data:/opt/oracle/oradata
       - oracle-backup:/opt/oracle/backup
     healthcheck:
-      test: ["CMD", "sqlplus", "/" "as sysdba", "@healthcheck.sql"]
+      test: ["CMD", "sqlplus", "/", "as sysdba", "@healthcheck.sql"]
       interval: 30s
       timeout: 10s
       retries: 5
