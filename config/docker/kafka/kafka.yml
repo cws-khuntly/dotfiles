@@ -1,144 +1,194 @@
 ---
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    pull_policy: missing
-    restart: unless-stopped
-    hostname: zookeeper
-    container_name: zookeeper
+  broker01:
+    image: confluentinc/cp-kafka:7.9.1
+    container_name: broker01
+    hostname: broker01
     networks:
       service-network:
-        ipv4_address: 192.168.1.6
+        ipv4_address: 192.168.1.30
     ports:
-      - "2181:2181"
+      - 9092:9092
+      - 9101:9101
+    environment:
+      KAFKA_NODE_ID: 1001
+      KAFKA_LISTENERS: 'PLAINTEXT://broker01:29092,CONTROLLER://broker01:29192,PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker01:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1001@broker01:29192,1002@broker02:29192,1003@broker03:29192"
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      # Replace CLUSTER_ID with a unique base64 UUID using "bin/kafka-storage.sh random-uuid" 
+      # See https://docs.confluent.io/kafka/operations-tools/kafka-tools.html#kafka-storage-sh
+      CLUSTER_ID: fzR8_urgTSCZgFdIBSwJOg
     volumes:
-      - zookeeper-data:/var/lib/zookeeper/data:Z
-      - zookeeper-log:/var/lib/zookeeper/log:Z
-    environment:
-      ZOOKEEPER_CLIENT_PORT: '2181'
-      ZOOKEEPER_ADMIN_ENABLE_SERVER: 'false'
-      ZOOKEEPER_TICK_TIME: 2000
-
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    pull_policy: missing
-    restart: unless-stopped
-    hostname: kafka
-    container_name: kafka
+      - broker01-data:/var/lib/kafka/data
+      - broker01-logs:/var/log/kafka
+      
+  broker02:
+    image: confluentinc/cp-kafka:7.9.1
+    container_name: broker02
+    hostname: broker02
+    depends_on:
+      - broker01
     networks:
       service-network:
-        ipv4_address: 192.168.1.7
+        ipv4_address: 192.168.1.31
     ports:
-      - "9092:9092"
+      - 9093:9093
+      - 9102:9102
+    environment:
+      KAFKA_NODE_ID: 1002
+      KAFKA_LISTENERS: 'PLAINTEXT://broker02:29092,CONTROLLER://broker02:29192,PLAINTEXT_HOST://0.0.0.0:9093'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker02:29092,PLAINTEXT_HOST://localhost:9093'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9102
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1001@broker01:29192,1002@broker02:29192,1003@broker03:29192"
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      CLUSTER_ID: fzR8_urgTSCZgFdIBSwJOg
     volumes:
-      - kafka-data:/var/lib/kafka/data:Z
-    environment:
-      CLUSTER_ID: "fzR8_urgTSCZgFdIBSwJOg"
-      KAFKA_CLUSTER_ID: "fzR8_urgTSCZgFdIBSwJOg"
-      KAFKA_BROKER_ID: '0'
-      KAFKA_KRAFT_MODE: "true"               
-      KAFKA_NODE_ID: '0'
-      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
-      KAFKA_LISTENERS: "PLAINTEXT://kafka:29092,EXTERNAL://:9092,CONTROLLER://:9093"
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,EXTERNAL://:9092
-      KAFKA_LISTENER_NAMES: "CONTROLLER"
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
-      KAFKA_LOG_DIRS: "/var/lib/kafka/data"
-      KAFKA_CONTROLLER_QUORUM_VOTERS: "0@kafka:9093"
-      ALLOW_PLAINTEXT_LISTENER: "yes"
-      KAFKA_PROCESS_ROLES: "controller,broker"
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_NUM_PARTITIONS: '12'
-      KAFKA_COMPRESSION_TYPE: 'gzip'
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: '1'
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: '1'
-      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
-      KAFKA_JMX_PORT: '9091'
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: 'true'
-    links:
-      - zookeeper
-    depends_on:
-      - zookeeper
+      - broker02-data:/var/lib/kafka/data
+      - broker02-logs:/var/log/kafka
 
-  akhq:
-    image: tchiotludo/akhq:latest
-    pull_policy: missing
-    restart: unless-stopped
-    hostname: akhq
-    container_name: akhq
-    environment:
-      AKHQ_CONFIGURATION: |
-        akhq:
-          connections:
-            docker-kafka-server:
-              properties:
-                bootstrap.servers: "kafka:9092"
+  broker03:
+    image: confluentinc/cp-kafka:7.9.1
+    container_name: broker03
+    hostname: broker03
+    depends_on:
+      - broker01
+      - broker02
     networks:
       service-network:
-        ipv4_address: 192.168.1.8
+        ipv4_address: 192.168.1.32
     ports:
-      - 8080:8080
-    links:
-      - kafka
-    depends_on:
-      - zookeeper
-      - kafka
+      - 9094:9094
+      - 9103:9103
+    environment:
+      KAFKA_NODE_ID: 1003
+      KAFKA_LISTENERS: 'PLAINTEXT://broker03:29092,CONTROLLER://broker03:29192,PLAINTEXT_HOST://0.0.0.0:9094'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker03:29092,PLAINTEXT_HOST://localhost:9094'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9102
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1001@broker01:29192,1002@broker02:29192,1003@broker03:29192"
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      CLUSTER_ID: fzR8_urgTSCZgFdIBSwJOg
+    volumes:
+      - broker03-data:/var/lib/kafka/data
+      - broker03-logs:/var/log/kafka
 
-  connect:
-    image: confluentinc/cp-kafka-connect:7.7.7
-    pull_policy: missing
-    hostname: connect
-    container_name: connect
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.9.1
+    container_name: schema-registry
+    hostname: schema-registry
+    depends_on:
+      - broker01
+      - broker02
+      - broker03
     networks:
       service-network:
-        ipv4_address: 192.168.1.9
+        ipv4_address: 192.168.1.33
     ports:
-      - "8083:8083"
+      - 9081:9081
     environment:
-      # Connect to the Kafka broker internally via its service name and internal port
-      CONNECT_BOOTSTRAP_SERVERS: kafka:29092
-      CONNECT_REST_PORT: 8083
-      CONNECT_REST_ADVERTISED_HOST_NAME: connect
-      CONNECT_GROUP_ID: compose-connect-group
-      CONNECT_CONFIG_STORAGE_TOPIC: docker-connect-configs
-      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_OFFSET_STORAGE_TOPIC: docker-connect-offsets
-      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
-      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      # Set the plugin path to include default directories
-      CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components
-      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-    links:
-      - kafka
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'broker01:29092'
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:9081
+      
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:7.9.1
+    container_name: control-center
+    hostname: control-center
     depends_on:
-      - kafka
+      - broker01
+      - broker02
+      - broker03
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.34
+    ports:
+      - 9021:9021     # -> Web UI console
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker01:29092'
+      CONTROL_CENTER_CONNECT_CONNECT-DEFAULT_CLUSTER: 'connect:8083'
+      CONTROL_CENTER_CONNECT_HEALTHCHECK_ENDPOINT: '/connectors'
+      CONTROL_CENTER_KSQL_KSQLDB1_URL: "http://ksqldb-server:8088"
+      CONTROL_CENTER_KSQL_KSQLDB1_ADVERTISED_URL: "http://0.0.0.0:8088"
+      CONTROL_CENTER_SCHEMA_REGISTRY_URL: "http://schema-registry:9081"
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+      PORT: 9021
 
 ---
 volumes:
-  zookeeper-data:
+  broker01-data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/opt/Apache/kafka/zookeeper/data"
+      device: "/opt/Apache/kafka/broker01/data"
 
-  zookeeper-log:
+  broker01-logs:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/opt/Apache/kafka/zookeeper/logs"
+      device: "/opt/Apache/kafka/broker01/logs"
 
-  kafka-data:
+  broker02-data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/opt/Apache/kafka/kafka/data"
+      device: "/opt/Apache/kafka/broker02/data"
+
+  broker02-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/Apache/kafka/broker02/logs"
+
+  broker03-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/Apache/kafka/broker03/data"
+
+  broker03-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/Apache/kafka/broker03/logs"
 
 ---
 networks:

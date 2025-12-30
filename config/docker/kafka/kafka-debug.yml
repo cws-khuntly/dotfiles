@@ -1,0 +1,35 @@
+---
+services:
+  debug-kafka:
+    hostname: debug-kafka
+    container_name: debug-kafka
+    image: alpine:latest
+    tty: true
+    volumes:
+      - zookeeper-data:/mnt/data/zookeeper/data
+      - zookeeper-log:/mnt/data/zookeeper/log
+      - kafka-data:/mnt/data/kafka/data
+
+---
+volumes:
+  zookeeper-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/Apache/zookeeper/data"
+
+  zookeeper-log:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/Apache/zookeeper/logs"
+
+  kafka-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/Apache/kafka/data"
+ 
