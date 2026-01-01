@@ -5,8 +5,9 @@ metadata:
   name: debug-pod
 spec:
   containers:
-    - name: alpine
-      image: alpine:latest
+    - name: fedora
+      container_name: fedora
+      image: fedora:43
       command: ["sleep", "infinity"]
       volumeMounts:
         - name: storage-volume
