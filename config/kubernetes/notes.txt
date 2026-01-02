@@ -6,6 +6,6 @@ kubectl config set-credentials admin@k3d-fedora-cluster --username admin@k3d-fed
 
 kubectl config set-cluster k3d-fedora-cluster --insecure-skip-tls-verify=true
 
-kubectl create ns continuity
+kubectl create ns my-ms
 
-kubectl config set-context --current --namespace continuityContext "k3d-fedora-cluster" modified.
+kubectl config set-context --current --namespace my-ns
