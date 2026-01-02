@@ -21,7 +21,7 @@ ORCLCDB =
     (ADDRESS_LIST =
       (ADDRESS =
         (PROTOCOL = TCP)
-        (HOST = 192.168.12.6)
+        (HOST = 127.0.0.1)
         (PORT = 1521)
       )
     )
@@ -35,7 +35,7 @@ ORCLPDB1 =
     (ADDRESS_LIST =
       (ADDRESS =
         (PROTOCOL = TCP)
-        (HOST = 192.168.12.6)
+        (HOST = 127.0.0.1)
         (PORT = 1521)
       )
     )
