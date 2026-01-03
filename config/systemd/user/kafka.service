@@ -22,10 +22,9 @@ PartOf=docker.target
 ReloadPropagatedFrom=docker.target
 ConditionPathExists=/opt/Apache/kafka
 ConditionPathExists=%h/workspace/kafka/kafka.txt
-RemainAfterExit=true
 
 [Service]
-Type=forking
+Type=oneshot
 ExecStart=docker compose -f %h/.dotfiles/config/docker/kafka/kafka.yml up -d
 ExecStop=docker compose -f %h/.dotfiles/config/docker/kafka/kafka.yml down
 
