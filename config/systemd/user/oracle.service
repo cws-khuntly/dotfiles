@@ -1,0 +1,31 @@
+#==============================================================================
+#
+#          FILE:  tmux.service
+#         USAGE:  systemctl --user enable tmux.service;
+#                 systemctl --user start tmux.service
+#   DESCRIPTION:  Loads the tmux systemd service
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+[Unit]
+Description=Run docker compose for Oracle
+PartOf=docker.target
+ReloadPropagatedFrom=docker.target
+StopWhenUnneeded=yes
+
+[Service]
+Type=forking
+ExecStart=docker compose -f ~/.dotfiles/docker/oracle/oracle.yml up -d
+ExecStop=docker compose -f ~/.dotfiles/docker/oracle/oracle.yml down
+
+[Install]
+WantedBy=docker.target
