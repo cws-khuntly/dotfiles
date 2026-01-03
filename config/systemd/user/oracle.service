@@ -25,7 +25,7 @@ ConditionPathExists=/opt/oracle/orabackup
 ConditionPathExists=%h/workspace/oracle/oracle.txt
 
 [Service]
-Type=forking
+Type=oneshot
 ExecStart=docker compose -f %h/.dotfiles/config/docker/oracle/oracle.yml up -d
 ExecStop=docker compose -f %h/.dotfiles/config/docker/oracle/oracle.yml down
 
