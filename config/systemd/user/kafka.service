@@ -21,7 +21,8 @@ Description=Run docker compose for Kafka
 PartOf=docker.target
 ReloadPropagatedFrom=docker.target
 ConditionPathExists=/opt/Apache/kafka
-ConditionPathExists=%h/workspace/kafka/kafka.txt 
+ConditionPathExists=%h/workspace/kafka/kafka.txt
+RemainAfterExit=true
 
 [Service]
 Type=forking
