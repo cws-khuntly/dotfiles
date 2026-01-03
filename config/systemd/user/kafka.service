@@ -26,8 +26,8 @@ ConditionPathExists=%h/workspace/kafka/kafka.txt
 
 [Service]
 Type=forking
-ExecStart=docker compose -f %h/.dotfiles/docker/kafka/kafka.yml up -d
-ExecStop=docker compose -f %h/.dotfiles/docker/kafka/kafka.yml down
+ExecStart=docker compose -f %h/.dotfiles/config/docker/kafka/kafka.yml up -d
+ExecStop=docker compose -f %h/.dotfiles/config/docker/kafka/kafka.yml down
 
 [Install]
 WantedBy=docker.target
