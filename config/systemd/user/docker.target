@@ -1,0 +1,27 @@
+#==============================================================================
+#
+#          FILE:  docker.target
+#         USAGE:  Install unit file using appropriate systemctl syntax.
+#     ARGUMENTS:  None
+#   DESCRIPTION:  systemd service to docker containers
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#==============================================================================
+[Unit]
+Description=Run docker containers
+After=default.target
+Wants=enable-oracle.service
+Wants=enable-kafka.service
+BindsTo=enable-oracle.service
+BindsTo=enable-kafka.service
+
+[Install]
+WantedBy=default.target
