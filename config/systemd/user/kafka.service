@@ -17,7 +17,7 @@
 #
 #==============================================================================
 [Unit]
-Description=Run docker compose for Oracle
+Description=Run docker compose for Kafka
 PartOf=docker.target
 ReloadPropagatedFrom=docker.target
 StopWhenUnneeded=yes
