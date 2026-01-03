@@ -27,8 +27,8 @@ ConditionPathExists=%h/workspace/oracle/oracle.txt
 
 [Service]
 Type=forking
-ExecStart=docker compose -f ~/.dotfiles/docker/oracle/oracle.yml up -d
-ExecStop=docker compose -f ~/.dotfiles/docker/oracle/oracle.yml down
+ExecStart=docker compose -f %h/.dotfiles/docker/oracle/oracle.yml up -d
+ExecStop=docker compose -f %h/.dotfiles/docker/oracle/oracle.yml down
 
 [Install]
 WantedBy=docker.target
