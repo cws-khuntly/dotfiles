@@ -18,10 +18,10 @@
 [Unit]
 Description=Run docker containers
 After=default.target
-Wants=enable-oracle.service
-Wants=enable-kafka.service
-BindsTo=enable-oracle.service
-BindsTo=enable-kafka.service
+Wants=oracle.service
+Wants=kafka.service
+BindsTo=oracle.service
+BindsTo=kafka.service
 
 [Install]
 WantedBy=default.target
