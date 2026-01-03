@@ -20,14 +20,14 @@
 Description=Run docker compose for MSSQL
 PartOf=docker.target
 ReloadPropagatedFrom=docker.target
-StopWhenUnneeded=yes
 ConditionPathExists=/opt/mssql/data
 ConditionPathExists=%h/workspace/mssql/mssql.txt
 
 [Service]
-Type=forking
-ExecStart=docker compose -f ~/.dotfiles/docker/mssql/mssql.yml up -d
-ExecStop=docker compose -f ~/.dotfiles/docker/mssql/masql.yml down
+Type=oneshot
+ExecStart=docker compose -f %h/.dotfiles/docker/mssql/mssql.yml up -d
+ExecStop=docker compose -f %h/.dotfiles/docker/mssql/masql.yml down
+RemainAfterExit=yes
 
 [Install]
 WantedBy=docker.target
