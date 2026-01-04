@@ -37,7 +37,6 @@ function readPropertyFile()
     local -i end_epoch;
     local -i runtime;
 
-
     (( ${#} != 1 )) && return 3;
 
     config_file="${1}";
