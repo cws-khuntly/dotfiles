@@ -18,7 +18,6 @@
 #==============================================================================
 [Unit]
 Description=Run docker compose for Oracle
-PartOf=docker.target
 ReloadPropagatedFrom=docker.target
 ConditionPathExists=/opt/oracle/oradata
 ConditionPathExists=/opt/oracle/orabackup
