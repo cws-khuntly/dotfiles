@@ -19,18 +19,12 @@
 ## get the available log config and load it
 if [[ -n "${LOGGING_PROPERTIES:-${HOME}/.dotfiles/config/system/logging.properties}" ]] && [[ -f "${LOGGING_PROPERTIES:-${HOME}/.dotfiles/config/system/logging.properties}" ]]; then
     readPropertyFile "${LOGGING_PROPERTIES:-${HOME}/.dotfiles/config/system/logging.properties}";
+elif [[ -r "/usr/local/config/logging.properties" ]] && [[ -s "/usr/local/config/logging.properties" ]]; then
+    readPropertyFile "/usr/local/config/logging.properties";
+
+    declare -x LOGGING_LOADED="${TRUE:-true}"
 else
-    if [[ -r "${HOME}/.dotfiles/config/system/logging.properties" ]] && [[ -s "${HOME}/.dotfiles/config/system/logging.properties" ]]; then
-        readPropertyFile "${HOME}/.dotfiles/config/system/logging.properties";
-
-        declare -x LOGGING_LOADED="${TRUE:-true}";
-    elif [[ -r "/usr/local/config/logging.properties" ]] && [[ -s "/usr/local/config/logging.properties" ]]; then
-        readPropertyFile "/usr/local/config/logging.properties";
-
-        declare -x LOGGING_LOADED="${TRUE:-true}"
-    else
-        printf "\e[00;31m%s\e[00;32m\n" "Unable to load logging configuration. Shutting down." >&2;
-    fi
+    printf "\e[00;31m%s\e[00;32m\n" "Unable to load logging configuration. Shutting down." >&2;
 fi
 
 if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
