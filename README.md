@@ -8,6 +8,7 @@ I made an Ansible playbook
 ```
 git clone https://github.com/cws-khuntly/dotfiles.git ${HOME}/.dotfiles;
 
+ANSIBLE_CONFIG="${HOME}/.dotfiles/config/ansible/ansible.cfg;
 ansible-playbook ${HOME}/.dotfiles/ansible/site.yml
 ```
 
