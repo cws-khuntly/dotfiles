@@ -3,5 +3,5 @@
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
 ---
-install_dotfiles_base_path: "{{ ansible_facts['ansible_user_home'] }}/.dotfiles"
-user_home_dir: "{{ ansible_facts['ansible_user_home'] }}"
+install_dotfiles_base_path: "{{ ansible_user_dir }}/.dotfiles"
+user_home_dir: "{{ ansible_user_dir }}"
