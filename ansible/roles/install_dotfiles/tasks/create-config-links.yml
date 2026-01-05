@@ -5,7 +5,7 @@
 ---
 - name: Remove any existing configuration directories
   ansible.builtin.file:
-    path: "{{ user_home_dir }}/.config/{{ item }}"
+    path: "{{ user_home_dir }}/.config/{{ rm-config-item }}"
     state: "absent"
   loop:
     - "environment.d"
@@ -13,11 +13,13 @@
     - "gnupg"
     - "systemd"
     - "tmux"
+  loop_control:
+    loop_var: "rm-config-item"
 
 - name: Create links in home directory to config files
   ansible.builtin.file:
-    src: "{{ install_dotfiles_base_path }}/config/{{ item }}"
-    dest: "{{ user_home_dir }}/.config/{{ item }}"
+    src: "{{ install_dotfiles_base_path }}/config/{{ ln-config-item }}"
+    dest: "{{ user_home_dir }}/.config/{{ ln-config-item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -28,3 +30,5 @@
     - "gnupg"
     - "systemd"
     - "tmux"
+  loop_control:
+    loop_var: "ln-config-item"
