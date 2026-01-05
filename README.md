@@ -9,7 +9,7 @@ I made an Ansible playbook
 git clone https://github.com/cws-khuntly/dotfiles.git ${HOME}/.dotfiles;
 
 ANSIBLE_CONFIG="${HOME}/.dotfiles/config/ansible/ansible.cfg";
-ansible-playbook -i localhost, --connection=local "${HOME}/.dotfiles/ansible/site.yml";
+ansible-playbook -i "${HOME}/.dotfiles/ansible/inventory/hosts.yml" --connection=local "${HOME}/.dotfiles/ansible/site.yml";
 ```
 
 I don't make changes every day but it is fairly active. If you have any questions or anything like that create an issue or toss me an email or whatever and I'll help where I can!
