@@ -7,9 +7,9 @@
   hosts: all
 
   tasks:
-    - name: Run common role
-      ansible.builtin.include_role:
-        name: common
+    # - name: Run common role
+    #   ansible.builtin.include_role:
+    #    name: common
 
     - name: Run custom role install_dotfiles
       ansible.builtin.include_role:
