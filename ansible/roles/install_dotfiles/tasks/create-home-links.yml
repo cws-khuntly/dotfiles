@@ -45,16 +45,18 @@
 
 - name: Remove any existing bin/lib directories in home
   ansible.builtin.file:
-    path: "{{ user_home_dir }}/{{ item }}"
+    path: "{{ user_home_dir }}/{{ rm-home-item }}"
     state: absent
   loop:
     - "bin"
     - "lib"
+  loop_control:
+    loop_var: "rm-home-item"
 
 - name: Create links for bin and lib
   ansible.builtin.file:
-    src: "{{ install_dotfiles_base_path }}/{{ item }}"
-    dest: "{{ user_home_dir }}/{{ item }}"
+    src: "{{ install_dotfiles_base_path }}/{{ add-home-item }}"
+    dest: "{{ user_home_dir }}/{{ add-home-item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -62,11 +64,13 @@
   loop:
     - "bin"
     - "lib"
+  loop_control:
+    loop_var: "add-home-item"
 
 - name: Create links in home directory for system config files
   ansible.builtin.file:
-    src: "{{ install_dotfiles_base_path }}/config/system/{{ item }}"
-    dest: "{{ user_home_dir }}/.{{ item }}"
+    src: "{{ install_dotfiles_base_path }}/config/system/{{ ln-home-item }}"
+    dest: "{{ user_home_dir }}/.{{ ln-home-item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -78,6 +82,8 @@
     - "inputrc"
     - "odbc.ini"
     - "vim"
+  loop_control:
+    loop_var: "ln-home-item"
 
 - name: Create link for Ansible
   ansible.builtin.file:
