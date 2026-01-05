@@ -1,0 +1,19 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  tasks/deploy-files.yml
+#   DESCRIPTION:  Primary entry point for this play
+# =============================================================================
+---
+- name: Create links in home directory to config files
+  ansible.builtin.file:
+    src: "{{ install_dotfiles_base_path }}/config/{{ item }}"
+    dest: "{{ user_home_dir }}/.config/{{ item }}"
+    state: "link"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0755"
+  loop:
+    - "environment.d"
+    - "git"
+    - "gnupg"
+    - "systemd"
+    - "tmux"

@@ -3,7 +3,5 @@
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
 ---
-global_installer_path: /var/tmp/ansible-installer
-global_remote_username: "{{ ansible_facts['user_name'] }}"
-global_ssh_key_list:
-  - id_ed25519
+install_dotfiles_base_path: "{{ ansible_facts['ansible_user_home'] }}/.dotfiles"
+user_home_dir: "{{ ansible_facts['ansible_user_home'] }}"

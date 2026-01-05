@@ -1,0 +1,55 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  tasks/deploy-files.yml
+#   DESCRIPTION:  Primary entry point for this play
+# =============================================================================
+---
+- name: Create links in home directory to dotfiles
+  ansible.builtin.file:
+    src: "{{ install_dotfiles_base_path }}/{{ item }}"
+    dest: "{{ user_home_dir }}/.{{ item }}"
+    state: "link"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0644"
+  loop:
+    - "profile"
+    - "bash_profile"
+    - "bash_logout"
+    - "bashrc"
+
+- name: Create links for bin and lib
+  ansible.builtin.file:
+    src: "{{ install_dotfiles_base_path }}/{{ item }}"
+    dest: "{{ user_home_dir }}/{{ item }}"
+    state: "link"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0755"
+  loop:
+    - "bin"
+    - "lib"
+
+- name: Create links in home directory for system config files
+  ansible.builtin.file:
+    src: "{{ install_dotfiles_base_path }}/config/system/{{ item }}"
+    dest: "{{ user_home_dir }}/.{{ item }}"
+    state: "link"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0644"
+  loop:
+    - "netrc"
+    - "digrc"
+    - "mailrc"
+    - "inputrc"
+    - "odbc.ini"
+    - "vim"
+
+- name: Create link for Ansible
+  ansible.builtin.file:
+    src: "{{ install_dotfiles_base_path }}/config/ansible/ansible.cfg"
+    dest: "{{ user_home_dir }}/ansible.cfg"
+    state: "link"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0644"

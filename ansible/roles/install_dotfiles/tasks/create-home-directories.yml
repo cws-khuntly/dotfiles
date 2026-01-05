@@ -1,0 +1,23 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  tasks/deploy-files.yml
+#   DESCRIPTION:  Primary entry point for this play
+# =============================================================================
+---
+- name: Create directories if they do not exist
+  ansible.builtin.file:
+    path: "{{ user_home_dir }}/{{ item }}"
+    state: "directory"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0755"
+  loop:
+    - "workspace"
+    - ".config"
+
+- name: Create SSH directory
+  ansible.builtin.file:
+    path: "{{ user_home_dir }}/.ssh"
+    state: "directory"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0700"

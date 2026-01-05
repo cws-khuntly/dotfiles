@@ -6,25 +6,6 @@
 - name: Deploy and install dotfiles
   hosts: all
 
-  pre_tasks:
-    - name: Generate SSH key(s)
-      delegate_to: localhost
-      community.crypto.openssh_keypair:
-        passphrase: "{{ default_ssh_passphrase }}"
-        type: "{{ item }}"
-        path: "{{ ansible_facts['ansible_user_home'] }}/.ssh/{{ item }}"
-      loop:
-        - "{{ global_ssh_key_list }}"
-
-    - name: Send authorized SSH key(s)
-      delegate_to: localhost
-      ansible.posix.authorized_key:
-        user: "{{ ansible_facts.ansible_user_name }}"
-        state: present
-        key: "{{ lookup('file', ansible_facts['ansible_user_home'] + '/.ssh/' + item + '.pub') }}"
-      loop:
-        - "{{ global_ssh_key_list }}"
-
   tasks:
     - name: Run common role
       ansible.builtin.include_role:
@@ -33,12 +14,3 @@
     - name: Run custom role install_dotfiles
       ansible.builtin.include_role:
         name: install_dotfiles
-
-  post_tasks:
-    - name: Post-installation cleanup
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: absent
-      loop:
-        - "{{ global_installer_path }}"
-        - "{{ global_checkout_path }}"

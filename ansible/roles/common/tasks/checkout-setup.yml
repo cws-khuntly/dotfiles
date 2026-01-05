@@ -3,21 +3,8 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: Pre-checkout cleanup - global installer path
-  ansible.builtin.file:
-    path: "{{ global_installer_path }}"
-    state: absent
-
-- name: Create temporary directories
-  ansible.builtin.file:
-    path: "{{ global_installer_path }}"
-    state: directory
-    mode: "0700"
-    owner: "{{ global_remote_username }}"
-    group: "{{ global_remote_username }}"
-
-- name: Checkout setup from Github
+- name: Checkout dotfiles from Github
   ansible.builtin.git:
-    repo: https://github.com/cws-khuntly/dotfiles-setup.git
-    dest: "{{ global_installer_path }}"
+    repo: https://github.com/cws-khuntly/dotfiles.git
+    dest: "{{ install_dotfiles_base_path }}"
     version: main
