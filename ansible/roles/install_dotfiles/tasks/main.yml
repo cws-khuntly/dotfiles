@@ -7,7 +7,6 @@
   ansible.builtin.include_tasks:
     file: "{{ item }}"
   loop:
-    - checkout-dotfiles.yml
     - create-home-links.yml
     - create-ssh-links.yml
     - create-config-links.yml
