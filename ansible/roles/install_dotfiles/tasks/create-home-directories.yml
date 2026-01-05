@@ -13,7 +13,7 @@
   loop:
     - "workspace"
     - ".config"
-  ignore_errors: true
+  failed_when: false
 
 - name: Create SSH directory
   ansible.builtin.file:
