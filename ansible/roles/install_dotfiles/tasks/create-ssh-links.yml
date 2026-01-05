@@ -10,8 +10,8 @@
 
 - name: Create links in home directory to dotfiles
   ansible.builtin.file:
-    src: "{{ install_dotfiles_base_path }}/config/ssh/{{ ssh-item }}"
-    dest: "{{ user_home_dir }}/.ssh/{{ ssh-item }}"
+    src: "{{ install_dotfiles_base_path }}/config/ssh/{{ ssh_item }}"
+    dest: "{{ user_home_dir }}/.ssh/{{ ssh_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -20,7 +20,7 @@
     - "config"
     - "config.d"
   loop_control:
-    loop_var: "ssh-item"
+    loop_var: "ssh_item"
 
 - name: Create ssh local.d
   ansible.builtin.file:
