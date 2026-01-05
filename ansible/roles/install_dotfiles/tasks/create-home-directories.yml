@@ -5,7 +5,7 @@
 ---
 - name: Create directories if they do not exist
   ansible.builtin.file:
-    path: "{{ user_home_dir }}/{{ item }}"
+    path: "{{ user_home_dir }}/{{ add-home-item }}"
     state: "directory"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -13,6 +13,8 @@
   loop:
     - "workspace"
     - ".config"
+  loop_control:
+    loop_var: "add-home-item"
   failed_when: false
 
 - name: Create SSH directory
