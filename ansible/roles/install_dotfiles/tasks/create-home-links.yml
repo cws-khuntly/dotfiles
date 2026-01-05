@@ -5,7 +5,7 @@
 ---
 - name: Remove any existing dotfiles in home
   ansible.builtin.file:
-    path: "{{ user_home_dir }}/.{{ rm-dotfiles-item }}"
+    path: "{{ user_home_dir }}/.{{ rm_dotfiles_item }}"
     state: absent
   loop:
     - "profile"
@@ -19,12 +19,12 @@
     - "odbc.ini"
     - "vim"
   loop_control:
-    loop_var: "rm-dotfiles-item"
+    loop_var: "rm_dotfiles_item"
 
 - name: Create dotfiles links in home directory
   ansible.builtin.file:
-    src: "{{ install_dotfiles_base_path }}/{{ ln-dotfiles-item }}"
-    dest: "{{ user_home_dir }}/.{{ ln-dotfiles-item }}"
+    src: "{{ install_dotfiles_base_path }}/{{ ln_dotfiles_item }}"
+    dest: "{{ user_home_dir }}/.{{ ln_dotfiles_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -35,12 +35,12 @@
     - "bash_logout"
     - "bashrc"
   loop_control:
-    loop_var: "ln-dotfiles-item"
+    loop_var: "ln_dotfiles_item"
 
 - name: Create system dotfiles in home directory
 ansible.builtin.file:
-    src: "{{ install_dotfiles_base_path }}/config/system/{{ ln-system-item }}"
-    dest: "{{ user_home_dir }}/.{{ ln-system-item }}"
+    src: "{{ install_dotfiles_base_path }}/config/system/{{ ln_system_item }}"
+    dest: "{{ user_home_dir }}/.{{ ln_system_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -53,22 +53,22 @@ ansible.builtin.file:
     - "odbc.ini"
     - "vim"
   loop_control:
-    loop_var: "ln-system-item"
+    loop_var: "ln_system_item"
 
 - name: Remove any existing bin/lib directories in home
   ansible.builtin.file:
-    path: "{{ user_home_dir }}/{{ rm-home-item }}"
+    path: "{{ user_home_dir }}/{{ rm_home_item }}"
     state: absent
   loop:
     - "bin"
     - "lib"
   loop_control:
-    loop_var: "rm-home-item"
+    loop_var: "rm_home_item"
 
 - name: Create links for bin and lib
   ansible.builtin.file:
-    src: "{{ install_dotfiles_base_path }}/{{ add-home-item }}"
-    dest: "{{ user_home_dir }}/{{ add-home-item }}"
+    src: "{{ install_dotfiles_base_path }}/{{ add_home_item }}"
+    dest: "{{ user_home_dir }}/{{ add_home_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -77,12 +77,12 @@ ansible.builtin.file:
     - "bin"
     - "lib"
   loop_control:
-    loop_var: "add-home-item"
+    loop_var: "add_home_item"
 
 - name: Create links in home directory for system config files
   ansible.builtin.file:
-    src: "{{ install_dotfiles_base_path }}/config/system/{{ ln-home-item }}"
-    dest: "{{ user_home_dir }}/.{{ ln-home-item }}"
+    src: "{{ install_dotfiles_base_path }}/config/system/{{ ln_home_item }}"
+    dest: "{{ user_home_dir }}/.{{ ln_home_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -95,7 +95,7 @@ ansible.builtin.file:
     - "odbc.ini"
     - "vim"
   loop_control:
-    loop_var: "ln-home-item"
+    loop_var: "ln_home_item"
 
 - name: Create link for Ansible
   ansible.builtin.file:
