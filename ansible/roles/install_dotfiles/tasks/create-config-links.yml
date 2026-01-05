@@ -5,7 +5,7 @@
 ---
 - name: Remove any existing configuration directories
   ansible.builtin.file:
-    path "{{ user_home_dir }}/.config/{{ item }}"
+    path: "{{ user_home_dir }}/.config/{{ item }}"
     state: "absent"
   loop:
     - "environment.d"
