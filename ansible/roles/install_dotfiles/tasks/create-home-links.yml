@@ -38,7 +38,7 @@
     loop_var: "ln_dotfiles_item"
 
 - name: Create system dotfiles in home directory
-ansible.builtin.file:
+  ansible.builtin.file:
     src: "{{ install_dotfiles_base_path }}/config/system/{{ ln_system_item }}"
     dest: "{{ user_home_dir }}/.{{ ln_system_item }}"
     state: "link"
