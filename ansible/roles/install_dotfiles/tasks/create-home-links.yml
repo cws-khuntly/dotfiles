@@ -5,7 +5,7 @@
 ---
 - name: Remove any existing dotfiles in home
   ansible.builtin.file:
-    path: "{{ user_home_dir }}/.{{ item }}"
+    path: "{{ user_home_dir }}/.{{ rm-dotfiles-item }}"
     state: absent
   loop:
     - "profile"
@@ -18,11 +18,13 @@
     - "inputrc"
     - "odbc.ini"
     - "vim"
+  loop_control:
+    loop_var: "rm-dotfiles-item"
 
 - name: Create dotfiles links in home directory
   ansible.builtin.file:
-    src: "{{ install_dotfiles_base_path }}/{{ item }}"
-    dest: "{{ user_home_dir }}/.{{ item }}"
+    src: "{{ install_dotfiles_base_path }}/{{ ln-dotfiles-item }}"
+    dest: "{{ user_home_dir }}/.{{ ln-dotfiles-item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -38,6 +40,8 @@
     - "inputrc"
     - "odbc.ini"
     - "vim"
+  loop_control:
+    loop_var: "ln-dotfiles-item"
 
 - name: Remove any existing bin/lib directories in home
   ansible.builtin.file:
