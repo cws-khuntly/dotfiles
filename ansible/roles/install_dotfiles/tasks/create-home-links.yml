@@ -3,7 +3,23 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: Create links in home directory to dotfiles
+- name: Remove any existing dotfiles in home
+  ansible.builtin.file:
+    path: "{{ user_home_dir }}/.{{ item }}"
+    state: absent
+  loop:
+    - "profile"
+    - "bash_profile"
+    - "bash_logout"
+    - "bashrc"
+    - "netrc"
+    - "digrc"
+    - "mailrc"
+    - "inputrc"
+    - "odbc.ini"
+    - "vim"
+
+- name: Create dotfiles links in home directory
   ansible.builtin.file:
     src: "{{ install_dotfiles_base_path }}/{{ item }}"
     dest: "{{ user_home_dir }}/.{{ item }}"
@@ -16,6 +32,20 @@
     - "bash_profile"
     - "bash_logout"
     - "bashrc"
+    - "netrc"
+    - "digrc"
+    - "mailrc"
+    - "inputrc"
+    - "odbc.ini"
+    - "vim"
+
+- name: Remove any existing bin/lib directories in home
+  ansible.builtin.file:
+    path: "{{ user_home_dir }}/{{ item }}"
+    state: absent
+  loop:
+    - "bin"
+    - "lib"
 
 - name: Create links for bin and lib
   ansible.builtin.file:
@@ -44,6 +74,11 @@
     - "inputrc"
     - "odbc.ini"
     - "vim"
+
+- name: Create link for Ansible
+  ansible.builtin.file:
+    path: "{{ user_home_dir }}/ansible.cfg"
+    state: "absent"
 
 - name: Create link for Ansible
   ansible.builtin.file:
