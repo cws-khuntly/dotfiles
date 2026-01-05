@@ -19,6 +19,12 @@ jobs:
         with:
           persist-credentials: false
           submodules: false
+
+      - name: Install bitwarden-sdk
+        uses: actions/setup-python@v5
+        run: |
+          pip install bitwarden-sdk
+
       - name: Run Ansible linter on playbooks
         uses: ansible/ansible-lint@main
         with:
