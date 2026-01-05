@@ -34,6 +34,18 @@
     - "bash_profile"
     - "bash_logout"
     - "bashrc"
+  loop_control:
+    loop_var: "ln-dotfiles-item"
+
+- name: Create system dotfiles in home directory
+ansible.builtin.file:
+    src: "{{ install_dotfiles_base_path }}/config/system/{{ ln-system-item }}"
+    dest: "{{ user_home_dir }}/.{{ ln-system-item }}"
+    state: "link"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0644"
+  loop:
     - "netrc"
     - "digrc"
     - "mailrc"
@@ -41,7 +53,7 @@
     - "odbc.ini"
     - "vim"
   loop_control:
-    loop_var: "ln-dotfiles-item"
+    loop_var: "ln-system-item"
 
 - name: Remove any existing bin/lib directories in home
   ansible.builtin.file:
