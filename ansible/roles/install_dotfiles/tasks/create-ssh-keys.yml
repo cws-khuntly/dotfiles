@@ -29,4 +29,3 @@
     mode: "0600"
   when:
     - fetch_keys == "true"
-
