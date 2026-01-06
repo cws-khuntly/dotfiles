@@ -20,3 +20,4 @@
     content: "{{ secret }}"
     dest: "{{ user_home_dir }}/.ssh/id_ed25519"
     mode: "0600"
+  when: fetch_keys is true
