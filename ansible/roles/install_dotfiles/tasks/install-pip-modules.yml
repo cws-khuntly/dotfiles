@@ -1,0 +1,10 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  site.yml
+#   DESCRIPTION:  Entry point for playbook
+# ============================================================================
+---
+- name: Install bcrypt via pip
+  ansible.builtin.pip:
+    name: bcrypt
+  when:
+    - user_account.ssh_passphrase == "true"
