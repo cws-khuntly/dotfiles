@@ -7,4 +7,4 @@
   ansible.builtin.pip:
     name: bcrypt
   when:
-    - user_account.ssh_passphrase == "true"
+    - user_account.ssh_passphrase is defined
