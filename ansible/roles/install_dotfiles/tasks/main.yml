@@ -19,11 +19,22 @@
     file: "{{ ssh_key_item }}"
   loop:
     - create-ssh-keys.yml
-    - fetch-ssh-keys.yml
   loop_control:
     loop_var: "ssh_key_item"
   when:
     - ssh.generate_keys == "true"
+    - SSH.fetch_keys == "false"
+
+- name: Fetch SSH keys (if enabled)
+  ansible.builtin.include_tasks:
+    file: "{{ fetch_key_item }}"
+  loop:
+    - fetch-ssh-keys.yml
+  loop_control:
+    loop_var: "fetch_key_item"
+  when:
+    - ssh.generate_keys == "false"
+    - ssh.fetch_keys == "true"
 
 - name: Generate GPG keys (if enabled)
   ansible.builtin.include_tasks:
