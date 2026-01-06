@@ -1,0 +1,10 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  tasks/main.yml
+#   DESCRIPTION:  Primary entry point for this play
+# =============================================================================
+---
+- name: Install bitwarden SDK via pip
+  ansible.builtin.pip:
+    name: bitwarden-sdk
+  when:
+    - fetch_keys == "true"
