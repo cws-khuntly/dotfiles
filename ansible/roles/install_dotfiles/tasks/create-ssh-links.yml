@@ -15,7 +15,6 @@
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
-    mode: "0644"
   loop:
     - "config"
     - "config.d"
