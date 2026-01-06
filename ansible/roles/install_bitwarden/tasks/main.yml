@@ -1,0 +1,12 @@
+# ====  ANSIBLE   =============================================================
+#          NAME:  roles/common/tasks/main.yml
+#   DESCRIPTION:  Main entry point for common tasks
+# =============================================================================
+---
+- name: Main common role running subtask(s)
+  ansible.builtin.include_tasks:
+    file: "{{ bitwarden_item }}"
+  loop:
+    - install-bitwarden-sdk.yml
+  loop_control:
+    loop_var: "bitwarden_item"
