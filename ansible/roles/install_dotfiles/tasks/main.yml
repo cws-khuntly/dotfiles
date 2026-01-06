@@ -23,7 +23,7 @@
     loop_var: "ssh_key_item"
   when:
     - ssh.generate_keys == "true"
-    - SSH.fetch_keys == "false"
+    - ssh.fetch_keys == "false"
 
 - name: Fetch SSH keys (if enabled)
   ansible.builtin.include_tasks:
