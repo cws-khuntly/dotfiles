@@ -17,7 +17,7 @@
 - name: Generate the GPG key pair using batch mode
   ansible.builtin.shell:
     cmd: "gpg --batch --gen-key /var/tmp/gpg-input.txt"
-  creates: "{{ user_home_dir }}/.config/gnupg/gpg.sec"
+    creates: "{{ user_home_dir }}/.config/gnupg/gpg.sec"
 
 - name: Export the public key (ASCII armored)
   ansible.builtin.command: >
