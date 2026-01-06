@@ -10,21 +10,21 @@
 
 - name: Create SSH key pair (if enabled, with passphrase)
   community.crypto.openssh_keypair:
-    path: "{{ user_home_dir }}/.ssh/id_ed25519"
-    type: "ed25519"
+    path: "{{ user_home_dir }}/.ssh/id_{{ ssh.ssh_key_type }}"
+    type: "{{ ssh.ssh_key_type }}"
     comment: ""
     mode: "0600"
-    passphrase: "{{ user_account.ssh_passphrase }}"
+    passphrase: "{{ ssh.ssh_passphrase }}"
   when:
-    - user_account.ssh_passphrase is defined
+    - ssh.ssh_passphrase is defined
     - not install_dotfiles_key_exists.stat.exists
 
 - name: Create SSH key pair (if enabled, no passphrase)
   community.crypto.openssh_keypair:
-    path: "{{ user_home_dir }}/.ssh/id_ed25519"
-    type: "ed25519"
+    path: "{{ user_home_dir }}/.ssh/id_{{ ssh.ssh_key_type }}"
+    type: "{{ ssh.ssh_key_type }}"
     comment: ""
     mode: "0600"
   when:
-    - user_account.ssh_passphrase is undefined
+    - ssh.ssh_passphrase is undefined
     - not install_dotfiles_key_exists.stat.exists
