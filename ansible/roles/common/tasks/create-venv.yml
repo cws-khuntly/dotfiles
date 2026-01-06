@@ -1,0 +1,18 @@
+# ====  ANSIBLE   =============================================================
+#          NAME:  roles/common/tasks/main.yml
+#   DESCRIPTION:  Main entry point for common tasks
+# =============================================================================
+---
+- name: Check for existing Python virtual environment
+  ansible.builtin.stat:
+    path: "{{ user_home_dir }}/workspace/venv"
+  registers: common_check_venv
+
+- name: Create Python virtual environment
+  ansible.builtin.command:
+    cmd:
+      - "python -m venv "{{ user_home_dir }}/workspace/venv"
+  when:
+    - not common_check_venv.stat.exists
+
+  
