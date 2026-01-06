@@ -1,0 +1,22 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  tasks/deploy-files.yml
+#   DESCRIPTION:  Primary entry point for this play
+# =============================================================================
+---
+- name: Create SSH key pair (if enabled)
+  community.crypto.openssh_keypair:
+    path: "{{ user_home_dir }}/.ssh/id_ed25519"
+    type: "ed25519"
+    comment: ""
+    mode: "0600"
+  when: generate_keys is true
+
+- name: Fetch SSH key pair (if enabled)
+  vars:
+    bws_access_token: "${{ secrets.BW_ACCESS_TOKEN }}"
+    secret_id: "1a519708-804f-4f6d-a9ff-b3c901885583"
+    secret: "{{ lookup('bitwarden.secrets.lookup', secret_id) }}"
+  ansible.builtin.copy:
+    content: "{{ secret }}"
+    dest: "{{ user_home_dir }}/.ssh/id_ed25519"
+    mode: "0600"
