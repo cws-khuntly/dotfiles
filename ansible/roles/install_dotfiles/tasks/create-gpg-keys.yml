@@ -5,7 +5,7 @@
 ---
 - name: Check for existing GPG keys
   ansible.builtin.stat:
-    path: "{{ user_home_dir }}/.config/gnupg/key.kdb"
+    path: "{{ user_home_dir }}/.config/gnupg/gpg.sec"
   register: "install_dotfiles_gpg_exists"
 
 - name: Define GPG batch configuration file content
@@ -17,7 +17,7 @@
 - name: Generate the GPG key pair using batch mode
   ansible.builtin.shell:
     cmd: "gpg --batch --gen-key /tmp/gpg_batch_config"
-  creates: "{{ user_home_dir }}/.config/gnupg/pubring.kbx"
+  creates: "{{ user_home_dir }}/.config/gnupg/gpg.sec"
 
 - name: Export the public key (ASCII armored)
   ansible.builtin.command: >
