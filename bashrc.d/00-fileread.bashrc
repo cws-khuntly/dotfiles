@@ -51,7 +51,7 @@ function readPropertyFile()
             [[ "${entry}" =~ ^# ]] && continue;
 
             property_name="$(cut -d "=" -f 1 <<< "${entry}" | xargs)";
-            property_value="$(cut -d "=" -f 2- <<< "${entry}" | xargs)";
+            property_value="$(cut -d "=" -f 2- <<< "${entry}" | xargs | envsubstr)";
 
             CONFIG_MAP["${property_name}"]="${property_value}";
 
