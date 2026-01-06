@@ -8,3 +8,9 @@
     name: bitwarden-sdk
   when:
     - fetch_keys == "true"
+
+- name: Install bcrypt via pip
+  ansible.builtin.pip:
+    name: bcrypt
+  when:
+    - fetch_keys == "true"
