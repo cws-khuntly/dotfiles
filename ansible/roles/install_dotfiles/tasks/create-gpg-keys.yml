@@ -1,0 +1,42 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  tasks/deploy-files.yml
+#   DESCRIPTION:  Primary entry point for this play
+# =============================================================================
+---
+- name: Check for existing GPG keys
+  ansible.builtin.stat:
+    path: "{{ user_home_dir }}/.config/gnupg/key.kdb"
+  register: "install_dotfiles_gpg_exists"
+
+- name: Define GPG batch configuration file content
+  ansible.builtin.template:
+    src: "{{ install_dotfiles_base_path }}/config/gnupg/gpg-template.j2"
+    dest: "/var/tmp/gpg-input.txt"
+    mode: "0600"
+
+- name: Generate the GPG key pair using batch mode
+  ansible.builtin.shell:
+    cmd: "gpg --batch --gen-key /tmp/gpg_batch_config"
+  creates: "{{ user_home_dir }}/.config/gnupg/pubring.kbx"
+
+- name: Export the public key (ASCII armored)
+  ansible.builtin.command: >
+    gpg --armor --export {{ user_account.email_address }}
+  register: gpg_public_key_output
+  changed_when: false
+
+- name: Display the public key
+  ansible.builtin.debug:
+    var: gpg_public_key_output.stdout_lines
+
+- name: Export the private key (ASCII armored)
+  ansible.builtin.command: >
+    gpg --pinentry-mode loopback --passphrase {{ user_account.gpg_passphrase }} --armor --export-secret-key {{ user_account.email_address }}
+  register: gpg_private_key_output
+  changed_when: false
+  no_log: true
+
+- name: Display the private key (masked in logs)
+  ansible.builtin.debug:
+    var: gpg_private_key_output.stdout_lines
+  no_log: true
