@@ -7,7 +7,5 @@ Name-Real: {{ user_account.name }}
 Name-Email: {{ user_account.email }}
 Expire-Date: {{ gpg.expiry }}
 Passphrase: {{ gpg.passphrase }}
-%pubring {{ user_home_dir }}/.config/gnupg/gpg.pub
-%secring {{ user_home_dir }}/.config/gnupg/gpg.sec
 %commit
 %echo done
