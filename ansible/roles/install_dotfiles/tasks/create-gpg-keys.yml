@@ -8,6 +8,14 @@
     path: "{{ user_home_dir }}/.config/gnupg/gpg.sec"
   register: "install_dotfiles_gpg_exists"
 
+- name: Create private keys directory
+  ansible.builtin.file:
+    path: "{{ user_home_dir }}/.config/gnupg/private-keys-v1.d"
+    state: "directory"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0700"
+
 - name: Define GPG batch configuration file content
   ansible.builtin.template:
     src: "{{ install_dotfiles_base_path }}/config/gnupg/gpg-template.j2"
