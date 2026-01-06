@@ -7,7 +7,6 @@
   ansible.builtin.stat:
     path: "{{ user_home_dir }}/workspace/venv"
   register: "common_check_venv"
-  changed_when: false
 
 - name: Create Python virtual environment
   ansible.builtin.command:
@@ -15,5 +14,3 @@
       - "python -m venv {{ user_home_dir }}/workspace/venv"
   when:
     - not common_check_venv.stat.exists
-
-  
