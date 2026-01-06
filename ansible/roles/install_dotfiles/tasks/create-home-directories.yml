@@ -12,7 +12,6 @@
     mode: "0755"
   loop:
     - "log"
-    - "log/ansible"
     - "log/archive"
     - "workspace"
     - ".config"
