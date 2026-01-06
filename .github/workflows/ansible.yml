@@ -2,7 +2,7 @@
 #          NAME:  ansible-linter.yml
 #   DESCRIPTION:  GitHub action for yaml linter
 # ============================================================================
-name: yaml linter
+name: yaml linter - Ansible Playbook
 on: [push, pull_request]
 
 jobs:
