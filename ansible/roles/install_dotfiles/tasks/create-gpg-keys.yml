@@ -33,8 +33,10 @@
 
 - name: Export the public key (ASCII armored)
   ansible.builtin.command:
-    cmd:
-      - gpg --armor --export {{ user_account.email }}
+    argv:
+      - gpg
+      - --armor
+      - --export {{ user_account.email }}
   register: install_dotfiles_gpg_public_key_output
   changed_when: false
 
@@ -44,8 +46,12 @@
 
 - name: Export the private key (ASCII armored)
   ansible.builtin.command:
-    cmd:
-      - gpg --pinentry-mode loopback --passphrase {{ user_account.gpg_passphrase }} --armor --export-secret-key {{ user_account.email }}
+    argv:
+      - gpg
+      - --pinentry-mode loopback
+      - --passphrase {{ user_account.gpg_passphrase }}
+      - --armor
+      - --export-secret-key {{ user_account.email }}
   register: install_dotfiles_gpg_private_key_output
   changed_when: false
   no_log: true
