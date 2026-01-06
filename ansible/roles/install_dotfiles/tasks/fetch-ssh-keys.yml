@@ -1,0 +1,14 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  tasks/deploy-files.yml
+#   DESCRIPTION:  Primary entry point for this play
+# =============================================================================
+---
+- name: Fetch SSH key pair (if enabled)
+  vars:
+    bws_access_token: "${{ secrets.BW_ACCESS_TOKEN }}"
+    secret_id: "{{ install_dotfiles_ssh_key_secret_id }}"
+    secret: "{{ lookup('bitwarden.secrets.lookup', secret_id) }}"
+  ansible.builtin.copy:
+    content: "{{ secret }}"
+    dest: "{{ user_home_dir }}/.ssh/id_ed25519"
+    mode: "0600"
