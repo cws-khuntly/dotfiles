@@ -27,3 +27,4 @@ private-keys-v1.d/
 .#*
 gpg.pub
 gpg.sec
+pubring.kbx
