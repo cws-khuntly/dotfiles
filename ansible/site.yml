@@ -7,7 +7,7 @@
   hosts: all
   vars_files:
     - "{{ user_home_dir }}/workspace/ansible/vault/dotfiles.yml"
-    _ "{{ user_home_dir }}/workspace/ansible/vault/bitwarden.yml"
+    - "{{ user_home_dir }}/workspace/ansible/vault/bitwarden.yml"
 
   tasks:
     # - name: Run common role
