@@ -1,12 +1,12 @@
 %echo Generating an OpenPGP key
-Key-Type: {{ gpg_key_type }}
-Key-Length: {{ gpg_key_length }}
-Subkey-Type: {{ gpg_subkey_type }}
-Subkey-Length: {{ gpg_subkey_length }}
+Key-Type: {{ gpg.key_type }}
+Key-Length: {{ gpg.key_length }}
+Subkey-Type: {{ gpg.subkey_type }}
+Subkey-Length: {{ gpg.subkey_length }}
 Name-Real: {{ user_account.full_name }}
 Name-Email: {{ user_account.email_address }}
-Expire-Date: {{ gpg_expiry }}
-Passphrase: {{ user_account.gpg_passphrase }}
+Expire-Date: {{ gpg.expiry }}
+Passphrase: {{ gpg.passphrase }}
 %pubring {{ user_home_dir }}/.config/gnupg/gpg.pub
 %secring {{ user_home_dir }}/.config/gnupg/gpg.sec
 %commit
