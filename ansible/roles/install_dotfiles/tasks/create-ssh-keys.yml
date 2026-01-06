@@ -9,7 +9,7 @@
     type: "ed25519"
     comment: ""
     mode: "0600"
-  when: generate_keys is true
+  when: fetch_keys is undefined or fetch_keys is false
 
 - name: Fetch SSH key pair (if enabled)
   vars:
