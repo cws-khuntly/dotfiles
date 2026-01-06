@@ -5,7 +5,7 @@
 ---
 - name: Check for existing SSH keys
   ansible.builtin.stat:
-    path: "{{ user_home_dir }}/.ssh/id_ed25519"
+    path: "{{ user_home_dir }}/.ssh/id_{{ ssh.key_type }}"
   register: "install_dotfiles_key_exists"
 
 - name: Create SSH key pair (if enabled, with passphrase)
