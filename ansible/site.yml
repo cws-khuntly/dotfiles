@@ -11,11 +11,6 @@
     #   ansible.builtin.include_role:
     #    name: common
 
-    - name: Install bitwarden SDK via pip
-      ansible.builtin.pip:
-        name: bitwarden-sdk
-      when: fetch_keys == "true"
-
     - name: Run custom role install_dotfiles
       ansible.builtin.include_role:
         name: install_dotfiles
