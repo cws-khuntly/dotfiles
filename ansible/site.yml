@@ -10,9 +10,9 @@
     - "{{ user_home_dir }}/workspace/ansible/vault/bitwarden.yml"
 
   tasks:
-    # - name: Run common role
-    #   ansible.builtin.include_role:
-    #    name: common
+    - name: Run common role
+      ansible.builtin.include_role:
+        name: common
 
     - name: Run custom role install_dotfiles
       ansible.builtin.include_role:
