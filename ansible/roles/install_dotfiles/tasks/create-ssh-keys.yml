@@ -6,7 +6,7 @@
 - name: Check for existing SSH keys
   ansible.builtin.stat:
     path: "{{ user_home_dir }}/.ssh/id_ed25519"
-  register: "key_exists"
+  register: "install_dotfiles_key_exists"
 
 - name: Create SSH key pair (if enabled)
   community.crypto.openssh_keypair:
@@ -14,7 +14,7 @@
     type: "ed25519"
     comment: ""
     mode: "0600"
-  when: fetch_keys is undefined or fetch_keys is false and not key_exists.stat.exists
+  when: fetch_keys is undefined or fetch_keys is false and not install_dotfiles_key_exists.stat.exists
 
 - name: Fetch SSH key pair (if enabled)
   vars:
