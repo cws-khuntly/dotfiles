@@ -10,4 +10,5 @@
     - create-home-directories.yml
     - create-home-links.yml
     - create-ssh-links.yml
+    - create-ssh-keys.yml
     - create-config-links.yml
