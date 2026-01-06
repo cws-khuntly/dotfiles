@@ -14,13 +14,23 @@
   loop_control:
     loop_var: "core_item"
 
-- name: Generate keys (if enabled)
+- name: Generate SSH keys (if enabled)
   ansible.builtin.include_tasks:
-    file: "{{ key_item }}"
+    file: "{{ ssh_key_item }}"
   loop:
     - create-ssh-keys.yml
+    - fetch-ssh-keys.yml
+  loop_control:
+    loop_var: "ssh_key_item"
+  when:
+    - ssh.generate_keys == "true"
+
+- name: Generate GPG keys (if enabled)
+  ansible.builtin.include_tasks:
+    file: "{{ gpg_key_item }}"
+  loop:
     - create-gpg-keys.yml
   loop_control:
-    loop_var: "key_item"
+    loop_var: "gpg_key_item"
   when:
-    - generate_keys == "true"
+    - gpg.generate_keys == "true"
