@@ -9,6 +9,8 @@
     - "{{ user_home_dir }}/workspace/ansible/vault/dotfiles.yml"
     - "{{ user_home_dir }}/workspace/ansible/vault/bitwarden.yml"
 
+  pre_tasks:
+
   tasks:
     - name: Run common role
       ansible.builtin.include_role:
