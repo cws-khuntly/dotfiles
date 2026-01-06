@@ -16,10 +16,14 @@
 #
 #==============================================================================
 
-#
-# ignore
-#
+##
+## ignore directories
+##
+private-keys-v1.d/
+
+##
+## ignore files
+##
 .#*
 gpg.pub
 gpg.sec
-
