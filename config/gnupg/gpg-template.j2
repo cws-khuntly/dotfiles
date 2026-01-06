@@ -3,8 +3,8 @@ Key-Type: {{ gpg.key_type }}
 Key-Length: {{ gpg.key_length }}
 Subkey-Type: {{ gpg.subkey_type }}
 Subkey-Length: {{ gpg.subkey_length }}
-Name-Real: {{ user_account.full_name }}
-Name-Email: {{ user_account.email_address }}
+Name-Real: {{ user_account.name }}
+Name-Email: {{ user_account.email }}
 Expire-Date: {{ gpg.expiry }}
 Passphrase: {{ gpg.passphrase }}
 %pubring {{ user_home_dir }}/.config/gnupg/gpg.pub
