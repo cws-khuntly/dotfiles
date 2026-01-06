@@ -14,7 +14,9 @@
     type: "ed25519"
     comment: ""
     mode: "0600"
-  when: fetch_keys is undefined or fetch_keys is false and not install_dotfiles_key_exists.stat.exists
+  when:
+    - fetch_keys is undefined or fetch_keys == "false"
+    - not install_dotfiles_key_exists.stat.exists
 
 - name: Fetch SSH key pair (if enabled)
   vars:
@@ -25,4 +27,6 @@
     content: "{{ secret }}"
     dest: "{{ user_home_dir }}/.ssh/id_ed25519"
     mode: "0600"
-  when: fetch_keys is true
+  when:
+    - fetch_keys == "true"
+
