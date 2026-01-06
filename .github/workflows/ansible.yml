@@ -20,8 +20,10 @@ jobs:
           persist-credentials: false
           submodules: false
 
-      - name: Install bitwarden-sdk
+      - name: Set up Python
         uses: actions/setup-python@v5
+
+      - name: Install Bitwarden SDK
         run: |
           pip install bitwarden-sdk
 
