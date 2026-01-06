@@ -22,3 +22,5 @@
     - create-gpg-keys.yml
   loop_control:
     loop_var: "key_item"
+  when:
+    - generate_keys == "true"
