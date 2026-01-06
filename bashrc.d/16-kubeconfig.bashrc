@@ -22,4 +22,4 @@
 
 declare -x KUBECONFIG="${HOME}/.kube/config";
 
-printf "%s\n" "*** KUBECONFIG SET TO DEFAULT. DONT FORGET TO CHANGE.";
+printf '\[\e[91m\]%s\n\[\e[0m\]' "*** KUBECONFIG SET TO DEFAULT. DONT FORGET TO CHANGE.";
