@@ -15,13 +15,15 @@
     mode: "0600"
 
 - name: Generate the GPG key pair using batch mode
-  ansible.builtin.shell:
-    cmd: "gpg --batch --gen-key /var/tmp/gpg-input.txt"
+  ansible.builtin.command:
+    cmd:
+      - gpg --batch --gen-key /var/tmp/gpg-input.txt
     creates: "{{ user_home_dir }}/.config/gnupg/gpg.sec"
 
 - name: Export the public key (ASCII armored)
-  ansible.builtin.command: >
-    gpg --armor --export {{ user_account.email_address }}
+  ansible.builtin.command:
+    cmd:
+      - gpg --armor --export {{ user_account.email_address }}
   register: install_dotfiles_gpg_public_key_output
   changed_when: false
 
@@ -30,8 +32,9 @@
     var: install_dotfiles_gpg_public_key_output.stdout_lines
 
 - name: Export the private key (ASCII armored)
-  ansible.builtin.command: >
-    gpg --pinentry-mode loopback --passphrase {{ user_account.gpg_passphrase }} --armor --export-secret-key {{ user_account.email_address }}
+  ansible.builtin.command:
+    cmd:
+      - gpg --pinentry-mode loopback --passphrase {{ user_account.gpg_passphrase }} --armor --export-secret-key {{ user_account.email_address }}
   register: install_dotfiles_gpg_private_key_output
   changed_when: false
   no_log: true
