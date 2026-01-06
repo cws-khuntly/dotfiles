@@ -3,13 +3,18 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
+- name: Check for existing SSH keys
+  ansible.builtin.stat:
+    path: "{{ user_home_dir }}/.ssh/id_ed25519"
+  register: "key_exists"
+
 - name: Create SSH key pair (if enabled)
   community.crypto.openssh_keypair:
     path: "{{ user_home_dir }}/.ssh/id_ed25519"
     type: "ed25519"
     comment: ""
     mode: "0600"
-  when: fetch_keys is undefined or fetch_keys is false
+  when: fetch_keys is undefined or fetch_keys is false and not key_exists.stat.exists
 
 - name: Fetch SSH key pair (if enabled)
   vars:
