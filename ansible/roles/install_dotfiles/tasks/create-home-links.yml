@@ -8,7 +8,6 @@
     path: "{{ user_home_dir }}/.{{ rm_dotfiles_item }}"
     state: absent
   loop:
-    - "profile"
     - "bash_profile"
     - "bash_logout"
     - "bashrc"
@@ -30,7 +29,6 @@
     group: "{{ ansible_user_gid }}"
     mode: "0644"
   loop:
-    - "profile"
     - "bash_profile"
     - "bash_logout"
     - "bashrc"
