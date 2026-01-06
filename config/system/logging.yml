@@ -1,0 +1,25 @@
+logging:
+  defaults:
+    _true: "true"
+    _false: "false"
+    log_root: ${HOME}/log
+  enabled:
+    audit: "false"
+    debug: "true"
+    verbose: "false"
+    trace: "false"
+    performance: "false"
+  output_formatting:
+    conversion_pattern: "[Time: %s] [Log: %s] [Level: %s] - [Thread: %d] [File: %s:%d] [Method: %s] - %s"
+    timestamp_opts: "%d/%m/%Y %H:%M:%S"
+  files:
+    perf_log: "performance.log"
+    error_log: "error.log"
+    debug_log: "debug.log"
+    audit_log: "audit.log"
+    warn_log: "warn.log"
+    info_log: "info.log"
+    fatal_log: "fatal.log"
+    monitor_log: "monitor.log"
+    default_log: "default.log"
+
