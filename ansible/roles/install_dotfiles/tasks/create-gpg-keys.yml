@@ -43,3 +43,8 @@
   ansible.builtin.debug:
     var: install_dotfiles_gpg_private_key_output.stdout_lines
   no_log: true
+
+- name: Remove temporary GPG file
+  ansible.builtin.file:
+    path: "/var/tmp/gpg-input.txt"
+    state: absent
