@@ -19,7 +19,7 @@
 - name: Fetch SSH key pair (if enabled)
   vars:
     bws_access_token: "${{ secrets.BW_ACCESS_TOKEN }}"
-    secret_id: "1a519708-804f-4f6d-a9ff-b3c901885583"
+    secret_id: "{{ install_dotfiles_ssh_key_secret_id }}"
     secret: "{{ lookup('bitwarden.secrets.lookup', secret_id) }}"
   ansible.builtin.copy:
     content: "{{ secret }}"
