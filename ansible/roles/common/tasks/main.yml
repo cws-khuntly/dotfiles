@@ -5,6 +5,8 @@
 ---
 - name: Main common role running subtask(s)
   ansible.builtin.include_tasks:
-    file: "{{ item }}"
+    file: "{{ common_item }}"
   loop:
-    - checkout-setup.yml
+    - install-pip-items.yml
+  loop_control:
+    loop_var: "common_item"
