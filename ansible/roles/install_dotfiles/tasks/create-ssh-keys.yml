@@ -8,13 +8,26 @@
     path: "{{ user_home_dir }}/.ssh/id_ed25519"
   register: "install_dotfiles_key_exists"
 
-- name: Create SSH key pair (if enabled)
+- name: Create SSH key pair (if enabled, with passphrase)
+  community.crypto.openssh_keypair:
+    path: "{{ user_home_dir }}/.ssh/id_ed25519"
+    type: "ed25519"
+    comment: ""
+    mode: "0600"
+    passphrase: "{{ user_account.ssh_passphrase }}"
+  when:
+    - user_account.ssh_passphrase is defined
+    - fetch_keys is undefined or fetch_keys == "false"
+    - not install_dotfiles_key_exists.stat.exists
+
+- name: Create SSH key pair (if enabled, no passphrase)
   community.crypto.openssh_keypair:
     path: "{{ user_home_dir }}/.ssh/id_ed25519"
     type: "ed25519"
     comment: ""
     mode: "0600"
   when:
+    - user_account.ssh_passphrase is undefined
     - fetch_keys is undefined or fetch_keys == "false"
     - not install_dotfiles_key_exists.stat.exists
 
