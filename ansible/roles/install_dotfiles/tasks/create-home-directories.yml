@@ -11,6 +11,9 @@
     group: "{{ ansible_user_gid }}"
     mode: "0755"
   loop:
+    - "log"
+    - "log/ansible"
+    - "log/archive"
     - "workspace"
     - ".config"
   loop_control:
