@@ -1,0 +1,16 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  tasks/main.yml
+#   DESCRIPTION:  Primary entry point for this play
+# =============================================================================
+---
+- name: Install bcrypt via pip
+  ansible.builtin.pip:
+    name: bcrypt
+  when:
+    - user_account.ssh_passphrase is defined
+
+- name: Install bitwarden SDK via pip
+  ansible.builtin.pip:
+    name: bitwarden-sdk
+  when:
+    - fetch_keys == "true"
