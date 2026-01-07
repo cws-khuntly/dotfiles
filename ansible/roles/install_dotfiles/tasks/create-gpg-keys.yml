@@ -81,4 +81,3 @@
   ansible.builtin.file:
     path: "/var/tmp/gpg-input.txt"
     state: absent
-
