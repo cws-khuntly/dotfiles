@@ -21,3 +21,7 @@
         name: install_dotfiles
 
   post_tasks:
+    - name: Clean up temporary files
+      ansible.builtin.file:
+        path: "/var/tmp/gpg-input.txt"
+        state: absent
