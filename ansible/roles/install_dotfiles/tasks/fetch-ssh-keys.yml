@@ -5,10 +5,7 @@
 ---
 - name: Fetch SSH key pair (if enabled)
   vars:
-    bws_access_token: "${{ secrets.BW_ACCESS_TOKEN }}"
-    secret_id: "{{ secrets.entries.ssh_key_id }}"
-    secret: "{{ lookup('bitwarden.secrets.lookup', secret_id) }}"
-  ansible.builtin.copy:
-    content: "{{ secret }}"
+    ssh_key_data: "{{ lookup('google.cloud.gcp_secret_manager', name='ssh-key', project='home') }}"
+    content: "{{ ssh_key_data }}"
     dest: "{{ user_home_dir }}/.ssh/id_ed25519"
     mode: "0600"
