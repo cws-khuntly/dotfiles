@@ -53,7 +53,22 @@
     - gpg.fetch_keys == "true"
     - install_dotfiles_gpg_public_key_output.value is defined
 
+- name: Create temporary password file
+  ansible.builtin.copy:
+    content: "{{ gpg.passphrase }}"
+    dest: "{{ user_home_dir }}/workspace/ansible/gpg.txt"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+  when:
+    - gpg.passphrase is defined
+
 - name: Import keys to gpg
   ansible.builtin.command:
-    cmd: "gpg --import {{ user_home_dir }}/.config/gnupg/privkey.asc"
+    cmd: "gpg --batch --import {{ user_home_dir }}/.config/gnupg/privkey.asc --passphrase-file {{ user_home_dir }}/workspace/ansible/gpg.txt --pinentry-mode loopback"
     creates: "{{ user_home_dir }}/.config/gnupg/private-keys-v1.d/*.key"
+
+- name: Remove temporary file
+  ansible.builtin.file:
+    path: "{{ user_home_dir }}/workspace/ansible/gpg.txt"
+    state: absent
