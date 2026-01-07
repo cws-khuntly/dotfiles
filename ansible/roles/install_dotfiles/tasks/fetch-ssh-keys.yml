@@ -14,6 +14,7 @@
   register: "install_dotfiles_ssh_key_output"
   when:
     - ssh.fetch_keys == "true"
+    - ssh.generate_keys == "false"
     - secrets.GCP_ACCESS_TOKEN is defined
     - gcp.projects.project_id is defined
 
@@ -26,4 +27,5 @@
     mode: "0600"
   when:
     - ssh.fetch_keys == "true"
+    - ssh.generate_keys == "false"
     - install_dotfiles_ssh_key_output.value is defined
