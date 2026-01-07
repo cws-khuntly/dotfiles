@@ -5,7 +5,7 @@
 ---
 - name: Search for existing private keys
   ansible.builtin.find:
-    paths: "{{ user_home_dir }}/.config/gnupg/private-keys-v1.d"
+    paths: "{{ user_home_dir }}/.config/gnupg/private-keys-v1.d/"
     patterns: "*.key"
     file_type: "file"
     recurse: false
@@ -19,7 +19,7 @@
     group: "{{ ansible_user_gid }}"
     mode: "0700"
   when:
-    - install_dotfiles_gpg_keys_files_found.files.size > 0
+    - install_dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: Define GPG batch configuration file content
   ansible.builtin.template:
@@ -27,14 +27,14 @@
     dest: "/var/tmp/gpg-input.txt"
     mode: "0600"
   when:
-    - install_dotfiles_gpg_keys_files_found.files | length > 0
+    - install_dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: Generate the GPG key pair using batch mode
   ansible.builtin.command:
     cmd: "gpg --batch --gen-key /var/tmp/gpg-input.txt"
     creates: "{{ user_home_dir }}/.config/gnupg/punting.kbx"
   when:
-    - install_dotfiles_gpg_keys_files_found.files | length > 0
+    - install_dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: Export the public key (ASCII armored)
   ansible.builtin.command:
@@ -42,7 +42,7 @@
   register: "install_dotfiles_gpg_public_key_output"
   changed_when: false
   when:
-    - install_dotfiles_gpg_keys_files_found.files | length > 0
+    - install_dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: Copy the public key
   ansible.builtin.copy:
@@ -54,7 +54,7 @@
   run_once: true
   # nolog: true
   when:
-    - install_dotfiles_gpg_keys_files_found.files | length > 0
+    - install_dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: Export the private key (ASCII armored)
   ansible.builtin.command:
@@ -63,7 +63,7 @@
   changed_when: false
   # no_log: true
   when:
-    - install_dotfiles_gpg_keys_files_found.files | length > 0
+    - install_dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: Copy the public key
   ansible.builtin.copy:
@@ -75,9 +75,10 @@
   run_once: true
   # no_log: true
   when:
-    - install_dotfiles_gpg_keys_files_found.files | length > 0
+    - install_dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: Remove temporary GPG file
   ansible.builtin.file:
     path: "/var/tmp/gpg-input.txt"
     state: absent
+

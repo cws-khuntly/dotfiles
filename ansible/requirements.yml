@@ -4,6 +4,8 @@
 # ============================================================================
 ---
 collections:
-  - ansible.posix
-  - community.crypto
-  - google.cloud
+  - name: ansible.posix
+  - name: community.crypto
+  - name: bitwarden.secrets
+  - name: google.cloud
+

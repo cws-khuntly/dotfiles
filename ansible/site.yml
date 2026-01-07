@@ -8,8 +8,12 @@
   vars_files:
     - "{{ user_home_dir }}/workspace/ansible/vault/dotfiles.yml"
     - "{{ user_home_dir }}/workspace/ansible/vault/bitwarden.yml"
+    - "{{ user_home_dir }}/workspace/ansible/vault/gcloud.yml"
 
   pre_tasks:
+    - name: Install galaxy collectiond
+      ansible.builtin.command:
+        cmd: "ansible-galaxy collection install -r {{ install_dotfiles_base_path }}/ansible/requirements.yml"
 
   tasks:
     - name: Run common role
