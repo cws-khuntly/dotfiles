@@ -12,6 +12,9 @@
       key: "ssh-key"
   registers: "ssh-key-output"
 
+- name: output message
+  ansible.builtin.debug:
+    msg: "{{ ssh-key-output }}"
 
 - name: Test secret using explicit credentials
   ansible.builtin.debug:
