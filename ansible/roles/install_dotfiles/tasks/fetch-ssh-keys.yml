@@ -3,7 +3,7 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: Get secret
+- name: Get SSH key
   google.cloud.gcp_secret_manager:
     auth_kind: "accesstoken"
     access_token: "{{ secrets.GCP_ACCESS_TOKEN }}"
