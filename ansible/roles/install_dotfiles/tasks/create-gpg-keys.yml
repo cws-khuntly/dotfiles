@@ -54,6 +54,9 @@
   ansible.builtin.copy:
     content: "{{ install_dotfiles_gpg_private_key_output.stdout_lines }}"
     dest: "{{ user_home_dir }}/.config/gnupg/private-key.asc"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
   run_once: true
   # no_log: true
 
