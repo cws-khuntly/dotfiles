@@ -17,15 +17,4 @@
     - ssh.generate_keys == "false"
     - secrets.GCP_ACCESS_TOKEN is defined
     - gcp.projects.project_id is defined
-
-- name: Save private key file
-  ansible.builtin.copy:
-    content: "{{ install_dotfiles_ssh_key_output.value }}"
-    dest: "{{ user_home_dir }}/.ssh/id_{{ ssh.key_type }}"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0600"
-  when:
-    - ssh.fetch_keys == "true"
-    - ssh.generate_keys == "false"
-    - install_dotfiles_ssh_key_output.value is defined
+  notify: add-ssh-key

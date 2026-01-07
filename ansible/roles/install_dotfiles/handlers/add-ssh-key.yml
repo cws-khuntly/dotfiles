@@ -1,0 +1,13 @@
+# ====  ANSIBLE   =============================================================
+#          NAME:  group_vars/all/main.yml
+#   DESCRIPTION:  Common variables that apply to this play
+# =============================================================================
+---
+- name: Save SSH private key file
+  ansible.builtin.copy:
+    content: "{{ install_dotfiles_ssh_key_output.value }}"
+    dest: "{{ user_home_dir }}/.ssh/id_{{ ssh.key_type }}"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+  listen: add-ssh-key

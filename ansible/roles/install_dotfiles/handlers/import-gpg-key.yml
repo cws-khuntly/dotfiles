@@ -1,0 +1,10 @@
+# ====  ANSIBLE   =============================================================
+#          NAME:  group_vars/all/main.yml
+#   DESCRIPTION:  Common variables that apply to this play
+# =============================================================================
+---
+- name: Import keys to gpg
+  ansible.builtin.command:
+    cmd: "gpg --batch --passphrase {{ gpg.passphrase }} --pinentry-mode loopback --import {{ user_home_dir }}/.config/gnupg/privkey.asc"
+    creates: "{{ user_home_dir }}/.config/gnupg/private-keys-v1.d/*.key"
+  listen: import-gpg-key

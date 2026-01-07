@@ -13,58 +13,11 @@
     return_value: true
   register: "install_dotfiles_gpg_private_key_output"
   when:
+    - gpg.generate_keys == "false"
     - gpg.fetch_keys == "true"
     - secrets.GCP_ACCESS_TOKEN is defined
     - gcp.projects.project_id is defined
-
-- name: Get GPG Public Key
-  google.cloud.gcp_secret_manager:
-    auth_kind: "serviceaccount"
-    service_account_file: "{{ user_home_dir }}/.config/gcloud/service_account.json"
-    project: "{{ gcp.projects.project_id }}"
-    name: "gpg-public-key"
-    state: present
-    return_value: true
-  register: "install_dotfiles_gpg_public_key_output"
-  when:
-    - gpg.fetch_keys == "true"
-    - secrets.GCP_ACCESS_TOKEN is defined
-    - gcp.projects.project_id is defined
-
-- name: Save private key file
-  ansible.builtin.copy:
-    content: "{{ install_dotfiles_gpg_private_key_output.value }}"
-    dest: "{{ user_home_dir }}/.config/gnupg/privkey.asc"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0600"
-  when:
-    - gpg.fetch_keys == "true"
-    - install_dotfiles_gpg_private_key_output.value is defined
-
-- name: Save public key file
-  ansible.builtin.copy:
-    content: "{{ install_dotfiles_gpg_public_key_output.value }}"
-    dest: "{{ user_home_dir }}/.config/gnupg/pubkey.asc"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0644"
-  when:
-    - gpg.fetch_keys == "true"
-    - install_dotfiles_gpg_public_key_output.value is defined
-
-- name: Import keys to gpg
-  ansible.builtin.command:
-    cmd: "gpg --batch --passphrase {{ gpg.passphrase }} --pinentry-mode loopback --import {{ user_home_dir }}/.config/gnupg/privkey.asc"
-    creates: "{{ user_home_dir }}/.config/gnupg/private-keys-v1.d/*.key"
-
-- name: Remove temporary files
-  ansible.builtin.file:
-    path: "{{ gpg_temp_file }}"
-    state: absent
-  loop:
-    - "{{ user_home_dir }}/workspace/ansible/gpg.txt"
-    - "{{ user_home_dir }}/.config/gnupg/privkey.asc"
-    - "{{ user_home_dir }}/.config/gnupg/pubkey.asc"
-  loop_control:
-    loop_var: "gpg_temp_file"
+  notify:
+    - add-gpg-key
+    - import-gpg-key
+    - cleanup-gpg-files
