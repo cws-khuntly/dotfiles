@@ -3,26 +3,6 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: Google Cloud integration
-  google.cloud.gcp_secret_manager:
-    lookup:
-      access_token: "{{ secrets.GC_ACCESS_TOKEN }}"
-      auth_kind: "token"
-      project: "home"
-      key: "ssh-key"
-  registers: "ssh-key-output"
-
-- name: output message
-  ansible.builtin.debug:
-    msg: "{{ ssh-key-output }}"
-
 - name: Test secret using explicit credentials
   ansible.builtin.debug:
-    msg: "{{ ssh_key_output }}"
-
-# - name: Fetch SSH key pair (if enabled)
-#  vars:
-#     ssh_key_data: "{{ lookup('google.cloud.gcp_secret_manager', name='ssh-key', project='home') }}"
-#     content: "{{ ssh_key_data }}"
-#    dest: "{{ user_home_dir }}/.ssh/id_ed25519"
-#     mode: "0600"
+    msg: "{{ lookup('google.cloud.gcp_secret_manager', key='ssh-key', project='home', access_token='{{ secrets.GCP_ACCESS_TOKEN }},version=latest) }}"
