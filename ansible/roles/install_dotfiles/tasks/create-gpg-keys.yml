@@ -45,10 +45,13 @@
     - install_dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: Copy the public key
-  ansible.builtin.debug:
-    msg: "{{ install_dotfiles_gpg_public_key_output }}"
+  ansible.builtin.copy:
+    content: "{{ install_dotfiles_gpg_public_key_output.stdout }}"
+    dest: "{{ user_home_dir }}/.config/gnupg/public-key.asc"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0644"
   run_once: true
-  # nolog: true
   when:
     - install_dotfiles_gpg_keys_files_found.files | count == 0
 
@@ -57,19 +60,19 @@
     cmd: "gpg --pinentry-mode loopback --passphrase {{ gpg.passphrase }} --armor --export-secret-key {{ user_account.email }}"
   register: install_dotfiles_gpg_private_key_output
   changed_when: false
-  # no_log: true
+  no_log: true
   when:
     - install_dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: Copy the public key
   ansible.builtin.copy:
-    content: "{{ install_dotfiles_gpg_private_key_output.stdout_lines }}"
+    content: "{{ install_dotfiles_gpg_private_key_output.stdout }}"
     dest: "{{ user_home_dir }}/.config/gnupg/private-key.asc"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   run_once: true
-  # no_log: true
+  no_log: true
   when:
     - install_dotfiles_gpg_keys_files_found.files | count == 0
 
