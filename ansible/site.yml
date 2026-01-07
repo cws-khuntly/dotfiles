@@ -16,14 +16,6 @@
       ansible.builtin.include_role:
         name: common
 
-    - name: Run Bitwarden installation (if enabled)
-      ansible.builtin.include_role:
-        name: install_bitwarden
-      when:
-        - secrets.BW_ACCESS_TOKEN is defined
-        - gpg.fetch_keys == "true"
-        - ssh.fetch_keys == "true"
-
     - name: Run custom role install_dotfiles
       ansible.builtin.include_role:
         name: install_dotfiles
