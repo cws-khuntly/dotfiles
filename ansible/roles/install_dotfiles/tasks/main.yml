@@ -45,3 +45,15 @@
     loop_var: "gpg_key_item"
   when:
     - gpg.generate_keys == "true"
+    - gpg.fetch_keys == "false"
+
+- name: Fetch GPG keys (if enabled)
+  ansible.builtin.include_tasks:
+    file: "{{ fetch_key_item }}"
+  loop:
+    - fetch-gpg-keys.yml
+  loop_control:
+    loop_var: "fetch_key_item"
+  when:
+    - gpg.generate_keys == "false"
+    - gpg.fetch_keys == "true"
