@@ -5,4 +5,4 @@
 ---
 - name: Test secret using explicit credentials
   ansible.builtin.debug:
-    msg: "{{ lookup('google.cloud.gcp_secret_manager', key='ssh-key', project='home', access_token=' secrets.GCP_ACCESS_TOKEN ',version=latest) }}"
+    msg: "{{ lookup('google.cloud.gcp_secret_manager', key='ssh-key', project='home', access_token=' secrets.GCP_ACCESS_TOKEN ') }}"
