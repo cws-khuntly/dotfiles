@@ -45,12 +45,8 @@
     - install_dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: Copy the public key
-  ansible.builtin.copy:
-    content: "{{ install_dotfiles_gpg_public_key_output.stdout_lines }}"
-    dest: "{{ user_home_dir }}/.config/gnupg/public-key.asc"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0644"
+  ansible.builtin.debug:
+    msg: "{{ install_dotfiles_gpg_public_key_output }}"
   run_once: true
   # nolog: true
   when:
