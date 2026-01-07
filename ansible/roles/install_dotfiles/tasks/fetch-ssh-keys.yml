@@ -12,7 +12,18 @@
     state: present
     return_value: true
   register: "install_dotfiles_ssh_key_output"
+  when:
+    - ssh.fetch_keys == "true"
+    - secrets.GCP_ACCESS_TOKEN is defined
+    - gcp.projects.project_id is defined
 
-- name: Print Print
-  ansible.builtin.debug:
-    msg: "{{ install_dotfiles_ssh_key_output }}"
+- name: Save private key file
+  ansible.builtin.copy:
+    content: "{{ install_dotfiles_ssh_key_output.value }}"
+    dest: "{{ user_home_dir }}/.ssh/id_{{ ssh.key_type }}"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+  when:
+    - ssh.fetch_keys == "true"
+    - install_dotfiles_ssh_key_output.value is defined
