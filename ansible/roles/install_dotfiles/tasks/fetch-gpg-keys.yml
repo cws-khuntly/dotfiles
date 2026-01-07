@@ -65,7 +65,7 @@
 
 - name: Import keys to gpg
   ansible.builtin.command:
-    cmd: "gpg --batch --import {{ user_home_dir }}/.config/gnupg/privkey.asc --passphrase-file {{ user_home_dir }}/workspace/ansible/gpg.txt --pinentry-mode loopback"
+    cmd: "gpg --batch --passphrase {{ gpg.passphrase }} --pinentry-mode loopback --import {{ user_home_dir }}/.config/gnupg/privkey.asc"
     creates: "{{ user_home_dir }}/.config/gnupg/private-keys-v1.d/*.key"
 
 - name: Remove temporary file
