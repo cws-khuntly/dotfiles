@@ -19,8 +19,8 @@
 
 - name: Get GPG Public Key
   google.cloud.gcp_secret_manager:
-    auth_kind: "accesstoken"
-    access_token: "{{ secrets.GCP_ACCESS_TOKEN }}"
+    auth_kind: "serviceaccount"
+    service_account_file: "{{ user_home_dir }}/.config/gcloud/service_account.json"
     project: "{{ gcp.projects.project_id }}"
     name: "gpg-public-key"
     state: present
