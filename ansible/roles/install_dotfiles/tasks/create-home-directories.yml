@@ -14,6 +14,10 @@
     - "log"
     - "log/archive"
     - "workspace"
+    - "workspace/ansible"
+    - "workspace/ansible/vault"
+    - "workspace/ansible/inventory"
+    - "workspace/ansible/roles"
     - ".config"
   loop_control:
     loop_var: "add_home_item"
