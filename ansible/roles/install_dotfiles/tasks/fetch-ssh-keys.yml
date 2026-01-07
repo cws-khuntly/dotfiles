@@ -27,12 +27,3 @@
   when:
     - ssh.fetch_keys == "true"
     - install_dotfiles_ssh_key_output.value is defined
-
-- name: Set key passphrase
-  community.crypto.openssh_keypair:
-    path: "{{ user_home_dir }}/.ssh/id_{{ ssh.key_type }}"
-    passphrase: "{{ ssh.passphrase }}"
-    regenerate: never
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0600"
