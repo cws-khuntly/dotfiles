@@ -7,12 +7,12 @@
   google.cloud.gcp_secret_manager:
     auth_kind: "accesstoken"
     access_token: "{{ secrets.GCP_ACCESS_TOKEN }}"
-    project: "home"
+    project: "{{ gcp.projects.project_id }}"
     name: "ssh-key"
     state: present
     return_value: true
-  register: "ssh_key_output"
+  register: "install_dotfiles_ssh_key_output"
 
 - name: Print Print
   ansible.builtin.debug:
-    msg: "{{ ssh_key_output }}"
+    msg: "{{ install_dotfiles_ssh_key_output }}"
