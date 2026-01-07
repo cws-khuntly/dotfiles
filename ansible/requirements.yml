@@ -7,3 +7,4 @@ collections:
   - ansible.posix
   - community.crypto
   - bitwarden.secrets
+  - google.cloud
