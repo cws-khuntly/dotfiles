@@ -6,9 +6,17 @@
 - name: Install google-auth via pip
   ansible.builtin.pip:
     name: google-auth
+  when:
+    - secrets.GCP_ACCESS_TOKEN is defined
 
 - name: Install bcrypt via pip
   ansible.builtin.pip:
     name: bcrypt
   when:
     - user_account.ssh_passphrase is defined
+
+- name: Install bitwarden SDK via pip
+  ansible.builtin.pip:
+    name: bitwarden-sdk
+  when:
+    - secrets.BW_ACCESS_TOKEN is defined

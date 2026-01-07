@@ -26,15 +26,3 @@
         name: install_dotfiles
 
   post_tasks:
-    - name: Clean up temporary files
-      ansible.builtin.file:
-        path: "{{ cleanup_item }}"
-        state: absent
-      loop:
-        - "/var/tmp/gpg-input.txt"
-        - "{{ user_home_dir }}/workspace/ansible/gpg.txt"
-        - "{{ user_home_dir }}/workspace/ansible/gpg.txt"
-        - "{{ user_home_dir }}/.config/gnupg/privkey.asc"
-        - "{{ user_home_dir }}/.config/gnupg/pubkey.asc"
-      loop_control:
-        loop_var: "cleanup_item"
