@@ -3,6 +3,10 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
+- name: Install google-auth via pip
+  ansible.builtin.pip:
+    name: google-auth
+
 - name: Install bcrypt via pip
   ansible.builtin.pip:
     name: bcrypt
