@@ -3,6 +3,16 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: Test secret using explicit credentials
+- name: Get secret
+  google.cloud.gcp_secret_manager:
+    auth_kind: "accesstoken"
+    access_token: "{{ secrets.GCP_ACCESS_TOKEN }}"
+    project: "home"
+    name: "ssh-key"
+    state: present
+    return_value: true
+  register: "ssh_key_output"
+
+- name: Print Print
   ansible.builtin.debug:
-    msg: "{{ lookup('google.cloud.gcp_secret_manager', key='ssh-key', project='home', auth_kind='accesstoken', access_token=' secrets.GCP_ACCESS_TOKEN ') }}"
+    msg: "{{ ssh_key_output }}"
