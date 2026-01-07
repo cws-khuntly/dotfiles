@@ -19,7 +19,7 @@
     group: "{{ ansible_user_gid }}"
     mode: "0700"
   when:
-    - install_dotfiles_gpg_keys_files_found.files | length > 0
+    - install_dotfiles_gpg_keys_files_found.files.size > 0
 
 - name: Define GPG batch configuration file content
   ansible.builtin.template:
