@@ -15,8 +15,6 @@
   when:
     - gpg.generate_keys == "false"
     - gpg.fetch_keys == "true"
-    - secrets.GCP_ACCESS_TOKEN is defined
-    - gcp.projects.project_id is defined
   notify:
     - add-gpg-key
     - import-gpg-key
