@@ -3,7 +3,3 @@
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
 ---
-setup_ansible_:
-  smtp:
-    host: "localhost"
-    port: 25
