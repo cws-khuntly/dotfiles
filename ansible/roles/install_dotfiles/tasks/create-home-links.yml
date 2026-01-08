@@ -17,6 +17,7 @@
     - "inputrc"
     - "odbc.ini"
     - "vim"
+    - "wgetrc"
   loop_control:
     loop_var: "rm_dotfiles_item"
 
@@ -42,7 +43,6 @@
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
   loop:
-    - "netrc"
     - "digrc"
     - "mailrc"
     - "inputrc"
