@@ -57,3 +57,11 @@
   when:
     - gpg.generate_keys == "false"
     - gpg.fetch_keys == "true"
+
+- name: Enable systemd services
+  ansible.builtin.debug:
+    msg: "Enabling systemd services"
+  notify:
+    - restart-systemd
+    - enable-agents
+    - enable-logrotate
