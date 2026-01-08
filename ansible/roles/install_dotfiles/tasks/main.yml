@@ -13,6 +13,10 @@
     - create-config-links.yml
   loop_control:
     loop_var: "core_item"
+
+- name: Reload systemd for user account
+  ansible.builtin.debug:
+    msg: "Reload systemd user space"
   notify:
     - restart-systemd
 
