@@ -1,0 +1,10 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  requirements.yml
+#   DESCRIPTION:  It's for the linter
+# ============================================================================
+---
+- name: Send alert notification
+  ansible.builtin.debug:
+    msg: "A notification message is being sent"
+  notify:
+    - send-notification
