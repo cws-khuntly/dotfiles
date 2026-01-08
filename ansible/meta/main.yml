@@ -3,5 +3,11 @@
 #   DESCRIPTION:  It's for the linter
 # ============================================================================
 ---
+author: Kevin Huntly <kmhuntly@gmail.com>
+description: Installs personal dotfiles
+license: CC0
+galaxy_info:
+  company: CWSNA
+
 dependencies:
-- role: send-notification
+  - role: send-notification
