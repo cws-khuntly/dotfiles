@@ -28,6 +28,7 @@
   loop_control:
     loop_var: "ssh_key_item"
   when:
+    - ssh.generate_keys is defined
     - ssh.generate_keys == "true"
     - ssh.fetch_keys == "false"
 
@@ -39,6 +40,7 @@
   loop_control:
     loop_var: "fetch_key_item"
   when:
+    - ssh.generate_keys is defined
     - ssh.generate_keys == "false"
     - ssh.fetch_keys == "true"
 
@@ -50,6 +52,7 @@
   loop_control:
     loop_var: "gpg_key_item"
   when:
+    - gpg.generate_keys is defined
     - gpg.generate_keys == "true"
     - gpg.fetch_keys == "false"
 
@@ -61,6 +64,7 @@
   loop_control:
     loop_var: "fetch_key_item"
   when:
+    - gpg.generate_keys is defined
     - gpg.generate_keys == "false"
     - gpg.fetch_keys == "true"
 
