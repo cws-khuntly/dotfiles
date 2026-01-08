@@ -3,6 +3,11 @@
 #   DESCRIPTION:  Main entry point for common tasks
 # =============================================================================
 ---
+- name: Check for existing Python virtual environment
+  ansible.builtin.stat:
+    path: "{{ user_home_dir }}/workspace/venv"
+  register: "common_check_venv"
+
 - name: Create directory structure for virtual environment
   ansible.builtin.file:
     path: "{{ user_home_dir }}/workspace/venv"
@@ -10,11 +15,8 @@
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0755"
-
-- name: Check for existing Python virtual environment
-  ansible.builtin.stat:
-    path: "{{ user_home_dir }}/workspace/venv"
-  register: "common_check_venv"
+  when:
+    - not common_check_venv.stat.exists
 
 - name: Create Python virtual environment
   ansible.builtin.command:
