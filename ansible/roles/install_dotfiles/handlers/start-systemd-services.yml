@@ -1,0 +1,26 @@
+# ====  ANSIBLE   =============================================================
+#          NAME:  roles/common/tasks/main.yml
+#   DESCRIPTION:  Main entry point for common tasks
+# =============================================================================
+---
+- name: Reload systemd after changes
+  ansible.builtin.systemd_service:
+    daemon_reexec: true
+    scope: user
+  listen: restart-systemd
+
+- name: Enable and start agent services
+  ansible.builtin.systemd_service:
+    name: start-agents.target
+    enabled: true
+    state: restarted
+    scope: user
+  listen: enable-agents
+
+- name: Enable and start logrotate
+  ansible.builtin.systemd_service:
+    name: logrotate.target
+    enabled: true
+    state: restarted
+    scope: user
+  listen: enable-logrotate
