@@ -6,11 +6,11 @@
 - name: Send a notification email
   community.general.mail:
     body: "{{ message_body }}"
-    host: "{{ defaults.smtp.host }}"
-    port: {{ defaults.smtp.port }}
-    username: "{{ defaults.smtp.username }}"
-    password: "{{ defaults.smtp.password }}"
-    sender: "{{ defaults.smtp.username }}"
+    host: "{{ send_notification.smtp.host }}"
+    port: {{ send_notification.smtp.port }}
+    username: "{{ send_notification.smtp.username }}"
+    password: "{{ send_notification.smtp.password }}"
+    sender: "{{ send_notification.smtp.username }}"
     subject: "{{ message_subject }}"
     to: "{{ message_to }}"
   delegate_to: localhost
