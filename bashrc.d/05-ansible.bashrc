@@ -2,9 +2,9 @@
 
 #==============================================================================
 #
-#          FILE:  ansible
-#         USAGE:  . ansible
-#   DESCRIPTION:  Loads keychain and adds available keys to it
+#          FILE:  A02-git
+#         USAGE:  . A02-git
+#   DESCRIPTION:  Useful git aliases
 #
 #       OPTIONS:  ---
 #  REQUIREMENTS:  ---
@@ -18,4 +18,6 @@
 #
 #==============================================================================
 
-[[ -z "$(compgen -c | grep -Ew "(^ansible)" | sort | uniq)" ]] && return;
+[[ -f "${HOME}/workspace/ansible/inventory/hosts.yml" ]] || return;
+
+declare -x ANSIBLE_HOSTS="${HOME}/workspace/ansible/inventory/hosts.yml";
