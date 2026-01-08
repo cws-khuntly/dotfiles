@@ -15,6 +15,4 @@
   when:
     - ssh.fetch_keys == "true"
     - ssh.generate_keys == "false"
-    - secrets.GCP_ACCESS_TOKEN is defined
-    - gcp.projects.project_id is defined
   notify: add-ssh-key
