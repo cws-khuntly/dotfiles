@@ -3,6 +3,14 @@
 #   DESCRIPTION:  Main entry point for common tasks
 # =============================================================================
 ---
+- name: Create directory structure for virtual environment
+  ansible.builtin.file:
+    path: "{{ user_home_dir }}/workspace/venv"
+    state: present
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0755"
+
 - name: Check for existing Python virtual environment
   ansible.builtin.stat:
     path: "{{ user_home_dir }}/workspace/venv"
