@@ -1,0 +1,10 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  site.yml
+#   DESCRIPTION:  Entry point for playbook
+# ============================================================================
+---
+defaults:
+  smtp:
+    username: "kmhuntly@gmail.com"
+    hostname: "smtp.google.com"
+    port: 587
