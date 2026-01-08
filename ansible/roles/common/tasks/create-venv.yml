@@ -11,7 +11,7 @@
 - name: Create directory structure for virtual environment
   ansible.builtin.file:
     path: "{{ user_home_dir }}/workspace/venv"
-    state: present
+    state: directory
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0755"
