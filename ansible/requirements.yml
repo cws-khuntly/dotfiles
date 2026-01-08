@@ -6,5 +6,6 @@
 collections:
   - name: ansible.posix
   - name: community.crypto
+  - name: community.collections
   - name: bitwarden.secrets
   - name: google.cloud
