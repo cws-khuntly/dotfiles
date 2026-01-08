@@ -33,9 +33,6 @@ function readPropertyFile()
     local property_name;
     local property_value;
     local config_file;
-    local -i start_epoch;
-    local -i end_epoch;
-    local -i runtime;
 
     (( ${#} != 1 )) && return 3;
 
@@ -66,10 +63,6 @@ function readPropertyFile()
     [[ -n "${property_name}" ]] && unset property_name;
     [[ -n "${property_value}" ]] && unset property_value;
     [[ -n "${entry}" ]] && unset entry;
-
-    [[ -n "${start_epoch}" ]] && unset start_epoch;
-    [[ -n "${end_epoch}" ]] && unset end_epoch;
-    [[ -n "${runtime}" ]] && unset runtime;
     [[ -n "${function_name}" ]] && unset function_name;
     [[ -n "${cname}" ]] && unset cname;
 
