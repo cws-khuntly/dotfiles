@@ -26,4 +26,10 @@
       ansible.builtin.include_role:
         name: install_dotfiles
 
+    - name: Set up Ansible workspace
+      ansible.builtin.include_role:
+        name: setup_ansible
+      when:
+        - user_account.setup_ansible == "true"
+
   post_tasks:

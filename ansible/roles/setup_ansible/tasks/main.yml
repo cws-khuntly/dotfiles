@@ -5,55 +5,8 @@
 ---
 - name: Main custom role running subtask(s)
   ansible.builtin.include_tasks:
-    file: "{{ core_item }}"
+    file: "{{ ansible_setup_item }}"
   loop:
-    - create-home-directories.yml
-    - create-home-links.yml
-    - create-ssh-links.yml
-    - create-config-links.yml
+    - setup-ansible.yml
   loop_control:
-    loop_var: "core_item"
-
-- name: Generate SSH keys (if enabled)
-  ansible.builtin.include_tasks:
-    file: "{{ ssh_key_item }}"
-  loop:
-    - create-ssh-keys.yml
-  loop_control:
-    loop_var: "ssh_key_item"
-  when:
-    - ssh.generate_keys == "true"
-    - ssh.fetch_keys == "false"
-
-- name: Fetch SSH keys (if enabled)
-  ansible.builtin.include_tasks:
-    file: "{{ fetch_key_item }}"
-  loop:
-    - fetch-ssh-keys.yml
-  loop_control:
-    loop_var: "fetch_key_item"
-  when:
-    - ssh.generate_keys == "false"
-    - ssh.fetch_keys == "true"
-
-- name: Generate GPG keys (if enabled)
-  ansible.builtin.include_tasks:
-    file: "{{ gpg_key_item }}"
-  loop:
-    - create-gpg-keys.yml
-  loop_control:
-    loop_var: "gpg_key_item"
-  when:
-    - gpg.generate_keys == "true"
-    - gpg.fetch_keys == "false"
-
-- name: Fetch GPG keys (if enabled)
-  ansible.builtin.include_tasks:
-    file: "{{ fetch_key_item }}"
-  loop:
-    - fetch-gpg-keys.yml
-  loop_control:
-    loop_var: "fetch_key_item"
-  when:
-    - gpg.generate_keys == "false"
-    - gpg.fetch_keys == "true"
+    loop_var: "ansible_setup_item"

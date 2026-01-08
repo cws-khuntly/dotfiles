@@ -1,0 +1,11 @@
+# ====  ANSIBLE   =============================================================
+#          NAME:  roles/common/tasks/main.yml
+#   DESCRIPTION:  Main entry point for common tasks
+# =============================================================================
+---
+- name: Create and set up Ansible workspace
+  ansible.builtin.debug:
+    msg: "Installing Ansible workspace"
+  notify:
+    - create-ansible-workspace
+    - install-ansible-workspace
