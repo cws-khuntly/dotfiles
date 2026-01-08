@@ -4,6 +4,7 @@ use_default_rules: true
 
 skip_list:
   - '403'
+  - 'role-name'
 
 enable_list:
   - args
