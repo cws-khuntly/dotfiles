@@ -1,3 +1,7 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  requirements.yml
+#   DESCRIPTION:  It's for the linter
+# ============================================================================
 ---
 dependencies:
 - role: send-notification
