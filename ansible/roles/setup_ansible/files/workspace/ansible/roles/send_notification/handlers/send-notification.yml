@@ -6,11 +6,11 @@
 - name: Send a notification email
   community.general.mail:
     body: "{{ message_body }}"
-    host: smtp.gmail.com
-    port: 587
-    username: "{{ smtp_username }}"
-    password: "{{ smtp_password }}"
-    sender: "{{ smtp_username }}"
+    host: "{{ defaults.smtp.host }}"
+    port: {{ defaults.smtp.port }}
+    username: "{{ defaults.smtp.username }}"
+    password: "{{ defaults.smtp.password }}"
+    sender: "{{ defaults.smtp.username }}"
     subject: "{{ message_subject }}"
     to: "{{ message_to }}"
   delegate_to: localhost
