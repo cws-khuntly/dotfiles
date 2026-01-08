@@ -3,3 +3,7 @@
 #   DESCRIPTION:  Entry point for playbook
 # ============================================================================
 ---
+send_notification_:
+  smtp:
+    host:
+    port:
