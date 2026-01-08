@@ -23,8 +23,9 @@ IgnoreOnIsolate=true
 [Service]
 Type=simple
 Environment=SSH_AUTH_SOCK=%t/ssh-agent.socket
-ExecStart=/usr/bin/ssh-agent -D -a $SSH_AUTH_SOCK
-ExecStop=/usr/bin/ssh-agent -k
+ExecStart=ssh-agent -D -a $SSH_AUTH_SOCK
+ExecStart=ssh-agent
+ExecStop=ssh-agent -k
 Restart=on-abort
 
 [Install]
