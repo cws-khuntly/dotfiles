@@ -20,4 +20,4 @@
 
 [[ -z "$(compgen -c | grep -Ew "(^docker)" | sort | uniq)" ]] && return;
 
-docker login -u kmhuntly@container-registry.oracle.com
+docker login -u kmhuntly@gmail.com container-registry.oracle.com
