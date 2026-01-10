@@ -11,16 +11,6 @@
     recurse: false
   register: "install_dotfiles_gpg_keys_files_found"
 
-- name: Create private keys directory
-  ansible.builtin.file:
-    path: "{{ user_home_dir }}/.config/gnupg/private-keys-v1.d"
-    state: "directory"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0700"
-  when:
-    - install_dotfiles_gpg_keys_files_found.files | count == 0
-
 - name: Define GPG batch configuration file content
   ansible.builtin.template:
     src: "{{ install_dotfiles_base_path }}/config/gnupg/gpg-template.j2"
@@ -28,53 +18,9 @@
     mode: "0600"
   when:
     - install_dotfiles_gpg_keys_files_found.files | count == 0
-
-- name: Generate the GPG key pair using batch mode
-  ansible.builtin.command:
-    cmd: "gpg --batch --gen-key /var/tmp/gpg-input.txt"
-    creates: "{{ user_home_dir }}/.config/gnupg/punting.kbx"
-  when:
-    - install_dotfiles_gpg_keys_files_found.files | count == 0
-
-- name: Export the public key (ASCII armored)
-  ansible.builtin.command:
-    cmd: "gpg --armor --export {{ user_account.email }}"
-  register: "install_dotfiles_gpg_public_key_output"
-  changed_when: false
-  when:
-    - install_dotfiles_gpg_keys_files_found.files | count == 0
-
-- name: Copy the public key
-  ansible.builtin.copy:
-    content: "{{ install_dotfiles_gpg_public_key_output.stdout }}"
-    dest: "{{ user_home_dir }}/.config/gnupg/public-key.asc"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0644"
-  run_once: true
-  when:
-    - install_dotfiles_gpg_keys_files_found.files | count == 0
-
-- name: Export the private key (ASCII armored)
-  ansible.builtin.command:
-    cmd: "gpg --pinentry-mode loopback --passphrase {{ gpg.passphrase }} --armor --export-secret-key {{ user_account.email }}"
-  register: install_dotfiles_gpg_private_key_output
-  changed_when: false
-  no_log: true
-  when:
-    - install_dotfiles_gpg_keys_files_found.files | count == 0
-
-- name: Copy the public key
-  ansible.builtin.copy:
-    content: "{{ install_dotfiles_gpg_private_key_output.stdout }}"
-    dest: "{{ user_home_dir }}/.config/gnupg/private-key.asc"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0600"
-  run_once: true
-  no_log: true
-  when:
-    - install_dotfiles_gpg_keys_files_found.files | count == 0
+  notify:
+    - generate-gpg-keys
+    - reload-key-agents
 
 - name: Remove temporary GPG file
   ansible.builtin.file:
