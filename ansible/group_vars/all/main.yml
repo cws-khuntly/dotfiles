@@ -6,7 +6,6 @@
 install:
   base_path: "{{ ansible_user_dir }}/.dotfiles"
 
----
 user_account:
   name:
   email:
