@@ -6,7 +6,7 @@
 - name: Get GPG Private Key
   google.cloud.gcp_secret_manager:
     auth_kind: "serviceaccount"
-    service_account_file: "{{ user_account.home_dir }}/.config/gcloud/service_account.json"
+    service_account_file: "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/gcloud/service_account.json"
     project: "{{ gcp.projects.project_id }}"
     name: "gpg-key"
     state: present
