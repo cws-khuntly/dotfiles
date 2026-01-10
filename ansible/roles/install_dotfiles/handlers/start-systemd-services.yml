@@ -7,7 +7,7 @@
   ansible.builtin.systemd_service:
     daemon_reexec: true
     scope: user
-  listen: restart-systemd
+  listen: restart-user-systemd
 
 - name: Enable and start agent services
   ansible.builtin.systemd_service:
@@ -15,7 +15,9 @@
     enabled: true
     state: restarted
     scope: user
-  listen: enable-agents
+  listen:
+    - enable-key-agents
+    - restart-key-agents
 
 - name: Enable and start logrotate
   ansible.builtin.systemd_service:
