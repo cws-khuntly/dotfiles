@@ -5,7 +5,7 @@
 ---
 - name: Create Ansible workspace
   ansible.builtin.file:
-    path: "{{ user_home_dir }}/{{ ansible_workspace_entry }}"
+    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/{{ ansible_workspace_entry }}"
     state: directory
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -21,7 +21,7 @@
 - name: Install Ansible workspace
   ansible.builtin.copy:
     src: "files/workspace/ansible"
-    dest: "{{ user_home_dir }}/workspace/ansible"
+    dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0755"
