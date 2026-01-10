@@ -8,9 +8,9 @@
     path: "{{ gpg_temp_file }}"
     state: absent
   loop:
-    - "{{ user_home_dir }}/workspace/ansible/gpg.txt"
-    - "{{ user_home_dir }}/.config/gnupg/privkey.asc"
-    - "{{ user_home_dir }}/.config/gnupg/pubkey.asc"
+    - "{{ user_account.home_dir }}/workspace/ansible/gpg.txt"
+    - "{{ user_account.home_dir }}/.config/gnupg/privkey.asc"
+    - "{{ user_account.home_dir }}/.config/gnupg/pubkey.asc"
   loop_control:
     loop_var: "gpg_temp_file"
   listen: cleanup-gpg-files
