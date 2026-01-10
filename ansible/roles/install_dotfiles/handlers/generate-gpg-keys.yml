@@ -4,7 +4,7 @@
 # =============================================================================
 - name: Create private keys directory
   ansible.builtin.file:
-    path: "{{ user_home_dir }}/.config/gnupg/private-keys-v1.d"
+    path: "{{ user_account.home_dir }}/.config/gnupg/private-keys-v1.d"
     state: "directory"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -16,7 +16,7 @@
 - name: Generate the GPG key pair using batch mode
   ansible.builtin.command:
     cmd: "gpg --batch --gen-key /var/tmp/gpg-input.txt"
-    creates: "{{ user_home_dir }}/.config/gnupg/punting.kbx"
+    creates: "{{ user_account.home_dir }}/.config/gnupg/punting.kbx"
   when:
     - install_dotfiles_gpg_keys_files_found.files | count == 0
   listen: create-gpg-keys
