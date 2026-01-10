@@ -20,6 +20,7 @@ user_account:
     fetch_keys: false
     passphrase:
   systemd:
+    enabled: false
     enabled_services:
       - start-agents.target
       - logrotate.target
