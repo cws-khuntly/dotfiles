@@ -23,7 +23,7 @@
 
 - name: Create SSH key pair (if enabled, no passphrase)
   community.crypto.openssh_keypair:
-    path: "{{ user_home_dir }}/.ssh/id_{{ user_accou t.ssh.key_type }}"
+    path: "{{ user_home_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
     type: "{{ user_account.ssh.key_type }}"
     comment: ""
     mode: "0600"
