@@ -24,3 +24,4 @@ user_account:
     enabled_services:
       - start-agents.target
       - logrotate.target
+      - scheduled-dnd.target
