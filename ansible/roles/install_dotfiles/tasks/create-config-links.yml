@@ -32,4 +32,4 @@
   loop_control:
     loop_var: "ln_config_item"
   notify:
-    - enable-user-systemd
+    - reload-user-systemd
