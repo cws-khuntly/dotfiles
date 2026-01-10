@@ -5,7 +5,7 @@
 ---
 - name: Search for existing private keys
   ansible.builtin.find:
-    paths: "{{ user_home_dir }}/.config/gnupg/private-keys-v1.d/"
+    paths: "{{ user_account.home_dir }}/.config/gnupg/private-keys-v1.d/"
     patterns: "*.key"
     file_type: "file"
     recurse: false
@@ -13,7 +13,7 @@
 
 - name: Define GPG batch configuration file content
   ansible.builtin.template:
-    src: "{{ install_dotfiles_base_path }}/config/gnupg/gpg-template.j2"
+    src: "{{ install.base_path }}/config/gnupg/gpg-template.j2"
     dest: "/var/tmp/gpg-input.txt"
     mode: "0600"
   when:
