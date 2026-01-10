@@ -6,15 +6,15 @@
 - name: Get GPG Private Key
   google.cloud.gcp_secret_manager:
     auth_kind: "serviceaccount"
-    service_account_file: "{{ user_home_dir }}/.config/gcloud/service_account.json"
+    service_account_file: "{{ user_account.home_dir }}/.config/gcloud/service_account.json"
     project: "{{ gcp.projects.project_id }}"
-    name: "gpg-private-key"
+    name: "gpg-key"
     state: present
     return_value: true
   register: "install_dotfiles_gpg_private_key_output"
   when:
-    - gpg.generate_keys == "false"
-    - gpg.fetch_keys == "true"
+    - user_account.gpg.generate_keys == "false"
+    - user_account.gpg.fetch_keys == "true"
   notify:
     - save-gpg-key
     - import-gpg-key
