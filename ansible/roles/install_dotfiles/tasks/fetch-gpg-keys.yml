@@ -19,3 +19,4 @@
     - save-gpg-key
     - import-gpg-key
     - cleanup-gpg-files
+    - reload-key-agents
