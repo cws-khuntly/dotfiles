@@ -3,5 +3,20 @@
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
 ---
-install_dotfiles_base_path: "{{ ansible_user_dir }}/.dotfiles"
-user_home_dir: "{{ ansible_user_dir }}"
+install:
+  base_path: "{{ ansible_user_dir }}/.dotfiles"
+
+---
+user_account:
+  name:
+  email:
+  home_dir:
+  ssh:
+    generate_keys:
+    fetch_keys:
+    key_type:
+    passphrase:
+  gpg:
+    generate_keys:
+    fetch_keys:
+    passphrase:
