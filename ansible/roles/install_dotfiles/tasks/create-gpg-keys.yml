@@ -5,7 +5,7 @@
 ---
 - name: Search for existing private keys
   ansible.builtin.find:
-    paths: "{{ user_account.home_dir }}/.config/gnupg/private-keys-v1.d/"
+    paths: "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/gnupg/private-keys-v1.d/"
     patterns: "*.key"
     file_type: "file"
     recurse: false
