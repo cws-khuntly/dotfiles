@@ -5,30 +5,30 @@
 ---
 - name: Check for existing SSH keys
   ansible.builtin.stat:
-    path: "{{ user_home_dir }}/.ssh/id_{{ ssh.key_type }}"
+    path: "{{ user_home_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
   register: "install_dotfiles_key_exists"
 
 - name: Create SSH key pair (if enabled, with passphrase)
   community.crypto.openssh_keypair:
-    path: "{{ user_home_dir }}/.ssh/id_{{ ssh.key_type }}"
-    type: "{{ ssh.key_type }}"
+    path: "{{ user_home_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
+    type: "{{ user_account.ssh.key_type }}"
     comment: ""
     mode: "0600"
-    passphrase: "{{ ssh.passphrase }}"
+    passphrase: "{{ user_account.ssh.passphrase }}"
   when:
-    - ssh.ssh_passphrase is defined
+    - user_account.ssh.passphrase is defined
     - not install_dotfiles_key_exists.stat.exists
   notify:
     - reload-key-agents
 
 - name: Create SSH key pair (if enabled, no passphrase)
   community.crypto.openssh_keypair:
-    path: "{{ user_home_dir }}/.ssh/id_{{ ssh.key_type }}"
-    type: "{{ ssh.key_type }}"
+    path: "{{ user_home_dir }}/.ssh/id_{{ user_accou t.ssh.key_type }}"
+    type: "{{ user_account.ssh.key_type }}"
     comment: ""
     mode: "0600"
   when:
-    - ssh.ssh_passphrase is undefined
+    - user_account.ssh.passphrase is undefined
     - not install_dotfiles_key_exists.stat.exists
   notify:
     - reload-key-agents
