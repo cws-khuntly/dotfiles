@@ -16,6 +16,6 @@
     - gpg.generate_keys == "false"
     - gpg.fetch_keys == "true"
   notify:
-    - add-gpg-key
+    - save-gpg-key
     - import-gpg-key
     - cleanup-gpg-files
