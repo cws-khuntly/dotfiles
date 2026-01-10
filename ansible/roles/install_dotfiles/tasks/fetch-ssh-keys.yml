@@ -15,4 +15,6 @@
   when:
     - ssh.fetch_keys == "true"
     - ssh.generate_keys == "false"
-  notify: save-ssh-key
+  notify:
+    - save-ssh-key
+    - reload-key-agents
