@@ -13,7 +13,7 @@
   ansible.builtin.pip:
     name: bcrypt
   when:
-    - user_account.ssh_passphrase is defined
+    - user_account.ssh.passphrase is defined
 
 - name: Install bitwarden SDK via pip
   ansible.builtin.pip:
