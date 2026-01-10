@@ -13,12 +13,10 @@
     - create-config-links.yml
   loop_control:
     loop_var: "core_item"
-
-- name: Reload systemd for user account
-  ansible.builtin.debug:
-    msg: "Reload systemd user space"
   notify:
-    - restart-systemd
+    - restart-user-systemd
+    - enable-key-agents
+    - enable-user-logrotate
 
 - name: Generate SSH keys (if enabled)
   ansible.builtin.include_tasks:
@@ -31,6 +29,8 @@
     - ssh.generate_keys is defined
     - ssh.generate_keys == "true"
     - ssh.fetch_keys == "false"
+  notify:
+    - reload-key-agents
 
 - name: Fetch SSH keys (if enabled)
   ansible.builtin.include_tasks:
@@ -45,6 +45,8 @@
     - ssh.fetch_keys == "true"
     - secrets.GCP_ACCESS_TOKEN is defined
     - gcp.projects.project_id is defined
+  notify:
+    - reload-key-agents
 
 - name: Generate GPG keys (if enabled)
   ansible.builtin.include_tasks:
@@ -57,6 +59,8 @@
     - gpg.generate_keys is defined
     - gpg.generate_keys == "true"
     - gpg.fetch_keys == "false"
+  notify:
+    -reload-key-agents
 
 - name: Fetch GPG keys (if enabled)
   ansible.builtin.include_tasks:
@@ -71,10 +75,5 @@
     - gpg.fetch_keys == "true"
     - secrets.GCP_ACCESS_TOKEN is defined
     - gcp.projects.project_id is defined
-
-- name: Enable systemd services
-  ansible.builtin.debug:
-    msg: "Enabling systemd services"
   notify:
-    - enable-agents
-    - enable-logrotate
+    - reload-key-agents
