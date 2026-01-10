@@ -17,7 +17,7 @@
     scope: user
   listen:
     - enable-key-agents
-    - restart-key-agents
+    - reload-key-agents
 
 - name: Enable and start logrotate
   ansible.builtin.systemd_service:
