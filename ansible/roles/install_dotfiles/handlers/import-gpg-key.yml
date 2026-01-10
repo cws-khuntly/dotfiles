@@ -5,6 +5,6 @@
 ---
 - name: Import keys to gpg
   ansible.builtin.command:
-    cmd: "gpg --batch --passphrase {{ user_account.gpg.passphrase }} --pinentry-mode loopback --import {{ user_home_dir }}/.config/gnupg/privkey.asc"
-    creates: "{{ user_home_dir }}/.config/gnupg/private-keys-v1.d/*.key"
+    cmd: "gpg --batch --passphrase {{ user_account.gpg.passphrase }} --pinentry-mode loopback --import {{ user_account.home_dir }}/.config/gnupg/privkey.asc"
+    creates: "{{ user_account.home_dir }}/.config/gnupg/private-keys-v1.d/*.key"
   listen: import-gpg-key
