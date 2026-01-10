@@ -5,12 +5,12 @@
 ---
 - name: Check for existing SSH keys
   ansible.builtin.stat:
-    path: "{{ user_account.home_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
+    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
   register: "install_dotfiles_key_exists"
 
 - name: Create SSH key pair (if enabled, with passphrase)
   community.crypto.openssh_keypair:
-    path: "{{ user_account.home_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
+    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
     type: "{{ user_account.ssh.key_type }}"
     comment: ""
     mode: "0600"
@@ -23,7 +23,7 @@
 
 - name: Create SSH key pair (if enabled, no passphrase)
   community.crypto.openssh_keypair:
-    path: "{{ user_account.home_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
+    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
     type: "{{ user_account.ssh.key_type }}"
     comment: ""
     mode: "0600"
