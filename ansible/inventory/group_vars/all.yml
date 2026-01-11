@@ -32,6 +32,9 @@ user_account:
     fetch_keys: false
     passphrase: ""
     signing_key: ""
+    key_type: ""
+    key_length: ""
+    expiry: ""
   systemd:
     enabled: false
     enabled_services:
