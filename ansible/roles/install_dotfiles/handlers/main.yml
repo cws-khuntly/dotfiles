@@ -15,7 +15,7 @@
     loop_var: "enabled_service_name"
   when:
     - user_account.systemd.enabled is true
-    - user_account.systemd.services | size > 0
+    - user_account.systemd.services | length > 0
 
 - name: Restart key agent services in systemd userspace
   ansible.builtin.systemd_service:
