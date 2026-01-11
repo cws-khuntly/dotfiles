@@ -3,10 +3,12 @@
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
 ---
-ansible_managed: "Ansible managed: {file} modified on %Y-%m-%d %H:%M:%S by {uid} on {host}"
-
 install:
   base_path: "{{ ansible_user_dir }}/.dotfiles"
+
+secrets:
+  BW_ACCESS_TOKEN: ""
+  GCP_ACCESS_TOKEN: ""
 
 user_account:
   name: ""
