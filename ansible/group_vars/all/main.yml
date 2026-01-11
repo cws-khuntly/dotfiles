@@ -14,6 +14,7 @@ user_account:
   name: ""
   email: ""
   home_dir: "{{ ansible_user_dir }}"
+  setup_ansible: ""
   ssh:
     generate_keys: false
     fetch_keys: false
