@@ -28,8 +28,8 @@
 
 - name: Capture the key ID
   ansible.builtin.shell: "files/scripts/get_gpg_key.sh"
-    args:
-      chdir: "{{ role_dir }}"
+  args:
+    chdir: "{{ role_dir }}"
   changed_when: false
   register: install_dotfiles_gpg_key_signing_id
   when:
