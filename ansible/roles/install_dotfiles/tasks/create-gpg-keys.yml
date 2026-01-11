@@ -22,6 +22,17 @@
     - generate-gpg-keys
     - reload-key-agents
 
+- name: Capture the key ID
+  ansible.builtin.command:
+    cmd: "files/scripts/get_gpg_key.sh"
+  changed_when: false
+  register: install_dotfiles_gpg_key_signing_id
+  when:
+    - user_account.gpg.generate_keys == "true"
+    - user_account.gpg.fetch_keys == "false"
+  notify:
+    - generate-git-config-with-gpg
+
 - name: Remove temporary GPG file
   ansible.builtin.file:
     path: "/run/user/{{ ansible_user_uid }}/gpg-input.txt"

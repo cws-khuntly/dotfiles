@@ -20,3 +20,14 @@
   when:
     - install_dotfiles_gpg_keys_files_found.files | count == 0
   listen: create-gpg-keys
+
+- name: Generate git configuration including signing key
+  vars:
+    gpg_signing_key: "{{ install_dotfiles_gpg_key_signing_id | default(user_account.gpg.signing_key) }}"
+  ansible.builtin.template:
+    src: "files/templates/config/git/config"
+    dest: "{{ user_home_dir | default(ansible_user_dir) }}/.config/git/config"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_group }}"
+    mode: "0644"
+  listen: generate-git-config-with-gpg
