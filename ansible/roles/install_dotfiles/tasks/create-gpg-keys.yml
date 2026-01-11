@@ -14,7 +14,7 @@
 - name: Define GPG batch configuration file content
   ansible.builtin.template:
     src: "templates/config/gnupg/template.j2"
-    dest: "/run/user/{{ ansible_user_uid }}/gpg-input.txt"
+    dest: "{{ user_home_dir | default(ansible_user_dir) }}/input.txt"
     mode: "0600"
   when:
     - install_dotfiles_gpg_keys_files_found.files | count == 0
@@ -35,5 +35,5 @@
 
 - name: Remove temporary GPG file
   ansible.builtin.file:
-    path: "/run/user/{{ ansible_user_uid }}/gpg-input.txt"
+    path: "{{ user_home_dir | default(ansible_user_dir) }}/input.txt"
     state: absent
