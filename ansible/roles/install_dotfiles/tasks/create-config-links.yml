@@ -32,7 +32,7 @@
   loop_control:
     loop_var: "ln_config_item"
   notify:
-    - reload-user-systemd
+    - reload-systemd
 
 - name: Create links in home directory to dotfiles
   ansible.builtin.file:
