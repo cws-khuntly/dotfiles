@@ -18,6 +18,7 @@
   when:
     - user_account.ssh.passphrase is defined
     - not install_dotfiles_key_exists.stat.exists
+  notify: reload-key-agents
 
 - name: Create SSH key pair (if enabled, no passphrase)
   community.crypto.openssh_keypair:
@@ -28,3 +29,4 @@
   when:
     - user_account.ssh.passphrase is undefined
     - not install_dotfiles_key_exists.stat.exists
+  notify: reload-key-agents

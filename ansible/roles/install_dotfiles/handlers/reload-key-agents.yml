@@ -1,0 +1,14 @@
+# ====  ANSIBLE   =============================================================
+#          NAME:  roles/common/tasks/main.yml
+#   DESCRIPTION:  Main entry point for common tasks
+# =============================================================================
+---
+- name: Restart key agent services in systemd userspace
+  ansible.builtin.systemd_service:
+    name: "key-agents.target"
+    enabled: true
+    state: restarted
+    scope: user
+  listen: reload-key-agents
+  when:
+    - user_account.systemd.enabled is true

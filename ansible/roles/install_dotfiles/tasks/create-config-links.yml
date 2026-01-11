@@ -31,7 +31,7 @@
     - "tmux"
   loop_control:
     loop_var: "ln_config_item"
-notify:
+  notify:
     - reload-systemd
     - enable-services
 

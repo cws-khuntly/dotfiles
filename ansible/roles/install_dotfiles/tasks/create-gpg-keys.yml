@@ -18,9 +18,13 @@
     mode: "0600"
   when:
     - install_dotfiles_gpg_keys_files_found.files | count == 0
-  notify:
-    - generate-gpg-keys
-    - reload-key-agents
+
+- name: Generate the GPG key pair using batch mode
+  ansible.builtin.command:
+    cmd: "gpg --batch --gen-key {{ user_home_dir | default(ansible_user_dir) }}/input.txt
+    creates: "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/gnupg/pubring.kbx"
+  when:
+    - install_dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: Capture the key ID
   ansible.builtin.command:
@@ -30,8 +34,16 @@
   when:
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false
-  notify:
-    - generate-git-config-with-gpg
+
+- name: Generate git configuration including signing key
+  vars:
+    gpg_signing_key: "{{ install_dotfiles_gpg_key_signing_id | default(user_account.gpg.signing_key) }}"
+  ansible.builtin.template:
+    src: "templates/config/git/config"
+    dest: "{{ user_home_dir | default(ansible_user_dir) }}/.config/git/config"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_group }}"
+    mode: "0644"
 
 - name: Remove temporary GPG file
   ansible.builtin.file:

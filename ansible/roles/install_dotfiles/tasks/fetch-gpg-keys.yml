@@ -16,11 +16,6 @@
     - secrets.google.GCP_SERVICE_JSON | length > 0
     - secrets.google.project_id is defined
     - secrets.google.gpg_key_id is defined
-  notify:
-    - save-gpg-key
-    - import-gpg-key
-    - cleanup-gpg-files
-    - reload-key-agents
 
 - name: Get GPG Private Key (Bitwarden Secrets)
   vars:
@@ -32,8 +27,23 @@
   when:
     - secrets.bitwarden.BW_ACCESS_TOKEN | length > 0
     - secrets.bitwarden.gpg_key_id is defined
-  notify:
-    - save-gpg-key
-    - import-gpg-key
-    - cleanup-gpg-files
-    - reload-key-agents
+
+- name: Save fetched GPG private key file
+  ansible.builtin.copy:
+    content: "{{ install_dotfiles_gpg_private_key_output.value }}"
+    dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/gnupg/privkey.asc"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+
+- name: Import fetched GPG private key
+  ansible.builtin.command:
+    argv:
+      - "gpg"
+      - "--batch"
+      - "--passphrase"
+      - "{{ user_account.gpg.passphrase }}"
+      - "--pinentry-mode loopback"
+      - "--import"
+      - "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/gnupg/privkey.asc"
+    creates: "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/gnupg/private-keys-v1.d/*.key"

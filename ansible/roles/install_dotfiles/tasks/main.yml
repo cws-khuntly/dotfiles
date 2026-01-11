@@ -15,11 +15,7 @@
 
 - name: Generate SSH keys (if enabled)
   ansible.builtin.include_tasks:
-    file: "{{ ssh_key_item }}"
-  loop:
-    - create-ssh-keys.yml
-  loop_control:
-    loop_var: "ssh_key_item"
+    file: "create-ssh-keys.yml"
   when:
     - user_account.ssh.generate_keys is defined
     - user_account.ssh.generate_keys is true
@@ -27,11 +23,7 @@
 
 - name: Fetch SSH keys (if enabled)
   ansible.builtin.include_tasks:
-    file: "{{ fetch_key_item }}"
-  loop:
-    - fetch-ssh-keys.yml
-  loop_control:
-    loop_var: "fetch_key_item"
+    file: "fetch-ssh-keys.yml"
   when:
     - user_account.ssh.generate_keys is defined
     - user_account.ssh.generate_keys is false
@@ -39,11 +31,7 @@
 
 - name: Generate GPG keys (if enabled)
   ansible.builtin.include_tasks:
-    file: "{{ gpg_key_item }}"
-  loop:
-    - create-gpg-keys.yml
-  loop_control:
-    loop_var: "gpg_key_item"
+    file: "create-gpg-keys.yml"
   when:
     - user_account.gpg.generate_keys is defined
     - user_account.gpg.generate_keys is true
@@ -51,11 +39,7 @@
 
 - name: Fetch GPG keys (if enabled)
   ansible.builtin.include_tasks:
-    file: "{{ fetch_key_item }}"
-  loop:
-    - fetch-gpg-keys.yml
-  loop_control:
-    loop_var: "fetch_key_item"
+    file: "fetch-gpg-keys.yml"
   when:
     - user_account.gpg.generate_keys is defined
     - user_account.gpg.generate_keys is false
