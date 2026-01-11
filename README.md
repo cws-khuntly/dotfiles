@@ -4,12 +4,22 @@ These are my dotfiles. They're here for everyone to steal if desired, I don't mi
 
 I was using dotbot (https://github.com/anishathalye/dotbot)  for the installation, but that broke in environments where I couldn't install dotbot. So I wrote my own installation script and based the input file off what dotbot had if I recall correctly.
 
-I made an Ansible playbook
-```
-git clone https://github.com/cws-khuntly/dotfiles.git ${HOME}/.dotfiles;
+To get started with defaults:
 
-ANSIBLE_CONFIG="${HOME}/.dotfiles/config/ansible/ansible.cfg";
+```
+$ git clone https://github.com/cws-khuntly/dotfiles.git ${HOME}/.dotfiles;
+
+declare -x ANSIBLE_CONFIG="${HOME}/.dotfiles/ansible/ansible.cfg";
+
 ansible-playbook -i "${HOME}/.dotfiles/ansible/inventory/hosts.yml" --connection=local "${HOME}/.dotfiles/ansible/site.yml";
 ```
+
+To set up a vault for default configuration (this sets up SSH/GPG passphrases, email, name, etc), create a vault (this one uses a text file for a password, use @prompt to be prompted for a password):
+
+```
+ansible-vault edit --vault-id default@${HOME}/workspace/ansible/vault/ansible.txt ${HOME}/workspace/ansible/vault/default.yml
+```
+
+What I usually do is set up a default values to override the ones provided in `group_vars` and a separate `dotfiles.yml` vault file containing passwords/passphrases and any other user-specific information.
 
 I don't make changes every day but it is fairly active. If you have any questions or anything like that create an issue or toss me an email or whatever and I'll help where I can!
