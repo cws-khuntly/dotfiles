@@ -8,7 +8,7 @@
     daemon_reexec: true
     scope: user
   when:
-    - user_account.systemd.enabled == "true"
+    - user_account.systemd.enabled is true
   listen: reload-user-systemd
 
 - name: Enable and start agent services
@@ -18,7 +18,7 @@
     state: restarted
     scope: user
   when:
-    - user_account.systemd.enabled == "true"
+    - user_account.systemd.enabled is true
   listen:
     - enable-key-agents
     - reload-key-agents
@@ -30,5 +30,5 @@
     state: restarted
     scope: user
   when:
-    - user_account.systemd.enabled == "true"
+    - user_account.systemd.enabled is true
   listen: enable-logrotate
