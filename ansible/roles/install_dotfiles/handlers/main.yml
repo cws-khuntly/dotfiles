@@ -1,0 +1,14 @@
+# ====  ANSIBLE   =============================================================
+#          NAME:  roles/common/tasks/main.yml
+#   DESCRIPTION:  Main entry point for common tasks
+# =============================================================================
+---
+- name: Enable and start services
+  ansible.builtin.include_tasks:
+    file: "{{ handler_item }}"
+  loop:
+    - enable-services.yml
+    - reload-key-agents.yml
+    - reload-systemd.yml
+  loop_control:
+    loop_var: "handler_item"
