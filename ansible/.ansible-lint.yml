@@ -6,7 +6,7 @@ verbosity: 1
 skip_action_validation: false
 
 skip_list:
-  - '403'
+#  - '403'
 #  - 'role-name'
 
 enable_list:
