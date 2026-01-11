@@ -1,0 +1,54 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  site.yml
+#   DESCRIPTION:  Entry point for playbook
+# ============================================================================
+---
+- name: Deploy and install dotfiles
+  hosts: all
+  vars_files:
+    - "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/default.yml"
+    - "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/dotfiles.yml"
+    - "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/bitwarden.yml"
+    - "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/gcloud.yml"
+
+  pre_tasks:
+    - name: Install galaxy collections
+      ansible.builtin.command:
+        cmd: "ansible-galaxy collection install -r {{ install.base_path }}/ansible/requirements.yml"
+      changed_when: true
+
+    - name: Create GCP Service Account JSON (if available)
+      ansible.builtin.copy:
+        content: "{{ secrets.google.service_account_json }}"
+        dest: "/run/user/{{ ansible_user_uid }}/service_account.json"
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_group }}"
+        mode: "0600"
+      when:
+        - secrets.google.service_account is true
+        - secrets.google.service_account_json | length > 0
+
+  tasks:
+    - name: Run common role
+      ansible.builtin.include_role:
+        name: common
+
+    - name: Run custom role install_dotfiles
+      ansible.builtin.include_role:
+        name: install_dotfiles
+
+    - name: Set up Ansible workspace
+      ansible.builtin.include_role:
+        name: setup_ansible
+      when:
+        - user_account.setup_ansible is defined
+        - user_account.setup_ansible is true
+
+  post_tasks:
+    - name: Remove GCP Service Account JSON (if available)
+      ansible.builtin.file:
+        path: "/run/user/{{ ansible_user_uid }}/service_account.json"
+        state: absent
+      when:
+        - secrets.google.service_account is true
+        - secrets.google.service_account_json | length > 0
