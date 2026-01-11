@@ -38,5 +38,5 @@ user_account:
     expiry: ""
   systemd:
     enabled: false
-    enabled_services:
+    services:
       - ""

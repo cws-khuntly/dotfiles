@@ -44,3 +44,11 @@
     - user_account.gpg.generate_keys is defined
     - user_account.gpg.generate_keys is false
     - user_account.gpg.fetch_keys is true
+
+- name: Reload shell environment
+  ansible.builtin.command:
+    cmd: "source {{ user_home_dir | default(ansible_user_home) }}/.bash_profile"
+  changed_when: true
+  notify:
+    - reload-systemd
+    - enable-services
