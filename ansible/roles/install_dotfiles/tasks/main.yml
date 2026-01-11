@@ -12,7 +12,6 @@
     - create-config-links.yml
   loop_control:
     loop_var: "core_item"
-  notify: reload-systemd
 
 - name: Generate SSH keys (if enabled)
   ansible.builtin.include_tasks:
