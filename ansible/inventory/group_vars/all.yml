@@ -5,6 +5,7 @@
 ---
 install:
   base_path: "{{ ansible_user_dir }}/.dotfiles"
+  tmp_dir: "/var/tmp"
 
 secrets:
   bitwarden:
