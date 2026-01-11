@@ -26,6 +26,7 @@ openpgp-revocs.d/
 ## ignore files
 ##
 .#*
-gpg.pub
-gpg.sec
-pubring.kbx
+*.kbx
+*.db
+*.asc
+
