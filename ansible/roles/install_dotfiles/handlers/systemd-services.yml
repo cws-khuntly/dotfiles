@@ -17,7 +17,7 @@
     state: restarted
     scope: user
   listen: enable-services
-  loop: "{{ user_account.systemd.services }}
+  loop: "{{ user_account.systemd.services }}"
   loop_control:
     loop_var: "enabled_service_name"
   when:
