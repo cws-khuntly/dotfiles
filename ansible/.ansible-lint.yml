@@ -1,8 +1,8 @@
 profile: production
 strict: true
 use_default_rules: true
-# quiet: true
-verbosity: 3
+quiet: true
+verbosity: 1
 skip_action_validation: false
 
 # skip_list:
