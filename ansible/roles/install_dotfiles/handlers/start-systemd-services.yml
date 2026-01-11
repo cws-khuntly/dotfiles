@@ -7,8 +7,6 @@
   ansible.builtin.systemd_service:
     daemon_reexec: true
     scope: user
-  when:
-    - user_account.systemd.enabled is true
   listen: reload-user-systemd
 
 - name: Enable and start agent services
@@ -17,8 +15,6 @@
     enabled: true
     state: restarted
     scope: user
-  when:
-    - user_account.systemd.enabled is true
   listen:
     - enable-key-agents
     - reload-key-agents
@@ -29,6 +25,4 @@
     enabled: true
     state: restarted
     scope: user
-  when:
-    - user_account.systemd.enabled is true
   listen: enable-logrotate
