@@ -13,8 +13,8 @@
     return_value: true
   register: "install_dotfiles_ssh_key_output"
   when:
-    - user_account.ssh.fetch_keys == "true"
-    - user_account.ssh.generate_keys == "false"
+    - user_account.ssh.fetch_keys is true
+    - user_account.ssh.generate_keys is false
   notify:
     - save-ssh-key
     - reload-key-agents
