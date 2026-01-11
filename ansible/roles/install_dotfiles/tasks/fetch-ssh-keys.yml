@@ -3,18 +3,33 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: Get SSH key
+- name: Get SSH Private Key (Google Cloud)
   google.cloud.gcp_secret_manager:
     auth_kind: "serviceaccount"
-    service_account_file: "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/gcloud/service_account.json"
+    service_account_file: "/run/user/{{ ansible_user_uid }}/service_account.json"
     project: "{{ gcp.projects.project_id }}"
     name: "ssh-key"
     state: present
     return_value: true
-  register: "install_dotfiles_ssh_key_output"
+  register: "install_dotfiles_ssh_private_key_output"
   when:
-    - user_account.ssh.fetch_keys is true
-    - user_account.ssh.generate_keys is false
+    - user_account.ssh.generate_keys == "false"
+    - user_account.ssh.fetch_keys == "true"
+    - secrets.google.GCP_SERVICE_JSON | length > 0
+  notify:
+    - save-ssh-key
+    - reload-key-agents
+
+- name: Get SSH Private Key (Bitwarden Secrets)
+  bitwarden.secrets.lookup:
+    access_token: "{{ secrets.bitwarden.BW_ACCESS_TOKEN }}"
+    state_file_dir: "/run/user/{{ansible_user_uid }}/bwstate"
+    secret_id: "{{ secrets.bitwarden.ssh_key_id }}"
+  register: "install_dotfiles_ssh_private_key_output"
+  when:
+    - user_account.gpg.generate_keys == "false"
+    - user_account.gpg.fetch_keys == "true"
+    - secrets.bitwarden.BW_ACCESS_TOKEN | length > 0
   notify:
     - save-ssh-key
     - reload-key-agents

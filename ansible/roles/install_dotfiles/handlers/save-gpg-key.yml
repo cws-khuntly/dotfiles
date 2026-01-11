@@ -3,7 +3,7 @@
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
 ---
-- name: Save GPG private key file
+- name: Save fetched GPG private key file
   ansible.builtin.copy:
     content: "{{ install_dotfiles_gpg_private_key_output.value }}"
     dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/gnupg/privkey.asc"

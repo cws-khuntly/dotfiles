@@ -3,7 +3,7 @@
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
 ---
-- name: Save SSH private key file
+- name: Save fetched SSH private key file
   ansible.builtin.copy:
     content: "{{ install_dotfiles_ssh_key_output.value }}"
     dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"

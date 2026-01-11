@@ -7,8 +7,14 @@ install:
   base_path: "{{ ansible_user_dir }}/.dotfiles"
 
 secrets:
-  BW_ACCESS_TOKEN: ""
-  GCP_ACCESS_TOKEN: ""
+  bitwarden:
+    BW_ACCESS_TOKEN: ""
+    ssh_key_id: ""
+    gpg_key_id: ""
+  google:
+    GCP_ACCESS_TOKEN: ""
+    ssh_key_id: ""
+    gpg_key_id: ""
 
 user_account:
   name: ""

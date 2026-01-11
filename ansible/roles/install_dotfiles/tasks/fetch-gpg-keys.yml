@@ -3,18 +3,33 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: Get GPG Private Key
+- name: Get GPG Private Key (Google Cloud)
   google.cloud.gcp_secret_manager:
     auth_kind: "serviceaccount"
-    service_account_file: "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/gcloud/service_account.json"
-    project: "{{ gcp.projects.project_id }}"
-    name: "gpg-key"
+    service_account_file: "/run/user/{{ ansible_user_uid }}/service_account.json"
+    project: "{{ secrets.google.project_id }}"
+    name: "{{ secrets.google.gpg_key_id }}"
     state: present
     return_value: true
   register: "install_dotfiles_gpg_private_key_output"
   when:
     - user_account.gpg.generate_keys == "false"
     - user_account.gpg.fetch_keys == "true"
+    - secrets.google.GCP_SERVICE_JSON | length > 0
+  notify:
+    - save-gpg-key
+    - import-gpg-key
+    - cleanup-gpg-files
+    - reload-key-agents
+
+- name: Get GPG Private Key (Bitwarden Secrets)
+  vars:
+    bw_ssh_key: "{{ lookup('bitwarden.secrets.lookup', secrets.bitwarden.gpg_key_id, access_token=secrets.bitwarden.BW_ACCESS_TOKEN ) }}"
+  register: "install_dotfiles_gpg_private_key_output"
+  when:
+    - user_account.gpg.generate_keys == "false"
+    - user_account.gpg.fetch_keys == "true"
+    - secrets.bitwarden.BW_ACCESS_TOKEN | length > 0
   notify:
     - save-gpg-key
     - import-gpg-key

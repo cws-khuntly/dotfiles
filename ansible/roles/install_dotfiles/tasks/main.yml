@@ -36,7 +36,7 @@
     - ssh.generate_keys is defined
     - ssh.generate_keys is false
     - ssh.fetch_keys is true
-    - secrets.GCP_ACCESS_TOKEN is defined
+    - secrets.GCP_ACCESS_TOKEN is defined or secrets.service_account_json is defined
     - gcp.projects.project_id is defined
 
 - name: Generate GPG keys (if enabled)
@@ -62,5 +62,5 @@
     - gpg.generate_keys is defined
     - gpg.generate_keys is false
     - gpg.fetch_keys is true
-    - secrets.GCP_ACCESS_TOKEN is defined
+    - secrets.GCP_ACCESS_TOKEN is defined or secrets.service_account_json is defined
     - gcp.projects.project_id is defined
