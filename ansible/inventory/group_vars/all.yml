@@ -1,0 +1,38 @@
+# ====  ANSIBLE   =============================================================
+#          NAME:  group_vars/all/main.yml
+#   DESCRIPTION:  Common variables that apply to this play
+# =============================================================================
+---
+install:
+  base_path: "{{ ansible_user_dir }}/.dotfiles"
+
+secrets:
+  bitwarden:
+    BW_ACCESS_TOKEN: ""
+    ssh_key_id: ""
+    gpg_key_id: ""
+  google:
+    GCP_ACCESS_TOKEN: ""
+    project_id: ""
+    ssh_key_id: ""
+    gpg_key_id: ""
+
+user_account:
+  name: ""
+  email: ""
+  home_dir: "{{ ansible_user_dir }}"
+  setup_ansible: false
+  ssh:
+    generate_keys: false
+    fetch_keys: false
+    key_type: ""
+    passphrase: ""
+  gpg:
+    generate_keys: false
+    fetch_keys: false
+    passphrase: ""
+    signing_key: ""
+  systemd:
+    enabled: false
+    enabled_services:
+      - ""
