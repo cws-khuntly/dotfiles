@@ -24,7 +24,7 @@
 
 - name: Get GPG Private Key (Bitwarden Secrets)
   vars:
-    bw_ssh_key: "{{ lookup('bitwarden.secrets.lookup', secrets.bitwarden.gpg_key_id, access_token=secrets.bitwarden.BW_ACCESS_TOKEN ) }}"
+    bw_ssh_key: "{{ lookup('bitwarden.secrets.lookup', secrets.bitwarden.gpg_key_id, access_token=secrets.bitwarden.BW_ACCESS_TOKEN) }}"
   ansible.builtin.debug:
     msg: "Fetching key from Bitwarden..."
   no_log: true
