@@ -21,14 +21,15 @@
     - reload-key-agents
 
 - name: Get SSH Private Key (Bitwarden Secrets)
-  bitwarden.secrets.lookup:
-    access_token: "{{ secrets.bitwarden.BW_ACCESS_TOKEN }}"
-    state_file_dir: "/run/user/{{ansible_user_uid }}/bwstate"
-    secret_id: "{{ secrets.bitwarden.ssh_key_id }}"
+  vars:
+    bw_ssh_key: "{{ lookup('bitwarden.secrets.lookup', secrets.bitwarden.ssh_key_id, access_token=secrets.bitwarden.BW_ACCESS_TOKEN ) }}"
+  ansible.builtin.debug:
+    msg: "Fetching key from Bitwarden..."
+  no_log: true
   register: "install_dotfiles_ssh_private_key_output"
   when:
-    - user_account.gpg.generate_keys == "false"
-    - user_account.gpg.fetch_keys == "true"
+    - user_account.ssh.generate_keys == "false"
+    - user_account.ssh.fetch_keys == "true"
     - secrets.bitwarden.BW_ACCESS_TOKEN | length > 0
   notify:
     - save-ssh-key
