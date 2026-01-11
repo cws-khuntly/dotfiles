@@ -5,7 +5,7 @@ use_default_rules: true
 verbosity: 3
 skip_action_validation: false
 
-skip_list:
+# skip_list:
 #  - '403'
 #  - 'role-name'
 
