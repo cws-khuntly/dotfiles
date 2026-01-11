@@ -31,6 +31,6 @@
         name: setup_ansible
       when:
         - user_account.setup_ansible is defined
-        - user_account.setup_ansible == "true"
+        - user_account.setup_ansible is true
 
   post_tasks:
