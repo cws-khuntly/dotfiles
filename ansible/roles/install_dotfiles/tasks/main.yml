@@ -22,8 +22,8 @@
     loop_var: "ssh_key_item"
   when:
     - ssh.generate_keys is defined
-    - ssh.generate_keys == "true"
-    - ssh.fetch_keys == "false"
+    - ssh.generate_keys is true
+    - ssh.fetch_keys is false
 
 - name: Fetch SSH keys (if enabled)
   ansible.builtin.include_tasks:
@@ -34,8 +34,8 @@
     loop_var: "fetch_key_item"
   when:
     - ssh.generate_keys is defined
-    - ssh.generate_keys == "false"
-    - ssh.fetch_keys == "true"
+    - ssh.generate_keys is false
+    - ssh.fetch_keys is true
     - secrets.GCP_ACCESS_TOKEN is defined
     - gcp.projects.project_id is defined
 
@@ -48,8 +48,8 @@
     loop_var: "gpg_key_item"
   when:
     - gpg.generate_keys is defined
-    - gpg.generate_keys == "true"
-    - gpg.fetch_keys == "false"
+    - gpg.generate_keys is true
+    - gpg.fetch_keys is false
 
 - name: Fetch GPG keys (if enabled)
   ansible.builtin.include_tasks:
@@ -60,7 +60,7 @@
     loop_var: "fetch_key_item"
   when:
     - gpg.generate_keys is defined
-    - gpg.generate_keys == "false"
-    - gpg.fetch_keys == "true"
+    - gpg.generate_keys is false
+    - gpg.fetch_keys is true
     - secrets.GCP_ACCESS_TOKEN is defined
     - gcp.projects.project_id is defined
