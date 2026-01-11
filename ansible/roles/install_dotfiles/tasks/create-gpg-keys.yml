@@ -28,8 +28,8 @@
   changed_when: false
   register: install_dotfiles_gpg_key_signing_id
   when:
-    - user_account.gpg.generate_keys == "true"
-    - user_account.gpg.fetch_keys == "false"
+    - user_account.gpg.generate_keys is true
+    - user_account.gpg.fetch_keys is false
   notify:
     - generate-git-config-with-gpg
 
