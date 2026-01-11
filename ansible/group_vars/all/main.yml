@@ -13,6 +13,7 @@ secrets:
     gpg_key_id: ""
   google:
     GCP_ACCESS_TOKEN: ""
+    project_id: ""
     ssh_key_id: ""
     gpg_key_id: ""
 
