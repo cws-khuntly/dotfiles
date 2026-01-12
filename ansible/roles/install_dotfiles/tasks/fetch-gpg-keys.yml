@@ -27,12 +27,9 @@
     auth_kind: "serviceaccount"
     service_account_file: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     project: "{{ gcp.projects.project_id }}"
-    name: "{{ gpg_key_entry.name }}"
+    name: "{{ gcp.secret_entries.gpg_key_id }}"
     state: present
     return_value: true
-  loop: "{{ gcp.secret_entries.gpg_keys }}"
-  loop_control:
-    loop_var: "gpg_key_entry"
   register: "install_dotfiles_gpg_private_key_output"
   when:
     - gcp.projects.project_id is defined
