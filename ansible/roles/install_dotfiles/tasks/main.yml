@@ -53,6 +53,3 @@
 - name: "Update configuration files post-installation"
   ansible.builtin.include_tasks:
     file: "update-config-files.yml"
-  notify:
-    - reload-systemd
-    - enable-services
