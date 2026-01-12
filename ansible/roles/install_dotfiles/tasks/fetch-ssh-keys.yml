@@ -39,7 +39,7 @@
 
 - name: "Save fetched SSH private key file"
   ansible.builtin.copy:
-    content: "{{ install_dotfiles_ssh_private_key_output }}"
+    content: "{{ install_dotfiles_ssh_private_key_output.stdout }}"
     dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
