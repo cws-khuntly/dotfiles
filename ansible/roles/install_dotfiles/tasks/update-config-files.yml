@@ -25,3 +25,11 @@
   when:
     - install_dotfiles_gpg_key_signing_id is defined
     - install_dotfiles_gpg_key_signing_id | length > 0
+
+- name: "Send notification to reload systemd and enable services"
+  ansible.builtin.command:
+    cmd: "/bin/true"
+  changed_when: true
+  notify:
+    - reload-systemd
+    - enable-services
