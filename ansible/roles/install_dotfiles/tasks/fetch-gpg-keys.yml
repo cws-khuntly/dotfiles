@@ -45,16 +45,6 @@
     group: "{{ ansible_user_gid }}"
     mode: "0600"
 
-- name: "Create or update permissions on ${HOME}/.gnupg"
-  ansible.builtin.file:
-    path: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg"
-    state: directory
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0700"
-  when:
-    - install_dotfiles_gpg_keys_files_found.files | count == 0
-
 - name: "Import fetched GPG private key"
   ansible.builtin.command:
     argv:
