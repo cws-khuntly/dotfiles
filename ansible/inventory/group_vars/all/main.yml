@@ -14,25 +14,25 @@ install:
 # =============================================================================
 # Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/bitwarden.yml" if overrides are desired
 # =============================================================================
-secrets:
-  bitwarden:
-    BW_ACCESS_TOKEN: ""
+# secrets:
+#   bitwarden:
+#    BW_ACCESS_TOKEN: ""
 
-bitwarden:
-  projects:
-    project_id: ""
-  secret_entries:
-    ssh_key_id: ""
-    gpg_key_id: ""
+# bitwarden:
+#   projects:
+#     project_id: ""
+#   secret_entries:
+#     ssh_key_id: ""
+#     gpg_key_id: ""
 
 # =============================================================================
 # Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/gcloud.yml" if overrides are desired
 # =============================================================================
-secrets:
-  google:
-    GCP_ACCESS_TOKEN: ""
-    service_account_json: |
-      <<your json here>>
+# secrets:
+#   google:
+#     GCP_ACCESS_TOKEN: ""
+#     service_account_json: |
+#       <<your json here>>
 
 gcp:
   projects:
