@@ -31,7 +31,7 @@
 
 - name: "Save fetched GPG private key file"
   ansible.builtin.copy:
-    content: "{{ install_dotfiles_gpg_private_key_output.value }}"
+    content: "{{ install_dotfiles_gpg_private_key_output }}"
     dest: "{{ install.tmp_dir | default(ansible_user_dir) }}/privkey.asc"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
