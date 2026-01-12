@@ -17,7 +17,7 @@ To set up a vault for default configuration (this sets up SSH/GPG passphrases, e
 ```
 $ mkdir -pv ${HOME}/workspace/ansible/vault;
 
-$ ansible-vault edit --vault-id default@${HOME}/workspace/ansible/vault/ansible.txt ${HOME}/workspace/ansible/vault/default.yml
+$ ansible-vault edit --vault-id dotfiles@${HOME}/workspace/ansible/vault/ansible.txt ${HOME}/workspace/ansible/vault/dotfiles.yml
 ```
 
 What I usually do is set up a default values to override the ones provided in `group_vars` and a separate `dotfiles.yml` vault file containing passwords/passphrases and any other user-specific information.
