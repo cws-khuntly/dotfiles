@@ -17,17 +17,6 @@
         cmd: "ansible-galaxy collection install -r {{ install.base_path }}/ansible/requirements.yml"
       changed_when: true
 
-    - name: Create GCP Service Account JSON (if available)
-      ansible.builtin.copy:
-        content: "{{ secrets.google.service_account_json }}"
-        dest: "/run/user/{{ ansible_user_uid }}/service_account.json"
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_group }}"
-        mode: "0600"
-      when:
-        - secrets.google.service_account is true
-        - secrets.google.service_account_json | length > 0
-
   tasks:
     - name: Run common role
       ansible.builtin.include_role:
@@ -45,10 +34,17 @@
         - user_account.setup_ansible is true
 
   post_tasks:
-    - name: Remove GCP Service Account JSON (if available)
+    - name: "Remove temporary GPG file"
       ansible.builtin.file:
-        path: "/run/user/{{ ansible_user_uid }}/service_account.json"
+        path: "{{ user_account.home_dir | default(ansible_user_dir) }}/privkey.asc"
         state: absent
-      when:
-        - secrets.google.service_account is true
-        - secrets.google.service_account_json | length > 0
+
+    - name: "Remove service account file"
+      ansible.builtin.file:
+        path: "{{ user_account.home_dir | default(ansible_user_dir) }}/service_account.json"
+        state: absent
+
+    - name: "Remove service account file"
+      ansible.builtin.file:
+        path: "{{ user_home_dir | default(ansible_user_dir) }}/input.txt"
+        state: absent
