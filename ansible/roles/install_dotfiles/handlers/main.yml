@@ -3,7 +3,14 @@
 #   DESCRIPTION:  Main entry point for common tasks
 # =============================================================================
 ---
-- name: Enable and start services
+- name: "Reload systemd after changes"
+  ansible.builtin.systemd_service:
+    daemon_reexec: true
+    scope: user
+  listen: reload-systemd
+  when: user_account.systemd.enabled is true
+
+- name: "Enable and start services"
   ansible.builtin.systemd_service:
     name: "{{ enabled_service_name }}"
     enabled: true
@@ -17,7 +24,7 @@
     - user_account.systemd.enabled is true
     - user_account.systemd.services | length > 0
 
-- name: Restart key agent services in systemd userspace
+- name: "Restart key agent services in systemd userspace"
   ansible.builtin.systemd_service:
     name: "key-agents.target"
     enabled: true
@@ -26,10 +33,3 @@
   listen: reload-key-agents
   when:
     - user_account.systemd.enabled is true
-
-- name: Reload systemd after changes
-  ansible.builtin.systemd_service:
-    daemon_reexec: true
-    scope: user
-  listen: reload-systemd
-  when: user_account.systemd.enabled is true

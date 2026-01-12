@@ -3,11 +3,11 @@
 #   DESCRIPTION:  Main entry point for common tasks
 # =============================================================================
 ---
-- name: Main common role running subtask(s)
+- name: "Main common role running subtask(s)"
   ansible.builtin.include_tasks:
     file: "{{ common_item }}"
   loop:
-    - create-venv.yml
-    - install-pip-items.yml
+    - "create-venv.yml"
+    - "install-pip-items.yml"
   loop_control:
     loop_var: "common_item"

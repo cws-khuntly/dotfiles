@@ -3,20 +3,19 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: Remove any existing configuration directories
+- name: "Remove any existing configuration directories"
   ansible.builtin.file:
     path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/{{ rm_config_item }}"
     state: "absent"
   loop:
     - "environment.d"
     - "git"
-    - "gnupg"
     - "systemd"
     - "tmux"
   loop_control:
     loop_var: "rm_config_item"
 
-- name: Create links in home directory to config files
+- name: "Create links for ${HOME}/.config"
   ansible.builtin.file:
     src: "{{ install.base_path }}/config/{{ ln_config_item }}"
     dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/{{ ln_config_item }}"
@@ -26,13 +25,12 @@
   loop:
     - "environment.d"
     - "git"
-    - "gnupg"
     - "systemd"
     - "tmux"
   loop_control:
     loop_var: "ln_config_item"
 
-- name: Create links in home directory to dotfiles
+- name: "Create links in ${HOME}/.ssh"
   ansible.builtin.file:
     src: "{{ install.base_path }}/config/ssh/{{ ssh_item }}"
     dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/{{ ssh_item }}"
@@ -45,7 +43,7 @@
   loop_control:
     loop_var: "ssh_item"
 
-- name: Create ssh local.d
+- name: "Create ${HOME}/.ssh/local.d"
   ansible.builtin.file:
     path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/local.d"
     state: "directory"

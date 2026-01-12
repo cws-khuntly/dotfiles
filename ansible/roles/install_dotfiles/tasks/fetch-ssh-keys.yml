@@ -3,7 +3,7 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: Get SSH Private Key (Google Cloud)
+- name: "Get SSH Private Key (Google Cloud)"
   google.cloud.gcp_secret_manager:
     auth_kind: "serviceaccount"
     service_account_file: "/run/user/{{ ansible_user_uid }}/service_account.json"
@@ -15,7 +15,7 @@
   when:
     - secrets.google.GCP_SERVICE_JSON | length > 0
 
-- name: Get SSH Private Key (Bitwarden Secrets)
+- name: "Get SSH Private Key (Bitwarden Secrets)"
   vars:
     bw_ssh_key: "{{ lookup('bitwarden.secrets.lookup', secrets.bitwarden.ssh_key_id, access_token=secrets.bitwarden.BW_ACCESS_TOKEN) }}"
   ansible.builtin.debug:
@@ -25,7 +25,7 @@
   when:
     - secrets.bitwarden.BW_ACCESS_TOKEN | length > 0
 
-- name: Save fetched SSH private key file
+- name: "Save fetched SSH private key file"
   ansible.builtin.copy:
     content: "{{ install_dotfiles_ssh_key_output.value }}"
     dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"

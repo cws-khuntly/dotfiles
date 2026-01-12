@@ -3,17 +3,17 @@
 #   DESCRIPTION:  Main entry point for common tasks
 # =============================================================================
 ---
-- name: Main custom role running subtask(s)
+- name: "Main custom role running subtask(s)"
   ansible.builtin.include_tasks:
     file: "{{ core_item }}"
   loop:
-    - create-home-directories.yml
-    - create-home-links.yml
-    - create-config-links.yml
+    - "create-home-directories.yml"
+    - "create-home-links.yml"
+    - "create-config-links.yml"
   loop_control:
     loop_var: "core_item"
 
-- name: Generate SSH keys (if enabled)
+- name: "Generate SSH keys (if enabled)"
   ansible.builtin.include_tasks:
     file: "create-ssh-keys.yml"
   when:
@@ -21,7 +21,7 @@
     - user_account.ssh.generate_keys is true
     - user_account.ssh.fetch_keys is false
 
-- name: Fetch SSH keys (if enabled)
+- name: "Fetch SSH keys (if enabled)"
   ansible.builtin.include_tasks:
     file: "fetch-ssh-keys.yml"
   when:
@@ -29,7 +29,7 @@
     - user_account.ssh.generate_keys is false
     - user_account.ssh.fetch_keys is true
 
-- name: Generate GPG keys (if enabled)
+- name: "Generate GPG keys (if enabled)"
   ansible.builtin.include_tasks:
     file: "create-gpg-keys.yml"
   when:
@@ -37,7 +37,7 @@
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false
 
-- name: Fetch GPG keys (if enabled)
+- name: "Fetch GPG keys (if enabled)"
   ansible.builtin.include_tasks:
     file: "fetch-gpg-keys.yml"
   when:
@@ -45,7 +45,7 @@
     - user_account.gpg.generate_keys is false
     - user_account.gpg.fetch_keys is true
 
-- name: Reload shell environment
+- name: "Reload shell environment"
   ansible.builtin.command:
     cmd: "source {{ user_home_dir | default(ansible_user_home) }}/.bash_profile"
   changed_when: true

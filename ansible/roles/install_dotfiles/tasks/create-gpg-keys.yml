@@ -3,15 +3,15 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: Search for existing private keys
+- name: "Search for existing private keys"
   ansible.builtin.find:
-    paths: "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/gnupg/private-keys-v1.d/"
+    paths: "{{ user_account.home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/"
     patterns: "*.key"
     file_type: "file"
     recurse: false
   register: "install_dotfiles_gpg_keys_files_found"
 
-- name: Define GPG batch configuration file content
+- name: "Define GPG batch configuration file content"
   ansible.builtin.template:
     src: "templates/config/gnupg/template.j2"
     dest: "{{ user_home_dir | default(ansible_user_dir) }}/input.txt"
@@ -19,23 +19,23 @@
   when:
     - install_dotfiles_gpg_keys_files_found.files | count == 0
 
-- name: Generate the GPG key pair using batch mode
+- name: "Generate the GPG key pair using batch mode"
   ansible.builtin.command:
     cmd: "gpg --batch --gen-key {{ user_home_dir | default(ansible_user_dir) }}/input.txt"
-    creates: "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/gnupg/pubring.kbx"
+    creates: "{{ user_account.home_dir | default(ansible_user_dir) }}/.gnupg/trustdb.gpg"
   when:
     - install_dotfiles_gpg_keys_files_found.files | count == 0
 
-- name: Capture the key ID
+- name: "Capture the key ID"
   ansible.builtin.command:
-    cmd: "./files/scripts/get_gpg_key.sh"
+    cmd: "{{ role_path }}/files/scripts/get_gpg_key.sh"
   changed_when: false
   register: install_dotfiles_gpg_key_signing_id
   when:
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false
 
-- name: Generate git configuration including signing key
+- name: "Generate git configuration including signing key"
   vars:
     gpg_signing_key: "{{ install_dotfiles_gpg_key_signing_id | default(user_account.gpg.signing_key) }}"
   ansible.builtin.template:
@@ -45,7 +45,7 @@
     group: "{{ ansible_user_group }}"
     mode: "0644"
 
-- name: Remove temporary GPG file
+- name: "Remove temporary GPG file"
   ansible.builtin.file:
     path: "{{ user_home_dir | default(ansible_user_dir) }}/input.txt"
     state: absent

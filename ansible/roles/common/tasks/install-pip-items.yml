@@ -3,20 +3,20 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: Install google-auth via pip
+- name: "Install google-auth via pip"
   ansible.builtin.pip:
-    name: google-auth
+    name: "google-auth"
   when:
     - secrets.GCP_ACCESS_TOKEN is defined
 
-- name: Install bcrypt via pip
+- name: "Install bcrypt via pip"
   ansible.builtin.pip:
-    name: bcrypt
+    name: "bcrypt"
   when:
     - user_account.ssh.passphrase is defined
 
-- name: Install bitwarden SDK via pip
+- name: "Install bitwarden SDK via pip"
   ansible.builtin.pip:
-    name: bitwarden-sdk
+    name: "bitwarden-sdk"
   when:
     - secrets.BW_ACCESS_TOKEN is defined
