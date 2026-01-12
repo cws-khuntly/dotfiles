@@ -18,6 +18,7 @@
     file: "create-ssh-keys.yml"
   when:
     - user_account.ssh.generate_keys is defined
+    - user_account.ssh.fetch_keys is defined
     - user_account.ssh.generate_keys is true
     - user_account.ssh.fetch_keys is false
 
@@ -26,6 +27,7 @@
     file: "fetch-ssh-keys.yml"
   when:
     - user_account.ssh.generate_keys is defined
+    - user_account.ssh.fetch_keys is defined
     - user_account.ssh.generate_keys is false
     - user_account.ssh.fetch_keys is true
 
@@ -34,6 +36,7 @@
     file: "create-gpg-keys.yml"
   when:
     - user_account.gpg.generate_keys is defined
+    - user_account.gpg.fetch_keys is defined
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false
 
@@ -42,6 +45,7 @@
     file: "fetch-gpg-keys.yml"
   when:
     - user_account.gpg.generate_keys is defined
+    - user_account.gpg.fetch_keys is defined
     - user_account.gpg.generate_keys is false
     - user_account.gpg.fetch_keys is true
 
