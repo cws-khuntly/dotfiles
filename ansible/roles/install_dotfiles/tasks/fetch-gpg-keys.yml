@@ -48,6 +48,9 @@
       - "--import"
       - "{{ user_account.home_dir | default(ansible_user_dir) }}/privkey.asc"
     creates: "{{ user_account.home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/*.key"
+  when:
+    - user_account.gpg.passphrase is defined
+    - user_account.gpg.passphrase | length > 0
 
 - name: "Remove temporary GPG file"
   ansible.builtin.file:
