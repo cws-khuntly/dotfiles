@@ -13,14 +13,17 @@ set VISUAL=/usr/bin/vi
 
 {% for account in user_account.smtp.accounts %}
 {% if account.enabled == true %}
-account {{ account.account_name }} {
-    set smtp-use-starttls
+account {{ account.name }} {
+    {% if use_tls %}
     set ssl-verify=ignore
+    set smtp-use-starttls {% endif %}
+    {% if account.username %}
     set smtp-auth=login
-    set smtp=smtp://{{ account.hostname }}:{{ account.port }}
-    set from="{{ user_account.name }} <{{ user_account.email }}>"
     set smtp-auth-user={{ account.username }}
     set smtp-auth-password={{ account.password }}
+    {% endif %}
+    set smtp=smtp://{{ account.hostname }}:{{ account.port }}
+    set from="{{ user_account.name }} <{{ user_account.email }}>"
 }
 {% endif %}
 {% endfor %}
