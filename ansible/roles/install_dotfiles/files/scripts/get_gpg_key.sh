@@ -24,4 +24,4 @@
 #==============================================================================
 printf "%s\n" "$(gpg --list-secret-keys --keyid-format=long | grep "[S]" | cut -d "/" -f 2 | awk '{print $1}')"
 
-return 0;
+exit 0;
