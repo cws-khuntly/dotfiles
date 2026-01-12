@@ -29,16 +29,6 @@
     - gcp.projects.gpg_key_id is defined
     - gcp.projects.gpg_key_id | length > 0
 
-- name: "Get SSH Private Key (Bitwarden Secrets)"
-  vars:
-    bw_ssh_key: "{{ lookup('bitwarden.secrets.lookup', secrets.bitwarden.ssh_key_id, access_token=secrets.bitwarden.BW_ACCESS_TOKEN) }}"
-  ansible.builtin.debug:
-    msg: "Fetching key from Bitwarden..."
-  no_log: true
-  register: "install_dotfiles_ssh_private_key_output"
-  when:
-    - secrets.bitwarden.BW_ACCESS_TOKEN | length > 0
-
 - name: "Save fetched SSH private key file"
   ansible.builtin.copy:
     content: "{{ install_dotfiles_ssh_key_output.value }}"
