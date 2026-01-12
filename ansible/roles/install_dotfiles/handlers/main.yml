@@ -33,4 +33,4 @@
   listen: reload-key-agents
   when:
     - user_account.systemd.enabled is true
-    - 'key-agents.target' in user_account.systemd.services
+    - "'key-agents.target' in user_account.systemd.services"
