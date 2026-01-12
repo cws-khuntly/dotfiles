@@ -3,17 +3,31 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
+- name: "Save service account file (Google Cloud)"
+  ansible.builtin.copy:
+    content: "{{ secrets.google.GCP_SERVICE_JSON }}"
+    dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/service_account.json"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+  when:
+    - secrets.google.GCP_SERVICE_JSON is defined
+    - secrets.google.GCP_SERVICE_JSON | length > 0
+
 - name: "Get SSH Private Key (Google Cloud)"
   google.cloud.gcp_secret_manager:
     auth_kind: "serviceaccount"
-    service_account_file: "/run/user/{{ ansible_user_uid }}/service_account.json"
+    service_account_file: "{{ user_account.home_dir | default(ansible_user_dir) }}/service_account.json"
     project: "{{ gcp.projects.project_id }}"
     name: "{{ gcp.projects.ssh_key_id }}"
     state: present
     return_value: true
   register: "install_dotfiles_ssh_private_key_output"
   when:
-    - secrets.google.GCP_SERVICE_JSON | length > 0
+    - gcp.projects.project_id is defined
+    - gcp.projects.project_id | length > 0
+    - gcp.projects.gpg_key_id is defined
+    - gcp.projects.gpg_key_id | length > 0
 
 - name: "Get SSH Private Key (Bitwarden Secrets)"
   vars:
@@ -33,3 +47,8 @@
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   notify: reload-key-agents
+
+- name: "Remove service account file"
+  ansible.builtin.file:
+    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/service_account.json"
+    state: absent
