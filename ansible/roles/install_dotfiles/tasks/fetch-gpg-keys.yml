@@ -6,7 +6,7 @@
 - name: "Save service account file (Google Cloud)"
   ansible.builtin.copy:
     content: "{{ secrets.google.GCP_SERVICE_JSON }}"
-    dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/service_account.json"
+    dest: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"
@@ -17,7 +17,7 @@
 - name: "Get GPG Private Key (Google Cloud)"
   google.cloud.gcp_secret_manager:
     auth_kind: "serviceaccount"
-    service_account_file: "{{ user_account.home_dir | default(ansible_user_dir) }}/service_account.json"
+    service_account_file: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     project: "{{ gcp.projects.project_id }}"
     name: "{{ gcp.projects.gpg_key_id }}"
     state: present
@@ -26,13 +26,13 @@
   when:
     - gcp.projects.project_id is defined
     - gcp.projects.project_id | length > 0
-    - gcp.projects.gpg_key_id is defined
-    - gcp.projects.gpg_key_id | length > 0
+    - gcp.secret_entries.gpg_key_id is defined
+    - gcp.secret_entries.gpg_key_id | length > 0
 
 - name: "Save fetched GPG private key file"
   ansible.builtin.copy:
     content: "{{ install_dotfiles_gpg_private_key_output.value }}"
-    dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/privkey.asc"
+    dest: "{{ install.tmp_dir | default(ansible_user_dir) }}/privkey.asc"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"
@@ -46,7 +46,7 @@
       - "{{ user_account.gpg.passphrase }}"
       - "--pinentry-mode loopback"
       - "--import"
-      - "{{ user_account.home_dir | default(ansible_user_dir) }}/privkey.asc"
+      - "{{ install.tmp_dir | default(ansible_user_dir) }}/privkey.asc"
     creates: "{{ user_account.home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/*.key"
   when:
     - user_account.gpg.passphrase is defined
@@ -54,10 +54,10 @@
 
 - name: "Remove temporary GPG file"
   ansible.builtin.file:
-    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/privkey.asc"
+    path: "{{ install.tmp_dir | default(ansible_user_dir) }}/privkey.asc"
     state: absent
 
 - name: "Remove service account file"
   ansible.builtin.file:
-    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/service_account.json"
+    path: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     state: absent

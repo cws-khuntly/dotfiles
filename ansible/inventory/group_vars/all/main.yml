@@ -2,41 +2,81 @@
 #          NAME:  group_vars/all/main.yml
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
+
+# =============================================================================
+# Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/default.yml" if overrides are desired
+# =============================================================================
 ---
 install:
   base_path: "{{ ansible_user_dir }}/.dotfiles"
   tmp_dir: "/var/tmp"
 
+# =============================================================================
+# Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/bitwarden.yml" if overrides are desired
+# =============================================================================
+---
 secrets:
   bitwarden:
     BW_ACCESS_TOKEN: ""
-    ssh_key_id: ""
-    gpg_key_id: ""
-  google:
-    GCP_ACCESS_TOKEN: ""
+
+bitwarden:
+  projects:
     project_id: ""
+  secret_entries:
     ssh_key_id: ""
     gpg_key_id: ""
 
+# =============================================================================
+# Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/gcloud.yml" if overrides are desired
+# =============================================================================
+---
+secrets:
+  google:
+    GCP_ACCESS_TOKEN: ""
+    service_account_json: |
+      <<your json here>>
+
+gcp:
+  projects:
+    project_id: ""
+  secret_entries:
+    ssh_key_id: ""
+    gpg_key_id: ""
+
+# =============================================================================
+# Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/dotfiles.yml" if overrides are desired
+# =============================================================================
+---
 user_account:
   name: ""
   email: ""
-  home_dir: "{{ ansible_user_dir }}"
-  setup_ansible: false
+
   ssh:
-    generate_keys: false
     fetch_keys: false
-    key_type: ""
+    generate_keys: false
     passphrase: ""
+    key_type: ""
+
   gpg:
-    generate_keys: false
     fetch_keys: false
+    generate_keys: false
+    key_type: ""
+    key_length:
+    expiry: ""
     passphrase: ""
     signing_key: ""
-    key_type: ""
-    key_length: ""
-    expiry: ""
+
+  smtp:
+    accounts:
+      - name: ""
+        enabled: false
+        account_name: ""
+        username: ""
+        password: ""
+        hostname: ""
+        port:
+
   systemd:
     enabled: false
     services:
-      - ""
+      - name: ""
