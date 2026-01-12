@@ -54,7 +54,7 @@
     path: "{{ user_account.home_dir | default(ansible_user_dir) }}/privkey.asc"
     state: absent
 
-name: "Remove service account file"
+- name: "Remove service account file"
   ansible.builtin.file:
     path: "{{ user_account.home_dir | default(ansible_user_dir) }}/service_account.json"
     state: absent
