@@ -13,6 +13,8 @@
     path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
     type: "{{ user_account.ssh.key_type }}"
     comment: ""
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
     mode: "0600"
     passphrase: "{{ user_account.ssh.passphrase }}"
   when:
@@ -25,6 +27,8 @@
     path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
     type: "{{ user_account.ssh.key_type }}"
     comment: ""
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
     - user_account.ssh.passphrase is undefined
