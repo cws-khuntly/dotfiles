@@ -52,7 +52,6 @@
       - "--batch"
       - "--passphrase"
       - "{{ user_account.gpg.passphrase }}"
-      # - "--pinentry-mode loopback"
       - "--import"
       - "{{ install.tmp_dir | default(ansible_user_dir) }}/privkey.asc"
     creates: "{{ user_account.home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/*.key"

@@ -45,16 +45,6 @@
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false
 
-- name: "Generate git configuration including signing key"
-  vars:
-    gpg_signing_key: "{{ install_dotfiles_gpg_key_signing_id.stdout }}"
-  ansible.builtin.template:
-    src: "templates/config/git/config"
-    dest: "{{ user_home_dir | default(ansible_user_dir) }}/.config/git/config"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0644"
-
 - name: "Remove temporary GPG file"
   ansible.builtin.file:
     path: "{{ install.tmp_dir | default(ansible_user_dir) }}/input.txt"

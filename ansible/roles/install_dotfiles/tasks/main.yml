@@ -10,6 +10,7 @@
     - "create-home-directories.yml"
     - "create-home-links.yml"
     - "create-config-links.yml"
+    - "update-config-files.yml"
   loop_control:
     loop_var: "core_item"
 
@@ -49,10 +50,9 @@
     - user_account.gpg.generate_keys is false
     - user_account.gpg.fetch_keys is true
 
-- name: "Reload shell environment"
-  ansible.builtin.command:
-    cmd: "source {{ user_home_dir | default(ansible_user_dir) }}/.bash_profile"
-  changed_when: true
+- name: "Update configuration files post-installation"
+  ansible.builtin.include_tasks:
+    file: "update-config-files.yml"
   notify:
     - reload-systemd
     - enable-services

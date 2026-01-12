@@ -1,0 +1,27 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  tasks/deploy-files.yml
+#   DESCRIPTION:  Primary entry point for this play
+# =============================================================================
+---
+- name: "Generate mailrc configuration file"
+  ansible.builtin.template:
+    src: "templates/config/system/mailrc.j2"
+    dest: "{{ install.base_path }}/config/system/netrc"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+  when:
+    - user_account.smtp.accounts | length > 0
+
+- name: "Generate git configuration including signing key"
+  vars:
+    gpg_signing_key: "{{ install_dotfiles_gpg_key_signing_id.stdout }}"
+  ansible.builtin.template:
+    src: "templates/config/git/config"
+    dest: "{{ user_home_dir | default(ansible_user_dir) }}/.config/git/config"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0644"
+  when:
+    - install_dotfiles_gpg_key_signing_id is defined
+    - install_dotfiles_gpg_key_signing_id | length > 0

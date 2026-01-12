@@ -12,7 +12,7 @@
 
 - name: "Enable and start services"
   ansible.builtin.systemd_service:
-    name: "{{ enabled_service_name }}"
+    name: "{{ enabled_service_name.name }}"
     enabled: true
     state: restarted
     scope: user
