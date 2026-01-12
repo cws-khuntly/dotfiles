@@ -9,9 +9,7 @@ To get started with defaults:
 ```
 $ git clone https://github.com/cws-khuntly/dotfiles.git ${HOME}/.dotfiles;
 
-$ declare -x ANSIBLE_CONFIG="${HOME}/.dotfiles/ansible/ansible.cfg";
-
-$ ansible-playbook -i "${HOME}/.dotfiles/ansible/inventory/hosts.yml" --connection=local "${HOME}/.dotfiles/ansible/site.yml";
+$ ANSIBLE_CONFIG="${HOME}/.dotfiles/ansible/ansible.cfg" ansible-playbook --connection=local "${HOME}/.dotfiles/ansible/site.yml";
 ```
 
 To set up a vault for default configuration (this sets up SSH/GPG passphrases, email, name, etc), create a vault (this one uses a text file for a password, use @prompt to be prompted for a password):
