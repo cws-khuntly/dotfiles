@@ -14,8 +14,8 @@
   ansible.builtin.pip:
     name: "google-auth"
   when:
-    - secrets.google.GCP_SERVICE_JSON is defined
-    - secrets.google.GCP_SERVICE_JSON | length > 0
+    - secrets.google.GCP_SERVICE_ACCOUNT is defined
+    - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
 
 - name: "Install bitwarden SDK via pip"
   ansible.builtin.pip:
