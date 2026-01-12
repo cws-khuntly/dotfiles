@@ -1,0 +1,26 @@
+#===  CONFIGURATION  ==========================================================
+#          NAME:  E09-network
+#   DESCRIPTION:  Configuration file defining directories and platforms
+#    PARAMETERS:  N/A
+#       RETURNS:  N/A
+#==============================================================================
+
+set append
+set debug
+set verbose
+set EDITOR=/usr/bin/vi
+set VISUAL=/usr/bin/vi
+
+{% for account in user_account.smtp.accounts %}
+{% if account.enabled == true %}
+account {{ account.account_name }} {
+    set smtp-use-starttls
+    set ssl-verify=ignore
+    set smtp-auth=login
+    set smtp=smtp://{{ account.hostname }}:{{ account.port }}
+    set from="{{ user_account.name }} <{{ user_account.email }}>"
+    set smtp-auth-user={{ account.username }}
+    set smtp-auth-password={{ account.password }}
+}
+{% endif %}
+{% endfor %}
