@@ -51,7 +51,7 @@
 
 - name: "Reload shell environment"
   ansible.builtin.command:
-    cmd: "source {{ user_home_dir | default(ansible_user_home) }}/.bash_profile"
+    cmd: "source {{ user_home_dir | default(ansible_user_dir) }}/.bash_profile"
   changed_when: true
   notify:
     - reload-systemd

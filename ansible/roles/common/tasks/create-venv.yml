@@ -24,3 +24,4 @@
   when:
     - not common_check_venv.stat.exists
   changed_when: true
+  notify: activate-python-venv

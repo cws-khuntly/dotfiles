@@ -1,0 +1,9 @@
+# ====  ANSIBLE   =============================================================
+#          NAME:  roles/common/tasks/main.yml
+#   DESCRIPTION:  Main entry point for common tasks
+# =============================================================================
+---
+- name: Activate new Python virtual environment
+  ansible.builtin.command:
+    cmd: "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/venv/activate"
+  listen: activate-python-venv
