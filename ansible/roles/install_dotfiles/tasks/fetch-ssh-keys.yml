@@ -5,14 +5,14 @@
 ---
 - name: "Save service account file (Google Cloud)"
   ansible.builtin.copy:
-    content: "{{ secrets.google.GCP_SERVICE_JSON }}"
+    content: "{{ secrets.google.GCP_SERVICE_ACCOUNT }}"
     dest: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
-    - secrets.google.GCP_SERVICE_JSON is defined
-    - secrets.google.GCP_SERVICE_JSON | length > 0
+    - secrets.google.GCP_SERVICE_ACCOUNT is defined
+    - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
 
 - name: "Get SSH Private Key (Google Cloud)"
   google.cloud.gcp_secret_manager:

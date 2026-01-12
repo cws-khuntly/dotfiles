@@ -31,7 +31,7 @@ install:
 # secrets:
 #   google:
 #     GCP_ACCESS_TOKEN: ""
-#     service_account_json: |
+#     GCP_SERVICE_ACCOUNT: |
 #       <<your json here>>
 
 gcp:
