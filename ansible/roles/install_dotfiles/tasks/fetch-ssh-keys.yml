@@ -19,15 +19,15 @@
     auth_kind: "serviceaccount"
     service_account_file: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     project: "{{ gcp.projects.project_id }}"
-    name: "{{ gcp.projects.ssh_key_id }}"
+    name: "{{ gcp.secret_entries.ssh_key_id }}"
     state: present
     return_value: true
   register: "install_dotfiles_ssh_private_key_output"
   when:
     - gcp.projects.project_id is defined
     - gcp.projects.project_id | length > 0
-    - gcp.secret_entries.gpg_key_id is defined
-    - gcp.secret_entries.gpg_key_id | length > 0
+    - gcp.secret_entries.ssh_key_id is defined
+    - gcp.secret_entries.ssh_key_id | length > 0
 
 - name: "Save fetched SSH private key file"
   ansible.builtin.copy:
