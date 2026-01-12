@@ -3,6 +3,14 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
+- name: "Create or update permissions on ${HOME}/.ssh"
+  ansible.builtin.file:
+    path: "{{ user_home_dir | default(ansible_user_dir) }}/.ssh"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0700"
+
 - name: "Save service account file (Google Cloud)"
   ansible.builtin.copy:
     content: "{{ secrets.google.GCP_SERVICE_ACCOUNT }}"
