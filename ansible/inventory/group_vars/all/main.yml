@@ -34,12 +34,12 @@ install:
 #     GCP_SERVICE_ACCOUNT: |
 #       <<your json here>>
 
-gcp:
-  projects:
-    project_id: ""
-  secret_entries:
-    ssh_key_id: ""
-    gpg_key_id: ""
+# gcp:
+#   projects:
+#     project_id: ""
+#   secret_entries:
+#     ssh_key_id: ""
+#     gpg_key_id: ""
 
 # =============================================================================
 # Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/dotfiles.yml" if overrides are desired
