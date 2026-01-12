@@ -8,7 +8,7 @@
     auth_kind: "serviceaccount"
     service_account_file: "/run/user/{{ ansible_user_uid }}/service_account.json"
     project: "{{ gcp.projects.project_id }}"
-    name: "ssh-key"
+    name: "{{ gcp.projects.ssh_key_id }}"
     state: present
     return_value: true
   register: "install_dotfiles_ssh_private_key_output"

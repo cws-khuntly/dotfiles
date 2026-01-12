@@ -7,8 +7,8 @@
   google.cloud.gcp_secret_manager:
     auth_kind: "serviceaccount"
     service_account_file: "/run/user/{{ ansible_user_uid }}/service_account.json"
-    project: "{{ secrets.google.project_id }}"
-    name: "{{ secrets.google.gpg_key_id }}"
+    project: "{{ gcp.projects.project_id }}"
+    name: "{{ gcp.projects.gpg_key_id }}"
     state: present
     return_value: true
   register: "install_dotfiles_gpg_private_key_output"
