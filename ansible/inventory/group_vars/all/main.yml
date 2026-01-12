@@ -14,7 +14,6 @@ install:
 # =============================================================================
 # Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/bitwarden.yml" if overrides are desired
 # =============================================================================
----
 secrets:
   bitwarden:
     BW_ACCESS_TOKEN: ""
@@ -29,7 +28,6 @@ bitwarden:
 # =============================================================================
 # Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/gcloud.yml" if overrides are desired
 # =============================================================================
----
 secrets:
   google:
     GCP_ACCESS_TOKEN: ""
@@ -46,7 +44,6 @@ gcp:
 # =============================================================================
 # Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/dotfiles.yml" if overrides are desired
 # =============================================================================
----
 user_account:
   name: ""
   email: ""
