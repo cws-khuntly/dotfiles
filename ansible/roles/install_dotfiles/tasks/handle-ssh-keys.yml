@@ -54,7 +54,6 @@
     - user_account.ssh.fetch_keys is false
     - user_account.ssh.passphrase is defined
     - not install_dotfiles_key_exists.stat.exists
-  notify: reload-key-agents
 
 - name: "Create SSH key pair (if enabled, no passphrase)"
   community.crypto.openssh_keypair:
@@ -68,7 +67,6 @@
     - user_account.ssh.fetch_keys is false
     - user_account.ssh.passphrase is undefined
     - not install_dotfiles_key_exists.stat.exists
-  notify: reload-key-agents
 
 - name: "Get SSH Private Key (Google Cloud)"
   google.cloud.gcp_secret_manager:
@@ -93,7 +91,6 @@
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"
-  notify: reload-key-agents
   when:
     - user_account.ssh.fetch_keys is true
 
