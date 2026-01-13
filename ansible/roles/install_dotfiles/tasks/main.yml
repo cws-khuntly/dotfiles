@@ -14,41 +14,17 @@
   loop_control:
     loop_var: "core_item"
 
-- name: "Generate SSH keys (if enabled)"
+- name: "Manage SSH keys (if enabled)"
   ansible.builtin.include_tasks:
-    file: "create-ssh-keys.yml"
+    file: "handle-ssh-keys.yml"
   when:
-    - user_account.ssh.generate_keys is defined
-    - user_account.ssh.fetch_keys is defined
-    - user_account.ssh.generate_keys is true
-    - user_account.ssh.fetch_keys is false
+    - user_account.ssh.enabled is true
 
-- name: "Fetch SSH keys (if enabled)"
+- name: "Manage GPG keys (if enabled)"
   ansible.builtin.include_tasks:
-    file: "fetch-ssh-keys.yml"
+    file: "handle-gpg-keys.yml"
   when:
-    - user_account.ssh.generate_keys is defined
-    - user_account.ssh.fetch_keys is defined
-    - user_account.ssh.generate_keys is false
-    - user_account.ssh.fetch_keys is true
-
-- name: "Generate GPG keys (if enabled)"
-  ansible.builtin.include_tasks:
-    file: "create-gpg-keys.yml"
-  when:
-    - user_account.gpg.generate_keys is defined
-    - user_account.gpg.fetch_keys is defined
-    - user_account.gpg.generate_keys is true
-    - user_account.gpg.fetch_keys is false
-
-- name: "Fetch GPG keys (if enabled)"
-  ansible.builtin.include_tasks:
-    file: "fetch-gpg-keys.yml"
-  when:
-    - user_account.gpg.generate_keys is defined
-    - user_account.gpg.fetch_keys is defined
-    - user_account.gpg.generate_keys is false
-    - user_account.gpg.fetch_keys is true
+    - user_account.gpg.enabled is true
 
 - name: "Update configuration files post-installation"
   ansible.builtin.include_tasks:

@@ -49,14 +49,20 @@ user_account:
   email: ""
 
   ssh:
+    enabled: false
     fetch_keys: false
     generate_keys: false
+    ssh_key: |
+      << ssh private key >>
     passphrase: ""
     key_type: ""
 
   gpg:
+    enabled: false
     fetch_keys: false
     generate_keys: false
+    gpg_key: |
+      << gpg private key >>
     key_type: ""
     key_length:
     expiry: ""
