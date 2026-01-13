@@ -14,7 +14,7 @@ set VISUAL=/usr/bin/vi
 {% for account in user_account.smtp.accounts %}
 {% if account.enabled == true %}
 account {{ account.name }} {
-    {% if use_tls %}
+    {% if account.use_tls %}
     set ssl-verify=ignore
     set smtp-use-starttls {% endif %}
     {% if account.username %}

@@ -78,6 +78,7 @@ user_account:
         password: ""
         hostname: ""
         port:
+        use_tls: false
 
   systemd:
     enabled: false
