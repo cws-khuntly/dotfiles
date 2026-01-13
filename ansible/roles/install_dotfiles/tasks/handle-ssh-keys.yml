@@ -39,7 +39,7 @@
     - install_dotfiles_ssh_keys_files_found.files | count == 0
     - user_account.ssh.generate_keys is false
     - user_account.ssh.fetch_keys is false
-    - user_account.ssh.ssh_key | length > 0
+    - user_account.ssh.key | length > 0
 
 - name: "Create SSH key pair (if enabled, with passphrase)"
   community.crypto.openssh_keypair:

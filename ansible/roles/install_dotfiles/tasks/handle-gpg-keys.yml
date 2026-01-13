@@ -42,7 +42,7 @@
     - install_dotfiles_gpg_keys_files_found.files | count == 0
     - user_account.gpg.generate_keys is false
     - user_account.gpg.fetch_keys is false
-    - user_account.gpg.gpg_key | length > 0
+    - user_account.gpg.key | length > 0
 
 - name: "Get GPG Private Key (Google Cloud)"
   google.cloud.gcp_secret_manager:
@@ -84,7 +84,7 @@
     - install_dotfiles_gpg_keys_files_found.files | count == 0
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false
-    - user_account.gpg.gpg_key | length == 0
+    - user_account.gpg.key | length == 0
 
 - name: "Generate the GPG key pair using batch mode"
   ansible.builtin.command:
@@ -94,7 +94,7 @@
     - install_dotfiles_gpg_keys_files_found.files | count == 0
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false
-    - user_account.gpg.gpg_key | length == 0
+    - user_account.gpg.key | length == 0
 
 - name: "Import fetched GPG private key"
   ansible.builtin.command:
