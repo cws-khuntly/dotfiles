@@ -27,6 +27,7 @@
     - user_account.ssh.fetch_keys is true
     - secrets.google.GCP_SERVICE_ACCOUNT is defined
     - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
+    - install_dotfiles_key_exists is undefined or install_dotfiles_key_exists.stat.exists is false
 
 - name: "Create SSH private key (if provided)"
   ansible.builtin.copy:
@@ -36,7 +37,7 @@
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
-    - install_dotfiles_ssh_keys_files_found.files | count == 0
+    - install_dotfiles_key_exists is undefined or install_dotfiles_key_exists.stat.exists is false
     - user_account.ssh.generate_keys is false
     - user_account.ssh.fetch_keys is false
     - user_account.ssh.key | length > 0
@@ -51,9 +52,9 @@
     mode: "0600"
     passphrase: "{{ user_account.ssh.passphrase }}"
   when:
+    - install_dotfiles_key_exists is undefined or install_dotfiles_key_exists.stat.exists is false
     - user_account.ssh.fetch_keys is false
     - user_account.ssh.passphrase is defined
-    - not install_dotfiles_key_exists.stat.exists
 
 - name: "Create SSH key pair (if enabled, no passphrase)"
   community.crypto.openssh_keypair:
@@ -64,16 +65,16 @@
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
+    - install_dotfiles_key_exists is undefined or install_dotfiles_key_exists.stat.exists is false
     - user_account.ssh.fetch_keys is false
     - user_account.ssh.passphrase is undefined
-    - not install_dotfiles_key_exists.stat.exists
 
 - name: "Get SSH Private Key (Google Cloud)"
   google.cloud.gcp_secret_manager:
     auth_kind: "serviceaccount"
     service_account_file: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     project: "{{ gcp.projects.project_id }}"
-    name: "{{ gxp.secret_entries.ssh_key_id }}"
+    name: "{{ gcp.secret_entries.ssh_key_id }}"
     state: present
     return_value: true
   register: "install_dotfiles_ssh_private_key_output"
