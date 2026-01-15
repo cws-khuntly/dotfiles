@@ -48,6 +48,7 @@ function returnRandomCharacters()
     local string_length;
     local use_special;
     local returned_characters;
+    local -A returned_strings=();
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -193,12 +194,25 @@ function returnRandomCharacters()
         esac
     done
 
-    while (( counter <= string_count )); do
+    if (( string_count == 1 )); then
         if [[ -n "${use_special}" ]] && [[ "${use_special}" == "${_TRUE}" ]]; then
             returned_characters="$(tr -cd '[:graph:]' < /dev/urandom | head -c "${string_length}")";
         else
             returned_characters="$(tr -cd '[:alnum:]' < /dev/urandom | head -c "${string_length}")";
         fi
+
+        printf "%s\n" "${returned_characters}";
+    else
+        while (( counter <= string_count )); do
+            if [[ -n "${use_special}" ]] && [[ "${use_special}" == "${_TRUE}" ]]; then
+                returned_characters="$(tr -cd '[:graph:]' < /dev/urandom | head -c "${string_length}")";
+            else
+                returned_characters="$(tr -cd '[:alnum:]' < /dev/urandom | head -c "${string_length}")";
+            fi
+
+            printf "%s\n" "${returned_characters}";
+
+            (( counter += 1 ));
     done
 
     if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then

@@ -3,7 +3,7 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: "Remove any existing configuration directories"
+- name: "Remove any existing configuration directories (${HOME}/.config)"
   ansible.builtin.file:
     path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.config/{{ rm_config_item }}"
     state: "absent"
@@ -29,6 +29,16 @@
     - "tmux"
   loop_control:
     loop_var: "ln_config_item"
+
+- name: "Remove any existing configuration entries (${HOME}/.ssh)"
+  ansible.builtin.file:
+    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/{{ rm_ssh_config_item }}"
+    state: "absent"
+  loop:
+    - "config"
+    - "config.d"
+  loop_control:
+    loop_var: "rm_ssh_config_item"
 
 - name: "Create links in ${HOME}/.ssh"
   ansible.builtin.file:
