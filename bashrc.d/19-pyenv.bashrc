@@ -18,12 +18,13 @@
 #
 #==============================================================================
 
-[[ ! -d "${HOME}/workspace/venv" ]] && mkdir "${HOME}/workspace/venv";
+[[ ! -d "${HOME}/workspace/python/venv" ]] && mkdir "${HOME}/workspace/python/venv";
 
-if [[ -f "${HOME}/workspace/venv/bin/activate" ]]; then
-    source "${HOME}/workspace/venv/bin/activate";
+if [[ -f "${HOME}/workspace/python/venv/bin/activate" ]]; then
+    source "${HOME}/workspace/python/venv/bin/activate";
 else
-    /usr/bin/env python -m venv "${HOME}/workspace/venv";
+    /usr/bin/env python -m venv "${HOME}/workspace/python/venv";
 
-    source "${HOME}/workspace/venv/bin/activate";
+    source "${HOME}/workspace/python/venv/bin/activate";
 fi
+
