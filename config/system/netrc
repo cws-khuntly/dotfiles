@@ -1,0 +1,28 @@
+#===  CONFIGURATION  ==========================================================
+#          NAME:  E09-network
+#   DESCRIPTION:  Configuration file defining directories and platforms
+#    PARAMETERS:  N/A
+#       RETURNS:  N/A
+#==============================================================================
+
+set append
+set debug
+set verbose
+set EDITOR=/usr/bin/vi
+set VISUAL=/usr/bin/vi
+
+account gmail {
+        set ssl-verify=ignore
+    set smtp-use-starttls         set smtp-auth=login
+    set smtp-auth-user=kmhuntly@gmail.com
+    set smtp-auth-password=password
+        set smtp=smtp://smtp.google.com:587
+    set from="Kevin Huntly <kmhuntly@gmail.com>"
+}
+account local {
+            set smtp-auth=login
+    set smtp-auth-user=huntlyk0
+    set smtp-auth-password=
+        set smtp=smtp://localhost:25
+    set from="Kevin Huntly <kmhuntly@gmail.com>"
+}

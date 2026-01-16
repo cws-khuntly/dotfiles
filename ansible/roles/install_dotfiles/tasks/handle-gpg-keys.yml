@@ -75,7 +75,7 @@
 
 - name: "Define GPG batch configuration file content"
   ansible.builtin.template:
-    src: "templates/config/gnupg/template.j2"
+    src: "templates/config/gnupg/config.j2"
     dest: "{{ install.tmp_dir | default(ansible_user_dir) }}/input.txt"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -84,7 +84,12 @@
     - install_dotfiles_gpg_keys_files_found.files | count == 0
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false
-    - user_account.gpg.key | length == 0
+    - user_account.gpg.key_type is defined
+    - user_account.gpg.key_length is defined
+    - user_account.name is defined
+    - user_account.email is defined
+    - user_account.gpg.expiry is defined
+    - user_account.gpg.passphrase is defined
 
 - name: "Generate the GPG key pair using batch mode"
   ansible.builtin.command:
@@ -94,7 +99,12 @@
     - install_dotfiles_gpg_keys_files_found.files | count == 0
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false
-    - user_account.gpg.key | length == 0
+    - user_account.gpg.key_type is defined
+    - user_account.gpg.key_length is defined
+    - user_account.name is defined
+    - user_account.email is defined
+    - user_account.gpg.expiry is defined
+    - user_account.gpg.passphrase is defined
 
 - name: "Import fetched GPG private key"
   ansible.builtin.command:
@@ -107,6 +117,8 @@
       - "{{ install.tmp_dir | default(ansible_user_dir) }}/privkey.asc"
     creates: "{{ user_account.home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/*.key"
   when:
+    - user_account.gpg.fetch_keys is true
+    - user_account.gpg.generate_keys is false
     - install_dotfiles_gpg_keys_files_found.files | count == 0
     - user_account.gpg.passphrase is defined
     - user_account.gpg.passphrase | length > 0
@@ -115,7 +127,7 @@
   ansible.builtin.command:
     cmd: "{{ role_path }}/files/scripts/get_gpg_key.sh"
   changed_when: false
-  register: install_dotfiles_gpg_key_signing_id
+  register: get_gpg_key
   when:
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false

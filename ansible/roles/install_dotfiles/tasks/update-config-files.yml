@@ -13,15 +13,31 @@
   when:
     - user_account.smtp.accounts | length > 0
 
-- name: "Generate git configuration including signing key"
+- name: "Generate git configuration including signing key (Fetched)"
   vars:
-    gpg_signing_key: "{{ install_dotfiles_gpg_key_signing_id.stdout }}"
+    gpg_signing_key: "{{ user_account.gpg.signing_key }}"
   ansible.builtin.template:
-    src: "templates/config/git/config"
+    src: "templates/config/git/config.j2"
     dest: "{{ user_home_dir | default(ansible_user_dir) }}/.config/git/config"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0644"
   when:
-    - install_dotfiles_gpg_key_signing_id is defined
-    - install_dotfiles_gpg_key_signing_id | length > 0
+    - user_account.gpg.fetch_keys is true
+    - user_account.gpg.generate_keys is false
+    - user_account.gpg.signing_key is defined
+
+- name: "Generate git configuration including signing key (Generated)"
+  vars:
+    gpg_signing_key: "{{ get_gpg_key.stdout }}"
+  ansible.builtin.template:
+    src: "templates/config/git/config.j2"
+    dest: "{{ user_home_dir | default(ansible_user_dir) }}/.config/git/config"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0644"
+  when:
+    - user_account.gpg.fetch_keys is false
+    - user_account.gpg.generate_keys is true
+    - gpg_signing_key is defined
+

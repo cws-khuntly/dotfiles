@@ -19,6 +19,7 @@
 [User]
     name = Kevin Huntly
     email = kmhuntly@gmail.com
+    signingkey = 478CEB22B4E68865
 
 [include]
     path = ~/.config/git/localconfig
@@ -33,7 +34,7 @@
     filemode = false
 
 [init]
-    defaultBranch = main
+    defaultbranch = main
 
 [branch]
     autosetuprebase = always
@@ -51,12 +52,12 @@
 [http]
 
 [https]
-    sslVerify = true
+    sslverify = true
 
 [alias]
 
 [commit]
-    #gpgsign = true
+#    gpgsign = true
     verbose = true
 
 [filter "tabspace"]
@@ -88,7 +89,7 @@
     fsckobjects = true
 
 [status]
-    submoduleSummary = true
+    submodulesummary = true
 
 [submodule]
     recurse = true

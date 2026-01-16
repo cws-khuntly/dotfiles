@@ -95,7 +95,7 @@
     mode: "0600"
   when:
     - user_account.ssh.fetch_keys is true
-    - install_dotfiles_ssh_private_key_output | length > 0
+    - install_dotfiles_key_exists is undefined or install_dotfiles_key_exists.stat.exists is false
 
 - name: "Remove service account file"
   ansible.builtin.file:
