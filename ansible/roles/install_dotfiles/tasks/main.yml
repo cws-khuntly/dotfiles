@@ -10,7 +10,6 @@
     - "create-home-directories.yml"
     - "create-home-links.yml"
     - "create-config-links.yml"
-    - "update-config-files.yml"
   loop_control:
     loop_var: "core_item"
 
