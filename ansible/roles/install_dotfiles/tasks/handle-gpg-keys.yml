@@ -127,7 +127,7 @@
   ansible.builtin.command:
     cmd: "{{ role_path }}/files/scripts/get_gpg_key.sh"
   changed_when: false
-  register: get_gpg_key
+  register: install_dotfiles_get_gpg_key
   when:
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false
