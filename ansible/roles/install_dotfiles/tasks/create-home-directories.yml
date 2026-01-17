@@ -22,11 +22,3 @@
   loop_control:
     loop_var: "add_home_item"
   failed_when: false
-
-- name: "Create SSH directory"
-  ansible.builtin.file:
-    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh"
-    state: "directory"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0700"

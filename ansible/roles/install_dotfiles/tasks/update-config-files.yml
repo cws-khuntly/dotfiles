@@ -5,8 +5,8 @@
 ---
 - name: "Generate mailrc configuration file"
   ansible.builtin.template:
-    src: "templates/config/system/mailrc.j2"
-    dest: "{{ install.base_path }}/config/system/netrc"
+    src: "templates/config/dotfiles/mailrc.j2"
+    dest: "{{ install.base_path }}/config/dotfiles/netrc"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"
