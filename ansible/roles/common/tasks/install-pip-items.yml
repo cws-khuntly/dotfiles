@@ -7,7 +7,7 @@
   ansible.builtin.pip:
     name: "requests"
 
--  name: "Install common packages via pip"
+- name: "Install common packages via pip"
   ansible.builtin.pip:
     name: "packaging"
 
