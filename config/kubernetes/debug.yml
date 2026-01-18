@@ -2,16 +2,36 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: debug-pod
+ name: debug-pod
 spec:
   containers:
     - name: fedora
       image: fedora:43
       command: ["sleep", "infinity"]
+
       volumeMounts:
-        - name: storage-volume
-          mountPath: "/mnt/data"
+        - name: keystore-volume
+          mountPath: "/mnt/data/ssl/keystore.jks"
+          subPath: keystore.jks
+          readOnly: true
+        - name: keystore-volume
+          mountPath: "/mnt/data/ssl/truststore.jks"
+          subPath: truststore.jks
+          readOnly: true
+
+      env:
+        - name: KEYSTORE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: store-password-secret
+              key: keystore-password
+        - name: TRUSTSTORE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: store-password-secret
+              key: truststore-password
+
   volumes:
-    - name: storage-volume
-      persistentVolumeClaim:
-        claimName: "test-pvc"
+    - name: keystore-volume
+      secret:
+        secretName: store-file-secret
