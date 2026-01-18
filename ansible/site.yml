@@ -23,14 +23,7 @@
 
     - name: Run custom role install_dotfiles
       ansible.builtin.include_role:
-        name: install_dotfiles
-
-    - name: Set up Ansible workspace
-      ansible.builtin.include_role:
-        name: setup_ansible
-      when:
-        - user_account.setup_ansible is defined
-        - user_account.setup_ansible is true
+        name: dotfiles
 
   post_tasks:
     - name: "Remove temporary GPG file"
