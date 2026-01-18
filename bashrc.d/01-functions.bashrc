@@ -247,6 +247,9 @@ function runLoginCommands()
     #
     for file in ${cmds_file}; do
         if [[ -s "${file}" ]]; then
+            CURRENT_IFS="${IFS}";
+            IFS=$'\n';
+
             for cmd_entry in $(< "${file}"); do
                 [[ -z "${cmd_entry}" ]] && continue;
                 [[ "${cmd_entry}" =~ ^\# ]] && continue;
@@ -278,6 +281,8 @@ function runLoginCommands()
                 [[ -n "${cmd_binary}" ]] && unset -v cmd_binary;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
             done
+
+            IFS="${CURRENT_IFS}"
         fi
     done
 
@@ -287,6 +292,7 @@ function runLoginCommands()
     [[ -n "${primary_file}" ]] && unset -v primary_file;
     [[ -n "${secondary_file}" ]] && unset -v secondary_file;
     [[ -n "${error_count}" ]] && unset -v error_count;
+    [[ -n "${CURRENT_IFS}" ]] && unset -v CURRENT_IFS;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${cmd_entry}" ]] && unset -v cmd_entry;
     [[ -n "${cmd_binary}" ]] && unset -v cmd_binary;
