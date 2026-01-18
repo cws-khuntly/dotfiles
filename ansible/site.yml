@@ -26,17 +26,3 @@
         name: dotfiles
 
   post_tasks:
-    - name: "Remove temporary GPG file"
-      ansible.builtin.file:
-        path: "{{ user_account.home_dir | default(ansible_user_dir) }}/privkey.asc"
-        state: absent
-
-    - name: "Remove service account file"
-      ansible.builtin.file:
-        path: "{{ user_account.home_dir | default(ansible_user_dir) }}/service_account.json"
-        state: absent
-
-    - name: "Remove service account file"
-      ansible.builtin.file:
-        path: "{{ user_home_dir | default(ansible_user_dir) }}/input.txt"
-        state: absent

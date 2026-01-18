@@ -47,19 +47,6 @@
     path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
   register: "dotfiles_key_exists"
 
-- name: "Save service account file (Google Cloud)"
-  ansible.builtin.copy:
-    content: "{{ secrets.google.GCP_SERVICE_ACCOUNT }}"
-    dest: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0600"
-  when:
-    - user_account.ssh.fetch_keys is true
-    - secrets.google.GCP_SERVICE_ACCOUNT is defined
-    - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
-    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
-
 - name: "Create SSH private key (if provided)"
   ansible.builtin.copy:
     content: "{{ user_account.ssh.ssh_key }}"
@@ -100,6 +87,19 @@
     - user_account.ssh.fetch_keys is false
     - user_account.ssh.passphrase is undefined
 
+- name: "Save service account file (Google Cloud)"
+  ansible.builtin.copy:
+    content: "{{ secrets.google.GCP_SERVICE_ACCOUNT }}"
+    dest: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+  when:
+    - user_account.ssh.fetch_keys is true
+    - secrets.google.GCP_SERVICE_ACCOUNT is defined
+    - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
+    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
+
 - name: "Get SSH Private Key (Google Cloud)"
   google.cloud.gcp_secret_manager:
     auth_kind: "serviceaccount"
@@ -136,3 +136,12 @@
     - user_account.ssh.fetch_keys is true
     - secrets.google.GCP_SERVICE_ACCOUNT is defined
     - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
+
+- name: "Remove temporary GPG files"
+  ansible.builtin.file:
+    path: "{{ rm_ssh_temp_item }}"
+    state: absent
+  loop:
+    - "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
+  loop_control:
+    loop_var: "rm_ssh_temp_item"

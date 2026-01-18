@@ -24,18 +24,6 @@
     recurse: false
   register: "dotfiles_gpg_keys_files_found"
 
-- name: "Save service account file (Google Cloud)"
-  ansible.builtin.copy:
-    content: "{{ secrets.google.GCP_SERVICE_ACCOUNT }}"
-    dest: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0600"
-  when:
-    - secrets.google.GCP_SERVICE_ACCOUNT is defined
-    - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
-    - user_account.gpg.fetch_keys is true
-
 - name: "Create GPG private key (if provided)"
   ansible.builtin.copy:
     content: "{{ user_account.gpg.gpg_key }}"
@@ -48,6 +36,18 @@
     - user_account.gpg.generate_keys is false
     - user_account.gpg.fetch_keys is false
     - user_account.gpg.key | length > 0
+
+- name: "Save service account file (Google Cloud)"
+  ansible.builtin.copy:
+    content: "{{ secrets.google.GCP_SERVICE_ACCOUNT }}"
+    dest: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+  when:
+    - secrets.google.GCP_SERVICE_ACCOUNT is defined
+    - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
+    - user_account.gpg.fetch_keys is true
 
 - name: "Get GPG Private Key (Google Cloud)"
   google.cloud.gcp_secret_manager:
@@ -137,12 +137,13 @@
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false
 
-- name: "Remove temporary GPG file"
+- name: "Remove temporary GPG files"
   ansible.builtin.file:
-    path: "{{ install.tmp_dir | default(ansible_user_dir) }}/input.txt"
+    path: "{{ rm_gpg_temp_item }}"
     state: absent
-
-- name: "Remove service account file"
-  ansible.builtin.file:
-    path: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
-    state: absent
+  loop:
+    - "{{ install.tmp_dir | default(ansible_user_dir) }}/privkey.asc"
+    - "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
+    - "{{ install.tmp_dir | default(ansible_user_dir) }}/input.txt"
+  loop_control:
+    loop_var: "rm_gpg_temp_item"
