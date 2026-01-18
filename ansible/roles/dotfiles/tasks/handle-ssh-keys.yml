@@ -45,7 +45,7 @@
 - name: "Check for existing SSH keys"
   ansible.builtin.stat:
     path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
-  register: "install_dotfiles_key_exists"
+  register: "dotfiles_key_exists"
 
 - name: "Save service account file (Google Cloud)"
   ansible.builtin.copy:
@@ -58,7 +58,7 @@
     - user_account.ssh.fetch_keys is true
     - secrets.google.GCP_SERVICE_ACCOUNT is defined
     - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
-    - install_dotfiles_key_exists is undefined or install_dotfiles_key_exists.stat.exists is false
+    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
 - name: "Create SSH private key (if provided)"
   ansible.builtin.copy:
@@ -68,7 +68,7 @@
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
-    - install_dotfiles_key_exists is undefined or install_dotfiles_key_exists.stat.exists is false
+    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
     - user_account.ssh.generate_keys is false
     - user_account.ssh.fetch_keys is false
     - user_account.ssh.key | length > 0
@@ -83,7 +83,7 @@
     mode: "0600"
     passphrase: "{{ user_account.ssh.passphrase }}"
   when:
-    - install_dotfiles_key_exists is undefined or install_dotfiles_key_exists.stat.exists is false
+    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
     - user_account.ssh.fetch_keys is false
     - user_account.ssh.passphrase is defined
 
@@ -96,7 +96,7 @@
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
-    - install_dotfiles_key_exists is undefined or install_dotfiles_key_exists.stat.exists is false
+    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
     - user_account.ssh.fetch_keys is false
     - user_account.ssh.passphrase is undefined
 
@@ -108,25 +108,25 @@
     name: "{{ gcp.secret_entries.ssh_key_id }}"
     state: present
     return_value: true
-  register: "install_dotfiles_ssh_private_key_output"
+  register: "dotfiles_ssh_private_key_output"
   when:
     - user_account.ssh.fetch_keys is true
     - gcp.projects.project_id is defined
     - gcp.projects.project_id | length > 0
     - gcp.secret_entries.ssh_key_id is defined
     - gcp.secret_entries.ssh_key_id | length > 0
-    - install_dotfiles_key_exists is undefined or install_dotfiles_key_exists.stat.exists is false
+    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
 - name: "Save fetched SSH private key file"
   ansible.builtin.copy:
-    content: "{{ install_dotfiles_ssh_private_key_output.value }}"
+    content: "{{ dotfiles_ssh_private_key_output.value }}"
     dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
     - user_account.ssh.fetch_keys is true
-    - install_dotfiles_key_exists is undefined or install_dotfiles_key_exists.stat.exists is false
+    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
 - name: "Remove service account file"
   ansible.builtin.file:
