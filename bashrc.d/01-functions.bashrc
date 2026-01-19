@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #==============================================================================
-#          FILE:  basefunctions.sh
+#          FILE:  01-functions.bashrc
 #         USAGE:  Import file into script and call relevant functions
 #   DESCRIPTION:  Base system functions that don't necessarily belong elsewhere
 #
@@ -32,7 +32,7 @@ function isNaN() { [[ "${1}" =~ ^-?[0-9]+$ ]] || return_code=1; }
 #==============================================================================
 function returnRandomCharacters()
 {
-    local cname="basefunctions.sh";
+    local cname="01-functions.bashrc";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local -i error_count=0;
@@ -54,7 +54,7 @@ function returnRandomCharacters()
     #==============================================================================
     function usage()
     (
-        local cname="F02-misc";
+        local cname="01-functions.bashrc";
         local function_name="${cname}#${FUNCNAME[1]}";
         local return_code=3;
 
@@ -156,7 +156,7 @@ function returnRandomCharacters()
 #==============================================================================
 function setPromptCommand()
 {
-    local cname="userprofile.sh";
+    local cname="01-functions.bashrc";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local color_off='\[\e[0m\]';
@@ -231,7 +231,7 @@ function setPromptCommand()
 #==============================================================================
 function runLoginCommands()
 {
-    local cname="userprofile.sh";
+    local cname="01-functions.bashrc";
     local function_name="${cname}#${FUNCNAME[0]}";
     local cmds_file="${HOME}/.dotfiles/config/profile/logincmds.properties";
     local -i return_code=0;
@@ -321,7 +321,7 @@ function mkcd() { [[ -d "${1}" ]] && cd "${1}" || ( mkdir -p "${1}" && cd "${1}"
 #==============================================================================
 function lsz()
 {
-    local cname="misc.sh";
+    local cname="01-functions.bashrc";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local -i error_count=0;
@@ -337,7 +337,7 @@ function lsz()
     #==============================================================================
     function usage()
     (
-        local cname="misc.sh";
+        local cname="01-functions.bashrc";
         local function_name="${cname}#${FUNCNAME[1]}";
         local return_code=3;
 
