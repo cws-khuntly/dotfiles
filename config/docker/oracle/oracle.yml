@@ -18,7 +18,7 @@ services:
     volumes:
       - oracle-data:/opt/oracle/oradata
       - oracle-backup:/opt/oracle/backup
-      - wallet:/opt/oracle/wallet
+      - oracle-wallet:/opt/oracle/wallet
     healthcheck:
       test: ["CMD", "sqlplus", "/", "as sysdba", "@healthcheck.sql"]
       interval: 30s
@@ -46,7 +46,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: "/opt/oracle/wallet"
+      device: "/opt/oracle/orawallet"
 
 ---
 networks:
