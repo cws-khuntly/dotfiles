@@ -14,7 +14,7 @@
 
 - name: "Create private keys directory"
   ansible.builtin.file:
-    path: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/
+    path: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/"
     state: directory
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
