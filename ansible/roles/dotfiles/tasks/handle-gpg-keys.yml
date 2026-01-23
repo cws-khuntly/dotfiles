@@ -3,18 +3,22 @@
 #   DESCRIPTION:  Primary entry point for this play
 # =============================================================================
 ---
-- name: "Create or update permissions on GPG directories"
+- name: "Create symbolic link for GnuPG"
   ansible.builtin.file:
-    path: "{{ user_home_dir | default(ansible_user_dir) }}/{{ gpg_dir_entry }}"
+    src: "{{ install.base_path }}/dotfiles/gnupg"
+    dest: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg
+    state: link
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0700"
+
+- name: "Create private keys directory"
+  ansible.builtin.file:
+    path: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/
     state: directory
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0700"
-  loop:
-    - ".gnupg"
-    - ".gnupg/private-keys-v1.d"
-  loop_control:
-    loop_var: "gpg_dir_entry"
 
 - name: "Search for existing private keys"
   ansible.builtin.find:
