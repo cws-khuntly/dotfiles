@@ -1,0 +1,61 @@
+[ ca ]
+default_ca                      = CA_default
+ 
+[ CA_default ]
+# Directory and file locations.
+dir                             = ~/workspace/openssl
+certs                           = $dir/certs
+crl_dir                         = $dir/crl
+new_certs_dir                   = $dir/certs
+database                        = $dir/index.txt
+serial                          = $dir/serial
+RANDFILE                        = $dir/private/.rand
+copy_extensions                 = copy
+default_md                      = sha512
+name_opt                        = ca_default
+cert_opt                        = ca_default
+default_days                    = 365
+preserve                        = no
+policy                          = policy_supply
+ 
+[ policy_supply ]
+countryName                     = match
+stateOrProvinceName             = match
+localityName                    = match
+organizationName                = optional
+organizationalUnitName          = optional
+commonName                      = supplied
+emailAddress                    = optional
+
+[ req ]
+default_bits                    = 4096
+distinguished_name              = req_distinguished_name
+string_mask                     = utf8only
+default_md                      = sha512
+x509_extensions                 = @v3_req
+ 
+[v3_req]
+subjectAltName                  = copy
+
+[ req_distinguished_name ]
+countryName                     = Country Name (2 letter code)
+stateOrProvinceName             = State or Province Name
+localityName                    = Locality Name
+0.organizationName              = Organization Name
+organizationalUnitName          = Organizational Unit Name
+commonName                      = Common Name
+emailAddress                    = Email Address
+ 
+# Optionally, specify some defaults.
+countryName_default             = US
+stateOrProvinceName_default     = New York
+localityName_default            = Buffalo
+0.organizationName_default      = CWSNA
+organizationalUnitName_default  = RD
+emailAddress_default            = kmhuntly@caspersbox.com
+ 
+[alt_names]
+DNS.0                           = fedora-laptop.local
+DNS.1                           = fedora-laptop
+IP.1                            = 127.0.0.1
+
