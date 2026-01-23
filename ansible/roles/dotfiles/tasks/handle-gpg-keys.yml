@@ -6,7 +6,7 @@
 - name: "Create symbolic link for GnuPG"
   ansible.builtin.file:
     src: "{{ install.base_path }}/dotfiles/gnupg"
-    dest: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg
+    dest: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg"
     state: link
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
