@@ -57,6 +57,7 @@ user_account:
     generate_keys: false
     ssh_key: |
       << ssh private key >>
+    ssh_key_id: "1a519708-804f-4f6d-a9ff-b3c901885583"
     passphrase: ""
     key_type: ""
 
@@ -66,11 +67,15 @@ user_account:
     generate_keys: false
     gpg_key: |
       << gpg private key >>
+    gpg_key_id: "18b5f492-73c0-482e-94f5-b3dc01266666"
     key_type: ""
     key_length:
     expiry: ""
     passphrase: ""
     signing_key: ""
+
+  git:
+    git_ssh_key_id: "2717bd35-d8d6-4ab0-8f87-b3dc01269072"
 
   smtp:
     accounts:
