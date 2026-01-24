@@ -5,9 +5,8 @@ quiet: true
 verbosity: 1
 skip_action_validation: false
 
-# skip_list:
-#  - '403'
-#  - 'role-name'
+skip_list:
+  - var-naming[no-role-prefix]
 
 enable_list:
   - args
