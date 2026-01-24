@@ -18,7 +18,7 @@
     gpg_signing_key: "{{ dotfiles.user_account.git.signing_key }}"
   ansible.builtin.template:
     src: "templates/config/git/config.j2"
-    dest: "{{ user_home_dir | default(ansible_user_dir) }}/.config/git/config"
+    dest: "{{ ansible_user_dir }}/.config/git/config"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0644"
@@ -32,7 +32,7 @@
     gpg_signing_key: "{{ dotfiles_get_gpg_key.stdout }}"
   ansible.builtin.template:
     src: "templates/config/git/config.j2"
-    dest: "{{ user_home_dir | default(ansible_user_dir) }}/.config/git/config"
+    dest: "{{ ansible_user_dir }}/.config/git/config"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0644"

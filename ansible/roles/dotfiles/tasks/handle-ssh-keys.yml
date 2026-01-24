@@ -5,7 +5,7 @@
 ---
 - name: "Create or update permissions on ${HOME}/.ssh"
   ansible.builtin.file:
-    path: "{{ user_home_dir | default(ansible_user_dir) }}/.ssh"
+    path: "{{ ansible_user_dir }}/.ssh"
     state: directory
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -13,7 +13,7 @@
 
 - name: "Remove any existing configuration entries (${HOME}/.ssh)"
   ansible.builtin.file:
-    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/{{ rm_ssh_config_item }}"
+    path: "{{ ansible_user_dir }}/.ssh/{{ rm_ssh_config_item }}"
     state: "absent"
   loop:
     - "config"
@@ -24,7 +24,7 @@
 - name: "Create links in ${HOME}/.ssh"
   ansible.builtin.file:
     src: "{{ install.base_path }}/config/ssh/{{ ssh_item }}"
-    dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/{{ ssh_item }}"
+    dest: "{{ ansible_user_dir }}/.ssh/{{ ssh_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -36,7 +36,7 @@
 
 - name: "Create ${HOME}/.ssh/local.d"
   ansible.builtin.file:
-    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/local.d"
+    path: "{{ ansible_user_dir }}/.ssh/local.d"
     state: "directory"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -44,13 +44,13 @@
 
 - name: "Check for existing SSH keys"
   ansible.builtin.stat:
-    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
+    path: "{{ ansible_user_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
   register: "dotfiles_key_exists"
 
 - name: "Create SSH private key (if provided)"
   ansible.builtin.copy:
     content: "{{ user_account.ssh.ssh_key }}"
-    dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
+    dest: "{{ ansible_user_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"
@@ -62,7 +62,7 @@
 
 - name: "Create SSH key pair (if enabled, with passphrase)"
   community.crypto.openssh_keypair:
-    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
+    path: "{{ ansible_user_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
     type: "{{ user_account.ssh.key_type }}"
     comment: ""
     owner: "{{ ansible_user_id }}"
@@ -76,7 +76,7 @@
 
 - name: "Create SSH key pair (if enabled, no passphrase)"
   community.crypto.openssh_keypair:
-    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
+    path: "{{ ansible_user_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
     type: "{{ user_account.ssh.key_type }}"
     comment: ""
     owner: "{{ ansible_user_id }}"
@@ -134,7 +134,7 @@
 - name: "Save fetched SSH private key file"
   ansible.builtin.copy:
     content: "{{ dotfiles_ssh_private_key_output.value }}"
-    dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/.ssh/id_{{ user_account.ssh.key_type }}"
+    dest: "{{ ansible_user_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"

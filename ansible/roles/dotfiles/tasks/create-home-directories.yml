@@ -5,7 +5,7 @@
 ---
 - name: "Create directories if they do not exist"
   ansible.builtin.file:
-    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/{{ add_home_item }}"
+    path: "{{ ansible_user_dir }}/{{ add_home_item }}"
     state: "directory"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"

@@ -6,7 +6,7 @@
 - name: "Create symbolic link for GnuPG"
   ansible.builtin.file:
     src: "{{ install.base_path }}/dotfiles/gnupg"
-    dest: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg"
+    dest: "{{ ansible_user_dir }}/.gnupg"
     state: link
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -14,7 +14,7 @@
 
 - name: "Create private keys directory"
   ansible.builtin.file:
-    path: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/"
+    path: "{{ ansible_user_dir }}/.gnupg/private-keys-v1.d/"
     state: directory
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -22,7 +22,7 @@
 
 - name: "Search for existing private keys"
   ansible.builtin.find:
-    paths: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/"
+    paths: "{{ ansible_user_dir }}/.gnupg/private-keys-v1.d/"
     patterns: "*.key"
     file_type: "file"
     recurse: false
@@ -62,7 +62,7 @@
 - name: "Generate the GPG key pair using batch mode"
   ansible.builtin.command:
     cmd: "gpg --batch --gen-key {{ install.tmp_dir | default(ansible_user_dir) }}/input.txt"
-    creates: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg/trustdb.gpg"
+    creates: "{{ ansible_user_dir }}/.gnupg/trustdb.gpg"
   when:
     - dotfiles_gpg_keys_files_found.files | count == 0
     - dotfiles.user_account.gpg.generate_keys is true
@@ -133,7 +133,7 @@
       - "{{ dotfiles.user_account.gpg.passphrase }}"
       - "--import"
       - "{{ install.tmp_dir | default(ansible_user_dir) }}/privkey.asc"
-    creates: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/*.key"
+    creates: "{{ ansible_user_dir }}/.gnupg/private-keys-v1.d/*.key"
   when:
     - dotfiles.user_account.gpg.fetch_keys is true
     - dotfiles.user_account.gpg.generate_keys is false

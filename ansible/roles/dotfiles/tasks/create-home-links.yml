@@ -5,7 +5,7 @@
 ---
 - name: "Remove any existing dotfiles in home"
   ansible.builtin.file:
-    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/.{{ rm_dotfiles_item }}"
+    path: "{{ ansible_user_dir }}/.{{ rm_dotfiles_item }}"
     state: absent
   loop:
     - "bash_profile"
@@ -24,12 +24,12 @@
 
 - name: "Remove existing Ansible configuration file"
   ansible.builtin.file:
-    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/ansible.cfg"
+    path: "{{ ansible_user_dir }}/ansible.cfg"
     state: "absent"
 
 - name: "Remove any existing bin/lib directories in home"
   ansible.builtin.file:
-    path: "{{ user_account.home_dir | default(ansible_user_dir) }}/{{ rm_home_item }}"
+    path: "{{ ansible_user_dir }}/{{ rm_home_item }}"
     state: absent
   loop:
     - "bin"
@@ -40,7 +40,7 @@
 - name: "Create dotfiles links in home directory"
   ansible.builtin.file:
     src: "{{ install.base_path }}/{{ ln_dotfiles_item }}"
-    dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/.{{ ln_dotfiles_item }}"
+    dest: "{{ ansible_user_dir }}/.{{ ln_dotfiles_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -54,7 +54,7 @@
 - name: "Create dotfiles in home directory"
   ansible.builtin.file:
     src: "{{ install.base_path }}/config/dotfiles/{{ ln_system_item }}"
-    dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/.{{ ln_system_item }}"
+    dest: "{{ ansible_user_dir }}/.{{ ln_system_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -75,7 +75,7 @@
 - name: "Create links for bin and lib"
   ansible.builtin.file:
     src: "{{ install.base_path }}/{{ add_home_item }}"
-    dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/{{ add_home_item }}"
+    dest: "{{ ansible_user_dir }}/{{ add_home_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
@@ -88,7 +88,7 @@
 - name: "Create link for Ansible"
   ansible.builtin.file:
     src: "{{ install.base_path }}/config/ansible/ansible.cfg"
-    dest: "{{ user_account.home_dir | default(ansible_user_dir) }}/ansible.cfg"
+    dest: "{{ ansible_user_dir }}/ansible.cfg"
     state: "link"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
