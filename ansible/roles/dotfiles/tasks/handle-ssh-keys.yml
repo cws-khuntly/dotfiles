@@ -98,6 +98,7 @@
     - user_account.ssh.fetch_keys is true
     - secrets.google.GCP_SERVICE_ACCOUNT is defined
     - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
+    - secrets.bitwarden.BW_ACCESS_TOKEN is undefined or secrets.bitwarden.BW_ACCESS_TOKEN | length == 0
     - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
 - name: "Get SSH Private Key (Google Cloud)"
@@ -111,10 +112,23 @@
   register: "dotfiles_ssh_private_key_output"
   when:
     - user_account.ssh.fetch_keys is true
+    - secrets.google.GCP_SERVICE_ACCOUNT is defined
+    - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
+    - secrets.bitwarden.BW_ACCESS_TOKEN is undefined or secrets.bitwarden.BW_ACCESS_TOKEN | length == 0
     - gcp.projects.project_id is defined
     - gcp.projects.project_id | length > 0
-    - gcp.secret_entries.ssh_key_id is defined
-    - gcp.secret_entries.ssh_key_id | length > 0
+    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
+
+- name: "Get SSH Private Key (Bitwarden Secrets)"
+  vars:
+    bws_access_token: "{{ secrets.bitwarden.BW_ACCESS_TOKEN }}"
+    secret_id: "{{ user_account.ssh.ssh_key_id }}"
+    dotfiles_ssh_private_key_output: "{{ lookup('bitwarden.secrets.lookup', secret_id, access_token=bws_access_token ) }}"
+  when:
+    - user_account.ssh.fetch_keys is true
+    - secrets.bitwarden.BW_ACCESS_TOKEN is defined
+    - secrets.bitwarden.BW_ACCESS_TOKEN | length > 0
+    - secrets.google.GCP_SERVICE_ACCOUNT is undefined or secrets.google.GCP_SERVICE_ACCOUNT | length == 0
     - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
 - name: "Save fetched SSH private key file"
@@ -136,12 +150,3 @@
     - user_account.ssh.fetch_keys is true
     - secrets.google.GCP_SERVICE_ACCOUNT is defined
     - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
-
-- name: "Remove temporary GPG files"
-  ansible.builtin.file:
-    path: "{{ rm_ssh_temp_item }}"
-    state: absent
-  loop:
-    - "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
-  loop_control:
-    loop_var: "rm_ssh_temp_item"

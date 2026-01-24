@@ -22,7 +22,7 @@
 
 - name: "Search for existing private keys"
   ansible.builtin.find:
-    paths: "{{ user_account.home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/"
+    paths: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/"
     patterns: "*.key"
     file_type: "file"
     recurse: false
@@ -30,16 +30,43 @@
 
 - name: "Create GPG private key (if provided)"
   ansible.builtin.copy:
-    content: "{{ user_account.gpg.gpg_key }}"
+    content: "{{ dotfiles.user_account.gpg.gpg_key }}"
     dest: "{{ install.tmpdir | default(ansible_user_dir) }}/privkey.asc"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
     - dotfiles_gpg_keys_files_found.files | count == 0
-    - user_account.gpg.generate_keys is false
-    - user_account.gpg.fetch_keys is false
-    - user_account.gpg.key | length > 0
+    - dotfiles.user_account.gpg.generate_keys is false
+    - dotfiles.user_account.gpg.fetch_keys is false
+    - dotfiles.user_account.gpg.key | length > 0
+
+- name: "Define GPG batch configuration file content"
+  ansible.builtin.template:
+    src: "templates/config/gnupg/config.j2"
+    dest: "{{ install.tmp_dir | default(ansible_user_dir) }}/input.txt"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+  when:
+    - dotfiles_gpg_keys_files_found.files | count == 0
+    - dotfiles.user_account.gpg.generate_keys is true
+    - dotfiles.user_account.gpg.fetch_keys is false
+    - dotfiles.user_account.gpg.key_type is defined
+    - dotfiles.user_account.gpg.key_length is defined
+    - dotfiles.user_account.name is defined
+    - dotfiles.user_account.email is defined
+    - dotfiles.user_account.gpg.expiry is defined
+    - dotfiles.user_account.gpg.passphrase is defined
+
+- name: "Generate the GPG key pair using batch mode"
+  ansible.builtin.command:
+    cmd: "gpg --batch --gen-key {{ install.tmp_dir | default(ansible_user_dir) }}/input.txt"
+    creates: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg/trustdb.gpg"
+  when:
+    - dotfiles_gpg_keys_files_found.files | count == 0
+    - dotfiles.user_account.gpg.generate_keys is true
+    - dotfiles.user_account.gpg.fetch_keys is false
 
 - name: "Save service account file (Google Cloud)"
   ansible.builtin.copy:
@@ -49,9 +76,11 @@
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
+    - user_account.gpg.fetch_keys is true
     - secrets.google.GCP_SERVICE_ACCOUNT is defined
     - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
-    - user_account.gpg.fetch_keys is true
+    - secrets.bitwarden.BW_ACCESS_TOKEN is undefined or secrets.bitwarden.BW_ACCESS_TOKEN | length == 0
+    - dotfiles_gpg_keys_files_found is undefined or dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: "Get GPG Private Key (Google Cloud)"
   google.cloud.gcp_secret_manager:
@@ -63,12 +92,25 @@
     return_value: true
   register: "dotfiles_gpg_private_key_output"
   when:
-    - dotfiles_gpg_keys_files_found.files | count == 0
     - user_account.gpg.fetch_keys is true
+    - secrets.google.GCP_SERVICE_ACCOUNT is defined
+    - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
+    - secrets.bitwarden.BW_ACCESS_TOKEN is undefined or secrets.bitwarden.BW_ACCESS_TOKEN | length == 0
     - gcp.projects.project_id is defined
     - gcp.projects.project_id | length > 0
-    - gcp.secret_entries.gpg_key_id is defined
-    - gcp.secret_entries.gpg_key_id | length > 0
+    - dotfiles_gpg_keys_files_found.files | count == 0
+
+- name: "Get GPG Private Key (Bitwarden Secrets)"
+  vars:
+    bws_access_token: "{{ secrets.bitwarden.BW_ACCESS_TOKEN }}"
+    secret_id: "{{ dotfiles.user_account.gpg.gpg_key_id }}"
+    dotfiles_gpg_private_key_output: "{{ lookup('bitwarden.secrets.lookup', secret_id, access_token=bws_access_token ) }}"
+  when:
+    - user_account.gpg.fetch_keys is true
+    - secrets.bitwarden.BW_ACCESS_TOKEN is defined
+    - secrets.bitwarden.BW_ACCESS_TOKEN | length > 0
+    - secrets.google.GCP_SERVICE_ACCOUNT is undefined or secrets.google.GCP_SERVICE_ACCOUNT | length == 0
+    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
 - name: "Save fetched GPG private key file"
   ansible.builtin.copy:
@@ -78,42 +120,9 @@
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
-    - user_account.gpg.fetch_keys is true
+    - dotfiles.user_account.gpg.fetch_keys is true
     - dotfiles_gpg_keys_files_found.files | count == 0
     - dotfiles_gpg_private_key_output.value | length > 0
-
-- name: "Define GPG batch configuration file content"
-  ansible.builtin.template:
-    src: "templates/config/gnupg/config.j2"
-    dest: "{{ install.tmp_dir | default(ansible_user_dir) }}/input.txt"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0600"
-  when:
-    - dotfiles_gpg_keys_files_found.files | count == 0
-    - user_account.gpg.generate_keys is true
-    - user_account.gpg.fetch_keys is false
-    - user_account.gpg.key_type is defined
-    - user_account.gpg.key_length is defined
-    - user_account.name is defined
-    - user_account.email is defined
-    - user_account.gpg.expiry is defined
-    - user_account.gpg.passphrase is defined
-
-- name: "Generate the GPG key pair using batch mode"
-  ansible.builtin.command:
-    cmd: "gpg --batch --gen-key {{ install.tmp_dir | default(ansible_user_dir) }}/input.txt"
-    creates: "{{ user_account.home_dir | default(ansible_user_dir) }}/.gnupg/trustdb.gpg"
-  when:
-    - dotfiles_gpg_keys_files_found.files | count == 0
-    - user_account.gpg.generate_keys is true
-    - user_account.gpg.fetch_keys is false
-    - user_account.gpg.key_type is defined
-    - user_account.gpg.key_length is defined
-    - user_account.name is defined
-    - user_account.email is defined
-    - user_account.gpg.expiry is defined
-    - user_account.gpg.passphrase is defined
 
 - name: "Import fetched GPG private key"
   ansible.builtin.command:
@@ -121,16 +130,16 @@
       - "gpg"
       - "--batch"
       - "--passphrase"
-      - "{{ user_account.gpg.passphrase }}"
+      - "{{ dotfiles.user_account.gpg.passphrase }}"
       - "--import"
       - "{{ install.tmp_dir | default(ansible_user_dir) }}/privkey.asc"
-    creates: "{{ user_account.home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/*.key"
+    creates: "{{ user_home_dir | default(ansible_user_dir) }}/.gnupg/private-keys-v1.d/*.key"
   when:
-    - user_account.gpg.fetch_keys is true
-    - user_account.gpg.generate_keys is false
+    - dotfiles.user_account.gpg.fetch_keys is true
+    - dotfiles.user_account.gpg.generate_keys is false
     - dotfiles_gpg_keys_files_found.files | count == 0
-    - user_account.gpg.passphrase is defined
-    - user_account.gpg.passphrase | length > 0
+    - dotfiles.user_account.gpg.passphrase is defined
+    - dotfiles.user_account.gpg.passphrase | length > 0
 
 - name: "Capture the key ID"
   ansible.builtin.command:
@@ -138,8 +147,8 @@
   changed_when: false
   register: dotfiles_get_gpg_key
   when:
-    - user_account.gpg.generate_keys is true
-    - user_account.gpg.fetch_keys is false
+    - dotfiles.user_account.gpg.generate_keys is true
+    - dotfiles.user_account.gpg.fetch_keys is false
 
 - name: "Remove temporary GPG files"
   ansible.builtin.file:

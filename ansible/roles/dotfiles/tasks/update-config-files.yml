@@ -15,7 +15,7 @@
 
 - name: "Generate git configuration including signing key (Fetched)"
   vars:
-    gpg_signing_key: "{{ user_account.gpg.signing_key }}"
+    gpg_signing_key: "{{ dotfiles.user_account.git.signing_key }}"
   ansible.builtin.template:
     src: "templates/config/git/config.j2"
     dest: "{{ user_home_dir | default(ansible_user_dir) }}/.config/git/config"
@@ -23,9 +23,9 @@
     group: "{{ ansible_user_gid }}"
     mode: "0644"
   when:
-    - user_account.gpg.fetch_keys is true
-    - user_account.gpg.generate_keys is false
-    - user_account.gpg.signing_key is defined
+    - dotfiles.user_account.gpg.fetch_keys is true
+    - dotfiles.user_account.gpg.generate_keys is false
+    - dotfiles.user_account.gpg.signing_key is defined
 
 - name: "Generate git configuration including signing key (Generated)"
   vars:
@@ -37,6 +37,6 @@
     group: "{{ ansible_user_gid }}"
     mode: "0644"
   when:
-    - user_account.gpg.fetch_keys is false
-    - user_account.gpg.generate_keys is true
+    - dotfiles.user_account.gpg.fetch_keys is false
+    - dotfiles.user_account.gpg.generate_keys is true
     - gpg_signing_key is defined
