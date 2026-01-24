@@ -5,7 +5,7 @@
 ---
 - name: "Create symbolic link for GnuPG"
   ansible.builtin.file:
-    src: "{{ install.base_path }}/dotfiles/gnupg"
+    src: "{{ dotfiles.install.base_path }}/dotfiles/gnupg"
     dest: "{{ ansible_user_dir }}/.gnupg"
     state: link
     owner: "{{ ansible_user_id }}"
@@ -44,7 +44,7 @@
 - name: "Define GPG batch configuration file content"
   ansible.builtin.template:
     src: "templates/config/gnupg/config.j2"
-    dest: "{{ install.tmp_dir | default(ansible_user_dir) }}/input.txt"
+    dest: "{{ dotfiles.install.tmp_dir | default(ansible_user_dir) }}/input.txt"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"
@@ -61,7 +61,7 @@
 
 - name: "Generate the GPG key pair using batch mode"
   ansible.builtin.command:
-    cmd: "gpg --batch --gen-key {{ install.tmp_dir | default(ansible_user_dir) }}/input.txt"
+    cmd: "gpg --batch --gen-key {{ dotfiles.install.tmp_dir | default(ansible_user_dir) }}/input.txt"
     creates: "{{ ansible_user_dir }}/.gnupg/trustdb.gpg"
   when:
     - dotfiles_gpg_keys_files_found.files | count == 0
@@ -71,7 +71,7 @@
 - name: "Save service account file (Google Cloud)"
   ansible.builtin.copy:
     content: "{{ secrets.google.GCP_SERVICE_ACCOUNT }}"
-    dest: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
+    dest: "{{ dotfiles.install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"
@@ -85,7 +85,7 @@
 - name: "Get GPG Private Key (Google Cloud)"
   google.cloud.gcp_secret_manager:
     auth_kind: "serviceaccount"
-    service_account_file: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
+    service_account_file: "{{ dotfiles.install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     project: "{{ gcp.projects.project_id }}"
     name: "{{ gcp.secret_entries.gpg_key_id }}"
     state: present
@@ -134,7 +134,7 @@
       - "--passphrase"
       - "{{ dotfiles.user_account.gpg.passphrase }}"
       - "--import"
-      - "{{ install.tmp_dir | default(ansible_user_dir) }}/privkey.asc"
+      - "{{ dotfiles.install.tmp_dir | default(ansible_user_dir) }}/privkey.asc"
     creates: "{{ ansible_user_dir }}/.gnupg/private-keys-v1.d/*.key"
   when:
     - dotfiles.user_account.gpg.fetch_keys is true
@@ -157,8 +157,8 @@
     path: "{{ rm_gpg_temp_item }}"
     state: absent
   loop:
-    - "{{ install.tmp_dir | default(ansible_user_dir) }}/privkey.asc"
-    - "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
-    - "{{ install.tmp_dir | default(ansible_user_dir) }}/input.txt"
+    - "{{ dotfiles.install.tmp_dir | default(ansible_user_dir) }}/privkey.asc"
+    - "{{ dotfiles.install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
+    - "{{ dotfiles.install.tmp_dir | default(ansible_user_dir) }}/input.txt"
   loop_control:
     loop_var: "rm_gpg_temp_item"

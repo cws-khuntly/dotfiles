@@ -4,6 +4,10 @@
 # =============================================================================
 ---
 dotfiles:
+  install:
+    base_path: "{{ ansible_user_dir }}/.dotfiles"
+    tmp_dir: "/var/tmp"
+
   user_account:
     name: ""
     email: ""

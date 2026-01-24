@@ -17,7 +17,7 @@
 
 - name: "Create links for ${HOME}/.config"
   ansible.builtin.file:
-    src: "{{ install.base_path }}/config/{{ ln_config_item }}"
+    src: "{{ dotfiles.install.base_path }}/config/{{ ln_config_item }}"
     dest: "{{ ansible_user_dir }}/.config/{{ ln_config_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
