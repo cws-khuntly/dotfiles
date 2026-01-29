@@ -96,9 +96,9 @@
     mode: "0600"
   when:
     - user_account.ssh.fetch_keys is true
+    - user_account.ssh.key_source == "gcloud"
     - secrets.google.GCP_SERVICE_ACCOUNT is defined
     - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
-    - secrets.bitwarden.BW_ACCESS_TOKEN is undefined or secrets.bitwarden.BW_ACCESS_TOKEN | length == 0
     - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
 - name: "Get SSH Private Key (Google Cloud)"
@@ -112,9 +112,9 @@
   register: "dotfiles_ssh_private_key_output"
   when:
     - user_account.ssh.fetch_keys is true
+    - user_account.ssh.key_source == "gcloud"
     - secrets.google.GCP_SERVICE_ACCOUNT is defined
     - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
-    - secrets.bitwarden.BW_ACCESS_TOKEN is undefined or secrets.bitwarden.BW_ACCESS_TOKEN | length == 0
     - gcp.projects.project_id is defined
     - gcp.projects.project_id | length > 0
     - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
@@ -128,9 +128,9 @@
     msg: "Fetching key from Bitwarden Secrets"
   when:
     - user_account.ssh.fetch_keys is true
+    - user_account.ssh.key_source == "bitwarden"
     - secrets.bitwarden.BW_ACCESS_TOKEN is defined
     - secrets.bitwarden.BW_ACCESS_TOKEN | length > 0
-    - secrets.google.GCP_SERVICE_ACCOUNT is undefined or secrets.google.GCP_SERVICE_ACCOUNT | length == 0
     - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
 - name: "Save fetched SSH private key file"
