@@ -13,7 +13,7 @@
 #
 # gcp:
 #   projects:
-#     project_id:
+#     project_id: ""
 #
 # user_account:
 #   name: ""
@@ -35,9 +35,9 @@
 #     key_id: ""
 #     generate_keys: < true | false >
 #     key_type: ""
-#     key_length:
+#     key_length: < length >
 #     subkey_type: ""
-#     subkey_length:
+#     subkey_length: < length >
 #     expiry: ""
 #     passphrase: ""
 #
