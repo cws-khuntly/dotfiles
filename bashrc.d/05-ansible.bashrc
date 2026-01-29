@@ -19,5 +19,3 @@
 #==============================================================================
 
 [[ -f "${HOME}/workspace/ansible/inventory/hosts.yml" ]] || return;
-
-declare -x ANSIBLE_HOSTS="${HOME}/workspace/ansible/inventory/hosts.yml";
