@@ -2,45 +2,6 @@
 #          NAME:  group_vars/all/main.yml
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
-
-# =============================================================================
-# Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/default.yml" if overrides are desired
-# =============================================================================
 ---
 ansible_python_interpreter: "/usr/bin/python"
 ansible_managed: "Ansible managed: {file} modified on %Y-%m-%d %H:%M:%S by {uid} on {host}"
-
-# =============================================================================
-# Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/bitwarden.yml" if overrides are desired
-# =============================================================================
-# secrets:
-#   bitwarden:
-#    BW_ACCESS_TOKEN: ""
-
-# bitwarden:
-#   projects:
-#     project_id: ""
-#   secret_entries:
-#     ssh_key_id: ""
-#     gpg_key_id: ""
-
-# =============================================================================
-# Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/gcloud.yml" if overrides are desired
-# =============================================================================
-# secrets:
-#   google:
-#     GCP_ACCESS_TOKEN: ""
-#     GCP_SERVICE_ACCOUNT: |
-#       <<your json here>>
-
-# gcp:
-#   projects:
-#     project_id: ""
-#   secret_entries:
-#     ssh_key_id: ""
-#     gpg_key_id: ""
-
-# =============================================================================
-# Specified as "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/dotfiles.yml" if overrides are desired
-# =============================================================================
----
