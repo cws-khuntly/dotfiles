@@ -7,6 +7,8 @@
   ansible.builtin.include_vars:
     dir: "{{ ansible_user_dir }}/workspace/ansible/vault"
     depth: 0
+    ignore_files:
+      - "txt"
 
 - name: "Main custom role running subtask(s)"
   ansible.builtin.include_tasks:
