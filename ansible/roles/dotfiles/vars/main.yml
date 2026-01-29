@@ -1,55 +1,65 @@
 # ====  ANSIBLE   =============================================================
-#          NAME:  group_vars/all/main.yml
-#   DESCRIPTION:  Common variables that apply to this play
+#          NAME:  roles/dotfiles/vars/main.yml
+#   DESCRIPTION:  Template variables for dotfiles
+#          NOTE: This file is meant to be a template and saved as ${GIT_CLONE_DIR}/ansible/vault/dotfiles.yml as an ansible vault
 # =============================================================================
 ---
-dotfiles:
-  install:
-    base_path: "{{ ansible_user_dir }}/.dotfiles"
-    tmp_dir: "/var/tmp"
-
-  user_account:
-    name: ""
-    email: ""
-
-    ssh:
-      enabled: false
-      fetch_keys: false
-      generate_keys: false
-      ssh_key: |
-        << ssh private key >>
-      ssh_key_id: "1a519708-804f-4f6d-a9ff-b3c901885583"
-      passphrase: ""
-      key_type: ""
-
-    gpg:
-      enabled: false
-      fetch_keys: false
-      generate_keys: false
-      gpg_key: |
-        << gpg private key >>
-      gpg_key_id: "18b5f492-73c0-482e-94f5-b3dc01266666"
-      key_type: ""
-      key_length:
-      expiry: ""
-      passphrase: ""
-
-    git:
-      signing_key: ""
-      ssh_key_id: "2717bd35-d8d6-4ab0-8f87-b3dc01269072"
-
-    smtp:
-      accounts:
-        - name: ""
-          enabled: false
-          account_name: ""
-          username: ""
-          password: ""
-          hostname: ""
-          port:
-          use_tls: false
-
-    systemd:
-      enabled: false
-      services:
-        - name: ""
+# secrets:
+#   bitwarden:
+#     BW_ACCESS_TOKEN: ""
+#
+#   google:
+#     GCP_SERVICE_ACCOUNT: ""
+#
+#gcp:
+#   projects:
+#     project_id:
+#
+# user_account:
+#   name: ""
+#   email: ""
+#
+#   ssh:
+#     enabled: < true | false >
+#     fetch_keys: < true | false >
+#     key_source: ""
+#     key_id: ""
+#     generate_keys: < true | false >
+#     passphrase: ""
+#     key_type: ""
+#
+#   gpg:
+#     enabled: < true | false >
+#     fetch_keys: < true | false >
+#     key_source: ""
+#     key_id: ""
+#     generate_keys: < true | false >
+#     key_type: ""
+#     key_length:
+#     subkey_type: ""
+#     subkey_length:
+#     expiry: ""
+#     passphrase: ""
+#
+#   git:
+#     enabled: < true | false >
+#     fetch_keys: < true | false >
+#     key_source: ""
+#     key_id: ""
+#     signing_key: ""
+#
+#  smtp:
+#     accounts:
+#       - name: ""
+#         enabled: < true | false >
+#         account_name: ""
+#         username: ""
+#         password: ""
+#         hostname: ""
+#         port: < port >
+#         use_tls: < true | false >
+#
+#   systemd:
+#     enabled: < true | false >
+#     services:
+#      - name: "service.<service | target | timer >"
