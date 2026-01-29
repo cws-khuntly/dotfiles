@@ -5,3 +5,7 @@
 ---
 ansible_python_interpreter: "/usr/bin/python"
 ansible_managed: "Ansible managed: {file} modified on %Y-%m-%d %H:%M:%S by {uid} on {host}"
+
+install:
+  base_path: "{{ ansible_user_dir }}/.dotfiles"
+  tmp_dir: "/var/tmp"
