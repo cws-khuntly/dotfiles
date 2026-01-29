@@ -11,7 +11,7 @@
 #   google:
 #     GCP_SERVICE_ACCOUNT: ""
 #
-#gcp:
+# gcp:
 #   projects:
 #     project_id:
 #
