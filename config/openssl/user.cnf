@@ -35,7 +35,11 @@ default_md                      = sha512
 x509_extensions                 = @v3_req
  
 [v3_req]
-subjectAltName                  = copy
+subjectAltName                  = @alt_names
+
+[alt_names]
+[alt_names]
+DNS.0                           = fedora-desktop.local
 
 [ req_distinguished_name ]
 countryName                     = Country Name (2 letter code)
