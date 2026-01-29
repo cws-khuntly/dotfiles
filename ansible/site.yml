@@ -5,10 +5,6 @@
 ---
 - name: Deploy and install dotfiles
   hosts: all
-  vars_files:
-    - "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/dotfiles.yml"
-    - "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/bitwarden.yml"
-    - "{{ user_account.home_dir | default(ansible_user_dir) }}/workspace/ansible/vault/gcloud.yml"
 
   pre_tasks:
     - name: Install galaxy collections
