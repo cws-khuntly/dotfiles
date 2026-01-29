@@ -1,5 +1,5 @@
 # ====  ANSIBLE   =============================================================
-#          NAME:  group_vars/all/main.yml
+#          NAME:  group_vars/all.yml
 #   DESCRIPTION:  Common variables that apply to this play
 # =============================================================================
 ---

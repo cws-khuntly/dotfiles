@@ -1,7 +1,7 @@
 # =====  ANSIBLE  ============================================================
-#          NAME:  tasks/deploy-files.yml
+#          NAME:  roles/dotfiles/tasks/handle-ssh-keys.yml
 #   DESCRIPTION:  Primary entry point for this play
-# =============================================================================
+# ============================================================================
 ---
 - name: "Create or update permissions on ${HOME}/.ssh"
   ansible.builtin.file:
@@ -23,7 +23,7 @@
 
 - name: "Create links in ${HOME}/.ssh"
   ansible.builtin.file:
-    src: "{{ dotfiles.install.base_path }}/config/ssh/{{ ssh_item }}"
+    src: "{{ install.base_path }}/config/ssh/{{ ssh_item }}"
     dest: "{{ ansible_user_dir }}/.ssh/{{ ssh_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
@@ -104,7 +104,7 @@
 - name: "Get SSH Private Key (Google Cloud)"
   google.cloud.gcp_secret_manager:
     auth_kind: "serviceaccount"
-    service_account_file: "{{ dotfiles.install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
+    service_account_file: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     project: "{{ gcp.projects.project_id }}"
     name: "{{ gcp.secret_entries.ssh_key_id }}"
     state: present
@@ -146,7 +146,7 @@
 
 - name: "Remove service account file"
   ansible.builtin.file:
-    path: "{{ dotfiles.install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
+    path: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     state: absent
   when:
     - user_account.ssh.fetch_keys is true

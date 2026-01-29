@@ -1,7 +1,7 @@
 # =====  ANSIBLE  ============================================================
-#          NAME:  tasks/deploy-files.yml
+#          NAME:  roles/dotfiles/tasks/create-home-links.yml
 #   DESCRIPTION:  Primary entry point for this play
-# =============================================================================
+# ============================================================================
 ---
 - name: "Remove any existing dotfiles in home"
   ansible.builtin.file:
@@ -39,7 +39,7 @@
 
 - name: "Create dotfiles links in home directory"
   ansible.builtin.file:
-    src: "{{ dotfiles.install.base_path }}/{{ ln_dotfiles_item }}"
+    src: "{{ install.base_path }}/{{ ln_dotfiles_item }}"
     dest: "{{ ansible_user_dir }}/.{{ ln_dotfiles_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
@@ -53,7 +53,7 @@
 
 - name: "Create dotfiles in home directory"
   ansible.builtin.file:
-    src: "{{ dotfiles.install.base_path }}/config/dotfiles/{{ ln_system_item }}"
+    src: "{{ install.base_path }}/config/dotfiles/{{ ln_system_item }}"
     dest: "{{ ansible_user_dir }}/.{{ ln_system_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
@@ -74,7 +74,7 @@
 
 - name: "Create links for bin and lib"
   ansible.builtin.file:
-    src: "{{ dotfiles.install.base_path }}/{{ add_home_item }}"
+    src: "{{ install.base_path }}/{{ add_home_item }}"
     dest: "{{ ansible_user_dir }}/{{ add_home_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
@@ -87,7 +87,7 @@
 
 - name: "Create link for Ansible"
   ansible.builtin.file:
-    src: "{{ dotfiles.install.base_path }}/config/ansible/ansible.cfg"
+    src: "{{ install.base_path }}/config/ansible/ansible.cfg"
     dest: "{{ ansible_user_dir }}/ansible.cfg"
     state: "link"
     owner: "{{ ansible_user_id }}"

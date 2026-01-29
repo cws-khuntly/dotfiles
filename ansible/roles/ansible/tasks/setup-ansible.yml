@@ -1,5 +1,5 @@
 # ====  ANSIBLE   =============================================================
-#          NAME:  roles/common/tasks/main.yml
+#          NAME:  roles/ansible/tasks/setup-ansible.yml
 #   DESCRIPTION:  Main entry point for common tasks
 # =============================================================================
 ---

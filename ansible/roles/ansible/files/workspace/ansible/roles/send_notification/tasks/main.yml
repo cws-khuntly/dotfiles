@@ -1,6 +1,6 @@
 # =====  ANSIBLE  ============================================================
-#          NAME:  requirements.yml
-#   DESCRIPTION:  It's for the linter
+#          NAME:  roles/ansible/send_notification/tasks/main.yml
+#   DESCRIPTION:  Primary entry point for this play
 # ============================================================================
 ---
 - name: Send alert notification

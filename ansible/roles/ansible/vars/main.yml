@@ -1,5 +1,5 @@
-# ====  ANSIBLE   =============================================================
-#          NAME:  group_vars/all/main.yml
-#   DESCRIPTION:  Common variables that apply to this play
-# =============================================================================
+# =====  ANSIBLE  ============================================================
+#          NAME:  roles/ansible/vars/main.yml
+#   DESCRIPTION:  Primary entry point for this play
+# ============================================================================
 ---

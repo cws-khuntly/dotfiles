@@ -1,5 +1,5 @@
 # =====  ANSIBLE  ============================================================
-#          NAME:  site.yml
+#          NAME:  roles/send_notification/vars/main.yml
 #   DESCRIPTION:  Entry point for playbook
 # ============================================================================
 ---

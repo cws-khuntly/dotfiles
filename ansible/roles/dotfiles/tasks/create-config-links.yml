@@ -1,7 +1,7 @@
 # =====  ANSIBLE  ============================================================
-#          NAME:  tasks/deploy-files.yml
+#          NAME:  roles/dotfiles/tasks/create-config-links.yml
 #   DESCRIPTION:  Primary entry point for this play
-# =============================================================================
+# ============================================================================
 ---
 - name: "Remove any existing configuration directories (${HOME}/.config)"
   ansible.builtin.file:
@@ -17,7 +17,7 @@
 
 - name: "Create links for ${HOME}/.config"
   ansible.builtin.file:
-    src: "{{ dotfiles.install.base_path }}/config/{{ ln_config_item }}"
+    src: "{{ install.base_path }}/config/{{ ln_config_item }}"
     dest: "{{ ansible_user_dir }}/.config/{{ ln_config_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
