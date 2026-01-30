@@ -10,15 +10,18 @@ services:
       - ORACLE_PDB=ORCLPDB1
       - ORACLE_PWD_FILE=/run/secrets/oracle
       - ORACLE_EDITION=enterprise
+      - ENABLE_TCPS=true
+      - TCPS_CERTS_LOCATION=/home/oracle/wallet
     networks:
       service-network:
         ipv4_address: 192.168.1.11
     ports:
       - 1521:1521
+      - 2484:2484
     volumes:
       - oracle-data:/opt/oracle/oradata
       - oracle-backup:/opt/oracle/backup
-      - oracle-wallet:/opt/oracle/wallet
+      - oracle-wallet:/home/oracle/wallet:ro
     healthcheck:
       test: ["CMD", "sqlplus", "/", "as sysdba", "@healthcheck.sql"]
       interval: 30s
