@@ -119,15 +119,12 @@
     - gcp.projects.project_id | length > 0
     - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
-- name: print1
-  ansible.builtin.debug:
-    msg: "{{ secrets.bitwarden.BW_ACCESS_TOKEN }}"
-
 - name: "Get SSH Private Key (Bitwarden Secrets)"
   vars:
     bws_access_token: "{{ secrets.bitwarden.BW_ACCESS_TOKEN }}"
     secret_id: "{{ user_account.ssh.key_id }}"
-    dotfiles_ssh_private_key_output: "{{ lookup('bitwarden.secrets.lookup', secret_id, access_token=bws_access_token) }}"
+    bw_vault_url: "https://vault.bitwarden.eu/"
+    dotfiles_ssh_private_key_output: "{{ lookup('bitwarden.secrets.lookup', secret_id, access_token=bws_access_token, base_url=bw_vault_url) }}"
   ansible.builtin.debug:
     msg: "{{ dotfiles_ssh_private_key_output }}"
   when:
