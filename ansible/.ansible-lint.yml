@@ -16,3 +16,6 @@ enable_list:
   - name
   - yaml
   - jinja
+
+rules:
+  line-length: disable
