@@ -9,3 +9,5 @@ GRANT ALL PRIVILEGES TO &user_name;
 
 --
 COMMIT;
+
+EXIT;
