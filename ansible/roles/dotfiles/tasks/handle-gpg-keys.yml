@@ -87,7 +87,8 @@
     auth_kind: "serviceaccount"
     service_account_file: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     project: "{{ gcp.projects.project_id }}"
-    dotfiles_gpg_private_key_output: "{{ lookup('google.cloud.gcp_secret_manager', project=project, auth_kind=auth_kind, service_service_account_file=service_account_file, key=user_account.gpg.key_id) }}"
+    secret_id: "{{ user_account.gpg.key_id }}"
+    dotfiles_gpg_private_key_output: "{{ lookup('google.cloud.gcp_secret_manager', project=project, auth_kind=auth_kind, service_service_account_file=service_account_file, key=secret_id) }}"
   ansible.builtin.debug:
     msg: "Fetching key from Google Cloud"
   when:
@@ -102,7 +103,7 @@
 - name: "Get GPG Private Key (Bitwarden Secrets)"
   vars:
     bws_access_token: "{{ secrets.bitwarden.BW_ACCESS_TOKEN }}"
-    secret_id: "{{ user_account.gpg.gpg_key_id }}"
+    secret_id: "{{ user_account.gpg.key_id }}"
     dotfiles_gpg_private_key_output: "{{ lookup('bitwarden.secrets.lookup', secret_id, access_token=bws_access_token) }}"
   ansible.builtin.debug:
     msg: "Fetching key from Bitwarden Secrets"
