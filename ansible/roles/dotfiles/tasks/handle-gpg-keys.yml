@@ -83,22 +83,21 @@
     - dotfiles_gpg_keys_files_found is undefined or dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: "Get GPG Private Key (Google Cloud)"
-  google.cloud.gcp_secret_manager:
+  vars:
     auth_kind: "serviceaccount"
     service_account_file: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     project: "{{ gcp.projects.project_id }}"
-    name: "{{ gcp.secret_entries.gpg_key_id }}"
-    state: present
-    return_value: true
-  register: "dotfiles_gpg_private_key_output"
+    dotfiles_gpg_private_key_output: "{{ lookup('google.cloud.gcp_secret_manager', project=project, auth_kind=auth_kind, service_service_account_file=service_account_file,key=user_account.gpg.key_id) }}"
+  ansible.builtin.debug:
+    msg: "Fetching key from Google Cloud"
   when:
     - user_account.gpg.fetch_keys is true
-    - user_account.ssh.key_source == "gcloud"
+    - user_account.gpg.key_source == "gcloud"
     - secrets.google.GCP_SERVICE_ACCOUNT is defined
     - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
     - gcp.projects.project_id is defined
     - gcp.projects.project_id | length > 0
-    - dotfiles_gpg_keys_files_found.files | count == 0
+    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
 - name: "Get GPG Private Key (Bitwarden Secrets)"
   vars:
