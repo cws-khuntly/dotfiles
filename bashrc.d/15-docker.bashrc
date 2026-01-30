@@ -35,8 +35,6 @@ function startDockerContainer()
     local -i return_code=0;
     local -i error_count=0;
     local -i ret_code=0;
-    local -i string_count=1;
-    local -i counter=0;
     local argument;
     local argument_name;
     local argument_value;
@@ -51,7 +49,7 @@ function startDockerContainer()
     #==============================================================================
     function usage()
     (
-        local cname="01-functions.bashrc";
+        local cname="15-docker.bashrc";
         local function_name="${cname}#${FUNCNAME[1]}";
         local return_code=3;
 
@@ -70,7 +68,6 @@ function startDockerContainer()
     if (( ${#} == 0 )); then usage; return ${?}; fi
 
     while (( ${#} > 0 )); do
-
         argument="${1}";
 
         case "${argument}" in
@@ -112,7 +109,7 @@ function startDockerContainer()
         docker compose -f "${container}" "${action}";
         ret_code="${?}";
 
-        if [[ -z "${ret_code}"]] || (( ret_code != 0 )); then
+        if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
             return_code="${ret_code}";
 
             if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]]; then
