@@ -17,6 +17,9 @@ secrets:
   google:
     GCP_SERVICE_ACCOUNT: ""
 
+bitwarden:
+  vault_url: ""
+
 gcp:
   projects:
     project_id: ""

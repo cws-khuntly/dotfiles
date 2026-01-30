@@ -123,7 +123,7 @@
   vars:
     bws_access_token: "{{ secrets.bitwarden.BW_ACCESS_TOKEN }}"
     secret_id: "{{ user_account.ssh.key_id }}"
-    bw_vault_url: "https://vault.bitwarden.eu/"
+    bw_vault_url: "{{ bitwarden.vault_url }}"
     dotfiles_ssh_private_key_output: "{{ lookup('bitwarden.secrets.lookup', secret_id, access_token=bws_access_token, base_url=bw_vault_url) }}"
   ansible.builtin.debug:
     msg: "{{ dotfiles_ssh_private_key_output }}"
@@ -133,10 +133,6 @@
     - secrets.bitwarden.BW_ACCESS_TOKEN is defined
     - secrets.bitwarden.BW_ACCESS_TOKEN | length > 0
     - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
-
-- name: print
-  ansible.builtin.debug:
-    msg: "{{ dotfiles_ssh_private_key_output }}"
 
 - name: "Save fetched SSH private key file"
   ansible.builtin.copy:
