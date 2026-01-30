@@ -7,6 +7,7 @@ skip_action_validation: false
 
 skip_list:
   - var-naming[no-role-prefix]
+  - yaml[line-length]
 
 enable_list:
   - args
@@ -16,6 +17,3 @@ enable_list:
   - name
   - yaml
   - jinja
-
-rules:
-  line-length: disable
