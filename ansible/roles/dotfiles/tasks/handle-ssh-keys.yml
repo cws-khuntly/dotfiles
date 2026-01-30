@@ -106,7 +106,7 @@
     auth_kind: "serviceaccount"
     service_account_file: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
     project: "{{ gcp.projects.project_id }}"
-    dotfiles_ssh_private_key_output: "{{ lookup('google.cloud.gcp_secret_manager', project=project, auth_kind=auth_kind, service_service_account_file=service_account_file,key=user_account.ssh.key_id) }}"
+    dotfiles_ssh_private_key_output: "{{ lookup('google.cloud.gcp_secret_manager', project=project, auth_kind=auth_kind, service_service_account_file=service_account_file, key=user_account.ssh.key_id) }}"
   ansible.builtin.debug:
     msg: "Fetching key from Google Cloud"
   when:
