@@ -53,7 +53,7 @@ ORCLPDB1_SSL =
          (PORT = 2484)
       )
     )
-      (CONNECT_DATA =
+    (CONNECT_DATA =
       (SERVICE_NAME = ORCLPDB1)
     )
   )
@@ -67,7 +67,7 @@ REMOTE_SSL =
          (PORT = 2484)
       )
     )
-      (CONNECT_DATA =
+    (CONNECT_DATA =
       (SERVICE_NAME = ORCLPDB1)
     )
   )

@@ -21,7 +21,7 @@ services:
     volumes:
       - oracle-data:/opt/oracle/oradata
       - oracle-backup:/opt/oracle/backup
-      - oracle-wallet:/home/oracle/wallet:ro
+      - oracle-wallet:/home/oracle/wallet
     healthcheck:
       test: ["CMD", "sqlplus", "/", "as sysdba", "@healthcheck.sql"]
       interval: 30s
