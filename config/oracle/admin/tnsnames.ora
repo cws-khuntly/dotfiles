@@ -58,3 +58,15 @@ ORCLPDB1_SSL =
      )
   )
 
+REMOTE_SSL =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS =
+        (PROTOCOL = TCPS)
+        (HOST = 192.168.12.6)
+        (PORT = 2484)
+      )
+    )
+    
+  )
+
