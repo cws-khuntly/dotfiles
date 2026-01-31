@@ -44,3 +44,17 @@ ORCLPDB1 =
     )
   )
 
+ORCLPDB1_SSL =
+  (DESCRIPTION =
+    (ADDRESS_LIST =
+      (ADDRESS =
+         (PROTOCOL = TCPS)
+         (HOST = 127.0.0.1)
+         (PORT = 1521)
+       )
+     )
+     (CONNECT_DATA =
+       (SERVICE_NAME = ORCLPDB1)
+     )
+  )
+
