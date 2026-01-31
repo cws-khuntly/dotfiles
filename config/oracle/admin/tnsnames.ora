@@ -51,22 +51,23 @@ ORCLPDB1_SSL =
          (PROTOCOL = TCPS)
          (HOST = 127.0.0.1)
          (PORT = 1521)
-       )
-     )
-     (CONNECT_DATA =
-       (SERVICE_NAME = ORCLPDB1)
-     )
+      )
+    )
+      (CONNECT_DATA =
+      (SERVICE_NAME = ORCLPDB1)
+    )
   )
 
 REMOTE_SSL =
   (DESCRIPTION =
     (ADDRESS_LIST =
       (ADDRESS =
-        (PROTOCOL = TCPS)
-        (HOST = 192.168.12.6)
-        (PORT = 2484)
+         (PROTOCOL = TCPS)
+         (HOST = 127.0.0.1)
+         (PORT = 1521)
       )
     )
-    
+      (CONNECT_DATA =
+      (SERVICE_NAME = ORCLPDB1)
+    )
   )
-
