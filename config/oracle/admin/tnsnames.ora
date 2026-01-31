@@ -54,6 +54,7 @@ ORCLPDB1_SSL =
       )
     )
     (CONNECT_DATA =
+      (SERVER = DEDICATED)
       (SERVICE_NAME = ORCLPDB1)
     )
   )
