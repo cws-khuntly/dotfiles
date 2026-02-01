@@ -23,6 +23,36 @@
 docker login -u kmhuntly@gmail.com container-registry.oracle.com
 
 #=====  FUNCTION  =============================================================
+#          NAME:  createDockerNetwork
+#   DESCRIPTION:  Returns a random string of alphanumeric characters
+#    PARAMETERS:  Length of string, include special characters
+#       RETURNS:  0 regardless of result.
+#==============================================================================
+function createDockerNetwork()
+{
+    local cname="15-docker.bashrc";
+    local function_name="${cname}#${FUNCNAME[0]}";
+    local -i return_code=0;
+    local -i error_count=0;
+    local -i ret_code=0;
+    local network_name;
+    local network_addr;
+    local network_mask;
+    local network_gateway;
+
+    if (( ${#} != 4 )); then usage; return 3; fi
+
+    network_name="${1}";
+    network_addr="${2}"
+    network_mask="${3}";
+    network_gateway="${4}";
+
+    docker network create --driver=bridge --subnet="${network_addr}"/"${network_mask}" --gateway "${network_gateway}" "${network_name}";
+
+    return "${?}";
+}
+
+#=====  FUNCTION  =============================================================
 #          NAME:  startDockerContainer
 #   DESCRIPTION:  Returns a random string of alphanumeric characters
 #    PARAMETERS:  Length of string, include special characters
