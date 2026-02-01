@@ -6,37 +6,9 @@
 - name: "Generate mailrc configuration file"
   ansible.builtin.template:
     src: "templates/config/dotfiles/mailrc.j2"
-    dest: "{{ install.base_path }}/config/dotfiles/netrc"
+    dest: "{{ install.base_path }}/config/dotfiles/mailrc"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
     - user_account.smtp.accounts | length > 0
-
-- name: "Generate git configuration including signing key (Fetched)"
-  vars:
-    gpg_signing_key: "{{ user_account.git.signing_key }}"
-  ansible.builtin.template:
-    src: "templates/config/git/config.j2"
-    dest: "{{ ansible_user_dir }}/.config/git/config"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0644"
-  when:
-    - user_account.gpg.fetch_keys is true
-    - user_account.gpg.generate_keys is false
-    - user_account.gpg.signing_key is defined
-
-- name: "Generate git configuration including signing key (Generated)"
-  vars:
-    gpg_signing_key: "{{ dotfiles_get_gpg_key.stdout }}"
-  ansible.builtin.template:
-    src: "templates/config/git/config.j2"
-    dest: "{{ ansible_user_dir }}/.config/git/config"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_gid }}"
-    mode: "0644"
-  when:
-    - user_account.gpg.fetch_keys is false
-    - user_account.gpg.generate_keys is true
-    - gpg_signing_key is defined

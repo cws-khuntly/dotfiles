@@ -42,25 +42,20 @@
     group: "{{ ansible_user_gid }}"
     mode: "0755"
 
-- name: "Check for existing SSH keys"
-  ansible.builtin.stat:
-    path: "{{ ansible_user_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
-  register: "dotfiles_key_exists"
-
 - name: "Create SSH private key (if provided)"
   ansible.builtin.copy:
-    content: "{{ user_account.ssh.ssh_key }}"
+    content: "{{ user_account.ssh.key_data }}"
     dest: "{{ ansible_user_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
-    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
     - user_account.ssh.generate_keys is false
     - user_account.ssh.fetch_keys is false
-    - user_account.ssh.key | length > 0
+    - user_account.ssh.key_data is defined
+    - user_account.ssh.key_data | length > 0
 
-- name: "Create SSH key pair (if enabled, with passphrase)"
+- name: "Create SSH key (if enabled, with passphrase)"
   community.crypto.openssh_keypair:
     path: "{{ ansible_user_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
     type: "{{ user_account.ssh.key_type }}"
@@ -70,11 +65,10 @@
     mode: "0600"
     passphrase: "{{ user_account.ssh.passphrase }}"
   when:
-    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
     - user_account.ssh.fetch_keys is false
     - user_account.ssh.passphrase is defined
 
-- name: "Create SSH key pair (if enabled, no passphrase)"
+- name: "Create SSH key (if enabled, no passphrase)"
   community.crypto.openssh_keypair:
     path: "{{ ansible_user_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
     type: "{{ user_account.ssh.key_type }}"
@@ -83,7 +77,6 @@
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
-    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
     - user_account.ssh.fetch_keys is false
     - user_account.ssh.passphrase is undefined
 
@@ -99,9 +92,8 @@
     - user_account.ssh.key_source == "gcloud"
     - secrets.google.GCP_SERVICE_ACCOUNT is defined
     - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
-    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
-- name: "Get SSH Private Key (Google Cloud)"
+- name: "Get SSH key (Google Cloud)"
   vars:
     auth_kind: "serviceaccount"
     service_account_file: "{{ install.tmp_dir | default(ansible_user_dir) }}/service_account.json"
@@ -117,24 +109,8 @@
     - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
     - gcp.projects.project_id is defined
     - gcp.projects.project_id | length > 0
-    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
-- name: "Get SSH Private Key (Bitwarden Secrets)"
-  vars:
-    bws_access_token: "{{ secrets.bitwarden.BW_ACCESS_TOKEN }}"
-    secret_id: "{{ user_account.ssh.key_id }}"
-    bw_vault_url: "{{ bitwarden.vault_url }}"
-    dotfiles_ssh_private_key_output: "{{ lookup('bitwarden.secrets.lookup', secret_id, access_token=bws_access_token, base_url=bw_vault_url) }}"
-  ansible.builtin.debug:
-    msg: "{{ dotfiles_ssh_private_key_output }}"
-  when:
-    - user_account.ssh.fetch_keys is true
-    - user_account.ssh.key_source == "bitwarden"
-    - secrets.bitwarden.BW_ACCESS_TOKEN is defined
-    - secrets.bitwarden.BW_ACCESS_TOKEN | length > 0
-    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
-
-- name: "Save fetched SSH private key file"
+- name: "Save fetched SSH key file"
   ansible.builtin.copy:
     content: "{{ dotfiles_ssh_private_key_output }}"
     dest: "{{ ansible_user_dir }}/.ssh/id_{{ user_account.ssh.key_type }}"
@@ -143,7 +119,6 @@
     mode: "0600"
   when:
     - user_account.ssh.fetch_keys is true
-    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
 - name: "Remove service account file"
   ansible.builtin.file:

@@ -3,6 +3,11 @@
 #   DESCRIPTION:  Primary entry point for this play
 # ============================================================================
 ---
+- name: "Remove existing GnuPG configuration"
+  ansible.builtin.file:
+    path: "{{ ansible_user_dir }}/.gnupg"
+    state: absent
+
 - name: "Create symbolic link for GnuPG"
   ansible.builtin.file:
     src: "{{ install.base_path }}/config/dotfiles/gnupg"
@@ -20,14 +25,6 @@
     group: "{{ ansible_user_gid }}"
     mode: "0700"
 
-- name: "Search for existing private keys"
-  ansible.builtin.find:
-    paths: "{{ ansible_user_dir }}/.gnupg/private-keys-v1.d/"
-    patterns: "*.key"
-    file_type: "file"
-    recurse: false
-  register: "dotfiles_gpg_keys_files_found"
-
 - name: "Create GPG private key (if provided)"
   ansible.builtin.copy:
     content: "{{ user_account.gpg.gpg_key }}"
@@ -36,10 +33,10 @@
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
-    - dotfiles_gpg_keys_files_found.files | count == 0
     - user_account.gpg.generate_keys is false
     - user_account.gpg.fetch_keys is false
-    - user_account.gpg.key | length > 0
+    - user_account.gpg.key_data is defined
+    - user_account.gpg.key_data | length > 0
 
 - name: "Define GPG batch configuration file content"
   ansible.builtin.template:
@@ -49,7 +46,6 @@
     group: "{{ ansible_user_gid }}"
     mode: "0600"
   when:
-    - dotfiles_gpg_keys_files_found.files | count == 0
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false
     - user_account.gpg.key_type is defined
@@ -64,7 +60,6 @@
     cmd: "gpg --batch --gen-key {{ install.tmp_dir | default(ansible_user_dir) }}/input.txt"
     creates: "{{ ansible_user_dir }}/.gnupg/trustdb.gpg"
   when:
-    - dotfiles_gpg_keys_files_found.files | count == 0
     - user_account.gpg.generate_keys is true
     - user_account.gpg.fetch_keys is false
 
@@ -80,7 +75,6 @@
     - user_account.ssh.key_source == "gcloud"
     - secrets.google.GCP_SERVICE_ACCOUNT is defined
     - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
-    - dotfiles_gpg_keys_files_found is undefined or dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: "Get GPG Private Key (Google Cloud)"
   vars:
@@ -98,22 +92,6 @@
     - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
     - gcp.projects.project_id is defined
     - gcp.projects.project_id | length > 0
-    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
-
-- name: "Get GPG Private Key (Bitwarden Secrets)"
-  vars:
-    bws_access_token: "{{ secrets.bitwarden.BW_ACCESS_TOKEN }}"
-    secret_id: "{{ user_account.gpg.key_id }}"
-    bw_vault_url: "{{ bitwarden.vault_url }}"
-    dotfiles_gpg_private_key_output: "{{ lookup('bitwarden.secrets.lookup', secret_id, access_token=bws_access_token, base_url=bw_vault_url) }}"
-  ansible.builtin.debug:
-    msg: "Fetching key from Bitwarden Secrets"
-  when:
-    - user_account.gpg.fetch_keys is true
-    - user_account.ssh.key_source == "bitwarden"
-    - secrets.bitwarden.BW_ACCESS_TOKEN is defined
-    - secrets.bitwarden.BW_ACCESS_TOKEN | length > 0
-    - dotfiles_key_exists is undefined or dotfiles_key_exists.stat.exists is false
 
 - name: "Save fetched GPG private key file"
   ansible.builtin.copy:
@@ -124,8 +102,6 @@
     mode: "0600"
   when:
     - user_account.gpg.fetch_keys is true
-    - dotfiles_gpg_keys_files_found.files | count == 0
-    - dotfiles_gpg_private_key_output.value | length > 0
 
 - name: "Import fetched GPG private key"
   ansible.builtin.command:
@@ -142,7 +118,6 @@
     - user_account.gpg.generate_keys is false
     - user_account.gpg.passphrase is defined
     - user_account.gpg.passphrase | length > 0
-    - dotfiles_gpg_keys_files_found.files | count == 0
 
 - name: "Capture the key ID"
   ansible.builtin.command:

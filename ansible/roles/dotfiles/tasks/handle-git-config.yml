@@ -1,0 +1,47 @@
+# =====  ANSIBLE  ============================================================
+#          NAME:  roles/dotfiles/tasks/update-config-files.yml
+#   DESCRIPTION:  Primary entry point for this play
+# =============================================================================
+---
+- name: "Generate git configuration including signing key (Fetched)"
+  vars:
+    gpg_signing_key: "{{ user_account.git.signing_key }}"
+  ansible.builtin.template:
+    src: "templates/config/git/config.j2"
+    dest: "{{ ansible_user_dir }}/.config/git/config"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0644"
+  when:
+    - user_account.gpg.fetch_keys is true
+    - user_account.gpg.generate_keys is false
+    - user_account.gpg.signing_key is defined
+    - user_account.gpg.signing_key | length > 0
+
+- name: "Generate git configuration including signing key (Generated)"
+  vars:
+    gpg_signing_key: "{{ dotfiles_get_gpg_key.stdout }}"
+  ansible.builtin.template:
+    src: "templates/config/git/config.j2"
+    dest: "{{ ansible_user_dir }}/.config/git/config"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0644"
+  when:
+    - user_account.gpg.fetch_keys is false
+    - user_account.gpg.generate_keys is true
+    - gpg_signing_key is defined
+    - user_account.gpg.signing_key | length > 0
+
+- name: "Create SSH private key (if provided)"
+  ansible.builtin.copy:
+    content: "{{ user_account.ssh.key_data }}"
+    dest: "{{ ansible_user_dir }}/.ssh/{{ user_account.gpg.key_name }}"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: "0600"
+  when:
+    - user_account.git.key_name is defined
+    - user_account.git.key_name | length > 0
+    - user_account.git.key_data is defined
+    - user_account.git.key_data | length > 0
