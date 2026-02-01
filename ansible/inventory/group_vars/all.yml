@@ -9,3 +9,16 @@ ansible_managed: "Ansible managed: {file} modified on %Y-%m-%d %H:%M:%S by {uid}
 install:
   base_path: "{{ ansible_user_dir }}/.dotfiles"
   tmp_dir: "/var/tmp"
+
+  pip:
+    install_base_packages: true
+    install_extra_packages: true
+
+    base_packages:
+      - requests
+      - packaging
+      - bcrypt
+
+    extra_packages:
+      - google-auth
+      - bitwarden-sdk

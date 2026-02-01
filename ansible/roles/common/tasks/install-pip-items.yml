@@ -5,29 +5,18 @@
 ---
 - name: "Install common packages via pip"
   ansible.builtin.pip:
-    name: "requests"
+    name: "{{ install_item }}"
+  loop:
+    - "{{ install.pip.base_packages }}"
+  loop_control:
+    loop_var: "install_item"
+  when: install_base_packages is true
 
-- name: "Install common packages via pip"
+- name: "Install extra packages via pip"
   ansible.builtin.pip:
-    name: "packaging"
-
-- name: "Install bcrypt via pip"
-  ansible.builtin.pip:
-    name: "bcrypt"
-  when:
-    - user_account.ssh.passphrase is defined
-    - user_account.ssh.passphrase | length > 0
-
-- name: "Install google-auth via pip"
-  ansible.builtin.pip:
-    name: "google-auth"
-  when:
-    - secrets.google.GCP_SERVICE_ACCOUNT is defined
-    - secrets.google.GCP_SERVICE_ACCOUNT | length > 0
-
-- name: "Install bitwarden SDK via pip"
-  ansible.builtin.pip:
-    name: "bitwarden-sdk"
-  when:
-    - secrets.bitwarden.BW_ACCESS_TOKEN is defined
-    - secrets.bitwarden.BW_ACCESS_TOKEN | length > 0
+    name: "{{ install_extra }}"
+  loop:
+    - "{{ install.pip.extra_packages }}"
+  loop_control:
+    loop_var: "install_extra"
+  when: install_extra_packages is true
