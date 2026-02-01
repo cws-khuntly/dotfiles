@@ -1,0 +1,73 @@
+---
+services:
+  hashicorp-vault:
+    image: hashicorp/vault:latest
+    pull_policy: missing
+    hostname: vault
+    container_name: vault
+    environment:
+      VAULT_ADDR: "https://localhost:8200"
+      VAULT_API_ADDR: "https://localhost:8200"
+      VAULT_ADDRESS: "https://localhost:8200"
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.27
+    ports:
+      - 8200:8200
+      - 8201:8201
+    volumes:
+      - vault-logs:/vault/logs:rw
+      - vault-data:/vault/data:rw
+      - vault-config:/vault/config:rw
+      - vault-certs:/certs:rw
+      - vault-files:/vault/file:rw
+    cap_add:
+      - IPC_LOCK
+    entrypoint: vault server -config /vault/config/config.hcl
+    # healthcheck:
+      # test: ["CMD", "sqlplus", "/", "as sysdba", "@healthcheck.sql"]
+      # interval: 30s
+      # timeout: 10s
+      # retries: 5
+
+---
+volumes:
+  vault-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/hashicorp/vault/logs"
+
+  vault-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/hashicorp/vault/data"
+
+  vault-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/hashicorp/vault/config"
+
+  vault-certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/hashicorp/vault/certs"
+
+  vault-files:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/hashicorp/vault/files"
+
+---
+networks:
+  service-network:
+    external: true

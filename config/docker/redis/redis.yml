@@ -13,7 +13,7 @@ services:
       - "6379:6379"
     command: redis-server --save 20 1 --loglevel warning --requirepass 317V1jK7eMFW2mivTHzmvOvX2znkl4hn
     volumes:
-      - redis-data:/data
+      - redis-data:/data:rw
     healthcheck:
       test: ["CMD", "redis-cli", "-h", "localhost", "-p", "6379", "-a", "317V1jK7eMFW2mivTHzmvOvX2znkl4hn", "ping"]
       interval: 30s
@@ -33,4 +33,3 @@ volumes:
 networks:
   service-network:
     external: true
-

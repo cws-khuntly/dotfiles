@@ -6,9 +6,9 @@ services:
     image: alpine:latest
     tty: true
     volumes:
-      - zookeeper-data:/mnt/data/zookeeper/data
-      - zookeeper-log:/mnt/data/zookeeper/log
-      - kafka-data:/mnt/data/kafka/data
+      - zookeeper-data:/mnt/data/zookeeper/data:ro
+      - zookeeper-log:/mnt/data/zookeeper/log:ro
+      - kafka-data:/mnt/data/kafka/data:ro
 
 ---
 volumes:

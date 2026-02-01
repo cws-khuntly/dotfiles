@@ -19,9 +19,9 @@ services:
       - 1521:1521
       - 2484:2484
     volumes:
-      - oracle-data:/opt/oracle/oradata
-      - oracle-backup:/opt/oracle/backup
-      - oracle-wallet:/opt/oracle/wallet
+      - oracle-data:/opt/oracle/oradata:rw
+      - oracle-backup:/opt/oracle/backup:rw
+      - oracle-wallet:/opt/oracle/wallet:rw
     healthcheck:
       test: ["CMD", "sqlplus", "/", "as sysdba", "@healthcheck.sql"]
       interval: 30s
