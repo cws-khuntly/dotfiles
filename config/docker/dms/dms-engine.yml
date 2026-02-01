@@ -1,0 +1,72 @@
+---
+services:
+  mailserver:
+    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: mail.fedora.local
+    container_name: mailserver
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.28
+    ports:
+      - 25:25
+    environment:
+      - SMTP_ONLY=1
+      - ENABLE_IMAP=0
+      - ENABLE_POP3=0
+      - ENABLE_RSPAMD=0
+      - ENABLE_CLAMAV=0
+      - ENABLE_FAIL2BAN=0
+      - DMS_VMAIL_UID=40000
+      - DMS_VMAIL_GID=40000
+      - POSTFIX_INET_PROTOCOLS=ipv4
+    volumes:
+      - dms-mail-data:/var/mail:rw
+      - dms-mail-state:/var/mail-state:rw
+      - dms-mail-logs:/var/log/mail:rw
+      - dms-mail-config:/tmp/docker-mailserver:rw
+      - /etc/localtime:/etc/localtime:ro
+    cap_add:
+      - NET_ADMIN
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "25"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+---
+volumes:
+  dms-mail-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/dms/mail-data"
+
+  dms-mail-state:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/dms/mail-state"
+
+  dms-mail-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/dms/logs"
+
+  dms-mail-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/dms/config"
+
+---
+networks:
+  service-network:
+    external: true

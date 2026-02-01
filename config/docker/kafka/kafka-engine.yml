@@ -2,8 +2,10 @@
 services:
   broker01:
     image: confluentinc/cp-kafka:7.9.1
-    container_name: broker01
+    pull_policy: missing
+    restart: unless-stopped
     hostname: broker01
+    container_name: broker01
     networks:
       service-network:
         ipv4_address: 192.168.1.30
@@ -26,19 +28,19 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_LOG_DIRS: /var/lib/kafka/data
-      # Replace CLUSTER_ID with a unique base64 UUID using "bin/kafka-storage.sh random-uuid" 
-      # See https://docs.confluent.io/kafka/operations-tools/kafka-tools.html#kafka-storage-sh
       CLUSTER_ID: fzR8_urgTSCZgFdIBSwJOg
     volumes:
       - broker01-data:/var/lib/kafka/data:rw
       - broker01-logs:/var/log/kafka:rw
       
   broker02:
-    image: confluentinc/cp-kafka:7.9.1
-    container_name: broker02
-    hostname: broker02
     depends_on:
       - broker01
+    image: confluentinc/cp-kafka:7.9.1
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: broker02
+    container_name: broker02
     networks:
       service-network:
         ipv4_address: 192.168.1.31
@@ -67,12 +69,14 @@ services:
       - broker02-logs:/var/log/kafka:rw
 
   broker03:
-    image: confluentinc/cp-kafka:7.9.1
-    container_name: broker03
-    hostname: broker03
     depends_on:
       - broker01
       - broker02
+    image: confluentinc/cp-kafka:7.9.1
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: broker03
+    container_name: broker03
     networks:
       service-network:
         ipv4_address: 192.168.1.32
@@ -101,13 +105,15 @@ services:
       - broker03-logs:/var/log/kafka:rw
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:7.9.1
-    container_name: schema-registry
-    hostname: schema-registry
     depends_on:
       - broker01
       - broker02
       - broker03
+    image: confluentinc/cp-schema-registry:7.9.1
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: schema-registry
+    container_name: schema-registry
     networks:
       service-network:
         ipv4_address: 192.168.1.33
@@ -119,18 +125,20 @@ services:
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:9081
 
   control-center:
-    image: confluentinc/cp-enterprise-control-center:7.9.1
-    container_name: control-center
-    hostname: control-center
     depends_on:
       - broker01
       - broker02
       - broker03
+    image: confluentinc/cp-enterprise-control-center:7.9.1
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: control-center
+    container_name: control-center
     networks:
       service-network:
         ipv4_address: 192.168.1.34
     ports:
-      - 9021:9021     # -> Web UI console
+      - 9021:9021
     environment:
       CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker01:29092'
       CONTROL_CENTER_CONNECT_CONNECT-DEFAULT_CLUSTER: 'connect:8083'

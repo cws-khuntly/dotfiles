@@ -3,18 +3,19 @@ services:
   mssql-server:
     image: mcr.microsoft.com/mssql/server:2022-latest
     pull_policy: missing
-    hostname: mssql
+    restart: unless-stopped
+    hostname: mssql.fedora.local
     container_name: mssql
-    environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD_FILE: "/run/secrets/mssql"
-      MSSQL_SA_PASSWORD_FILE: "/run/secrets/mssql"
-      MSSQL_PID: "Developer" 
     networks:
       service-network:
         ipv4_address: 192.168.1.12
     ports:
-      - "1433:1433"
+      - 1433:1433
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD_FILE: /run/secrets/mssql
+      MSSQL_SA_PASSWORD_FILE: /run/secrets/mssql
+      MSSQL_PID: "Developer" 
     volumes:
       - mssql-data:/var/opt/mssql:rw
     restart: unless-stopped
@@ -23,6 +24,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+      start_period: 15s
 
 ---
 volumes:

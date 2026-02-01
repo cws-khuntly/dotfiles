@@ -3,18 +3,19 @@ services:
   hashicorp-vault:
     image: hashicorp/vault:latest
     pull_policy: missing
-    hostname: vault
+    restart: unless-stopped
+    hostname: vault.fedora.local
     container_name: vault
-    environment:
-      VAULT_ADDR: "https://localhost:8200"
-      VAULT_API_ADDR: "https://localhost:8200"
-      VAULT_ADDRESS: "https://localhost:8200"
     networks:
       service-network:
         ipv4_address: 192.168.1.27
     ports:
       - 8200:8200
       - 8201:8201
+    environment:
+      VAULT_ADDR: "https://localhost:8200"
+      VAULT_API_ADDR: "https://localhost:8200"
+      VAULT_ADDRESS: "https://localhost:8200"
     volumes:
       - vault-logs:/vault/logs:rw
       - vault-data:/vault/data:rw
@@ -24,11 +25,12 @@ services:
     cap_add:
       - IPC_LOCK
     entrypoint: vault server -config /vault/config/config.hcl
-    # healthcheck:
-      # test: ["CMD", "sqlplus", "/", "as sysdba", "@healthcheck.sql"]
-      # interval: 30s
-      # timeout: 10s
-      # retries: 5
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
 
 ---
 volumes:
