@@ -8,7 +8,7 @@ services:
     container_name: vault
     networks:
       service-network:
-        ipv4_address: 192.168.1.27
+        ipv4_address: 192.168.1.18
     ports:
       - 8200:8200
       - 8201:8201
