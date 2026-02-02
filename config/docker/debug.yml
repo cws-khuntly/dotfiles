@@ -1,5 +1,0 @@
----
-services:
-  debugger:
-    image: fedora:43
-    tty: true

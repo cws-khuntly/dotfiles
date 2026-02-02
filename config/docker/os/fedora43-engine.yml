@@ -1,0 +1,27 @@
+---
+services:
+  fedora-os:
+    image: fedora:43
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: fedora.local
+    container_name: fedora-43
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.250
+    volumes:
+      - fedora-data:/mnt/data:rw
+
+---
+volumes:
+  fedora-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/fedora/data"
+
+---
+networks:
+  service-network:
+    external: true
