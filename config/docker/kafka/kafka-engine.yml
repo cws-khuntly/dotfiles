@@ -8,7 +8,7 @@ services:
     container_name: broker01
     networks:
       service-network:
-        ipv4_address: 192.168.1.11
+        ipv4_address: 192.168.1.20
     ports:
       - 9092:9092
       - 9101:9101
@@ -43,7 +43,7 @@ services:
     container_name: broker02
     networks:
       service-network:
-        ipv4_address: 192.168.1.12
+        ipv4_address: 192.168.1.21
     ports:
       - 9093:9093
       - 9102:9102
@@ -79,7 +79,7 @@ services:
     container_name: broker03
     networks:
       service-network:
-        ipv4_address: 192.168.1.13
+        ipv4_address: 192.168.1.22
     ports:
       - 9094:9094
       - 9103:9103
@@ -116,7 +116,7 @@ services:
     container_name: schema-registry
     networks:
       service-network:
-        ipv4_address: 192.168.1.14
+        ipv4_address: 192.168.1.23
     ports:
       - 9081:9081
     environment:
@@ -132,7 +132,7 @@ services:
     container_name: akhq
     networks:
       service-network:
-        ipv4_address: 192.168.1.15
+        ipv4_address: 192.168.1.24
     depends_on:
       - broker01
       - broker02

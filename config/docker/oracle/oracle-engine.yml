@@ -9,7 +9,7 @@ services:
     container_name: oracle
     networks:
       service-network:
-        ipv4_address: 192.168.1.10
+        ipv4_address: 192.168.1.50
     ports:
       - 1521:1521
       - 2484:2484

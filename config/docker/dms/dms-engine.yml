@@ -8,7 +8,7 @@ services:
     container_name: mailserver
     networks:
       service-network:
-        ipv4_address: 192.168.1.19
+        ipv4_address: 192.168.1.10
     ports:
       - 25:25
     environment:
