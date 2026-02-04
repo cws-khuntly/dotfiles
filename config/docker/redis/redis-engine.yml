@@ -8,7 +8,7 @@ services:
     container_name: redis
     networks:
       service-network:
-        ipv4_address: 192.168.1.60
+        ipv4_address: 192.168.1.30
     ports:
       - 6379:6379
     command: redis-server --save 20 1 --loglevel warning --requirepass $(cat /run/secrets/redis)
