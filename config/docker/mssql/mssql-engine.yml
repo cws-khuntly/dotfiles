@@ -22,8 +22,7 @@ services:
     volumes:
       - mssql-data:/var/opt/mssql:rw
     healthcheck:
-      # test: ["CMD", "nc", "-vz", "localhost", "1433"]
-      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "$(cat /run/secrets/mssql)", "-C", "-Q", "SELECT @@VERSION"]
+      test: ["CMD", "nc", "-vz", "localhost", "1433"]
       interval: 30s
       timeout: 10s
       retries: 5
