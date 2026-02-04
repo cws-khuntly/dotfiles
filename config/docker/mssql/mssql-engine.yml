@@ -15,7 +15,10 @@ services:
       ACCEPT_EULA: "Y"
       SA_PASSWORD_FILE: /run/secrets/mssql
       MSSQL_SA_PASSWORD_FILE: /run/secrets/mssql
-      MSSQL_PID: "Developer" 
+      MSSQL_PID: "Developer"
+    secrets:
+      - source: mssql
+        target: /run/secrets/mssql
     volumes:
       - mssql-data:/var/opt/mssql:rw
     healthcheck:
