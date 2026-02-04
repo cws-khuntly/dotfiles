@@ -20,6 +20,9 @@ services:
       - ORACLE_EDITION=enterprise
       - ENABLE_TCPS=true
       - TCPS_CERTS_LOCATION=/opt/oracle/wallet
+    secrets:
+      - source: oracle
+        target: /run/secrets/oracle
     volumes:
       - oracle-data:/opt/oracle/oradata:rw
       - oracle-backup:/opt/oracle/backup:rw
