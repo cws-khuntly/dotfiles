@@ -14,12 +14,12 @@ services:
       - 1521:1521
       - 2484:2484
     environment:
-      - ORACLE_SID=ORCLCDB
-      - ORACLE_PDB=ORCLPDB1
-      - ORACLE_PWD_FILE=/run/secrets/oracle
-      - ORACLE_EDITION=enterprise
-      - ENABLE_TCPS=true
-      - TCPS_CERTS_LOCATION=/opt/oracle/wallet
+      ORACLE_SID: "ORCLCDB"
+      ORACLE_PDB: "ORCLPDB1"
+      ORACLE_PWD_FILE: /run/secrets/oracle
+      ORACLE_EDITION: "enterprise"
+      ENABLE_TCPS: "true"
+      TCPS_CERTS_LOCATION: "/opt/oracle/wallet"
     secrets:
       - source: oracle
         target: /run/secrets/oracle

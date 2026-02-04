@@ -12,15 +12,15 @@ services:
     ports:
       - 25:25
     environment:
-      - SMTP_ONLY=1
-      - ENABLE_IMAP=0
-      - ENABLE_POP3=0
-      - ENABLE_RSPAMD=0
-      - ENABLE_CLAMAV=0
-      - ENABLE_FAIL2BAN=0
-      - DMS_VMAIL_UID=40000
-      - DMS_VMAIL_GID=40000
-      - POSTFIX_INET_PROTOCOLS=ipv4
+      SMTP_ONLY: 1
+      ENABLE_IMAP: 0
+      ENABLE_POP3: 0
+      ENABLE_RSPAMD: 0
+      ENABLE_CLAMAV: 0
+      ENABLE_FAIL2BAN: 0
+      DMS_VMAIL_UID: 40000
+      DMS_VMAIL_GID: 40000
+      POSTFIX_INET_PROTOCOLS: "ipv4"
     volumes:
       - dms-mail-data:/var/mail:rw
       - dms-mail-state:/var/mail-state:rw
