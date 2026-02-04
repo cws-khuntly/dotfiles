@@ -1,0 +1,67 @@
+---
+services:
+  postgres:
+    image: postgres:15
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: "postgres.fedora.local"
+    container_name: "postgres"
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.40
+    environment:
+      POSTGRES_DB: "keycloak"
+      POSTGRES_USER: "keycloak"
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - service-network
+    restart: always
+
+  keycloak:
+    depends_on: postgres
+    image: quay.io/keycloak/keycloak:latest
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: "keycloak.fedora.local"
+    container_name: "keycloak"
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.41
+    ports:
+      - 8080:8080
+    environment:
+      KC_DB: "postgres"
+      KC_DB_URL: "jdbc:postgresql://postgres:5432/keycloak"
+      KC_DB_USERNAME: "keycloak"
+      KC_DB_PASSWORD_FILE: /run/secrets/postgres
+      KC_HOSTNAME: "localhost"
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_LOG_LEVEL: "info"
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: "admin"
+      KEYCLOAK_ADMIN_PASSWORD_FILE: /run/secrets/keycloak
+    command: start-dev
+
+volumes:
+  postgres-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/postgres/data"
+
+networks:
+  service-network:
+    external: true
+
+---
+secrets:
+  postgres:
+    file: "~/workspace/keycloak/postgres.txt"
+  keycloak:
+    file: "~/workspace/keycloak/keycloak.txt"
