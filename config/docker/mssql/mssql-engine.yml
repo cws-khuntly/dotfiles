@@ -21,8 +21,10 @@ services:
         target: /run/secrets/mssql
     volumes:
       - mssql-data:/var/opt/mssql:rw
+      - mssql-passwd:/tmp/mssql:ro
     healthcheck:
-      test: ["CMD", "nc", "-vz", "localhost", "1433"]
+      # test: ["CMD", "nc", "-vz", "localhost", "1433"]
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "$(cat /run/secrets/mssql)", "-C", "-Q", "SELECT @@VERSION"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -36,6 +38,13 @@ volumes:
       type: none
       o: bind
       device: "/opt/mssql/data"
+
+  mssql-passwd:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "~/workspace/mssql/mssql.txt"
 
 ---
 networks:
