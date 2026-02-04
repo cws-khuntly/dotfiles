@@ -15,9 +15,3 @@
 #      REVISION:  ---
 #
 #==============================================================================
-
-rustdesk/data/
-tomcat/webapps/
-tomcat/conf/
-bind9/named_conf/
-bind9/named_db/
