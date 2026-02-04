@@ -15,9 +15,6 @@ services:
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    networks:
-      - service-network
-    restart: always
 
   keycloak:
     depends_on: postgres
@@ -55,6 +52,7 @@ volumes:
       o: bind
       device: "/opt/postgres/data"
 
+---
 networks:
   service-network:
     external: true
