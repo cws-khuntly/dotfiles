@@ -31,7 +31,13 @@ services:
     volumes:
       - broker01-data:/var/lib/kafka/data:rw
       - broker01-logs:/var/log/kafka:rw
-      
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'test-message' | kafka-console-producer.sh --broker-list broker01:9091 --topic health-check-topic && kafka-console-consumer.sh --bootstrap-server broker01:9091 --topic health-check-topic --from-beginning --max-messages 1 | grep 'test-message'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
   broker02:
     depends_on:
       - broker01
@@ -65,6 +71,12 @@ services:
     volumes:
       - broker02-data:/var/lib/kafka/data:rw
       - broker02-logs:/var/log/kafka:rw
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'test-message' | kafka-console-producer.sh --broker-list broker02:9092 --topic health-check-topic && kafka-console-consumer.sh --bootstrap-server broker02:9092 --topic health-check-topic --from-beginning --max-messages 1 | grep 'test-message'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
 
   broker03:
     depends_on:
@@ -100,6 +112,12 @@ services:
     volumes:
       - broker03-data:/var/lib/kafka/data:rw
       - broker03-logs:/var/log/kafka:rw
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'test-message' | kafka-console-producer.sh --broker-list broker03:9093 --topic health-check-topic && kafka-console-consumer.sh --bootstrap-server broker03:9093 --topic health-check-topic --from-beginning --max-messages 1 | grep 'test-message'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
 
   akhq:
     depends_on:
