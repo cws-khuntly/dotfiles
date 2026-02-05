@@ -26,7 +26,6 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_LOG_DIRS: /var/lib/kafka/data
       KAFKA_REST_CONTENT_TYPE: "application/json"
     volumes:
       - broker01-data:/var/lib/kafka/data:rw
@@ -60,7 +59,6 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_LOG_DIRS: /var/lib/kafka/data
       KAFKA_REST_CONTENT_TYPE: "application/json"
     volumes:
       - broker02-data:/var/lib/kafka/data:rw
@@ -95,7 +93,6 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_LOG_DIRS: /var/lib/kafka/data
       KAFKA_REST_CONTENT_TYPE: "application/json"
     volumes:
       - broker03-data:/var/lib/kafka/data:rw
