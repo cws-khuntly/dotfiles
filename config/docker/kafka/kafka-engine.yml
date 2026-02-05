@@ -122,7 +122,7 @@ services:
           connections:
             docker-kafka-servers:
               properties:
-                bootstrap.servers: "broker01:29091,broker02:29092,broker03:29093"
+                bootstrap.servers: "broker01:9091,broker02:9092,broker03:9093"
 
 ---
 volumes:
