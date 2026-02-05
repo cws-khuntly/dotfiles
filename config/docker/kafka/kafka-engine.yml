@@ -1,12 +1,11 @@
 ---
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.3.0
-    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:7.9.1
     pull_policy: missing
     restart: unless-stopped
-    hostname: broker01
-    container_name: broker01
+    hostname: zookeeper
+    container_name: zookeeper
     networks:
       service-network:
         ipv4_address: 192.168.1.40
