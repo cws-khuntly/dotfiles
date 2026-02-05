@@ -4,8 +4,8 @@ services:
     image: confluentinc/cp-kafka:7.9.1
     pull_policy: missing
     restart: unless-stopped
-    hostname: broker01
-    container_name: broker01
+    hostname: "broker01.fedora.local"
+    container_name: "broker01"
     networks:
       service-network:
         ipv4_address: 192.168.1.41
@@ -44,8 +44,8 @@ services:
     image: confluentinc/cp-kafka:7.9.1
     pull_policy: missing
     restart: unless-stopped
-    hostname: broker02
-    container_name: broker02
+    hostname: "broker02.fedora.local"
+    container_name: "broker02"
     networks:
       service-network:
         ipv4_address: 192.168.1.42
@@ -85,8 +85,8 @@ services:
     image: confluentinc/cp-kafka:7.9.1
     pull_policy: missing
     restart: unless-stopped
-    hostname: broker03
-    container_name: broker03
+    hostname: "broker03.fedora.local"
+    container_name: "broker03"
     networks:
       service-network:
         ipv4_address: 192.168.1.43
@@ -127,11 +127,11 @@ services:
     image: tchiotludo/akhq:latest
     pull_policy: missing
     restart: unless-stopped
-    hostname: akhq
-    container_name: akhq
+    hostname: "akhq.fedora.local"
+    container_name: "akhq"
     networks:
       service-network:
-        ipv4_address: 192.168.1.44
+        ipv4_address: 192.168.1.40
     ports:
       - 8080:8080
     environment:
@@ -144,20 +144,6 @@ services:
 
 ---
 volumes:
-  zookeeper-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: "/opt/confluent/zookeeper/data"
-
-  zookeeper-logs:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: "/opt/confluent/zookeeper/log"
-
   broker01-data:
     driver: local
     driver_opts:

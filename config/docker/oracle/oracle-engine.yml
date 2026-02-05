@@ -5,8 +5,8 @@ services:
     image: oracle:tcps
     pull_policy: missing
     restart: unless-stopped
-    hostname: oracle.fedora.local
-    container_name: oracle
+    hostname: "oracle.fedora.local"
+    container_name: "oracle"
     networks:
       service-network:
         ipv4_address: 192.168.1.10
