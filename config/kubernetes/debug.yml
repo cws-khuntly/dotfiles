@@ -2,16 +2,19 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: debug-pod
+  name: debug-handler
 spec:
   containers:
     - name: fedora
+      image: fedora:43
+      resources:
+        limits:
+          cpu: 2
+          memory: 3072Mi
+        requests:
+          cpu: 1
+          memory: 3072Mi
       command: ["sleep", "infinity"]
-
-      volumeMounts: []
-        # - name: keystore-volume
-        #   mountPath: "/mnt/data/ssl/keystore.jks"
-        #   subPath: keystore.jks
 
       env: []
         # - name: KEYSTORE_PASSWORD
@@ -20,7 +23,15 @@ spec:
         #       name: keystore-secrets
         #       key: keystore-password
 
-   volumes: []
+      volumeMounts:
+        - name: mypvc
+          mountPath: /inbound
+          # subPath: data.txt
+
+  volumes:
+    - name: mypvc
+      persistentVolumeClaim:
+        claimName: << claim >>
     # - name: keystore-files
     #   secret:
     #     secretName: keystore-files
