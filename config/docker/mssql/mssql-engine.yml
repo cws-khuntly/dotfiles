@@ -21,12 +21,6 @@ services:
         target: /run/secrets/mssql
     volumes:
       - mssql-data:/var/opt/mssql:rw
-    healthcheck:
-      test: ["CMD", "nc", "-vz", "localhost", "1433"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 15s
 
 ---
 volumes:
