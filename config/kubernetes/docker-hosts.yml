@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  # The key name can be anything, but must end with .override
+  local-containers.override: |
+    hosts {
+      192.168.12.6 oracle.fedora.local broker01.fedora.local broker02.fedora.local broker03.fedora.local oracle broker01 broker02 broker03
+      fallthrough
+    }
+
