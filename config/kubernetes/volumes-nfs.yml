@@ -23,8 +23,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: test-pvclaim
-  namespace: continuity
+  name: "test-pvclaim"
+  namespace: "namespace"
 spec:
   storageClassName: "nfs"
   accessModes:
