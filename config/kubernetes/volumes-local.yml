@@ -17,7 +17,7 @@ spec:
 kind: PersistentVolumeClaim
 metadata:
   name: default-pvclaim
-  namespace: "continuity"
+  namespace: "namespace"
 spec:
   storageClassName: "local-path"
   accessModes:
