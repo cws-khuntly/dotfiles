@@ -32,7 +32,7 @@ services:
       - broker01-data:/var/lib/kafka/data:rw
       - broker01-logs:/var/log/kafka:rw
     healthcheck:
-      test: ["CMD-SHELL", "echo 'broker01-test-message' | kafka-console-producer --broker-list broker01:9091 --topic health-check-topic && kafka-console-consumer --bootstrap-server broker01:9091 --topic health-check-topic --from-beginning --max-messages 1 | grep 'broker01-test-message'"]
+      test: ["CMD-SHELL", "echo 'broker01-test-message' | kafka-console-producer --broker-list localhost:9091 --topic health-check-topic && kafka-console-consumer --bootstrap-server localhost:9091 --topic health-check-topic --from-beginning --max-messages 1 | grep 'broker01-test-message'"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -72,7 +72,7 @@ services:
       - broker02-data:/var/lib/kafka/data:rw
       - broker02-logs:/var/log/kafka:rw
     healthcheck:
-      test: ["CMD-SHELL", "echo 'broker02-test-message' | kafka-console-producer --broker-list broker02:9092 --topic health-check-topic && kafka-console-consumer --bootstrap-server broker02:9092 --topic health-check-topic --from-beginning --max-messages 1 | grep 'broker02-test-message'"]
+      test: ["CMD-SHELL", "echo 'broker02-test-message' | kafka-console-producer --broker-list localhost:9092 --topic health-check-topic && kafka-console-consumer --bootstrap-server localhost:9092 --topic health-check-topic --from-beginning --max-messages 1 | grep 'broker02-test-message'"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -113,7 +113,7 @@ services:
       - broker03-data:/var/lib/kafka/data:rw
       - broker03-logs:/var/log/kafka:rw
     healthcheck:
-      test: ["CMD-SHELL", "echo 'broker03-test-message' | kafka-console-producer --broker-list broker03:9093 --topic health-check-topic && kafka-console-consumer --bootstrap-server broker03:9093 --topic health-check-topic --from-beginning --max-messages 1 | grep 'broker03-test-message'"]
+      test: ["CMD-SHELL", "echo 'broker03-test-message' | kafka-console-producer --broker-list localhost:9093 --topic health-check-topic && kafka-console-consumer --bootstrap-server localhost:9093 --topic health-check-topic --from-beginning --max-messages 1 | grep 'broker03-test-message'"]
       interval: 30s
       timeout: 10s
       retries: 5
