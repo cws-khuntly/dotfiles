@@ -1,0 +1,62 @@
+---
+services:
+  bind:
+    image: internetsystemsconsortium/bind9:9.20
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: "ns1.caspersbox.com"
+    container_name: "isc-bind9"
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.5
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    environment:
+      TZ: "EDT"
+    volumes:
+      - dns-config:/etc/bind:rw
+      - dns-zones:/var/lib/bind:rw
+      - dns-cache:/var/cache/bind:rw
+      - dns-log:/var/log/bind:rw
+    healthcheck:
+      test: ["CMD", "dig", "@localhost", "+short", "-t", "a", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+---
+volumes:
+  dns-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/etc"
+
+  dns-zones:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/namedb"
+
+  dns-cache:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/cache"
+
+  dns-log:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/log"
+
+---
+networks:
+  service-network:
+    external: true
