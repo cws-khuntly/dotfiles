@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  cwsna.server: |
+    192.168.12.6:9953 {
+        log
+        errors
+        health
+        fallhrough
+    }
+
+        
