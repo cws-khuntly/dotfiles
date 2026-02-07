@@ -16,8 +16,8 @@ services:
       TZ: "EDT"
     volumes:
       - dns-config:/etc/bind:rw
-      - dns-zones:/var/lib/bind:rw
-      - dns-cache:/var/cache/bind:rw
+      - dns-master-zones:/var/cache/bind:rw
+      - dns-slave-zones:/var/lib/bind:rw
       - dns-log:/var/log/bind:rw
     healthcheck:
       test: ["CMD", "dig", "@localhost", "+short", "-t", "a", "localhost"]
@@ -35,14 +35,14 @@ volumes:
       o: bind
       device: "/opt/named/etc"
 
-  dns-zones:
+  dns-master-zones:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: "/opt/named/namedb"
 
-  dns-cache:
+  dns-slave-zones:
     driver: local
     driver_opts:
       type: none
