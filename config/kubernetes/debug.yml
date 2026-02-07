@@ -23,15 +23,15 @@ spec:
         #       name: keystore-secrets
         #       key: keystore-password
 
-      volumeMounts:
-        - name: mypvc
-          mountPath: /inbound
-          # subPath: data.txt
+      volumeMounts: []
+        # - name: mypvc
+        #   mountPath: /inbound
+        #     subPath: data.txt
 
-  volumes:
-    - name: mypvc
-      persistentVolumeClaim:
-        claimName: << claim >>
+  volumes: []
+    # - name: mypvc
+    #   persistentVolumeClaim:
+    #     claimName: << claim >>
     # - name: keystore-files
     #   secret:
     #     secretName: keystore-files
