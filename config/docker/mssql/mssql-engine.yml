@@ -4,7 +4,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     pull_policy: missing
     restart: unless-stopped
-    hostname: "mssql.fedora.local"
+    hostname: "mssql.caspersbox.local"
     container_name: "mssql"
     networks:
       service-network:
