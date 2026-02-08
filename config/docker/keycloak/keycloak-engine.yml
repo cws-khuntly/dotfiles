@@ -32,7 +32,7 @@ services:
         ipv4_address: 192.168.1.71
     ports:
       - 8080:8080
-    env_file: "~/workspace/keycloak/keycloak.txt"
+    env_file: keycloak.env
     environment:
       KC_DB: "postgres"
       KC_DB_URL: "jdbc:postgresql://postgres:5432/keycloak"
