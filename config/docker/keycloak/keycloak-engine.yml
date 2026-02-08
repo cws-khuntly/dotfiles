@@ -38,14 +38,13 @@ services:
       KC_DB_USERNAME: "keycloak"
       KC_DB_PASSWORD_FILE: /run/secrets/postgres
       KC_HOSTNAME: "localhost"
-      KC_HOSTNAME_PORT: 8080
       KC_HOSTNAME_STRICT: false
-      KC_HOSTNAME_STRICT_HTTPS: false
       KC_LOG_LEVEL: "info"
       KC_METRICS_ENABLED: true
       KC_HEALTH_ENABLED: true
-      KEYCLOAK_ADMIN: "admin"
-      KEYCLOAK_ADMIN_PASSWORD_FILE: /run/secrets/keycloak
+      KC_BOOTSTRAP_ADMIN_USERNAME: "admin"
+      KC_BOOTSTRAP_ADMIN_PASSWORD_FILE: /run/secrets/keycloak
+      KC_ADMIN_PASSWORD_FILE: /run/secrets/keycloak
     secrets:
       - source: postgres
         target: /run/secrets/postgres
