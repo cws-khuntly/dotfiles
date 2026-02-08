@@ -27,8 +27,6 @@ services:
     volumes:
       - ldap-data:/var/lib/ldap:rw
       - ldap-config:/etc/ldap/slapd.d:rw
-    networks:
-      - service-network
 
   phpldapadmin:
     depends_on: openldap
