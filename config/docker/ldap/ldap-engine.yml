@@ -1,0 +1,73 @@
+---
+services:
+  openldap:
+    image: osixia/openldap:latest
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: "ldap.fedora.local"
+    container_name: "openldap"
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.80
+    ports:
+      - 389:389
+      - 636:636
+    env_file:
+      - path: ./openldap.env
+        required: true
+    environment:
+      LDAP_BASE_DN: "${LDAP_BASE_DN}"
+      LDAP_ORGANISATION: "${LDAP_ORGANISATION}"
+      LDAP_DOMAIN: "${LDAP_DOMAIN}"
+      LDAP_ADMIN_PASSWORD_FILE: /run/secrets/openldap
+      LDAP_TLS: "${LDAP_TLS}"
+    secrets:
+      - source: openldap
+        target: /run/secrets/openldap
+    volumes:
+      - ldap-data:/var/lib/ldap:rw
+      - ldap-config:/etc/ldap/slapd.d:rw
+    networks:
+      - service-network
+
+  phpldapadmin:
+    depends_on: openldap
+    image: osixia/phpldapadmin:latest
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: "ldapadm.fedora.local"
+    container_name: "phpldapadmin"
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.81
+    ports:
+      - 8081:80
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: openldap
+      PHPLDAPADMIN_HTTPS: "false"
+
+---
+volumes:
+  ldap-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/openldap/data"
+
+  ldap-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/openldap/config"
+
+---
+networks:
+  service-network:
+    external: true
+
+---
+secrets:
+  openldap:
+    file: "~/workspace/openldap/openldap.txt"
