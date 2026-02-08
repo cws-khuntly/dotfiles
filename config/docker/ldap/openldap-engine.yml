@@ -10,8 +10,8 @@ services:
       service-network:
         ipv4_address: 192.168.1.80
     ports:
-      - 389:389
-      - 636:636
+      - 10389:389
+      - 10636:636
     env_file:
       - path: ./.env
         required: true
