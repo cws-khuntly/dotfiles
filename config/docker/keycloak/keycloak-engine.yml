@@ -33,7 +33,7 @@ services:
     ports:
       - 8080:8080
     env_file:
-      - path: ./keycloak.env
+      - path: ./.env
         required: true
     environment:
       KC_DB: "postgres"
