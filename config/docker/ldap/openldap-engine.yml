@@ -13,7 +13,7 @@ services:
       - 389:389
       - 636:636
     env_file:
-      - path: ./openldap.env
+      - path: ./.env
         required: true
     environment:
       LDAP_BASE_DN: "${LDAP_BASE_DN}"
