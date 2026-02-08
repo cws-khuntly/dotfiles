@@ -44,6 +44,7 @@ services:
       KC_HEALTH_ENABLED: true
       KC_BOOTSTRAP_ADMIN_USERNAME: "admin"
       KC_BOOTSTRAP_ADMIN_PASSWORD_FILE: /run/secrets/keycloak
+      KC_ADMIN: "admin"
       KC_ADMIN_PASSWORD_FILE: /run/secrets/keycloak
     secrets:
       - source: postgres
