@@ -49,7 +49,7 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: "${KC_BOOTSTRAP_ADMIN_PASSWORD}"
       KC_ADMIN: "admin"
       KC_ADMIN_PASSWORD: "${KC_ADMIN_PASSWORD}"
-    command: start-dev
+    command: "${KC_START_COMMAND}"
 
 volumes:
   postgres-data:
