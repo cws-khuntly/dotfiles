@@ -32,7 +32,7 @@ services:
       - broker01-data:/var/lib/kafka/data:rw
       - broker01-logs:/var/log/kafka:rw
     healthcheck:
-      test: ["CMD-SHELL", "echo 'broker01-test-message' | kafka-console-producer --broker-list localhost:9091 --topic health-check-topic && kafka-console-consumer --bootstrap-server localhost:9091 --topic health-check-topic --from-beginning --max-messages 1 | grep 'broker01-test-message'"]
+      test: ["CMD-SHELL", "echo 'test-message' | kafka-console-producer --broker-list localhost:9091 --topic health-check-topic && kafka-console-consumer --bootstrap-server localhost:9091 --topic health-check-topic --from-beginning --max-messages 1 | grep 'test-message'"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -72,7 +72,7 @@ services:
       - broker02-data:/var/lib/kafka/data:rw
       - broker02-logs:/var/log/kafka:rw
     healthcheck:
-      test: ["CMD-SHELL", "echo 'broker02-test-message' | kafka-console-producer --broker-list localhost:9092 --topic health-check-topic && kafka-console-consumer --bootstrap-server localhost:9092 --topic health-check-topic --from-beginning --max-messages 1 | grep 'broker02-test-message'"]
+      test: ["CMD-SHELL", "echo 'test-message' | kafka-console-producer --broker-list localhost:9092 --topic health-check-topic && kafka-console-consumer --bootstrap-server localhost:9092 --topic health-check-topic --from-beginning --max-messages 1 | grep 'test-message'"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -113,7 +113,7 @@ services:
       - broker03-data:/var/lib/kafka/data:rw
       - broker03-logs:/var/log/kafka:rw
     healthcheck:
-      test: ["CMD-SHELL", "echo 'broker03-test-message' | kafka-console-producer --broker-list localhost:9093 --topic health-check-topic && kafka-console-consumer --bootstrap-server localhost:9093 --topic health-check-topic --from-beginning --max-messages 1 | grep 'broker03-test-message'"]
+      test: ["CMD-SHELL", "echo 'test-message' | kafka-console-producer --broker-list localhost:9093 --topic health-check-topic && kafka-console-consumer --bootstrap-server localhost:9093 --topic health-check-topic --from-beginning --max-messages 1 | grep 'test-message'"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -133,7 +133,7 @@ services:
       service-network:
         ipv4_address: 192.168.1.40
     ports:
-      - 8080:8080
+      - 8082:8080
     environment:
       AKHQ_CONFIGURATION: |
         akhq:
