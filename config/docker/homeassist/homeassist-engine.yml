@@ -16,7 +16,7 @@ services:
     volumes:
       - homeassist-data:/config:rw
       - /etc/localtime:/etc/localtime:ro
-      - /run/dbus:/run/dbus:ro
+      - /var/run/dbus:/run/dbus:ro
     cap_add:
       - NET_ADMIN
       - NET_RAW
