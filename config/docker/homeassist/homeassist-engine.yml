@@ -1,0 +1,36 @@
+---
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: "home.caspersbox.local"
+    container_name: "home-assist"
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.10
+    environment:
+      TZ: America/New_York
+    volumes:
+      - homeassist-data:/config
+      - /etc/localtime:/etc/localtime:ro
+    # healthcheck:
+    #   test: ["CMD", "sqlplus", "/", "as sysdba", "@healthcheck.sql"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5
+    #   start_period: 15s
+
+---
+volumes:
+  homeassist-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/homeassist/data"
+
+---
+networks:
+  service-network:
+    external: true

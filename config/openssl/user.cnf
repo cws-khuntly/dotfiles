@@ -38,7 +38,6 @@ x509_extensions                 = @v3_req
 subjectAltName                  = @alt_names
 
 [alt_names]
-[alt_names]
 DNS.0                           = fedora-desktop.local
 
 [ req_distinguished_name ]
@@ -57,9 +56,3 @@ localityName_default            = Buffalo
 0.organizationName_default      = CWSNA
 organizationalUnitName_default  = RD
 emailAddress_default            = kmhuntly@caspersbox.com
- 
-[alt_names]
-DNS.0                           = fedora-laptop.local
-DNS.1                           = fedora-laptop
-IP.1                            = 127.0.0.1
-
