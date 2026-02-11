@@ -9,11 +9,14 @@ services:
     networks:
       service-network:
         ipv4_address: 192.168.1.10
+    ports:
+      - 8123:8123
     environment:
       TZ: America/New_York
     volumes:
-      - homeassist-data:/config
+      - homeassist-data:/config:rw
       - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
     # healthcheck:
     #   test: ["CMD", "sqlplus", "/", "as sysdba", "@healthcheck.sql"]
     #   interval: 30s
