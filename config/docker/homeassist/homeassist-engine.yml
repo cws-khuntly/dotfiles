@@ -17,6 +17,9 @@ services:
       - homeassist-data:/config:rw
       - /etc/localtime:/etc/localtime:ro
       - /run/dbus:/run/dbus:ro
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
     # healthcheck:
     #   test: ["CMD", "sqlplus", "/", "as sysdba", "@healthcheck.sql"]
     #   interval: 30s
