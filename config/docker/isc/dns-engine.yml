@@ -9,11 +9,8 @@ services:
     networks:
       service-network:
         ipv4_address: 192.168.1.5
-    ports:
-      - "10953:53/udp"
-      - "10953:53/tcp"
     environment:
-      TZ: "EDT"
+      TZ: "America/New_York"
     volumes:
       - ns1-config:/etc/bind:rw
       - ns1-master-zones:/var/cache/bind:rw
@@ -41,7 +38,7 @@ services:
       - "10953:53/udp"
       - "10953:53/tcp"
     environment:
-      TZ: "EDT"
+      TZ: "America/New_York"
     volumes:
       - ns2-config:/etc/bind:rw
       - ns2-master-zones:/var/cache/bind:rw
