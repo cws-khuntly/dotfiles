@@ -1,6 +1,6 @@
 ---
 services:
-  bind:
+  bind-ns1:
     image: internetsystemsconsortium/bind9:9.20
     pull_policy: missing
     restart: unless-stopped
@@ -15,10 +15,38 @@ services:
     environment:
       TZ: "EDT"
     volumes:
-      - ns1-dns-config:/etc/bind:rw
-      - ns1-dns-master-zones:/var/cache/bind:rw
-      - ns1-dns-slave-zones:/var/lib/bind:rw
-      - ns1-dns-log:/var/log/bind:rw
+      - ns1-config:/etc/bind:rw
+      - ns1-master-zones:/var/cache/bind:rw
+      - ns1-slave-zones:/var/lib/bind:rw
+      - ns1-log:/var/log/bind:rw
+    healthcheck:
+      test: ["CMD", "dig", "@localhost", "+short", "-t", "a", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+  bind-ns2:
+    depends_on:
+      - bind-ns1
+    image: internetsystemsconsortium/bind9:9.20
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: "ns2.caspersbox.local"
+    container_name: "isc-bind9-ns2"
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.6
+    ports:
+      - "10953:53/udp"
+      - "10953:53/tcp"
+    environment:
+      TZ: "EDT"
+    volumes:
+      - ns2-config:/etc/bind:rw
+      - ns2-master-zones:/var/cache/bind:rw
+      - ns2-slave-zones:/var/lib/bind:rw
+      - ns2-log:/var/log/bind:rw
     healthcheck:
       test: ["CMD", "dig", "@localhost", "+short", "-t", "a", "localhost"]
       interval: 30s
@@ -28,33 +56,61 @@ services:
 
 ---
 volumes:
-  ns1-dns-config:
+  ns1-config:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: "/opt/named/ns1/etc"
 
-  ns1-dns-master-zones:
+  ns1-master-zones:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: "/opt/named/ns1/namedb"
 
-  ns1-dns-slave-zones:
+  ns1-slave-zones:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: "/opt/named/ns1/cache"
 
-  ns1-dns-log:
+  ns1-log:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: "/opt/named/ns1/log"
+
+ns2-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/ns2/etc"
+
+  ns2-master-zones:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/ns2/namedb"
+
+  ns2-slave-zones:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/ns2/cache"
+
+  ns2-log:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/named/ns2/log"
 
 ---
 networks:
