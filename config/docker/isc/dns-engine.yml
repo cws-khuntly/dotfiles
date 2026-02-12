@@ -15,10 +15,10 @@ services:
     environment:
       TZ: "EDT"
     volumes:
-      - dns-config:/etc/bind:rw
-      - dns-master-zones:/var/cache/bind:rw
-      - dns-slave-zones:/var/lib/bind:rw
-      - dns-log:/var/log/bind:rw
+      - ns1-dns-config:/etc/bind:rw
+      - ns1-dns-master-zones:/var/cache/bind:rw
+      - ns1-dns-slave-zones:/var/lib/bind:rw
+      - ns1-dns-log:/var/log/bind:rw
     healthcheck:
       test: ["CMD", "dig", "@localhost", "+short", "-t", "a", "localhost"]
       interval: 30s
@@ -28,33 +28,33 @@ services:
 
 ---
 volumes:
-  dns-config:
+  ns1-dns-config:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/opt/named/etc"
+      device: "/opt/named/ns1/etc"
 
-  dns-master-zones:
+  ns1-dns-master-zones:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/opt/named/namedb"
+      device: "/opt/named/ns1/namedb"
 
-  dns-slave-zones:
+  ns1-dns-slave-zones:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/opt/named/cache"
+      device: "/opt/named/ns1/cache"
 
-  dns-log:
+  ns1-dns-log:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: "/opt/named/log"
+      device: "/opt/named/ns1/log"
 
 ---
 networks:
