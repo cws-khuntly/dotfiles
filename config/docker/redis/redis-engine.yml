@@ -11,14 +11,14 @@ services:
         ipv4_address: 192.168.1.30
     ports:
       - 6379:6379
-    secrets:
-      - source: redis
-        target: /run/secrets/redis
-    command: ["redis-server", "--save", "20", "1", "--loglevel", "warning", "--requirepass", "$(cat /run/secrets/redis)", "--bind", "0.0.0.0"]
+    env_file:
+      - path: ./.env
+        required: true
+    command: ["redis-server", "--save", "20", "1", "--loglevel", "warning", "--requirepass", "${REDIS_PASSWORD}", "--bind", "0.0.0.0"]
     volumes:
       - redis-data:/data:rw
     healthcheck:
-      test: ["CMD", "redis-cli", "-h", "localhost", "-p", "6379", "-a", "$(cat /run/secrets/redis)", "ping"]
+      test: ["CMD", "redis-cli", "-h", "localhost", "-p", "6379", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -37,8 +37,3 @@ volumes:
 networks:
   service-network:
     external: true
-
----
-secrets:
-  redis:
-    file: "~/workspace/redis/redis.txt"
