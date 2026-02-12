@@ -14,7 +14,7 @@ services:
     secrets:
       - source: redis
         target: /run/secrets/redis
-    command: redis-server --save 20 1 --loglevel warning --requirepass $(cat /run/secrets/redis)
+    command: ["redis-server", "--save", "20", "1", "--loglevel", "warning", "--requirepass", "$(cat /run/secrets/redis)", "--bind", "0.0.0.0"]
     volumes:
       - redis-data:/data:rw
     healthcheck:
