@@ -1,7 +1,7 @@
 ---
 services:
   openldap:
-    image: osixia/openldap:latest
+    image: osixia/openldap:stable
     pull_policy: missing
     restart: unless-stopped
     hostname: "ldap.caspersbox.local"
@@ -31,7 +31,7 @@ services:
   phpldapadmin:
     depends_on:
       - openldap
-    image: osixia/phpldapadmin:latest
+    image: osixia/phpldapadmin:stable
     pull_policy: missing
     restart: unless-stopped
     hostname: "ldapadm.caspersbox.local"
