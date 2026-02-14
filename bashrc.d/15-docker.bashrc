@@ -20,7 +20,7 @@
 
 [[ -z "$(compgen -c | grep -Ew "(^docker)" | sort | uniq)" ]] && return;
 
-docker login -u kmhuntly@gmail.com container-registry.oracle.com
+function loginToOCI() { docker login -u kmhuntly@gmail.com container-registry.oracle.com; }
 
 #=====  FUNCTION  =============================================================
 #          NAME:  createDockerNetwork
