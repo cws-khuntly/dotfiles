@@ -1,7 +1,7 @@
 ---
 services:
   ibmmq:
-    image: icr.io/ibm-messaging/mq:9.4.5.0
+    image: icr.io/ibm-messaging/mq
     pull_policy: missing
     restart: unless-stopped
     hostname: "mq.caspersbox.local"
@@ -22,7 +22,7 @@ services:
       MQ_APP_PASSWORD: "${MQRC_APP_PASSWORD}"
       MQ_ENABLE_CLEAN_TMP_ON_START: true
     volumes:
-      - mq-data:/mnt/mqm
+      - mq-data:/mnt/mqm:rw
 
 ---
 volumes:
