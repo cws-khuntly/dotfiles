@@ -25,6 +25,14 @@
 function isNaN() { [[ "${1}" =~ ^-?[0-9]+$ ]] || return_code=1; }
 
 #=====  FUNCTION  =============================================================
+#          NAME:  mkcd
+#   DESCRIPTION:  Creates a directory and then changes into it
+#    PARAMETERS:  Directory to create
+#       RETURNS:  0 if success, 1 otherwise
+#==============================================================================
+function mkcd() { [[ ! -d "${1}" ]] && mkdir "${1}"; cd "${1}"; }
+
+#=====  FUNCTION  =============================================================
 #          NAME:  returnRandomCharacters
 #   DESCRIPTION:  Returns a random string of alphanumeric characters
 #    PARAMETERS:  Length of string, include special characters
@@ -114,7 +122,7 @@ function returnRandomCharacters()
 
         printf "%s\n" "${returned_characters}";
     else
-        while (( counter <= string_count )); do
+        while (( counter != string_count )); do
             if [[ -n "${use_special}" ]] && [[ "${use_special}" == "${_TRUE}" ]]; then
                 returned_characters="$(tr -cd '[:graph:]' < /dev/urandom | head -c "${string_length}")";
             else
@@ -304,14 +312,6 @@ function runLoginCommands()
 
     return "${return_code}";
 }
-
-#=====  FUNCTION  =============================================================
-#          NAME:  mkcd
-#   DESCRIPTION:  Creates a directory and then changes into it
-#    PARAMETERS:  Directory to create
-#       RETURNS:  0 if success, 1 otherwise
-#==============================================================================
-function mkcd() { [[ -d "${1}" ]] && cd "${1}" || ( mkdir -p "${1}" && cd "${1}" ); }
 
 #=====  FUNCTION  =============================================================
 #          NAME:  lsz

@@ -23,6 +23,12 @@ services:
       MQ_ENABLE_CLEAN_TMP_ON_START: true
     volumes:
       - mq-data:/mnt/mqm:rw
+    healthcheck:
+      test: ["CMD", "chkmqhealthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
 
 ---
 volumes:
