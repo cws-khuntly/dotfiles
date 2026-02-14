@@ -21,7 +21,7 @@ ORCLCDB =
     (ADDRESS_LIST =
       (ADDRESS =
         (PROTOCOL = TCP)
-        (HOST = 127.0.0.1)
+        (HOST = oracle.caspersbox.local)
         (PORT = 1521)
       )
     )
@@ -35,51 +35,8 @@ ORCLPDB1 =
     (ADDRESS_LIST =
       (ADDRESS =
         (PROTOCOL = TCP)
-        (HOST = 127.0.0.1)
+        (HOST = oracle.caspersbox.local)
         (PORT = 1521)
-      )
-    )
-    (CONNECT_DATA =
-      (SERVICE_NAME = ORCLPDB1)
-    )
-  )
-
-FREEPDB1 =
-  (DESCRIPTION =
-    (ADDRESS_LIST =
-      (ADDRESS =
-        (PROTOCOL = TCP)
-        (HOST = 127.0.0.1)
-        (PORT = 1521)
-      )
-    )
-    (CONNECT_DATA =
-      (SERVICE_NAME = FREEPDB1)
-    )
-  )
-
-ORCLPDB1_SSL =
-  (DESCRIPTION =
-    (ADDRESS_LIST =
-      (ADDRESS =
-         (PROTOCOL = TCPS)
-         (HOST = 127.0.0.1)
-         (PORT = 2484)
-      )
-    )
-    (CONNECT_DATA =
-      (SERVER = DEDICATED)
-      (SERVICE_NAME = ORCLPDB1)
-    )
-  )
-
-REMOTE_SSL =
-  (DESCRIPTION =
-    (ADDRESS_LIST =
-      (ADDRESS =
-         (PROTOCOL = TCPS)
-         (HOST = 192.168.12.6)
-         (PORT = 2484)
       )
     )
     (CONNECT_DATA =
