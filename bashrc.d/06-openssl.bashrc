@@ -23,7 +23,7 @@
 alias sha512sum='openssl sha512';
 alias checkCSR='openssl req -text -noout -verify -in';
 
-====  FUNCTION  =============================================================
+#=====  FUNCTION  =============================================================
 #          NAME:  returnRandomCharacters
 #   DESCRIPTION:  Returns a random string of alphanumeric characters
 #    PARAMETERS:  Length of string, include special characters
@@ -64,8 +64,8 @@ function createServerKeyAndCSR()
         printf "        %s\n" "ECC";
         printf "        %s\n" "RSA"
         printf "    %s: %s\n" "--size | -s" "The size of the key to generate. When 'type' is ECC, this value is fixed at 512."
-        printf "    %s: %s\n" "--curve <value> | -c <value>" "The elliptic curve to use when key type == ECC";
-        printf "    %s: %s\n" "--name=value | -n <value>" "The name of the generated file." >&2;
+        printf "    %s: %s\n" "--curve | -c" "The elliptic curve to use when key type == ECC";
+        printf "    %s: %s\n" "--name | -n" "The name of the generated file." >&2;
         printf "    %s: %s\n" "--addext | -a" "Add extensions to the request. Setting this flag will open the OpenSSL configuration file in vi for editing." >&2;
 
         [[ -n "${function_name}" ]] && unset -v function_name;

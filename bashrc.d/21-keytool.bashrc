@@ -20,7 +20,7 @@
 
 [[ -z "$(compgen -c | grep -Ew "(^keytool)" | sort | uniq)" ]] && return;
 
-====  FUNCTION  =============================================================
+#=====  FUNCTION  =============================================================
 #          NAME:  returnRandomCharacters
 #   DESCRIPTION:  Returns a random string of alphanumeric characters
 #    PARAMETERS:  Length of string, include special characters
