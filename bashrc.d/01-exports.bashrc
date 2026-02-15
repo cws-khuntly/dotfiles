@@ -29,6 +29,8 @@ declare -x USER_LIB_PATH="${HOME}/lib";
 declare -x USER_CONFIG_PATH="${HOME}/.dotfiles/config";
 declare -x PATH="${PATH}:${SYSTEM_PATH}:${USER_PATH}";
 declare -x DOT_PROFILE_LOADED="true";
+declare -x _TRUE="true";
+declare -x _FALSE="false";
 
 #
 # read-only
@@ -54,7 +56,7 @@ declare -ix ENTROPY_FILE_SIZE=16384;
 declare -x WGETRC="${HOME}/.dotfiles/config/system/wgetrc";
 declare -x LDAPRC="${HOME}/.dotfiles/config/system/ldaprc";
 declare -x AUTHFILE="${HOME}/.dotfiles/config/profile/authfile.gpg";
-declare -x LOGGING_PROPERTIES="${HOME}/.dotfiles/config/dotfiles/logging.properties";
+declare -x LOGGING_PROPERTIES="${HOME}/.dotfiles/config/logging/logging.properties";
 
 #
 # mail
