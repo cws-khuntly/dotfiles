@@ -83,11 +83,12 @@ function startDockerContainer()
         local function_name="${cname}#${FUNCNAME[1]}";
         local return_code=3;
 
-        printf "%s %s\n" "${FUNCNAME[1]}" "Return a string of random characters" >&2;
+        printf "%s %s\n" "${FUNCNAME[1]}" "Start a Docker container with a compose file" >&2;
         printf "%s %s\n" "Usage: ${FUNCNAME[1]}" "[ options ]" >&2;
-        printf "    %s: %s\n" "--container=value| -c <value>" "The container to start." >&2;
+        printf "    %s: %s\n" "--container | -c" "The container to start." >&2;
         printf "      %s: %s\n" "This should be the full path to the docker compose file." >&2;
-        printf "    %s: %s\n" "--action=value| -a <value>" "The action to perform - one of \"up\" or \"down\"" >&2;
+        printf "    %s: %s\n" "--action | -a" "The action to perform - one of \"up\" or \"down\"" >&2;
+        printf "    %s %s\n" "--detach | -d" "Detach from the container after startup."
 
         [[ -n "${function_name}" ]] && unset -v function_name;
         [[ -n "${cname}" ]] && unset -v cname;
@@ -116,8 +117,9 @@ function startDockerContainer()
         esac
 
         case "${argument_name}" in
-            container|c) container_name="${argument_value}"; ;;
-            action|a) action="${argument_value}"; ;;
+            [Cc][Oo][Nn][Tt][Aa][Ii][Nn][Ee][Rr]|[Cc]) container_name="${argument_value}"; ;;
+            [Aa][Cc][Tt][Ii][Oo][Nn]|[Aa]) action="${argument_value}"; ;;
+            [Dd][Ee][Tt][Aa][Cc][Hh]|[Dd]) detach="-d"; ;;
             help|\?|h) usage; return_code="${?}"; ;;
             *)
                 if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]]; then
@@ -128,7 +130,7 @@ function startDockerContainer()
         esac
     done
 
-    if [[ ! -f "${container_name}" ]]; then
+    if [[ ! -f "${HOME}/.dotfiles/docker/$(cut -d "/" -f 1 <<< "${container_name}")/$(cut -d "/" -f 2 <<< "${container_name}")" ]]; then
         return_code=1;
 
         if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]]; then
@@ -136,7 +138,7 @@ function startDockerContainer()
             writeLogEntry "CONSOLE" "STDERR" "${$}" "${cname}" "${LINENO}" "${function_name}" "The container file ${container_name} does not exist.";
         fi
     else
-        docker compose -f "${container}" "${action}";
+        docker compose -f "${HOME}/.dotfiles/docker/$(cut -d "/" -f 1 <<< "${container_name}")/$(cut -d "/" -f 2 <<< "${container_name}")" "${action}" "${detach}";
         ret_code="${?}";
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
