@@ -130,7 +130,7 @@ function startDockerContainer()
         esac
     done
 
-    if [[ ! -f "${HOME}/.dotfiles/docker/$(cut -d "/" -f 1 <<< "${container_name}")/$(cut -d "/" -f 2 <<< "${container_name}")" ]]; then
+    if [[ ! -f "${HOME}/.dotfiles/docker/$(cut -d "/" -f 1 <<< "${container_name}")/$(cut -d "/" -f 2 <<< "${container_name}")-engine.yml" ]]; then
         return_code=1;
 
         if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]]; then
@@ -138,7 +138,7 @@ function startDockerContainer()
             writeLogEntry "CONSOLE" "STDERR" "${$}" "${cname}" "${LINENO}" "${function_name}" "The container file ${container_name} does not exist.";
         fi
     else
-        docker compose -f "${HOME}/.dotfiles/docker/$(cut -d "/" -f 1 <<< "${container_name}")/$(cut -d "/" -f 2 <<< "${container_name}")" "${action}" "${detach}";
+        docker compose -f "${HOME}/.dotfiles/docker/$(cut -d "/" -f 1 <<< "${container_name}")/$(cut -d "/" -f 2 <<< "${container_name}")-engine.yml" "${action}" "${detach}";
         ret_code="${?}";
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
