@@ -135,7 +135,7 @@ function createServerKeyAndCSR()
 
                 return_code=1;
             else
-                openssl ecparam -out "${file_name}.key" -name "${key_curve}" -genkey;
+                openssl ecparam -out "${HOME}/workspace/openssl/private/${file_name}.key" -name "${key_curve}" -genkey;
                 ret_code="${?}";
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -146,7 +146,7 @@ function createServerKeyAndCSR()
     
                     return_code=1;
                 else
-                    openssl req -config openssl.cnf -key "${file_name}.key" -new -"${msg_digest}" -out "${file_name}.csr" -addext "subjectAltName = ${alt_names}"
+                    openssl req -config "${HOME}/workspace/openssl/conf/openssl.cnf" -extensions v3_req -key "${HOME}/workspace/openssl/private/${file_name}.key" -out "${HOME}/workspace/openssl/csr/${file_name}.csr";
                     ret_code="${?}";
     
                     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
