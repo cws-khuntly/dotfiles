@@ -4,7 +4,7 @@ services:
     image: icr.io/ibm-messaging/mq
     pull_policy: missing
     restart: unless-stopped
-    hostname: "mq.caspersbox.local"
+    hostname: "mqm.caspersbox.local"
     container_name: "ibmmq"
     networks:
       service-network:
