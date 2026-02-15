@@ -281,3 +281,11 @@ function createKeystore()
 
     return "${return_code}";
 }
+
+#=====  FUNCTION  =============================================================
+#          NAME:  returnRandomCharacters
+#   DESCRIPTION:  Returns a random string of alphanumeric characters
+#    PARAMETERS:  Length of string, include special characters
+#       RETURNS:  0 regardless of result.
+#==============================================================================
+function signCSR() { sudo -u certadm openssl ca -config "/opt/tls/${1}/intermediate/conf/openssl.cnf" -in "/opt/tls/${1}/intermediate/csr/${2}.csr" -out "/opt/tls/${1}/intermediate/certs/${2}.crt" -extensions server_cert; }
