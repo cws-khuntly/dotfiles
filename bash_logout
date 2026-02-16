@@ -27,7 +27,3 @@ FUNCTION_NAME="${CNAME}#bash_profile";
 
 ## write history
 history -n; history -a; history -r;
-
-## clear terminal scrollback
-printf "\033c";
-
