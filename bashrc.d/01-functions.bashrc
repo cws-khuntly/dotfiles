@@ -68,8 +68,8 @@ function returnRandomCharacters()
 
         printf "%s %s\n" "${FUNCNAME[1]}" "Return a string of random characters" >&2;
         printf "%s %s\n" "Usage: ${FUNCNAME[1]}" "[ options ]" >&2;
-        printf "    %s: %s\n" "--count=value| -c <value>" "The number of strings to generate." >&2;
-        printf "    %s: %s\n" "--length=value| -l <value>" "Determines the length of the string to generate." >&2;
+        printf "    %s: %s\n" "--count | -c" "The number of strings to generate." >&2;
+        printf "    %s: %s\n" "--length | -l" "Determines the length of the string to generate." >&2;
         printf "    %s: %s\n" "--special | -s" "Include special characters. If not specified, special characters are not utilized." >&2;
 
         [[ -n "${function_name}" ]] && unset -v function_name;
@@ -341,7 +341,7 @@ function lsz()
         local function_name="${cname}#${FUNCNAME[1]}";
         local return_code=3;
 
-        printf "%s %s\n" "${FUNCNAME[1]}" "Create a given directory and change into it." >&2;
+        printf "%s %s\n" "${FUNCNAME[1]}" "List the content of a given archive file." >&2;
         printf "%s %s\n" "Usage: ${FUNCNAME[1]}" "[ archive ]" >&2;
         printf "    %s: %s\n" "<archive>" "The path/name of the archive to inspect." >&2;
 

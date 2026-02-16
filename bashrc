@@ -26,41 +26,11 @@ FUNCTION_NAME="${CNAME}#bashrc";
 if [[ -f "/etc/bashrc" ]] && [[ -r "/etc/bashrc" ]] && [[ -s "/etc/bashrc" ]]; then source "/etc/bashrc"; fi
 if [[ -d "${HOME}/.dotfiles/bashrc.d" ]]; then for rc in "${HOME}/.dotfiles/bashrc.d/"*; do if [[ -f "${rc}" ]] && [[ -r "${rc}" ]] && [[ -s "${rc}" ]]; then source "${rc}"; [[ -n "${rc}" ]] && unset -v rc; fi done fi
 
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -n "${CONFIG_MAP["ENABLE_PERFORMANCE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_PERFORMANCE"]}" == "${_TRUE}" ]]; then
-    START_EPOCH="$(date +"%s")";
-
-    writeLogEntry "FILE" "PERFORMANCE" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} START: $(date -d @"${START_EPOCH}" +"${TIMESTAMP_OPTS}")";
-fi
-
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set -v; fi
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set -v; fi
-
 if [[ -z "${isReloadRequest}" ]] || [[ "${isReloadRequest}" == "${_FALSE}" ]]; then
-    if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: showHostInfo";
-    fi
-
-    if [[ ! "$(uname -s)" =~ [Aa][Ii][Xx] ]]; then
-        if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: showHostInfo";
-        fi
-
-        [[ -n "$(compgen -A function | grep showHostInfo)" ]] && showHostInfo;
-    fi
-
     if [[ -f "/etc/motd" ]] && [[ -r "/etc/motd" ]] && [[ -s "/etc/motd" ]]; then
-        if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: printf \"%s\n\n\" \"Message of the day:\"";
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: cat /etc/motd";
-        fi
-
         printf "%s\n\n" "Message of the day:";
 
         cat /etc/motd;
-    fi
-
-    if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_DEBUG"]}" ]] && [[ "${CONFIG_MAP["ENABLE_DEBUG"]}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: runLoginCommands";
     fi
 
     runLoginCommands;
@@ -68,17 +38,6 @@ fi
 
 ## make the umask sane
 umask 022;
-
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -n "${CONFIG_MAP["ENABLE_PERFORMANCE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_PERFORMANCE"]}" == "${_TRUE}" ]]; then
-    END_EPOCH="$(date +"%s")"
-    RUNTIME=$(( END_EPOCH - START_EPOCH ));
-
-    writeLogEntry "FILE" "PERFORMANCE" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} END: $(date -d "@${END_EPOCH}" +"${TIMESTAMP_OPTS}")";
-    writeLogEntry "FILE" "PERFORMANCE" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "${FUNCTION_NAME} TOTAL RUNTIME: $(( RUNTIME / 60)) MINUTES, TOTAL ELAPSED: $(( RUNTIME % 60)) SECONDS";
-fi
-
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_VERBOSE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_VERBOSE"]}" == "${_TRUE}" ]]; then set +x; fi
-if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["ENABLE_TRACE"]}" ]] && [[ "${CONFIG_MAP["ENABLE_TRACE"]}" == "${_TRUE}" ]]; then set +v; fi
 
 [[ -n "${FILE}" ]] && unset -v FILE;
 [[ -n "${SUBDIR}" ]] && unset -v SUBDIR;
