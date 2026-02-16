@@ -1,0 +1,45 @@
+---
+services:
+  duplicati:
+    image: duplicati/duplicati:latest
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: "backup.caspersbox.local"
+    container_name: "duplicati"
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.110
+    ports:
+      - 8200:8200
+    environment:
+      PUID: "2000"
+      PGID: "2000"
+      TZ: "America/New_York"
+    secrets:
+      - source: oracle
+        target: /run/secrets/oracle
+    volumes:
+      - duplicati-config:/config:rw
+      - /home/khuntly:/source:rw
+      - /home/khuntly/backups:/backups:rw
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8200/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+---
+volumes:
+  duplicati-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "~/workspace/duplicati/config"
+
+---
+networks:
+  service-network:
+    external: true
+
