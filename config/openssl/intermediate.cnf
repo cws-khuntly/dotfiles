@@ -83,7 +83,17 @@ extendedKeyUsage                = serverAuth
 crlDistributionPoints           = @crl_info
 authorityInfoAccess             = @ocsp_info
 subjectAltName                  = @alt_names
- 
+
+[ usr_cert ]
+# Extensions for client certificates (`man x509v3_config`).
+basicConstraints                = CA:FALSE
+nsCertType                      = client, email
+nsComment                       = "Grilled Cheese Generated Client Certificate"
+subjectKeyIdentifier            = hash
+authorityKeyIdentifier          = keyid,issuer
+keyUsage                        = critical, nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage                = clientAuth, emailProtection
+
 [alt_names]
 # DNS.0 = 
 
