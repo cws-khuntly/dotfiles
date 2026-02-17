@@ -15,9 +15,6 @@ services:
       PUID: "2000"
       PGID: "2000"
       TZ: "America/New_York"
-    secrets:
-      - source: oracle
-        target: /run/secrets/oracle
     volumes:
       - duplicati-config:/config:rw
       - /home/khuntly:/source:rw
