@@ -131,7 +131,7 @@ services:
     container_name: "akhq"
     networks:
       service-network:
-        ipv4_address: 192.168.1.100
+        ipv4_address: 192.168.1.10
     ports:
       - 8082:8080
     environment:
