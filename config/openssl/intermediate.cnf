@@ -30,17 +30,6 @@ cert_opt                        = ca_default
 default_days                    = 365
 preserve                        = no
 policy                          = policy_supply
- 
-[ policy_loose ]
-# Allow the intermediate CA to sign a more diverse range of certificates.
-# See the POLICY FORMAT section of the `ca` man page.
-countryName                     = optional
-stateOrProvinceName             = optional
-localityName                    = optional
-organizationName                = optional
-organizationalUnitName          = optional
-commonName                      = supplied
-emailAddress                    = optional
 
 [ policy_supply ]
 # Allow the intermediate CA to sign a more diverse range of certificates.
@@ -81,29 +70,19 @@ localityName_default            = Buffalo
 0.organizationName_default      = CWSNA
 organizationalUnitName_default  = RD
 emailAddress_default            = kmhuntly@caspersbox.com
-
-[ usr_cert ]
-# Extensions for client certificates (`man x509v3_config`).
-basicConstraints = CA:FALSE
-nsCertType = client, email
-nsComment = "OpenSSL Generated Client Certificate"
-subjectKeyIdentifier = hash
-authorityKeyIdentifier = keyid,issuer
-keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
-extendedKeyUsage = clientAuth, emailProtection
  
 [ server_cert ]
 # Extensions for server certificates (`man x509v3_config`).
-basicConstraints = CA:FALSE
-nsCertType = server
-nsComment = "Grilled Cheese Generated Server Certificate"
-subjectKeyIdentifier = hash
-authorityKeyIdentifier = keyid,issuer:always
-keyUsage = critical, digitalSignature, keyEncipherment
-extendedKeyUsage = serverAuth
-crlDistributionPoints = @crl_info
-authorityInfoAccess = @ocsp_info
-subjectAltName = @alt_names
+basicConstraints                = CA:FALSE
+nsCertType                      = server
+nsComment                       = "Grilled Cheese Generated Server Certificate"
+subjectKeyIdentifier            = hash
+authorityKeyIdentifier          = keyid,issuer:always
+keyUsage                        = critical, digitalSignature, keyEncipherment
+extendedKeyUsage                = serverAuth
+crlDistributionPoints           = @crl_info
+authorityInfoAccess             = @ocsp_info
+subjectAltName                  = @alt_names
  
 [alt_names]
 # DNS.0 = 
