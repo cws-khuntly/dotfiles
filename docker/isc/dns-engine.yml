@@ -8,7 +8,7 @@ services:
     container_name: "isc-bind9-ns1"
     networks:
       service-network:
-        ipv4_address: 192.168.1.5
+        ipv4_address: 192.168.1.15
     environment:
       TZ: "America/New_York"
     volumes:
@@ -33,7 +33,7 @@ services:
     container_name: "isc-bind9-ns2"
     networks:
       service-network:
-        ipv4_address: 192.168.1.6
+        ipv4_address: 192.168.1.16
     ports:
       - "10953:53/udp"
       - "10953:53/tcp"
