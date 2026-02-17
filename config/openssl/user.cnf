@@ -1,32 +1,3 @@
-[ ca ]
-default_ca                      = CA_default
- 
-[ CA_default ]
-# Directory and file locations.
-dir                             = ~/workspace/openssl
-certs                           = $dir/certs
-crl_dir                         = $dir/crl
-new_certs_dir                   = $dir/certs
-database                        = $dir/index.txt
-serial                          = $dir/serial
-RANDFILE                        = $dir/private/.rand
-copy_extensions                 = copy
-default_md                      = sha512
-name_opt                        = ca_default
-cert_opt                        = ca_default
-default_days                    = 365
-preserve                        = no
-policy                          = policy_supply
- 
-[ policy_supply ]
-countryName                     = match
-stateOrProvinceName             = match
-localityName                    = match
-organizationName                = optional
-organizationalUnitName          = optional
-commonName                      = supplied
-emailAddress                    = optional
-
 [ req ]
 default_bits                    = 4096
 distinguished_name              = req_distinguished_name
