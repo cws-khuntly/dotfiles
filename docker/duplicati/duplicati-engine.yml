@@ -18,7 +18,7 @@ services:
     volumes:
       - duplicati-config:/config:rw
       - /home/khuntly:/source:rw
-      - /home/khuntly/backups:/backups:rw
+      - /home/khuntly/backup:/backups:rw
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8200/health"]
       interval: 30s
