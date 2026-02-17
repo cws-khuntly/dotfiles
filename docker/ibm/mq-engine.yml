@@ -8,7 +8,7 @@ services:
     container_name: "ibmmq"
     networks:
       service-network:
-        ipv4_address: 192.168.1.100
+        ipv4_address: 192.168.1.6
     ports:
       - 1414:1414
       - 9443:9443
