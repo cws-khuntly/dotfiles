@@ -13,7 +13,7 @@ services:
       - 8200:8200
     environment:
       PUID: "2000"
-      PGID: "2000"
+      PGID: "100"
       TZ: "America/New_York"
     volumes:
       - duplicati-config:/config:rw
