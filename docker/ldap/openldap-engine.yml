@@ -8,7 +8,7 @@ services:
     container_name: "openldap"
     networks:
       service-network:
-        ipv4_address: 192.168.1.80
+        ipv4_address: 192.168.1.11
     ports:
       - 10389:389
       - 10636:636
@@ -38,7 +38,7 @@ services:
     container_name: "phpldapadmin"
     networks:
       service-network:
-        ipv4_address: 192.168.1.81
+        ipv4_address: 192.168.1.12
     ports:
       - 9081:80
     environment:
