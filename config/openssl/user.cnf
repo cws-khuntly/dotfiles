@@ -9,7 +9,9 @@ x509_extensions                 = @v3_req
 subjectAltName                  = @alt_names
 
 [alt_names]
-DNS.0                           = fedora-desktop.local
+DNS.0                           = localhost.localdomain
+DNS.1                           = localhost
+IP.0                            = 127.0.0.1
 
 [ req_distinguished_name ]
 countryName                     = Country Name (2 letter code)
