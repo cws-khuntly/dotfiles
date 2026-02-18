@@ -15,6 +15,7 @@ services:
       - ns1-config:/etc/bind:rw
       - ns1-zones:/var/cache/bind:rw
       - ns1-log:/var/log/bind:rw
+      - /etc/crypto-policies/back-ends/bind.config:/etc/bind/crypto-policies/back-ends/bind.config:ro
     healthcheck:
       test: ["CMD", "dig", "@localhost", "+short", "-t", "a", "localhost"]
       interval: 30s
@@ -42,6 +43,7 @@ services:
       - ns2-config:/etc/bind:rw
       - ns2-zones:/var/cache/bind:rw
       - ns2-log:/var/log/bind:rw
+      - /etc/crypto-policies/back-ends/bind.config:/etc/bind/crypto-policies/back-ends/bind.config:ro
     healthcheck:
       test: ["CMD", "dig", "@localhost", "+short", "-t", "a", "localhost"]
       interval: 30s
