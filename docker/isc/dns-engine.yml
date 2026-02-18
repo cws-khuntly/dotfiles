@@ -13,8 +13,7 @@ services:
       TZ: "America/New_York"
     volumes:
       - ns1-config:/etc/bind:rw
-      - ns1-master-zones:/var/cache/bind:rw
-      - ns1-slave-zones:/var/lib/bind:rw
+      - ns1-zones:/var/cache/bind:rw
       - ns1-log:/var/log/bind:rw
     healthcheck:
       test: ["CMD", "dig", "@localhost", "+short", "-t", "a", "localhost"]
@@ -41,8 +40,7 @@ services:
       TZ: "America/New_York"
     volumes:
       - ns2-config:/etc/bind:rw
-      - ns2-master-zones:/var/cache/bind:rw
-      - ns2-slave-zones:/var/lib/bind:rw
+      - ns2-zones:/var/cache/bind:rw
       - ns2-log:/var/log/bind:rw
     healthcheck:
       test: ["CMD", "dig", "@localhost", "+short", "-t", "a", "localhost"]
@@ -60,19 +58,12 @@ volumes:
       o: bind
       device: "/opt/named/ns1/etc"
 
-  ns1-master-zones:
+  ns1-zones:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: "/opt/named/ns1/namedb"
-
-  ns1-slave-zones:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: "/opt/named/ns1/cache"
 
   ns1-log:
     driver: local
@@ -81,26 +72,19 @@ volumes:
       o: bind
       device: "/opt/named/ns1/log"
 
-ns2-config:
+  ns2-config:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: "/opt/named/ns2/etc"
 
-  ns2-master-zones:
+  ns2-zones:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: "/opt/named/ns2/namedb"
-
-  ns2-slave-zones:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: "/opt/named/ns2/cache"
 
   ns2-log:
     driver: local
