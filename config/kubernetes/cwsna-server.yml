@@ -6,8 +6,10 @@ metadata:
   namespace: kube-system
 data:
   cwsna.server: |
-    192.168.10.20:10953 {
+    caspersbox.local:10953 {
         log
         errors
+        cache 30
         health
+        forward . 192.168.10.20:10953
     }
