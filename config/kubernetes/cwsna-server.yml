@@ -10,5 +10,4 @@ data:
         log
         errors
         health
-        fallhrough
     }
