@@ -6,11 +6,9 @@ metadata:
   namespace: kube-system
 data:
   cwsna.server: |
-    192.168.12.6:10953 {
+    192.168.10.20:10953 {
         log
         errors
         health
         fallhrough
     }
-
-        
