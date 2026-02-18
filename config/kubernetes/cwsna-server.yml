@@ -6,7 +6,7 @@ metadata:
   namespace: kube-system
 data:
   cwsna.server: |
-    caspersbox.local:10953 {
+    caspersbox.local:53 {
         log
         errors
         cache 30
