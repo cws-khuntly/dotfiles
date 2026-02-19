@@ -1,11 +1,16 @@
-k3d registry create fedora-registry.localhost --port 65000
+k3d registry create fedora.local --port 65000
 
-k3d cluster create fedora-cluster --agents 2 --port "8180:80@loadbalancer" --port "8143:443@loadbalancer" --registry-use k3d-registry.fedora.local:65000 --volume ${HOME}/workspace/${OWNER}/inbound:/inbound --wait
+k3d cluster create fedora --agents 2 --port "8180:80@loadbalancer" --port "8143:443@loadbalancer" --registry-use k3d-registry.fedora.local:65000 --wait
 
-kubectl config set-credentials admin@k3d-fedora-cluster --username admin@k3d-fedora-cluster
+kubectl config set-credentials admin@k3d-fedora --username admin@k3d-fedora
 
-kubectl config set-cluster k3d-fedora-cluster --insecure-skip-tls-verify=true
+kubectl config set-cluster k3d-fedora --insecure-skip-tls-verify=true
 
-kubectl create ns my-ms
+helm repo add traefik https://traefik.github.io/charts
+helm repo update
+kubectl create namespace traefik
+helm install traefik traefik/traefik --namespace traefik
 
-kubectl config set-context --current --namespace my-ns
+kubectl create ns fedora
+
+kubectl config set-context --current --namespace fedora
