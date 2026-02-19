@@ -88,9 +88,13 @@ function createServerKeyAndCSR()
                 ;;
             *)
                 argument_name="$(cut -d "-" -f 2 <<< "${argument}")";
-                argument_value="${2}";
+                if [[ ! -z "${2}" ]]; then
+                    argument_value="${2}";
 
-                shift 2;
+                    shift 2;
+                else
+                    shift 1;
+                fi
                 ;;
         esac
 
