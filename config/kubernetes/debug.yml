@@ -7,6 +7,7 @@ spec:
   containers:
     - name: fedora
       image: fedora:43
+      imagePullPolicy: IfNotPresent
       resources:
         limits:
           cpu: 2
