@@ -1,3 +1,5 @@
+https://docs.fedoraproject.org/en-US/quick-docs/using-kubernetes-kubeadm/
+
 k3d registry create fedora.local --port 65000
 
 k3d cluster create fedora --agents 2 --port "8180:80@loadbalancer" --port "8143:443@loadbalancer" --registry-use k3d-registry.fedora.local:65000 --wait
