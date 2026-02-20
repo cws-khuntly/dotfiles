@@ -44,6 +44,7 @@ function createServerKeyAndCSR()
     local msg_digest;
     local key_file;
     local csr_file;
+    local addext;
 
     #======  FUNCTION  ============================================================;
     #          NAME:  usage
@@ -88,13 +89,8 @@ function createServerKeyAndCSR()
                 ;;
             *)
                 argument_name="$(cut -d "-" -f 2 <<< "${argument}")";
-                if [[ ! -z "${2}" ]]; then
-                    argument_value="${2}";
 
-                    shift 2;
-                else
-                    shift 1;
-                fi
+                if [[ -z "${2}" ]]; then shift 1; else argument_value="${2}"; shift 2; fi
                 ;;
         esac
 
@@ -181,6 +177,13 @@ function createServerKeyAndCSR()
     [[ -n "${argument}" ]] && unset -v argument;
     [[ -n "${argument_name}" ]] && unset -v argument_name;
     [[ -n "${argument_value}" ]] && unset -v argument_value;
+    [[ -n "${key_type}" ]] && unset -v key_type;
+    [[ -n "${key_curve}" ]] && unset -v key_curve;
+    [[ -n "${msg_digest}" ]] && unset -v msg_digest;
+    [[ -n "${key_type}" ]] && unset -v key_type;
+    [[ -n "${key_file}" ]] && unset -v key_file;
+    [[ -n "${csr_file}" ]] && unset -v csr_file;
+    [[ -n "${addext}" ]] && unset -v addext;
 
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${cname}" ]] && unset -v cname;
@@ -247,9 +250,8 @@ function createKeystore()
                 ;;
             *)
                 argument_name="$(cut -d "-" -f 2 <<< "${argument}")";
-                argument_value="${2}";
 
-                shift 2;
+                if [[ -z "${2}" ]]; then shift 1; else argument_value="${2}"; shift 2; fi
                 ;;
         esac
 
@@ -279,6 +281,9 @@ function createKeystore()
     [[ -n "${argument}" ]] && unset -v argument;
     [[ -n "${argument_name}" ]] && unset -v argument_name;
     [[ -n "${argument_value}" ]] && unset -v argument_value;
+    [[ -n "${key_file}" ]] && unset -v key_file;
+    [[ -n "${crt_file}" ]] && unset -v crt_file;
+    [[ -n "${store_file}" ]] && unset -v store_file;
 
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${cname}" ]] && unset -v cname;

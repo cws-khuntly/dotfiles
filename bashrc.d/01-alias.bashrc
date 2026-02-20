@@ -77,10 +77,8 @@ alias listAliases="compgen -A alias";
 #
 # sudo aliases
 #
-alias ansible="sudo su - ansible";
 alias sysadm="sudo su - sysadm";
 alias ihsadm="sudo su - ihsadm";
-alias wasadm="sudo su - appadm";
 alias dnsadm="sudo su - dnsadm";
 alias root="sudo su -";
 

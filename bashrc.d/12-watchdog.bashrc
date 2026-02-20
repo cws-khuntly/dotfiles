@@ -109,6 +109,12 @@ function runWatchdog()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
+    [[ -n "${watch_data}" ]] && unset watch_data;
+    [[ -n "${watch_type}" ]] && unset watch_type;
+    [[ -n "${watch_pid}" ]] && unset watch_pid;
+    [[ -n "${watch_file}" ]] && unset watch_file;
+    [[ -n "${watch_host}" ]] && unset watch_host;
+    [[ -n "${watch_port}" ]] && unset watch_port;
     [[ -n "${error_count}" ]] && unset error_count;
     [[ -n "${process_id}" ]] && unset process_id;
     [[ -n "${process_time_wait}" ]] && unset process_time_wait;

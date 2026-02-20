@@ -23,6 +23,8 @@
 if [[ -f "${HOME}/workspace/python/venv/bin/activate" ]]; then
     source "${HOME}/workspace/python/venv/bin/activate";
 else
+    [[ -z "$(compgen -c | grep -Ew "(^python)" | sort | uniq)" ]] && return;
+
     /usr/bin/env python -m venv "${HOME}/workspace/python/venv";
 
     source "${HOME}/workspace/python/venv/bin/activate";

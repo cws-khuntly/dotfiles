@@ -60,6 +60,9 @@ function readPropertyFile()
 
     if [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
+    [[ -n "${config_entries[@]}" ]] && unset config_entries;
+    [[ -n "${entry}" ]] && unset entry;
+    [[ -n "${config_file}" ]] && unset config_file;
     [[ -n "${property_name}" ]] && unset property_name;
     [[ -n "${property_value}" ]] && unset property_value;
     [[ -n "${entry}" ]] && unset entry;

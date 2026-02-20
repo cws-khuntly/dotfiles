@@ -21,6 +21,8 @@
 [[ ! -d "/var/named" ]] && return;
 [[ -z "$(compgen -c | grep -Ew "(^named)" | sort | uniq)" ]] && return;
 
+[[ "$(id dnsadm; printf "%s" "${?}")" == "0" ]] && alias dnsadm='sudo su - dnsadm';
+
 alias rndc='sudo -u named rndc -c /var/named/etc/conf.d/rndc.conf';
 alias named-checkconf='sudo -u named named-checkconf -t /var/named';
 alias named-checkzone='sudo -u named named-checkzone -t /var/named';

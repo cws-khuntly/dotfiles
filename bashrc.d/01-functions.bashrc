@@ -93,9 +93,14 @@ function returnRandomCharacters()
                 ;;
             *)
                 argument_name="$(cut -d "-" -f 2 <<< "${argument}")";
-                argument_value="${2}";
 
-                shift 2;
+                if [[ ! -z "${2}" ]]; then
+                    shift 1;
+                else
+                    argument_value="${2}";
+
+                    shift 2;
+                fi
                 ;;
         esac
 

@@ -47,7 +47,7 @@ function createDockerNetwork()
     network_mask="${3}";
     network_gateway="${4}";
 
-    docker network create --driver=bridge --subnet="${network_addr}"/"${network_mask}" --gateway "${network_gateway}" "${network_name}";
+    docker network create --driver=bridge --subnet="${2}"/"${3}" --gateway "${4}" "${1}";
 
     return "${?}";
 }
@@ -110,9 +110,8 @@ function startDockerContainer()
                 ;;
             *)
                 argument_name="$(cut -d "-" -f 2 <<< "${argument}")";
-                argument_value="${2}";
 
-                shift 2;
+                if [[ -z "${2}" ]]; then shift 1; else argument_value="${2}"; shift 2; fi
                 ;;
         esac
 

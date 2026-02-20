@@ -22,8 +22,8 @@ if [[ -z "$(compgen -c | grep -Ew "(^docker)" | sort | uniq)" ]]; then alias web
 
 [[ ! -d "/opt/IBM/WebSphere" ]] && return;
 
-alias wasadm='sudo su - wasadm';
+[[ "$(id wasadm; printf "%s" "${?}")" == "0" ]] && alias wasadm='sudo su - wasadm';
 
 [[ ! -d "/opt/IBM/HTTPServer" ]] && return;
 
-alias ihsadm='sudo su - ihsadm';
+[[ "$(id ihsadm; printf "%s" "${?}")" == "0" ]] && alias ihsadm='sudo su - ihsadm';

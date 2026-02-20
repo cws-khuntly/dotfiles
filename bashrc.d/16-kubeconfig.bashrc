@@ -45,4 +45,6 @@ function setKubeConfig()
                 ;;
         esac
     fi
+
+    [[ -n "${response}" ]] && unset -v response;
 }
