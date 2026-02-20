@@ -19,7 +19,7 @@
 [User]
     name = Kevin Huntly
     email = kmhuntly@gmail.com
-    signingkey = 478CEB22B4E68865
+    signingkey = B2EA09AB59F8710C
 
 [include]
     path = ~/.config/git/localconfig
@@ -57,7 +57,7 @@
 [alias]
 
 [commit]
-#    gpgsign = true
+    gpgsign = true
     verbose = true
 
 [filter "tabspace"]

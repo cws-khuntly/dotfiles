@@ -110,8 +110,8 @@ keyUsage                        = critical, digitalSignature
 extendedKeyUsage                = critical, OCSPSigning
  
 [crl_info]
-URI.0                           = http://localhost/root.crt
+URI.0                           = http://caspersbox.com/root.crt
  
 [ocsp_info]
-caIssuers;URI.0                 = http://localhost/root.crt
-OCSP;URI.0                      = http://localhost/
+caIssuers;URI.0                 = http://caspersbox.com/root.crt
+OCSP;URI.0                      = http://caspersbox.com/
