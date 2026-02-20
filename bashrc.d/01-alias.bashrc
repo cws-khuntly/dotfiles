@@ -78,8 +78,6 @@ alias listAliases="compgen -A alias";
 # sudo aliases
 #
 alias sysadm="sudo su - sysadm";
-alias ihsadm="sudo su - ihsadm";
-alias dnsadm="sudo su - dnsadm";
 alias root="sudo su -";
 
 #
