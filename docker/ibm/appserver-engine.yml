@@ -10,6 +10,7 @@ services:
       service-network:
         ipv4_address: 192.168.1.21
     ports:
+      - 9060:9060
       - 9043:9043
       - 9080:9080
       - 9443:9443
