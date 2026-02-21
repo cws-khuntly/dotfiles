@@ -20,7 +20,9 @@
 
 [[ -z "$(compgen -c | grep -Ew "(^ldapsearch)" | sort | uniq)" ]] && return;
 
-declare -x LDAPRC="${HOME}/.dotfiles/config/system/ldaprc";
+declare -x LDAPRC="${HOME}/.dotfiles/config/ldaprc";
+
+[[ ! -d "${HOME}/workspace/ldap" ]] && mkdir -pv "${HOME}/workspace/ldap/{ldif,certs}";
 
 #=====  FUNCTION  =============================================================
 #          NAME:  fldapsearch
