@@ -1,6 +1,6 @@
 ---
 services:
-  ibmmq:
+  ibmliberty:
     image: websphere-liberty:full-java17-openj9
     pull_policy: missing
     restart: unless-stopped

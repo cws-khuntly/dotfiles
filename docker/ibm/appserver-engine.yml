@@ -1,6 +1,6 @@
 ---
 services:
-  ibmmq:
+  ibmwas:
     image: icr.io/appcafe/websphere-traditional:9.0.5.26
     pull_policy: missing
     restart: unless-stopped
