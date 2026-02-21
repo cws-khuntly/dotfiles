@@ -27,6 +27,8 @@ sudo reboot
 
 sudo dnf install iptables iproute-tc cri-o1.35 containernetworking-plugins kubernetes1.35 kubernetes1.35-kubeadm kubernetes1.35-client kubernetes1.35-systemd k9s helm
 
+curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+
 sudo systemctl enable --now cri-o kubelet
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --cri-socket unix:///var/run/crio/crio.sock
 
