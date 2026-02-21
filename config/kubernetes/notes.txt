@@ -53,7 +53,6 @@ helm install traefik traefik/traefik --namespace traefik
 kubectl get pods -n traefik
 kubectl get svc -n traefik
 
-kubectl create ns storage
 kubectl apply -f ~/.dotfiles/config/kubernetes/nfs-server.yml -n storage
 
 kubectl get pods -n storage
