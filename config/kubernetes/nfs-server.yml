@@ -30,9 +30,8 @@ spec:
           mountPath: /exports
       volumes:
       - name: storage
-        hostPath:
-          path: /opt/nfs
-          type: DirectoryOrCreate
+        persistentVolumeClaim:
+          claimName: "storage-pvc"
 
 ---
 apiVersion: v1
@@ -50,3 +49,32 @@ spec:
     port: 111
   selector:
     app: nfs-server
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: storage-pv
+  labels:
+    type: local-storage
+spec:
+  capacity:
+    storage: 5gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  hostPath: "/opt/nfs"
+
+kind: PersistentVolumeClaim
+metadata:
+  name: storage-pvclaim
+  namespace: "storage"
+spec:
+  storageClassName: local-storage
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5gi
+  volumeName: "storage-pv"
