@@ -14,15 +14,14 @@ services:
       - 9043:9043
       - 9080:9080
       - 9443:9443
-    env_file:
-      - path: ./.env
-        required: true
     environment:
       LICENSE: "accept"
       DOCKER_IMAGE_TAG: "9.0.5.26"
-      ADMIN_PASSWORD: ${WASADM_PASSWORD}
+    secrets:
+      - source: ibmwas
+        target: /tmp/PASSWORD
     volumes:
-      - ./was:/opt/ibm/WebSphere/profiles:rw
+      - was-data:/opt/ibm/WebSphere/profiles:rw
     # healthcheck:
       # test: ["CMD", "chkmqhealthy"]
       #  interval: 30s
@@ -44,3 +43,7 @@ networks:
   service-network:
     external: true
 
+---
+secrets:
+  ibmwas:
+    file: "~/workspace/ibm/was.txt"
