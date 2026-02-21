@@ -84,8 +84,6 @@ function usage()
 #==============================================================================
 function checkLoggingStatus()
 {
-    local logging_type;
-
     (( ${#} != 1 )) && return 3;
 
     if [[ -z "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]] && [[ -v "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${TRUE}" ]] && [[ -n "${CONFIG_MAP["${1}"]}" ]] && [[ "${CONFIG_MAP["${1}"]}" == "${_TRUE}" ]]; then return 1; else return 0; fi
