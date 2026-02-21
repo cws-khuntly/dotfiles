@@ -21,7 +21,7 @@
 [[ -z "$(compgen -c | grep -Ew "(^openssl)" | sort | uniq)" ]] && return;
 
 if [[ ! -d "${HOME}/workspace/openssl" ]]; then
-    mkdir -pv "${HOME}/workspace/openssl/{private,csr,certs,keystore}";
+    mkdir -pv ${HOME}/workspace/openssl/{private,csr,certs,keystore,conf}
 
     cp "${HOME}/.dotfiles/config/openssl/user.cnf" "${HOME}/workspace/openssl/conf/openssl.cnf";
 fi
