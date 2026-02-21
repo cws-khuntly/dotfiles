@@ -25,7 +25,7 @@ EOF
 
 sudo reboot
 
-sudo dnf install iptables iproute-tc cri-o1.35 containernetworking-plugins kubernetes1.35 kubernetes1.35-kubeadm kubernetes1.35-client kubernetes1.35-systemd k9s helm cephadm 
+sudo dnf install iptables iproute-tc cri-o1.35 containernetworking-plugins kubernetes1.35 kubernetes1.35-kubeadm kubernetes1.35-client kubernetes1.35-systemd k9s helm
 
 curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
 
@@ -47,13 +47,6 @@ helm install traefik traefik/traefik --namespace traefik
 
 kubectl get pods -n traefik
 kubectl get svc -n traefik
-
-git clone --single-branch --branch v1.19.1 https://github.com/rook/rook.git
-cd rook/deploy/examples
-kubectl create -f crds.yaml -f common.yaml -f csi-operator.yaml -f operator.yaml
-kubectl create -f cluster.yaml
-cd -
-rm -rf rook/
 
 k3d registry create fedora.local --port 65000
 
