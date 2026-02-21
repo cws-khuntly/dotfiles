@@ -31,7 +31,7 @@ spec:
       volumes:
       - name: storage
         hostPath:
-          path: /data/nfs
+          path: /opt/nfs
           type: DirectoryOrCreate
 
 ---
