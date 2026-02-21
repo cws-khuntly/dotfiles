@@ -60,7 +60,7 @@
 #         username: ""
 #         password: ""
 #         hostname: ""
-#         port: 
+#         port:
 #         use_tls: <true | false>
 #
 #   systemd:
