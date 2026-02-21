@@ -57,6 +57,7 @@ declare -x WGETRC="${HOME}/.dotfiles/config/system/wgetrc";
 declare -x LDAPRC="${HOME}/.dotfiles/config/system/ldaprc";
 declare -x AUTHFILE="${HOME}/.dotfiles/config/profile/authfile.gpg";
 declare -x LOGGING_PROPERTIES="${HOME}/.dotfiles/config/logging/logging.properties";
+declare -x GPG_TTY="$(tty)";
 
 #
 # mail
