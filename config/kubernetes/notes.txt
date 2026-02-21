@@ -63,6 +63,8 @@ kubectl config set-credentials admin@k3d-fedora --username admin@k3d-fedora
 
 kubectl config set-cluster k3d-fedora --insecure-skip-tls-verify=true
 
+kubectl apply -f ~/.dotfiles/config/kubernetes/cwsna-server.yml -n kube-system
+
 helm repo add traefik https://traefik.github.io/charts
 helm repo update
 
