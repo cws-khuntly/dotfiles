@@ -19,7 +19,7 @@
 [User]
     name = Kevin Huntly
     email = kmhuntly@gmail.com
-    signingkey = B2EA09AB59F8710C
+    signingkey = F45C3EAE9C505B5477AB4ADEB2EA09AB59F8710C
 
 [include]
     path = ~/.config/git/localconfig
@@ -95,7 +95,7 @@
     recurse = true
 
 [gpg]
-    format = ssh
+    format = openpgp
 
 [log]
     date = rfc
