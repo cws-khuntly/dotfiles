@@ -1,18 +1,12 @@
-# ====  ANSIBLE   =============================================================
-#          NAME:  roles/dotfiles/vars/main.yml
-#   DESCRIPTION:  Template variables for dotfiles
-#          NOTE: This file is meant to be a template and saved as ${GIT_CLONE_DIR}/ansible/vault/dotfiles.yml as an ansible vault
-# =============================================================================
+# ====  ANSIBLE   =================================================
+#        NAME:  roles/dotfiles/vars/main.yml
+# DESCRIPTION:  Template variables for dotfiles
+#        NOTE: This file is meant to be a template and saved as ${G
+# =================================================================
 ---
 # secrets:
-#   bitwarden:
-#     BW_ACCESS_TOKEN: ""
-#
 #   google:
 #     GCP_SERVICE_ACCOUNT: ""
-#
-# bitwarden:
-#   vault_url: ""
 #
 # gcp:
 #   projects:
@@ -23,46 +17,53 @@
 #   email: ""
 #
 #   ssh:
-#     enabled: < true | false >
-#     fetch_keys: < true | false >
+#     enabled: <true | false>
+#     fetch_keys: <true | false>
 #     key_source: ""
 #     key_id: ""
-#     generate_keys: < true | false >
+#     generate_keys: <true | false>
 #     passphrase: ""
-#     key_type: ""
+#     key_type: "<< KEY_TYPE>>"
+#     key_data: |
+#       << Paste key data here >>
 #
 #   gpg:
-#     enabled: < true | false >
-#     fetch_keys: < true | false >
+#     enabled: <true | false>
+#     fetch_keys: <true | false>
 #     key_source: ""
 #     key_id: ""
-#     generate_keys: < true | false >
+#     generate_keys: <true | false>
 #     key_type: ""
-#     key_length: < length >
+#     key_length: 0
 #     subkey_type: ""
-#     subkey_length: < length >
+#     subkey_length: 0
 #     expiry: ""
 #     passphrase: ""
+#     key_data: |
+#       << Paste key data here >>
 #
 #   git:
-#     enabled: < true | false >
-#     fetch_keys: < true | false >
+#     enabled: <true | false>
+#     fetch_keys: <true | false>
 #     key_source: ""
 #     key_id: ""
 #     signing_key: ""
+#     key_name: ""
+#     key_data: |
+#       << Paste key data here >>
 #
-#  smtp:
+#   smtp:
 #     accounts:
 #       - name: ""
-#         enabled: < true | false >
+#         enabled: <true | false>
 #         account_name: ""
 #         username: ""
 #         password: ""
 #         hostname: ""
-#         port: < port >
-#         use_tls: < true | false >
+#         port: 
+#         use_tls: <true | false>
 #
 #   systemd:
-#     enabled: < true | false >
+#     enabled: <true | false>
 #     services:
-#      - name: "service.<service | target | timer >"
+#       - name: ""
