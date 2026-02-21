@@ -1,4 +1,12 @@
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: storage
+  labels:
+    name: storage
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
