@@ -57,6 +57,8 @@ function fldapsearch()
         printf "%s %s\n" "${FUNCNAME[1]}" "Return a string of random characters" >&2;
         printf "%s %s\n" "Usage: ${FUNCNAME[1]}" "[ options ]" >&2;
         printf "    %s: %s\n" "--host | -h" "The LDAP host to connect to." >&2;
+        printf "    %s: %s\n" "--port | -p" "The LDAP port to connect to." >&2;
+        printf "      %s: %s\n" "NOTE" "If not specified, defaults of 389/636 are used." >&2;
         printf "    %s: %s\n" "--secure | -s" "Use a secure (TLS) connection." >&2;
         printf "    %s: %s\n" "--auth | -a" "The user DN to authenticate as." >&2;
         printf "    %s: %s\n" "--basedn | -b" "The base DN to search in." >&2;
@@ -95,6 +97,7 @@ function fldapsearch()
 
         case "${argument_name}" in
             [Hh][Oo][Ss][Tt]|[Hh]) host="${argument_value}"; ;;
+            [Pp][Oo][Rr][Tt]|[Pp]) port="${argument_value}"; ;;
             [Ss][Ee][Cc][Uu][Rr][Ee]|[Ss]) usetls="${_TRUE}"; ;;
             [Aa][Uu][Tt][Hh]|[Aa]) userdn="${argument_value}"; ;;
             [Bb][Aa][Ss][Ee]|[Bb]) basedn="${argument_value}"; ;:
@@ -109,9 +112,9 @@ function fldapsearch()
         esac
     done
 
-    [[ "${usetls}" == "${_TRUE}" ]] && host="ldaps://${host}" || host="ldap://${host}";
+    [[ "${usetls}" == "${_TRUE}" ]] && host="-ZZ ldaps://${host}:${port:-636}" || host="ldap://${host}:${port:-389}";
 
-    ldapsearch -x -H "${host}" -D "${userdn}" -W -b "${basedn}" "${search_string}";
+    ldapsearch -x -H "${host}" -D "${userdn}" -W -b "${basedn}" -s sub "${search_string}";
 
     return_code="${?}";
 
