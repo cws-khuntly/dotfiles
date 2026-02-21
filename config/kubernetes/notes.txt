@@ -1,5 +1,54 @@
 https://docs.fedoraproject.org/en-US/quick-docs/using-kubernetes-kubeadm/
 
+sudo dnf update
+sudo systemctl disable --now swap-create@zram0
+sudo dnf remove zram-generator-defaults
+sudo systemctl disable --now firewalld
+
+sudo cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+sudo cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+fs.inotify.max_user_watches         = 2099999999
+fs.inotify.max_user_instances       = 2099999999
+fs.inotify.max_queued_events        = 2099999999
+fs.file-max                         = 2099999999
+
+kernel.pid_max                      = 10485760
+kernel.threads-max                  = 10485760
+
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+sudo reboot
+
+sudo dnf install iptables iproute-tc cri-o1.31 containernetworking-plugins kubernetes1.31 kubernetes1.35-kubeadm kubernetes1.35-client
+sudo systemctl enable --now cri-o
+sudo systemctl enable --now kubelet
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
+
+helm repo add traefik https://traefik.github.io/charts
+helm repo update
+
+kubectl create ns traefik
+helm install traefik traefik/traefik --namespace traefik
+
+kubectl get pods -n traefik
+kubectl get svc -n traefik
+
+https://docs.fedoraproject.org/en-US/quick-docs/using-kubernetes-kubeadm/
+
 k3d registry create fedora.local --port 65000
 
 k3d cluster create fedora --agents 2 --port "8180:80@loadbalancer" --port "8143:443@loadbalancer" --registry-use k3d-registry.fedora.local:65000 --wait
@@ -10,9 +59,10 @@ kubectl config set-cluster k3d-fedora --insecure-skip-tls-verify=true
 
 helm repo add traefik https://traefik.github.io/charts
 helm repo update
+
 kubectl create namespace traefik
 helm install traefik traefik/traefik --namespace traefik
 
-kubectl create ns fedora
+kubectl create namespace fedora
 
 kubectl config set-context --current --namespace fedora
