@@ -25,7 +25,7 @@ EOF
 
 sudo reboot
 
-sudo dnf install iptables iproute-tc cri-o1.35 containernetworking-plugins kubernetes1.31 kubernetes1.35-kubeadm kubernetes1.35-client kubernetes.35-systemd k9s helm
+sudo dnf install iptables iproute-tc cri-o1.35 containernetworking-plugins kubernetes1.35 kubernetes1.35-kubeadm kubernetes1.35-client kubernetes1.35-systemd k9s helm
 
 sudo systemctl enable --now cri-o kubelet
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16
