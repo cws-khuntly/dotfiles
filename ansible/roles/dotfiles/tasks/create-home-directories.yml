@@ -18,6 +18,12 @@
     - "workspace/ansible/vault"
     - "workspace/ansible/inventory"
     - "workspace/ansible/roles"
+    - "workspace/openssl"
+    - "workspace/openssl/conf"
+    - "workspace/openssl/certs"
+    - "workspace/openssl/csr"
+    - "workspace/openssl/keystore"
+    - "workspace/openssl/private"
     - ".config"
   loop_control:
     loop_var: "add_home_item"

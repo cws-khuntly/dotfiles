@@ -53,7 +53,7 @@
 
 - name: "Create dotfiles in home directory"
   ansible.builtin.file:
-    src: "{{ install.base_path }}/config/dotfiles/{{ ln_system_item }}"
+    src: "{{ install.base_path }}/config/{{ ln_system_item }}"
     dest: "{{ ansible_user_dir }}/.{{ ln_system_item }}"
     state: "link"
     owner: "{{ ansible_user_id }}"
