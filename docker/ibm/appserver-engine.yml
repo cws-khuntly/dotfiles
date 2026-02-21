@@ -1,0 +1,45 @@
+---
+services:
+  ibmmq:
+    image: icr.io/appcafe/websphere-traditional:9.0.5.26
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: "was.caspersbox.local"
+    container_name: "ibmwas"
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.21
+    ports:
+      - 9043:9043
+      - 9080:9080
+      - 9443:9443
+    env_file:
+      - path: ./.env
+        required: true
+    environment:
+      LICENSE: "accept"
+      DOCKER_IMAGE_TAG: "9.0.5.26"
+      ADMIN_PASSWORD: ${WASADM_PASSWORD}
+    volumes:
+      - ./was:/opt/ibm/WebSphere/profiles:rw
+    # healthcheck:
+      # test: ["CMD", "chkmqhealthy"]
+      #  interval: 30s
+      # timeout: 10s
+      # retries: 5
+      # start_period: 15s
+
+---
+volumes:
+  was-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/ibm/was"
+
+---
+networks:
+  service-network:
+    external: true
+

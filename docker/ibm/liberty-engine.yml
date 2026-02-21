@@ -1,0 +1,44 @@
+---
+services:
+  ibmmq:
+    image: websphere-liberty:full-java17-openj9
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: "liberty.caspersbox.local"
+    container_name: "ibmliberty"
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.20
+    ports:
+      - 9080:9080
+    env_file:
+      - path: ./.env
+        required: true
+    environment:
+      LICENSE: "accept"
+      MQ_QMGR_NAME: "QM1"
+      MQ_ADMIN_PASSWORD: "${MQRC_ADM_PASSWORD}"
+      MQ_APP_PASSWORD: "${MQRC_APP_PASSWORD}"
+      MQ_ENABLE_CLEAN_TMP_ON_START: true
+    volumes:
+      - mq-data:/mnt/mqm:rw
+    healthcheck:
+      test: ["CMD", "chkmqhealthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+---
+volumes:
+  mq-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/ibm/mq"
+
+---
+networks:
+  service-network:
+    external: true
