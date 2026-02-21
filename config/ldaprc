@@ -10,3 +10,4 @@ TIMELIMIT 15
 TIMEOUT 10
 TLS_RANDFILE /dev/urandom
 TLS_REQCERT try
+TLS_CACERTDIR ~/workspace/ldap/certs
