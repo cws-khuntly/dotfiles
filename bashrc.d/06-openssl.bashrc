@@ -2,9 +2,9 @@
 
 #==============================================================================
 #
-#          FILE:  A05-openssl
-#         USAGE:  . A05-openssl
-#   DESCRIPTION:  Useful git aliases
+#          FILE:  06-openssl.bashrc
+#         USAGE:  . 06-openssl.bashrc
+#   DESCRIPTION:  OpenSSL things
 #
 #       OPTIONS:  ---
 #  REQUIREMENTS:  ---
@@ -20,13 +20,19 @@
 
 [[ -z "$(compgen -c | grep -Ew "(^openssl)" | sort | uniq)" ]] && return;
 
+if [[ ! -d "${HOME}/workspace/openssl" ]]; then
+    mkdir -pv "${HOME}/workspace/openssl/{private,csr,certs,keystore}";
+
+    cp "${HOME}/.dotfiles/config/openssl/user.cnf" "${HOME}/workspace/openssl/conf/openssl.cnf";
+fi
+
 alias sha512sum='openssl sha512';
 alias checkCSR='openssl req -text -noout -verify -in';
 
 #=====  FUNCTION  =============================================================
-#          NAME:  returnRandomCharacters
-#   DESCRIPTION:  Returns a random string of alphanumeric characters
-#    PARAMETERS:  Length of string, include special characters
+#          NAME:  createServerKeyAndCSR()
+#   DESCRIPTION:  Generates a key and CSR
+#    PARAMETERS:  Key type, size, curve, name
 #       RETURNS:  0 regardless of result.
 #==============================================================================
 function createServerKeyAndCSR()
