@@ -56,6 +56,8 @@ kubectl get svc -n traefik
 kubectl create ns storage
 kubectl apply -f ~/.dotfiles/config/kubernetes/nfs-server.yml -n storage
 
+kubectl get pods -n storage
+
 kubectl apply -f ~/.dotfiles/config/kubernetes/cwsna-server.yml -n kube-system
 
 k3d registry create fedora.local --port 65000
