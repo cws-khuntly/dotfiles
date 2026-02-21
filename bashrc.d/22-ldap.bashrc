@@ -37,10 +37,12 @@ function fldapsearch()
     local argument_name;
     local argument_value;
     local host;
+    local -i port=389;
     local userdn;
     local basedn;
     local search_string;
-    local usetls;
+    local usetls="${_FALSE}";
+    local usessl="${_FALSE}";
 
     #======  FUNCTION  ============================================================;
     #          NAME:  usage
@@ -59,10 +61,11 @@ function fldapsearch()
         printf "    %s: %s\n" "--host | -h" "The LDAP host to connect to." >&2;
         printf "    %s: %s\n" "--port | -p" "The LDAP port to connect to." >&2;
         printf "      %s: %s\n" "NOTE" "If not specified, defaults of 389/636 are used." >&2;
-        printf "    %s: %s\n" "--secure | -s" "Use a secure (TLS) connection." >&2;
+        printf "    %s: %s\n" "--usetls | -t" "Use a secure (StartTLS) connection." >&2;
+        printf "    %s: %s\n" "--usessl | -s" "Use a secure (SSL) connection." >&2;
         printf "    %s: %s\n" "--auth | -a" "The user DN to authenticate as." >&2;
         printf "    %s: %s\n" "--basedn | -b" "The base DN to search in." >&2;
-        printf "    %s: %s\n" "--search | -t" "The data to search." >&2;
+        printf "    %s: %s\n" "--search | -y" "The data to search." >&2;
 
         [[ -n "${function_name}" ]] && unset -v function_name;
         [[ -n "${cname}" ]] && unset -v cname;
@@ -98,13 +101,14 @@ function fldapsearch()
         case "${argument_name}" in
             [Hh][Oo][Ss][Tt]|[Hh]) host="${argument_value}"; ;;
             [Pp][Oo][Rr][Tt]|[Pp]) port="${argument_value}"; ;;
-            [Ss][Ee][Cc][Uu][Rr][Ee]|[Ss]) usetls="${_TRUE}"; ;;
+            [Uu][Ss][Ee][Tt][Ll][Ss]|[Tt]) usetls="${_TRUE}"; ;;
+            [Uu][Ss][Ee][Ss][Ss][Ss]|[Ss]) usessl="${_TRUE}"; ;;
             [Aa][Uu][Tt][Hh]|[Aa]) userdn="${argument_value}"; ;;
             [Bb][Aa][Ss][Ee]|[Bb]) basedn="${argument_value}"; ;:
-            [Ss][Ee][Aa][Rr][Cc][Hh]|[Tt]) search_string="${argument_value}"; ;;
+            [Ss][Ee][Aa][Rr][Cc][Hh]|[Yy]) search_string="${argument_value}"; ;;
             help|\?|h) usage; return_code="${?}"; ;;
             *)
-                if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]]; then
+                if (( $(checkLoggingStatus "ERROR") == 0 )); then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An invalid option has been provided and has been ignored. Option -> ${argument_name}, Value -> ${argument_value}";
                     writeLogEntry "CONSOLE" "STDERR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An invalid option has been provided and has been ignored. Option -> ${argument_name}, Value -> ${argument_value}";
                 fi
@@ -112,7 +116,15 @@ function fldapsearch()
         esac
     done
 
-    [[ "${usetls}" == "${_TRUE}" ]] && host="-ZZ ldaps://${host}:${port:-636}" || host="ldap://${host}:${port:-389}";
+    if [[ "${usetls}" == "${usessl}" ]] && [[ "${usetls}" == "${_TRUE}" ]]; then
+        if (( $(checkLoggingStatus "ERROR") == O )); then
+            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "StartTLS cannot be used with SSL.";
+            writeLogEntry "CONSOLE" "STDERR" "${$}" "${cname}" "${LINENO}" "${function_name}" "StartTLS cannot be used with SSL.";
+        fi
+    fi
+
+    [[ "${usetls}" == "${_TRUE}" ]] && host="-ZZ ldap://${host}:${port:-636}";
+    [[ "${usessl}" == "${_TRUE}" ]] && host="ldaps://${host}:${port:-636}";
 
     ldapsearch -x -H "${host}" -D "${userdn}" -W -b "${basedn}" -s sub "${search_string}";
 
@@ -122,6 +134,8 @@ function fldapsearch()
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${search_string}" ]] && unset -v search_string;
     [[ -n "${usetls}" ]] && unset -v usetls;
+    [[ -n "${usessl}" ]] && unset -v usessl;
+    [[ -n "${port}" ]] && unset -v port;
     [[ -n "${argument}" ]] && unset -v argument;
     [[ -n "${argument_name}" ]] && unset -v argument_name;
     [[ -n "${argument_value}" ]] && unset -v argument_value;
