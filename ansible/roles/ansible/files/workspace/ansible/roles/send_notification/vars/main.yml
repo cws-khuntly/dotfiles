@@ -1,9 +1,0 @@
-# =====  ANSIBLE  ============================================================
-#          NAME:  roles/send_notification/vars/main.yml
-#   DESCRIPTION:  Entry point for playbook
-# ============================================================================
----
-send_notification_:
-  smtp:
-    host:
-    port:
