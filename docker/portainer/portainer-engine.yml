@@ -1,0 +1,36 @@
+---
+services:
+  portainer:
+    image: portainer/portainer-ce:lts
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: "portainer.caspersbox.local"
+    container_name: "portainer"
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.21
+    ports:
+      - 9443:9443
+    volumes:
+      - portainer-data:/data:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9443/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+---
+volumes:
+  portainer-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/portainer/data"
+
+---
+networks:
+  service-network:
+    external: true
