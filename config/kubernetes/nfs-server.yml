@@ -21,8 +21,6 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-storage
   hostPath: "/opt/nfs"
-  selector:
-    app: nfs-server
 
 kind: PersistentVolumeClaim
 metadata:
@@ -36,8 +34,6 @@ spec:
     requests:
       storage: 5gi
   volumeName: "storage-pv"
-  selector:
-    app: nfs-server
 
 ---
 apiVersion: apps/v1
