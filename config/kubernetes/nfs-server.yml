@@ -10,12 +10,13 @@ metadata:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: storage-pv
+  name: "storage-pv"
+  namespace: "storage"
   labels:
     type: local-storage
 spec:
   capacity:
-    storage: 5gi
+    storage: 512Gi
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
@@ -24,7 +25,7 @@ spec:
 
 kind: PersistentVolumeClaim
 metadata:
-  name: storage-pvclaim
+  name: "storage-pvclaim"
   namespace: "storage"
 spec:
   storageClassName: local-storage
@@ -32,7 +33,7 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 5gi
+      storage: 512Gi
   volumeName: "storage-pv"
 
 ---
