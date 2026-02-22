@@ -18,7 +18,7 @@ services:
       - path: ./.env
         required: true
     environment:
-      GITLAB_ROOT_PASSWORD: ${GITLAB_ROOT_PASSWORD}
+      GITLAB_ROOT_PASSWORD: ${GITLAB_PASSWORD}
       GITLAB_EMAIL_DISPLAY_NAME: "GitLab Notification Runner"
       GITLAB_EMAIL_FROM: "gitlab@caspersbox.com"
       GITLAB_EMAIL_REPLY_TO: "devops@caspersbox.com"
