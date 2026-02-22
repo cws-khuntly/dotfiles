@@ -11,5 +11,5 @@ data:
         errors
         cache 30
         health
-        forward . 192.168.10.20:10953
+        forward . 192.168.12.6:10953
     }
