@@ -4,7 +4,7 @@ services:
     image: portainer/agent:2.33.7
     pull_policy: missing
     restart: unless-stopped
-    hostname: "portainer-agent.caspersbox.local"
+    hostname: "portainer-agent"
     container_name: "portainer-agent"
     ports:
       - 9001:9001
