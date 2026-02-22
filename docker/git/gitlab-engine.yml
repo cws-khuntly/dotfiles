@@ -1,0 +1,54 @@
+---
+services:
+  oracle-db:
+    image: gitlab/gitlab-ce:latest
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: "gitlab.caspersbox.local"
+    container_name: "gitlab"
+    shm_size: "256mb"
+    networks:
+      service-network:
+        ipv4_address: 192.168.1.22
+    ports:
+      - 2222:22
+      - 9080:80
+      - 9043:443
+    volumes:
+      - gitlab-config:/etc/gitlab:rw
+      - gitlab-data:/var/opt/gitlab:rw
+      - gitlab-logs:/var/log/gitlab:rw
+    healthcheck:
+      test: ["CMD", "curl", "https://localhost/health_check"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+---
+volumes:
+  gitlab-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/gitlab/config"
+
+  gitlab-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/gitlab/data"
+
+  gitlab-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/gitlab/logs"
+
+---
+networks:
+  service-network:
+    external: true
