@@ -14,9 +14,6 @@ services:
       - 2222:22
       - 9080:80
       - 9043:443
-    secrets:
-      - source: gitlab
-        target: /run/secrets/gitlab
     env_file:
       - path: ./.env
         required: true
@@ -63,8 +60,3 @@ volumes:
 networks:
   service-network:
     external: true
-
----
-secrets:
-  gitlab:
-    file: "~/workspace/gitlab/gitlab.txt"
