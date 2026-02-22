@@ -1,0 +1,19 @@
+---
+services:
+  portainer:
+    image: portainer/agent:2.33.7
+    pull_policy: missing
+    restart: unless-stopped
+    hostname: "portainer-agent.caspersbox.local"
+    container_name: "portainer-agent"
+    ports:
+      - 9001:9001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/volumes:/var/lib/docker/volumes:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
