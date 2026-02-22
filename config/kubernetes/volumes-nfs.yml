@@ -2,17 +2,18 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: test-pv
+  name: "test-pv"
+  namespace: "<< namespace >>"
 spec:
   capacity:
-    storage: 5Gi
+    storage: 1Gi
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   storageClassName: "nfs"
   nfs:
-    server: 192.168.12.6
-    path: "/appdata"
+    server: nfs-service.storage.svc.cluster.local
+    path: "/exports"
   mountOptions:
     - proto=tcp
     - nfsvers=4
@@ -24,12 +25,12 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: "test-pvclaim"
-  namespace: "namespace"
+  namespace: "<< namespace >>"
 spec:
   storageClassName: "nfs"
   accessModes:
     - ReadWriteMany
   resources:
     requests:
-      storage: 5Gi
+      storage: 1Gi
   volumeName: test-pv
