@@ -14,6 +14,14 @@ services:
       - 2222:22
       - 9080:80
       - 9043:443
+    secrets:
+      - source: gitlab
+        target: /run/secrets/gitlab
+    environment:
+      GITLAB_ROOT_PASSWORD: /run/secrets/gitlab
+      GITLAB_EMAIL_DISPLAY_NAME: "GitLab Notification Runner"
+      GITLAB_EMAIL_FROM: "gitlab@caspersbox.com"
+      GITLAB_EMAIL_REPLY_TO: "devops@caspersbox.com"
     volumes:
       - gitlab-config:/etc/gitlab:rw
       - gitlab-data:/var/opt/gitlab:rw
@@ -52,3 +60,8 @@ volumes:
 networks:
   service-network:
     external: true
+
+---
+secrets:
+  gitlab:
+    file: "~/workspace/gitlab/gitlab.txt"
