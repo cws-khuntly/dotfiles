@@ -7,6 +7,39 @@ metadata:
     name: storage
 
 ---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: storage-pv
+  labels:
+    type: local-storage
+spec:
+  capacity:
+    storage: 5gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  hostPath: "/opt/nfs"
+  selector:
+    app: nfs-server
+
+kind: PersistentVolumeClaim
+metadata:
+  name: storage-pvclaim
+  namespace: "storage"
+spec:
+  storageClassName: local-storage
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5gi
+  volumeName: "storage-pv"
+  selector:
+    app: nfs-server
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -57,32 +90,3 @@ spec:
     port: 111
   selector:
     app: nfs-server
-
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: storage-pv
-  labels:
-    type: local-storage
-spec:
-  capacity:
-    storage: 5gi
-  accessModes:
-    - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: local-storage
-  hostPath: "/opt/nfs"
-
-kind: PersistentVolumeClaim
-metadata:
-  name: storage-pvclaim
-  namespace: "storage"
-spec:
-  storageClassName: local-storage
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 5gi
-  volumeName: "storage-pv"
