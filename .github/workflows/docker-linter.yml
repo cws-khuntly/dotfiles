@@ -12,7 +12,7 @@ jobs:
           submodules: false
 
       - name: Run Docker Compose Linter
-        uses: docker-compose-linter/dclint-github-action@v1 
+        uses: docker-compose-linter/dclint-github-action@v1.6.0
         with:
           path: "./docker"
           recursive: true
