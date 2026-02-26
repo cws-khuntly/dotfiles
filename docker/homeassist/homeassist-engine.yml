@@ -4,7 +4,7 @@ services:
     image: ghcr.io/home-assistant/home-assistant:stable
     pull_policy: missing
     restart: unless-stopped
-    hostname: "home.caspersbox.local"
+    hostname: "home.svc.caspersbox.com"
     container_name: "home-assist"
     networks:
       service-network:

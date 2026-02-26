@@ -4,7 +4,7 @@ services:
     image: internetsystemsconsortium/bind9:9.20
     pull_policy: missing
     restart: unless-stopped
-    hostname: "ns1.caspersbox.local"
+    hostname: "ns1.svc.caspersbox.com"
     container_name: "isc-bind9-ns1"
     networks:
       service-network:
@@ -29,7 +29,7 @@ services:
     image: internetsystemsconsortium/bind9:9.20
     pull_policy: missing
     restart: unless-stopped
-    hostname: "ns2.caspersbox.local"
+    hostname: "ns2.svc.caspersbox.com"
     container_name: "isc-bind9-ns2"
     networks:
       service-network:

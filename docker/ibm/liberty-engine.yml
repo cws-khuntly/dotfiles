@@ -4,7 +4,7 @@ services:
     image: websphere-liberty:full-java17-openj9
     pull_policy: missing
     restart: unless-stopped
-    hostname: "liberty.caspersbox.local"
+    hostname: "liberty.svc.caspersbox.com"
     container_name: "ibmliberty"
     networks:
       service-network:

@@ -4,7 +4,7 @@ services:
     image: container-registry.oracle.com/database/enterprise:23.26.1.0
     pull_policy: missing
     restart: unless-stopped
-    hostname: "oracle.caspersbox.local"
+    hostname: "oracle.svc.caspersbox.com"
     container_name: "oracle"
     networks:
       service-network:

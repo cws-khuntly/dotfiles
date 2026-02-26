@@ -4,7 +4,7 @@ services:
     image: fedora:43
     pull_policy: missing
     restart: unless-stopped
-    hostname: "fedora-docker.caspersbox.local"
+    hostname: "fedora-docker.svc.caspersbox.com"
     container_name: "fedora-43"
     networks:
       service-network:

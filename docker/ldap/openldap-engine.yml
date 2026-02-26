@@ -4,7 +4,7 @@ services:
     image: osixia/openldap:stable
     pull_policy: missing
     restart: unless-stopped
-    hostname: "ldap.caspersbox.local"
+    hostname: "ldap.svc.caspersbox.com"
     container_name: "openldap"
     networks:
       service-network:
@@ -34,7 +34,7 @@ services:
     image: osixia/phpldapadmin:stable
     pull_policy: missing
     restart: unless-stopped
-    hostname: "ldapadm.caspersbox.local"
+    hostname: "ldapadm.svc.caspersbox.com"
     container_name: "phpldapadmin"
     networks:
       service-network:

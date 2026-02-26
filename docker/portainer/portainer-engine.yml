@@ -4,7 +4,7 @@ services:
     image: portainer/portainer-ce:lts
     pull_policy: missing
     restart: unless-stopped
-    hostname: "portainer.caspersbox.local"
+    hostname: "portainer.svc.caspersbox.com"
     container_name: "portainer"
     networks:
       service-network:

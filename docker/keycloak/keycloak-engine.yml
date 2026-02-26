@@ -4,7 +4,7 @@ services:
     image: postgres:latest
     pull_policy: missing
     restart: unless-stopped
-    hostname: "postgres.caspersbox.local"
+    hostname: "postgres.svc.caspersbox.com"
     container_name: "postgres"
     networks:
       service-network:
@@ -31,7 +31,7 @@ services:
     image: quay.io/keycloak/keycloak:latest
     pull_policy: missing
     restart: unless-stopped
-    hostname: "keycloak.caspersbox.local"
+    hostname: "keycloak.svc.caspersbox.com"
     container_name: "keycloak"
     networks:
       service-network:

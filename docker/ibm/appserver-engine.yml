@@ -4,7 +4,7 @@ services:
     image: icr.io/appcafe/websphere-traditional:9.0.5.26
     pull_policy: missing
     restart: unless-stopped
-    hostname: "was.caspersbox.local"
+    hostname: "was.svc.caspersbox.com"
     container_name: "ibmwas"
     networks:
       service-network:

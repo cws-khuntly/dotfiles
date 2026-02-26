@@ -4,7 +4,7 @@ services:
     image: duplicati/duplicati:latest
     pull_policy: missing
     restart: unless-stopped
-    hostname: "backup.caspersbox.local"
+    hostname: "backup.svc.caspersbox.com"
     container_name: "duplicati"
     networks:
       service-network:

@@ -4,7 +4,7 @@ services:
     image: redis:latest
     pull_policy: missing
     restart: unless-stopped
-    hostname: "redis.caspersbox.local"
+    hostname: "redis.svc.caspersbox.com"
     container_name: "redis"
     networks:
       service-network:
