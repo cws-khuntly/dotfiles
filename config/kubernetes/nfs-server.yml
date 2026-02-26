@@ -8,21 +8,6 @@ metadata:
 
 ---
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: "storage-pv"
-  namespace: "storage"
-  labels:
-    type: local-storage
-spec:
-  capacity:
-    storage: 384Gi
-  accessModes:
-    - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: local-storage
-  hostPath: "/opt/nfs"
-
 kind: PersistentVolumeClaim
 metadata:
   name: "storage-pvclaim"
@@ -33,8 +18,26 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 384Gi
+      storage: 128Gi
   volumeName: "storage-pv"
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: "storage-pv"
+  namespace: "storage"
+  labels:
+    type: local-storage
+spec:
+  capacity:
+    storage: 128Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  hostPath:
+    path: "/opt/nfs"
 
 ---
 apiVersion: apps/v1
@@ -69,7 +72,7 @@ spec:
       volumes:
       - name: storage
         persistentVolumeClaim:
-          claimName: "storage-pvc"
+          claimName: "storage-pvclaim"
 
 ---
 apiVersion: v1
