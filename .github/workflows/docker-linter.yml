@@ -1,4 +1,4 @@
-name: Lint Docker Compose
+name: Docker Compose linter
 on: [push, pull_request]
 
 jobs:
