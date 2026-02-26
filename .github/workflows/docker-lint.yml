@@ -1,0 +1,18 @@
+name: Lint Docker Compose
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: false
+
+      - name: Run Docker Compose Linter
+        uses: docker-compose-linter/dclint-github-action@v1 
+        with:
+          path: "./docker"
+          recursive: true
