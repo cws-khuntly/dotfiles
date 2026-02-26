@@ -9,7 +9,7 @@
   pre_tasks:
     - name: Install galaxy collections
       ansible.builtin.command:
-        cmd: "ansible-galaxy collection install -r ./ansible/requirements.yml"
+        cmd: "ansible-galaxy collection install requirements.yml"
       changed_when: true
 
   tasks:
