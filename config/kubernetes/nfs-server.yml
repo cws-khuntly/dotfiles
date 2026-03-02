@@ -13,7 +13,7 @@ metadata:
   name: "storage-pvclaim"
   namespace: "storage"
 spec:
-  storageClassName: local-storage
+  storageClassName: local
   accessModes:
     - ReadWriteMany
   resources:
@@ -28,14 +28,14 @@ metadata:
   name: "storage-pv"
   namespace: "storage"
   labels:
-    type: local-storage
+    type: local
 spec:
   capacity:
     storage: 128Gi
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: local-storage
+  storageClassName: local
   hostPath:
     path: "/opt/nfs"
 
