@@ -18,8 +18,7 @@
 #
 #==============================================================================
 
-[[ ! -d "${HOME}/workspace/python/venv" ]] && mkdir -pv
-"${HOME}/workspace/python/venv";
+[[ ! -d "${HOME}/workspace/python/venv" ]] && mkdir -pv "${HOME}/workspace/python/venv";
 
 if [[ -f "${HOME}/workspace/python/venv/bin/activate" ]]; then
     source "${HOME}/workspace/python/venv/bin/activate";
