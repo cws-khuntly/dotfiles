@@ -26,7 +26,7 @@ openpgp-revocs.d/
 ## ignore files
 ##
 .#*
-*.kbx
+*.kbx*
 *.db
 *.asc
-
+*.gpg
