@@ -106,7 +106,7 @@ function fldapsearch()
             [Uu][Ss][Ee][Tt][Ll][Ss]|[Tt]) usetls="${_TRUE}"; ;;
             [Uu][Ss][Ee][Ss][Ss][Ss]|[Ss]) usessl="${_TRUE}"; ;;
             [Aa][Uu][Tt][Hh]|[Aa]) userdn="${argument_value}"; ;;
-            [Bb][Aa][Ss][Ee]|[Bb]) basedn="${argument_value}"; ;:
+            [Bb][Aa][Ss][Ee]|[Bb]) basedn="${argument_value}"; ;;
             [Ss][Ee][Aa][Rr][Cc][Hh]|[Yy]) search_string="${argument_value}"; ;;
             help|\?|h) usage; return_code="${?}"; ;;
             *)
