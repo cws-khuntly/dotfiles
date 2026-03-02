@@ -134,6 +134,9 @@ services:
         ipv4_address: 192.168.1.10
     ports:
       - 8082:8080
+    env_file:
+      - path: ./.env
+        required: true
     environment:
       AKHQ_CONFIGURATION: |
         akhq:
@@ -141,6 +144,8 @@ services:
             docker-kafka-servers:
               properties:
                 bootstrap.servers: "broker01:9091,broker02:9092,broker03:9093"
+      JWT_GENERATOR_SIGNATURE_SECRET: ${JWT_GENERATOR_SECRET}
+      MICRONAUT_SECURITY_TOKEN_JWT_SIGNATURES_SECRET_GENERATOR_SECRET: ${MICRONAUT_SECURITY_TOKEN_JWT_SIGNATURES_SECRET}
 
 ---
 volumes:
