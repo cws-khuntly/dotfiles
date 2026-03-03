@@ -7,9 +7,7 @@ spec:
     app: my-app
   type: LoadBalancer
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 5900
-    - protocol: TCP
+    - name: http-ui
+      protocol: TCP
       port: 443
       targetPort: 5900
