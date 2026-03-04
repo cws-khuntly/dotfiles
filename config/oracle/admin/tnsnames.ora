@@ -21,7 +21,7 @@ ORCLCDB =
     (ADDRESS_LIST =
       (ADDRESS =
         (PROTOCOL = TCP)
-        (HOST = oracle.caspersbox.local)
+        (HOST = oracle.svc.caspersbox.local)
         (PORT = 1521)
       )
     )
@@ -35,7 +35,7 @@ ORCLPDB1 =
     (ADDRESS_LIST =
       (ADDRESS =
         (PROTOCOL = TCP)
-        (HOST = oracle.caspersbox.local)
+        (HOST = oracle.svc.caspersbox.local)
         (PORT = 1521)
       )
     )

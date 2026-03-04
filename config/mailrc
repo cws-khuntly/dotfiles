@@ -11,15 +11,10 @@ set verbose
 set EDITOR=/usr/bin/vi
 set VISUAL=/usr/bin/vi
 
-account gmail {
-    set smtp-use-starttls
-    set ssl-verify=ignore
+account local {
     set smtp-auth=login
-    set smtp=smtp://smtp.gmail.com:587
+    set smtp-auth-user=khuntly
+    set smtp-auth-password=
+    set smtp=smtp://mail.svc.caspersbox.com:25
     set from="Kevin Huntly <kmhuntly@gmail.com>"
-    set smtp-auth-user=kmhuntly@gmail.com
-    set smtp-auth-password=<password>
-    set ssl-verify=ignore
-    set nss-config-dir=/home/path/to/.certs
 }
-
