@@ -70,6 +70,7 @@ function startDockerContainer()
     local argument_value;
     local container_name;
     local action;
+    local detach;
 
     #======  FUNCTION  ============================================================;
     #          NAME:  usage
@@ -118,7 +119,7 @@ function startDockerContainer()
         case "${argument_name}" in
             [Cc][Oo][Nn][Tt][Aa][Ii][Nn][Ee][Rr]|[Cc]) container_name="${argument_value}"; ;;
             [Aa][Cc][Tt][Ii][Oo][Nn]|[Aa]) action="${argument_value}"; ;;
-            [Dd][Ee][Tt][Aa][Cc][Hh]|[Dd]) detach="-d"; ;;
+            [Dd][Ee][Tt][Aa][Cc][Hh]|[Dd]) detach="${_TRUE}"; ;;
             help|\?|h) usage; return_code="${?}"; ;;
             *)
                 if [[ -n "$(compgen -A function | grep -Ew "(^writeLogEntry)")" ]]; then
@@ -137,7 +138,9 @@ function startDockerContainer()
             writeLogEntry "CONSOLE" "STDERR" "${$}" "${cname}" "${LINENO}" "${function_name}" "The container file ${container_name} does not exist.";
         fi
     else
-        docker compose -f "${HOME}/.dotfiles/docker/$(cut -d "/" -f 1 <<< "${container_name}")/$(cut -d "/" -f 2 <<< "${container_name}").yml" "${action}" "${detach}";
+        [[ -z "${detach}" ]] && docker compose -f "${HOME}/.dotfiles/docker/$(cut -d "/" -f 1 <<< "${container_name}")/$(cut -d "/" -f 2 <<< "${container_name}").yml" "${action}";
+        [[ -n "${detach}" ]] && docker compose -f "${HOME}/.dotfiles/docker/$(cut -d "/" -f 1 <<< "${container_name}")/$(cut -d "/" -f 2 <<< "${container_name}").yml" "${action}" "${detach}";
+
         ret_code="${?}";
 
         if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
@@ -156,6 +159,7 @@ function startDockerContainer()
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${container_name}" ]] && unset -v container_name;
     [[ -n "${action}" ]] && unset -v action;
+    [[ -n "${detach}" ]] && unset -v detach;
     [[ -n "${argument}" ]] && unset -v argument;
     [[ -n "${argument_name}" ]] && unset -v argument_name;
     [[ -n "${argument_value}" ]] && unset -v argument_value;
