@@ -17,6 +17,7 @@ services:
     environment:
       EDGE: 1
       EDGE_ID: ${EDGE_IDENTIFIER}
+      EDGE_KEY: ${EDGE_TOKEN}
       EDGE_INSECURE_POLL: 1
     volumes:
       - agent_data:/data:rw
