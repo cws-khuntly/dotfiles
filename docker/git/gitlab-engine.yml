@@ -9,7 +9,7 @@ services:
     shm_size: "256mb"
     networks:
       service-network:
-        ipv4_address: 192.168.1.22
+        ipv4_address: 192.168.1.23
     ports:
       - 2222:22
       - 9080:80
