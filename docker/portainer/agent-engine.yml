@@ -1,7 +1,7 @@
 ---
 services:
   portainer-agent:
-    image: portainer/agent:2.33.7
+    image: portainer/agent:2.39.0
     pull_policy: missing
     restart: unless-stopped
     hostname: "portainer-agent"
