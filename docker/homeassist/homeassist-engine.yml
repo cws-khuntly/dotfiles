@@ -9,6 +9,8 @@ services:
     networks:
       service-network:
         ipv4_address: 192.168.1.200
+    ports:
+      - 8095:8095
     environment:
       LOG_LEVEL: INFO
 
