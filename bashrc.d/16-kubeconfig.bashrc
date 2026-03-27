@@ -48,5 +48,3 @@ function setKubeConfig()
 
     [[ -n "${response}" ]] && unset -v response;
 }
-
-alias kubectl="minikube -p fedora kubectl --"
