@@ -1,0 +1,5 @@
+---
+mirrors:
+  "registry.svc.caspersbox.com:65000":
+    endpoint:
+      - "http://registry.svc.caspersbox.com:65000"
