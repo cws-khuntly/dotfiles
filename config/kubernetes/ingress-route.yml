@@ -10,13 +10,13 @@ spec:
     - websecure
 
   routes:
-    - match: Host(`myapp.apps.caspersbox.com`)
+    - match: Host('myapp.apps.caspersbox.com')
       kind: Rule
-      priority: 10
       services:
         - name: myapp-service
-          port: 80
-          weight: 100
+          port: 443
+          scheme: https
+          serversTransport: insecure-skip-verify
           passHostHeader: true
 
   # TLS configuration (optional for HTTPS)
