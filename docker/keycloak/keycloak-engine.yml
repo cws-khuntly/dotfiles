@@ -31,7 +31,7 @@ services:
     image: quay.io/keycloak/keycloak:latest
     pull_policy: missing
     restart: unless-stopped
-    hostname: "keycloak.svc.caspersbox.com"
+    hostname: "keycloak.apps.caspersbox.com"
     container_name: "keycloak"
     networks:
       service-network:
