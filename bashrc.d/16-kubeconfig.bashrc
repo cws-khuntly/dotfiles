@@ -24,6 +24,13 @@ declare -x KUBECONFIG="${HOME}/.kube/fedora";
 
 printf '\e[31m%s\e[0m\n' "*** KUBECONFIG SET TO DEFAULT. DONT FORGET TO CHANGE.";
 
+alias k="kubectl"
+alias kgp="kubectl get pods"
+alias kgpn="kubectl get pods --namespace"
+alias kl="kubectl logs -f"
+alias kd="kubectl describe"
+alias kns="kubectl config set-context --current --namespace"
+
 function setKubeConfig()
 {
     if [[ -f "${HOME}/.kube/${1}" ]]; then

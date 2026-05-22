@@ -20,6 +20,14 @@
 
 [[ -z "$(compgen -c | grep -Ew "(^docker)" | sort | uniq)" ]] && return;
 
+alias dps="docker ps"
+alias dpsa="docker ps -a"
+alias dcu="docker-compose up -d"
+alias dcd="docker-compose down"
+alias dcl="docker logs -f"
+alias dex="docker exec -it"
+alias dprune="docker system prune -af"
+
 function loginToOCI() { docker login -u kmhuntly@gmail.com container-registry.oracle.com; }
 
 #=====  FUNCTION  =============================================================
