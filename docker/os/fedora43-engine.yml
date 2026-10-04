@@ -11,6 +11,7 @@ services:
         ipv4_address: 192.168.1.250
     volumes:
       - fedora-data:/mnt/data:rw
+      - was-install:/opt/IBM:rw
 
 ---
 volumes:
@@ -20,6 +21,13 @@ volumes:
       type: none
       o: bind
       device: "/opt/fedora/data"
+
+  was-install:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "/opt/IBM"
 
 ---
 networks:
