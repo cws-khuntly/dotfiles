@@ -17,7 +17,5 @@
 #==============================================================================
 
 if [[ $(command -v tmux 2>/dev/null) ]] && [[ -n "${PS1}" ]] && [[ -z "${TMUX}" ]] && [[ "${TERM_PROGRAM}" != "vscode" ]]; then
-    if [[ -z "${LOGNAME}" ]]; then
-        exec tmux new-session -A -s main
-    fi
+    exec tmux new-session -A -s main;
 fi
